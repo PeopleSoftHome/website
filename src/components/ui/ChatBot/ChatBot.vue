@@ -1,0 +1,252 @@
+<template>
+  <div v-if="isOpen" :class="s.overlay" role="dialog" aria-modal="true" :aria-label="t('chatBot.title')">
+    <div ref="windowRef" :class="s.window">
+      <!-- 顶部标题栏 -->
+      <div :class="s.header">
+        <div :class="s.headerLeft">
+          <div :class="s.avatar">{{ BOT_AVATAR }}</div>
+          <div>
+            <div :class="s.botName">{{ t('chatBot.botName') }}</div>
+            <div :class="s.status">
+              <span :class="s.statusDot" />
+              {{ isHandoff ? t('chatBot.statusHandoff') : t('chatBot.statusOnline') }}
+            </div>
+          </div>
+        </div>
+        <div :class="s.headerActions">
+          <button :class="s.handoffBtn" @click="sendMessage(t('chatBot.handoffBtn'))" :title="t('chatBot.handoffBtn')" :aria-label="t('chatBot.handoffBtn')">👤</button>
+          <button :class="s.closeBtn" @click="emit('close')" :aria-label="t('chatBot.closeAria')">✕</button>
+        </div>
+      </div>
+
+      <!-- 消息列表 -->
+      <div :class="s.messages" aria-live="polite" aria-atomic="false">
+        <div
+          v-for="msg in messages"
+          :key="msg.id"
+          :class="[s.msgRow, msg.from === 'bot' ? s.botRow : s.userRow]"
+        >
+          <span v-if="msg.from === 'bot'" :class="s.msgAvatar">{{ BOT_AVATAR }}</span>
+          <div :class="s.msgGroup">
+            <div :class="[s.bubble, msg.from === 'bot' ? s.botBubble : s.userBubble]">
+              <span v-html="formatMessage(msg.text)" />
+            </div>
+            <div :class="s.msgTime">{{ msg.time }}</div>
+            <div v-if="msg.from === 'bot' && msg.quickReplies?.length" :class="s.quickReplies">
+              <button v-for="q in msg.quickReplies" :key="q" :class="s.quickReply" @click="handleQuickReply(q)">
+                {{ q }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 打字指示器 -->
+        <div v-if="isTyping" :class="s.typingRow" aria-hidden="true">
+          <span :class="s.typingAvatar">{{ BOT_AVATAR }}</span>
+          <div :class="s.typingBubble">
+            <span :class="s.dot" />
+            <span :class="s.dot" />
+            <span :class="s.dot" />
+          </div>
+        </div>
+
+        <!-- 人工接入提示条 -->
+        <div v-if="isHandoff" :class="s.handoffBar">
+          <span>👤</span>
+          <span>{{ t('chatBot.handoffMsg') }}</span>
+          <a href="tel:4008888888" :class="s.handoffCall">{{ t('chatBot.handoffCall') }}</a>
+        </div>
+
+        <div ref="bottomRef" />
+      </div>
+
+      <!-- 输入区 -->
+      <div :class="s.inputArea">
+        <textarea
+          ref="inputRef"
+          :class="s.input"
+          v-model="input"
+          @keydown="handleKeyDown"
+          :placeholder="t('chatBot.placeholder')"
+          :aria-label="t('chatBot.placeholder')"
+          rows="1"
+        />
+        <button :class="[s.sendBtn, input.trim() ? s.sendActive : '']" @click="sendMessage(input)" :aria-label="t('chatBot.sendAria')">➤</button>
+      </div>
+
+      <!-- 底部快捷入口 -->
+      <div v-if="messages.length <= 2 && !isTyping" :class="s.quickArea">
+        <button v-for="q in quickRepliesDefault" :key="q" :class="s.quickChip" @click="handleQuickReply(q)">
+          {{ q }}
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, inject, watch, onMounted, onUnmounted } from 'vue';
+import { useFocusTrap } from '@/composables/useFocusTrap.js';
+import { BOT_AVATAR, FAQ_RULES_META, FALLBACK_REPLY_KEYS } from './chatData.js';
+import s from './ChatBot.module.css';
+
+const props = defineProps({ isOpen: { type: Boolean, default: false } });
+const emit = defineEmits(['close', 'openDemo']);
+
+const { t, locale } = inject('i18n', { t: (k) => k, locale: ref('zh') });
+
+const messages = ref([]);
+const input = ref('');
+const isTyping = ref(false);
+const isHandoff = ref(false);
+const initialized = ref(false);
+const windowRef = ref(null);
+const bottomRef = ref(null);
+const inputRef = ref(null);
+const timers = ref([]);
+
+useFocusTrap(() => props.isOpen, windowRef);
+
+const faqRules = computed(() => FAQ_RULES_META.map(meta => ({
+  ...meta,
+  reply: t(`chatBot.faq.${meta.id}.reply`),
+  quickReplies: t(`chatBot.faq.${meta.id}.quickReplies`) || [],
+})));
+
+const fallbackReplies = computed(() => FALLBACK_REPLY_KEYS.map(k => t(`chatBot.${k}`)).filter(Boolean));
+const welcomeMessages = computed(() => [
+  { text: t('chatBot.welcome1'), quickReplies: [] },
+  { text: t('chatBot.welcome2'), quickReplies: t('chatBot.welcomeQuickReplies') || [] },
+]);
+const quickRepliesDefault = computed(() => t('chatBot.quickRepliesDefault') || []);
+
+const clearAllTimers = () => {
+  timers.value.forEach(id => clearTimeout(id));
+  timers.value = [];
+};
+
+const matchRule = (text) => {
+  const lower = text.toLowerCase();
+  for (const rule of faqRules.value) {
+    if (rule.keywords.some(kw => lower.includes(kw.toLowerCase()))) {
+      return rule;
+    }
+  }
+  return {
+    reply: fallbackReplies.value[Math.floor(Math.random() * fallbackReplies.value.length)] || '',
+    quickReplies: [],
+  };
+};
+
+const nowTime = () => {
+  const loc = locale.value === 'en' ? 'en-US' : locale.value === 'zh-TW' ? 'zh-TW' : 'zh-CN';
+  return new Date().toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+};
+
+const sendMessage = (text) => {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  messages.value.push({
+    id: Date.now(),
+    from: 'user',
+    text: trimmed,
+    time: nowTime(),
+  });
+  input.value = '';
+  isTyping.value = true;
+
+  const matched = matchRule(trimmed);
+  const delay = 800 + Math.random() * 600;
+
+  const id = setTimeout(() => {
+    isTyping.value = false;
+    if (matched.action === 'openModal') emit('openDemo');
+    if (matched.isHandoff) isHandoff.value = true;
+
+    messages.value.push({
+      id: Date.now(),
+      from: 'bot',
+      text: matched.reply,
+      quickReplies: matched.quickReplies,
+      time: nowTime(),
+    });
+  }, delay);
+  timers.value.push(id);
+};
+
+const handleQuickReply = (text) => {
+  const lower = text.toLowerCase();
+  if (lower.includes('演示') || lower.includes('demo') || lower.includes('预约') || lower.includes('book')) {
+    emit('openDemo');
+    sendMessage(text);
+    return;
+  }
+  if (lower.includes('人工') || lower.includes('agent') || lower.includes('human') || lower.includes('客服') || lower.includes('service')) {
+    sendMessage(t('chatBot.handoffBtn'));
+    return;
+  }
+  sendMessage(text);
+};
+
+const handleKeyDown = (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(input.value);
+  }
+};
+
+// 初始化欢迎语
+watch(() => props.isOpen, (open) => {
+  if (open && !initialized.value) {
+    initialized.value = true;
+    let delay = 300;
+    welcomeMessages.value.forEach((msg, i) => {
+      const id = setTimeout(() => {
+        messages.value.push({
+          id: Date.now() + i,
+          from: 'bot',
+          text: msg.text,
+          quickReplies: msg.quickReplies,
+          time: nowTime(),
+        });
+      }, delay);
+      timers.value.push(id);
+      delay += 800;
+    });
+  }
+  if (open) {
+    const id = setTimeout(() => inputRef.value?.focus(), 100);
+    timers.value.push(id);
+  }
+});
+
+// 消息更新时滚动到底部
+watch([messages, isTyping], () => {
+  setTimeout(() => bottomRef.value?.scrollIntoView({ behavior: 'smooth' }), 50);
+});
+
+// Escape 关闭
+const onEsc = (e) => {
+  if (e.key === 'Escape' && props.isOpen) emit('close');
+};
+onMounted(() => document.addEventListener('keydown', onEsc));
+onUnmounted(() => {
+  document.removeEventListener('keydown', onEsc);
+  clearAllTimers();
+});
+
+// 格式化消息文本（**bold** → <strong>, \n → <br>）
+const formatMessage = (text) => {
+  if (!text) return '';
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return `<strong>${part.slice(2, -2)}</strong>`;
+      }
+      return part.replace(/\n/g, '<br>');
+    })
+    .join('');
+};
+</script>
