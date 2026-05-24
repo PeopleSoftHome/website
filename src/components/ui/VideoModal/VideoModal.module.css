@@ -1,0 +1,91 @@
+/* ── 遮罩 ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg-deep);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* z-index 3000：高于 DemoModal(2000) / NavBar(1000) */
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ── 弹窗容器 ── */
+.modal {
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+  animation: videoIn 0.3s var(--ease-out) both;
+}
+
+@keyframes videoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── 关闭按钮 ── */
+.closeBtn {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  color: var(--text-on-dark-secondary);
+  font-size: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s, transform 0.25s var(--ease-out), background 0.2s;
+  font-family: inherit;
+}
+
+.closeBtn:hover {
+  color: white;
+  transform: rotate(90deg);
+  background: var(--border-on-dark-subtle);
+}
+
+/* ── 16:9 视频容器 ── */
+.videoWrap {
+  position: relative;
+  /* 16:9 = 56.25% */
+  padding-top: 56.25%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+  background: var(--video-bg);
+}
+
+.iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 767px) {
+  .closeBtn {
+    top: -40px;
+    right: 0;
+  }
+
+  .modal {
+    max-width: 100%;
+  }
+}

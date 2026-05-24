@@ -1,0 +1,99 @@
+.section {
+  background: var(--gray-50);
+}
+
+/* 左右两栏面板 */
+.panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  /* Tab 切换淡入动画 */
+  animation: panelFadeIn 0.35s var(--ease-out);
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── 左侧特色功能列表 ── */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.featureItem {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.featureBody strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+.featureBody p {
+  font-size: 13px;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 24px;
+  background: var(--primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  margin-top: 4px;
+}
+
+.cta:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* ── 右侧截图区 ── */
+.screenshotWrap {
+  /* RevealWrapper 包裹，需要 block 显示 */
+}
+
+/* ── 响应式 ── */
+@media (max-width: 1023px) {
+  .panel {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .section { background: var(--section-alt-bg); }
+[data-theme="dark"] .featureItem { background: var(--card-bg); border-color: var(--card-border); }
+[data-theme="dark"] .featureBody strong { color: var(--gray-900); }
+[data-theme="dark"] .featureBody p { color: var(--gray-600); }

@@ -1,0 +1,76 @@
+.section {
+  background: white;
+}
+
+/* ── 轮播外框 ── */
+.carouselWrap {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  border-radius: var(--radius-lg);
+}
+.carouselWrap:active { cursor: grabbing; }
+
+/* ── 滑动轨道 ── */
+.track {
+  display: flex;
+  transition: transform 0.5s var(--ease-out);
+}
+
+/* 每张卡的包装层（宽度由 JS 动态注入）*/
+.cardWrap {
+  /* flex 属性由 JS 内联设置 */
+}
+
+/* ── 导航栏 ── */
+.nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+/* 上一页 / 下一页 按钮 */
+.navBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: white;
+  color: var(--gray-600);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.navBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* 圆点指示器 */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  padding: 0;
+}
+
+/* 激活态：胶囊形 */
+.dotActive {
+  background: var(--primary);
+  width: 24px;
+  border-radius: var(--radius-pill);
+}
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .section { background: var(--page-bg); }

@@ -1,0 +1,83 @@
+.section {
+  background: var(--grad-cta);
+  padding: clamp(60px, 7vw, 90px) 0;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* 右上角装饰光晕 */
+.glow {
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: clamp(26px, 3.5vw, 42px);
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-on-dark-secondary);
+  margin-bottom: 36px;
+}
+
+.btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* 白底蓝字主按钮 */
+.btnWhite {
+  padding: 13px 28px;
+  background: white;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+}
+
+.btnWhite:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 白色描边次按钮 */
+.btnOutline {
+  padding: 12px 24px;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--text-on-dark-muted);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btnOutline:hover {
+  background: var(--glass-border-on-dark);
+  border-color: white;
+}
+
+/* ── v2.3.0 暗色模式（CTA 渐变区，保持深蓝，小幅加深）── */
+[data-theme="dark"] .section { filter: brightness(0.9); }

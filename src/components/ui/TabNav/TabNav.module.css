@@ -1,0 +1,104 @@
+.nav {
+  display: flex;
+  gap: 4px;
+}
+
+/* ── segment（产品矩阵：灰色背景整体容器）── */
+.segment {
+  justify-content: center;
+  background: var(--gray-100);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  width: fit-content;
+  margin: 0 auto 40px;
+}
+
+.segment .btn {
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.segment .btn.active {
+  background: white;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── pill（行业方案 / WhyUs：独立胶囊按钮）── */
+.pill {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.pill .btn {
+  padding: 9px 22px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  background: white;
+  border: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.pill .btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* ── pill dark（WhyUs 深色区域 underline 变体）── */
+.underline {
+  gap: 0;
+  border-bottom: 1px solid var(--glass-border-on-dark);
+  margin-bottom: 40px;
+}
+
+.underline .btn {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-on-dark-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.underline .btn.active {
+  color: white;
+  font-weight: 600;
+  border-bottom-color: var(--primary);
+}
+
+.underline .btn:hover:not(.active) {
+  color: var(--text-on-dark-primary);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 767px) {
+  .segment {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .segment::-webkit-scrollbar { display: none; }
+}

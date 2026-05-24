@@ -1,0 +1,303 @@
+/* ── 遮罩 ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 默认隐藏 */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.overlayOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── 弹窗容器 ── */
+.modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 500px;
+  padding: 36px;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.35s var(--ease-out);
+  box-shadow: var(--shadow-xl);
+  margin: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.overlayOpen .modal {
+  transform: none;
+}
+
+/* ── 关闭按钮 ── */
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  color: var(--gray-600);
+}
+
+.closeBtn:hover {
+  background: var(--gray-200);
+}
+
+/* ── 步骤进度条 ── */
+.steps {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.stepDot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gray-200);
+  transition: background 0.3s;
+}
+
+.stepActive { background: var(--primary); }
+.stepDone   { background: var(--success); }
+
+/* ── 步骤标题区 ── */
+.stepTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 6px;
+}
+
+.stepSub {
+  font-size: 14px;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+
+/* ── 表单元素 ── */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.required {
+  color: var(--error);
+  margin-left: 2px;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--gray-900);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.inputError {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: var(--error);
+  margin-top: 5px;
+  display: block;
+}
+
+/* 验证码行 */
+.verifyRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.verifyRow .input {
+  flex: 1;
+}
+
+.verifyBtn {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.verifyBtn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+.verifyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--gray-200);
+  color: var(--gray-400);
+  background: var(--gray-100);
+}
+
+/* 提交/下一步按钮 */
+.submitBtn {
+  width: 100%;
+  height: 48px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s;
+  margin-top: 8px;
+  font-family: inherit;
+}
+
+.submitBtn:hover {
+  background: var(--primary-dark);
+}
+
+/* ── Pills（Step2 / Step3）── */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.pill {
+  padding: 8px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+  color: var(--gray-700);
+  font-family: inherit;
+}
+
+.pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pillSelected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ── 成功态 ── */
+.success {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.successIcon {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+
+.successTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 10px;
+}
+
+.successSub {
+  font-size: 14px;
+  color: var(--gray-400);
+  line-height: 1.7;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 480px) {
+  .modal { padding: 24px 20px; margin: 12px; }
+  .formRow { grid-template-columns: 1fr; }
+}
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .overlay { background: var(--overlay-bg-deep); }
+[data-theme="dark"] .modal {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+[data-theme="dark"] .closeBtn { background: var(--surface-on-dark-hover); color: var(--gray-600); }
+[data-theme="dark"] .closeBtn:hover { background: var(--surface-on-dark-elevated); }
+[data-theme="dark"] .stepTitle { color: var(--gray-900); }
+[data-theme="dark"] .stepSub   { color: var(--gray-600); }
+[data-theme="dark"] .label     { color: var(--gray-700); }
+[data-theme="dark"] .input {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-color);
+}
+[data-theme="dark"] .input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+[data-theme="dark"] .input::placeholder { color: var(--gray-400); }
+[data-theme="dark"] .verifyBtn {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+[data-theme="dark"] .pill {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--gray-700);
+}
+[data-theme="dark"] .pill:hover { border-color: var(--primary); color: var(--primary); }

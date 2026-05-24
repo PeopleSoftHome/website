@@ -1,0 +1,26 @@
+.header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.title {
+  font-size: clamp(26px, 3.5vw, 42px);
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ── light variant (default) ── */
+.light .title    { color: var(--gray-900); }
+.light .subtitle { color: var(--gray-600); }
+
+/* ── dark variant ── */
+.dark .title    { color: white; }
+.dark .subtitle { color: var(--text-on-dark-secondary); }

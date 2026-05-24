@@ -1,0 +1,91 @@
+.card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-out);
+  /* 轮播中的尺寸由 TestimonialSection 控制 */
+  flex-shrink: 0;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tagIndustry {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tag-blue-bg);
+  color: var(--tag-blue-text);
+}
+
+.tagProduct {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.quote {
+  font-size: 40px;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 12px;
+  font-family: Georgia, serif;
+  user-select: none;
+}
+
+.text {
+  font-size: 14px;
+  color: var(--gray-700);
+  line-height: 1.75;
+  margin-bottom: 24px;
+  /* 限制 5 行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.title {
+  font-size: 12px;
+  color: var(--gray-400);
+  margin-top: 2px;
+}

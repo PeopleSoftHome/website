@@ -1,0 +1,69 @@
+.section {
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 48px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.item {
+  text-align: center;
+  padding: 20px 16px;
+  border-right: 1px solid var(--gray-200);
+}
+.item.last,
+.item:last-child {
+  border-right: none;
+}
+
+.num {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+  /* 对齐：数值 + 后缀一行显示 */
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+}
+
+/* 后缀（+、万+、.9%）字号稍小 */
+.suffix {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+/* 隐藏 span[ref] 中自带的 suffix，避免重复 */
+.num span:first-child { }
+
+.label {
+  font-size: 12px;
+  color: var(--gray-400);
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 1023px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+  .item:nth-child(3) { border-right: none; }
+  .item:nth-child(4) { border-top: 1px solid var(--gray-200); }
+}
+
+@media (max-width: 767px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .item:nth-child(2n) { border-right: none; }
+  .item:nth-child(n+3) { border-top: 1px solid var(--gray-200); }
+  .num { font-size: 28px; }
+  .suffix { font-size: 18px; }
+}
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .section { background: var(--card-bg); border-color: var(--card-border); }
+[data-theme="dark"] .item { border-color: var(--card-border); }
+[data-theme="dark"] .label { color: var(--gray-600); }

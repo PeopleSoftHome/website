@@ -1,0 +1,78 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s var(--ease-out);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Sizes ── */
+.sm  { padding: 7px 16px; font-size: 13px; }
+.md  { padding: 9px 20px; font-size: 14px; }
+.lg  { padding: 14px 28px; font-size: 16px; }
+
+/* ── Variants ── */
+.primary {
+  background: var(--primary);
+  color: white;
+}
+.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.ghost {
+  background: var(--glass-border-on-dark);
+  color: white;
+  border: 1px solid var(--text-on-dark-dim);
+}
+.ghost:hover {
+  background: var(--surface-on-dark-elevated);
+}
+
+/* ghost 在亮色背景下的变体（由父容器通过 class 传入）*/
+.ghost.light {
+  background: transparent;
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+.ghost.light:hover {
+  background: var(--gray-100);
+  color: var(--gray-900);
+}
+
+.outline {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+.outline:hover {
+  background: var(--primary-light);
+}
+
+/* 蓝色背景上的白色按钮 */
+.white {
+  background: white;
+  color: var(--primary);
+  border: none;
+  font-weight: 700;
+}
+.white:hover {
+  background: var(--primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+}

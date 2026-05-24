@@ -1,0 +1,70 @@
+.section {
+  background: white;
+  padding: 20px 0;
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+
+.label {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gray-400);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* 遮罩：两侧渐变淡出，增加精致感 */
+.wrapper {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+/* 无限滚动轨道 */
+/* CSS Modules 需要在本文件内声明 keyframe，不能引用全局 animations.css 的 keyframe */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.track {
+  display: flex;
+  gap: 60px;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+.track:hover {
+  animation-play-state: paused;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-400);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+  cursor: default;
+}
+.logo:hover { color: var(--primary); }
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .section {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}

@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════
+   TalentPro Keyframe Animations
+   所有 @keyframes 集中定义于此，不含具体 class
+═══════════════════════════════════════ */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Hero 设备截图浮动：上下循环 6s */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-16px); }
+}
+
+/* Hero 渐变关键词背景位移 4s */
+@keyframes gradShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* 品牌滚动栏无限横向滚动 25s */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Hero Tag 左侧绿点闪烁 2s */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* 弹窗入场 */
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 导航 spinner（未来扩展用）*/
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════════
+   TalentPro Global CSS
+   注意：所有 CSS 变量值必须与 src/tokens/index.js 保持同步
+═══════════════════════════════════════════════════ */
+
+/* ── Design Tokens → CSS 自定义属性 ── */
+:root {
+  /* 主色 */
+  --primary:        #1B5FEB;
+  --primary-dark:   #1347C8;
+  --primary-light:  #EBF1FF;
+  --primary-glow:   rgba(27, 95, 235, 0.15);
+
+  /* 暗色系 */
+  --ink-900: #0D1526;
+  --ink-800: #1A2540;
+  --ink-700: #2B3A5C;
+
+  /* 中性色 */
+  --gray-50:  #F8FAFB;
+  --gray-100: #F0F4F8;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-900: #0F172A;
+
+  /* 功能色 */
+  --ai-purple:       #7C3AED;
+  --ai-purple-bg:    rgba(124, 58, 237, 0.25);
+  --ai-purple-lighter:#F3E8FF;
+  --ai-purple-light: #C4B5FD;
+  --ai-purple-text:  #A78BFA;
+  --success:         #059669;
+  --error:           #EF4444;
+  --warning:         #D97706;
+  --warning-bg:      #FFF7ED;
+  --warning-border:  #FED7AA;
+  --warning-text:    #92400E;
+  --orange:          #EA580C;
+  --green-text:      #16A34A;
+
+  /* 标签辅助色 */
+  --tag-blue-bg:   #EFF6FF;
+  --tag-blue-text: #3B82F6;
+
+  /* 视频背景 */
+  --video-bg: #000;
+
+  /* macOS 窗口按钮（Dashboard 装饰） */
+  --window-red:    #FF5F57;
+  --window-yellow: #FFBD2E;
+  --window-green:  #28CA41;
+
+  /* 玻璃态背景 */
+  --glass-bg:              rgba(255, 255, 255, 0.88);
+  --glass-bg-scrolled:     rgba(255, 255, 255, 0.95);
+  --glass-bg-dark:         rgba(10, 22, 40, 0.88);
+  --glass-bg-dark-scrolled:rgba(10, 22, 40, 0.95);
+
+  /* 状态指示 */
+  --status-online:  #4ADE80;
+  --status-away:    #FBBF24;
+  --status-busy:    #EF4444;
+
+  /* 渐变 */
+  --grad-hero: linear-gradient(135deg, #0D1526 0%, #1B3A6B 55%, #1B5FEB 100%);
+  --grad-ai:   linear-gradient(135deg, #1A0533 0%, #2D1B69 50%, #1B4FA8 100%);
+  --grad-cta:  linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%);
+  --grad-text: linear-gradient(135deg, #60A5FA, #A78BFA);
+
+  /* 圆角 */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 999px;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.18);
+
+  /* 动效 */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── 语义化变量（亮色默认值，暗色覆盖）── */
+  --page-bg:        #ffffff;
+  --card-bg:        #ffffff;
+  --card-border:    #E2E8F0;
+  --input-bg:       #ffffff;
+  --input-border:   #E2E8F0;
+  --input-color:    #0F172A;
+  --section-alt-bg: #F8FAFB;
+
+  /* ── 深色背景上的透明度 Token（v2.4.0 Phase 6）── */
+  --overlay-bg:              rgba(0, 0, 0, 0.45);
+  --overlay-bg-deep:         rgba(0, 0, 0, 0.88);
+
+  --text-on-dark-primary:    rgba(255, 255, 255, 0.85);
+  --text-on-dark-secondary:  rgba(255, 255, 255, 0.6);
+  --text-on-dark-muted:      rgba(255, 255, 255, 0.5);
+  --text-on-dark-tertiary:   rgba(255, 255, 255, 0.4);
+  --text-on-dark-dim:        rgba(255, 255, 255, 0.35);
+
+  --border-on-dark-subtle:   rgba(255, 255, 255, 0.1);
+  --border-on-dark:          rgba(255, 255, 255, 0.15);
+  --border-on-dark-hover:    rgba(255, 255, 255, 0.18);
+
+  --surface-on-dark-hover:   rgba(255, 255, 255, 0.08);
+  --surface-on-dark-subtle:  rgba(255, 255, 255, 0.04);
+  --surface-on-dark-elevated:rgba(255, 255, 255, 0.15);
+
+  --glass-bg-on-dark:        rgba(255, 255, 255, 0.07);
+  --glass-border-on-dark:    rgba(255, 255, 255, 0.12);
+
+  --primary-subtle-bg:       rgba(27, 95, 235, 0.08);
+  --primary-subtle-border:   rgba(27, 95, 235, 0.2);
+  --primary-faint-bg:        rgba(27, 95, 235, 0.05);
+  --primary-highlight-bg:    rgba(27, 95, 235, 0.15);
+  --primary-highlight-bg-dark:rgba(75, 130, 245, 0.25);
+
+  --ai-purple-subtle-bg:     rgba(124, 58, 237, 0.06);
+  --ai-purple-alpha-60:      rgba(124, 58, 237, 0.6);
+
+  --surface-fallback-muted:  rgba(0, 0, 0, 0.06);
+  --border-fallback-muted:   rgba(0, 0, 0, 0.12);
+}
+
+/* ═══════════════════════════════════════
+   暗色模式 Token 覆盖（v2.3.0 Sprint 11a）
+   挂载方式：<html data-theme="dark">
+   ═══════════════════════════════════════ */
+[data-theme="dark"] {
+  /* 主色：提亮，在深色背景下更可见 */
+  --primary:        #4B82F5;
+  --primary-dark:   #2D63E0;
+  --primary-light:  #1E3A6E;
+  --primary-glow:   rgba(75, 130, 245, 0.2);
+
+  /* 中性色：翻转，文字变亮，背景变深 */
+  --gray-900:  #F1F5F9;
+  --gray-700:  #CBD5E1;
+  --gray-600:  #94A3B8;
+  --gray-400:  #64748B;
+  --gray-300:  #475569;
+  --gray-200:  #334155;
+  --gray-100:  #1E293B;
+  --gray-50:   #0F172A;
+
+  /* 功能色：在深色背景下略微提亮 */
+  --success:      #10B981;
+  --error:        #F87171;
+  --warning:      #FBBF24;
+  --warning-bg:   rgba(251, 191, 36, 0.1);
+  --warning-border:rgba(251, 191, 36, 0.3);
+  --warning-text: #FCD34D;
+  --orange:       #FB923C;
+  --green-text:   #34D399;
+
+  /* AI 紫色系：在深色背景下提亮 */
+  --ai-purple-lighter:rgba(124, 58, 237, 0.15);
+  --ai-purple-light: #DDD6FE;
+  --ai-purple-text:  #C4B5FD;
+
+  /* 标签辅助色：暗色适配 */
+  --tag-blue-bg:   rgba(59, 130, 246, 0.15);
+  --tag-blue-text: #60A5FA;
+
+  /* 暗色 Section 背景：深化，增加层次感 */
+  --ink-900: #060D1A;
+  --ink-800: #0D1526;
+  --ink-700: #1A2540;
+
+  /* 渐变：Hero / AI Section 在暗色下更深 */
+  --grad-hero: linear-gradient(135deg, #030810 0%, #0D1F45 55%, #1347C8 100%);
+  --grad-ai:   linear-gradient(135deg, #0D0120 0%, #1A0E3D 50%, #0D2A6B 100%);
+  --grad-cta:  linear-gradient(90deg, #1347C8 0%, #0A2E99 100%);
+
+  /* 语义化变量 */
+  --page-bg:        #0A1628;
+  --card-bg:        #1E293B;
+  --card-border:    #334155;
+  --input-bg:       #1E293B;
+  --input-border:   #475569;
+  --input-color:    #F1F5F9;
+  --section-alt-bg: #0F172A;
+}
+
+/* body 背景色跟随主题 */
+body {
+  background: var(--page-bg);
+  transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out);
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', 'Noto Sans SC', Arial, sans-serif;
+  color: var(--gray-900);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* body 滚动锁定已由 useScrollLock Hook（引用计数）统一管理，
+   不再通过 CSS class 控制，避免多弹窗同时打开时互相覆盖。 */
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ── 通用布局工具 ── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
+}
+
+.section {
+  padding: clamp(60px, 8vw, 110px) 0;
+}
+
+/* ── Skip Link（键盘用户快速跳转到主内容）── */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 10000;
+  transition: top 0.2s;
+  border-radius: 0 0 var(--radius-sm) 0;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── 焦点样式（无障碍）── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

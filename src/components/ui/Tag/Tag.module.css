@@ -1,0 +1,30 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 16px;
+}
+
+/* ── Variants ── */
+.light {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.dark {
+  background: var(--glass-border-on-dark);
+  color: var(--text-on-dark-primary);
+  border: 1px solid var(--surface-on-dark-elevated);
+}
+
+.ai {
+  background: var(--ai-purple-bg);
+  color: var(--ai-purple-text);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+}

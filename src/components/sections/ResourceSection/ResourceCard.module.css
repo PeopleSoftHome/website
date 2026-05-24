@@ -1,0 +1,93 @@
+.card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  background: white;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+/* ── 封面区 ── */
+.cover {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coverIcon {
+  font-size: 52px;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.card:hover .coverIcon {
+  transform: scale(1.1);
+}
+
+.typeTag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* ── 内容区 ── */
+.body {
+  padding: 20px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 8px;
+  line-height: 1.5;
+  /* 限制 2 行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--gray-400);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+.cta {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 500;
+  transition: gap 0.2s;
+}
+
+.card:hover .cta {
+  text-decoration: underline;
+}

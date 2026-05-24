@@ -1,0 +1,33 @@
+.section {
+  background: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  /* Tab 切换时淡入 */
+  animation: fadeIn 0.3s var(--ease-out);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── 响应式 ── */
+@media (max-width: 1023px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ── v2.3.0 暗色模式 ── */
+[data-theme="dark"] .section { background: var(--page-bg); }
+[data-theme="dark"] .grid > div {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+[data-theme="dark"] .grid > div:hover { border-color: var(--primary); }

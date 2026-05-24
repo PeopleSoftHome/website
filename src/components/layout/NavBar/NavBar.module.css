@@ -1,0 +1,392 @@
+/* ── 导航栏容器 ── */
+/* v2.3.1：Hero 改为浅色背景后，NavBar 初始态改为白色毛玻璃，始终可见 */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--gray-200);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* scrolled 态：加深阴影，增强层次感 */
+.scrolled {
+  background: var(--glass-bg-scrolled);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 var(--gray-200), 0 4px 20px var(--shadow-color-sm, rgba(0,0,0,0.06));
+}
+
+/* ── 内部布局 ── */
+.inner {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  gap: 0;
+}
+
+/* ── Logo ── */
+/* 初始即深色（白色背景下可见）*/
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  margin-right: 40px;
+  background: var(--primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: opacity 0.2s;
+}
+.logo:hover { opacity: 0.8; }
+
+/* scrolled 态 Logo 保持一致 */
+.scrolled .logo {
+  background: var(--primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ── 桌面导航链接区 ── */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+/* 每个导航项 */
+.item {
+  position: relative;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+  padding-bottom: 20px;
+  margin-bottom: -12px;
+}
+
+.scrolled .item { color: var(--gray-700); }
+
+.item:hover { background: var(--gray-100); color: var(--primary); }
+.scrolled .item:hover { background: var(--gray-100); color: var(--primary); }
+
+/* item 内的 label（含箭头）*/
+.itemLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 0;
+  pointer-events: none;
+}
+
+.arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+.item:hover .arrow {
+  transform: rotate(180deg);
+}
+
+/* hover 时显示下拉菜单 */
+.item:hover > div {     /* NavDropdown wrapper */
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+}
+
+/* ── 右侧操作区 ── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.phone {
+  font-size: 12px;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+.scrolled .phone { color: var(--gray-600); }
+
+/* 登录按钮在 scrolled 时变为轮廓样式 */
+.loginScrolled {
+  background: transparent !important;
+  color: var(--gray-700) !important;
+  border-color: var(--gray-300) !important;
+}
+.loginScrolled:hover {
+  background: var(--gray-100) !important;
+}
+
+/* ── Hamburger 按钮（默认隐藏）── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--gray-900);
+  border-radius: 2px;
+  transition: all 0.35s var(--ease-out);
+  transform-origin: center;
+}
+.scrolled .hamburger span { background: var(--gray-900); }
+
+/* Hamburger → X 变换动画 */
+.hamburgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburgerOpen span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── 响应式 ── */
+@media (max-width: 1023px) {
+  .links,
+  .right  { display: none; }
+  .hamburger { display: flex; }
+  .logo { margin-right: auto; }
+}
+
+/* ── v2.3.0 语言切换器 ── */
+.langWrap {
+  position: relative;
+}
+
+.langBtn {
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.langBtn:hover { background: var(--gray-200); color: var(--primary); }
+.scrolled .langBtn {
+  color: var(--gray-700);
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+}
+.scrolled .langBtn:hover { background: var(--gray-200); color: var(--primary); }
+
+.langMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 130px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.langOption {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.langOption:hover { background: var(--gray-50); }
+.langActive { color: var(--primary) !important; font-weight: 700 !important; }
+
+/* ── v2.3.0 主题切换按钮 ── */
+.themeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.themeBtn:hover { background: var(--gray-200); transform: scale(1.1); }
+.scrolled .themeBtn {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+}
+.scrolled .themeBtn:hover { background: var(--gray-200); }
+
+/* ── v2.3.0 暗色模式适配 ── */
+/* 暗色模式下初始态也要深色，不能是白色 */
+.dark {
+  background: var(--glass-bg-dark) !important;
+  box-shadow: 0 1px 0 var(--gray-100);
+}
+.dark.scrolled {
+  background: var(--glass-bg-dark-scrolled) !important;
+  box-shadow: 0 1px 0 var(--gray-200), 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.dark .item        { color: var(--text-on-dark-primary); }
+.dark .item:hover  { background: var(--surface-on-dark-hover); color: white; }
+.dark.scrolled .item        { color: var(--gray-300); }
+.dark.scrolled .item:hover  { background: var(--surface-on-dark-subtle); color: white; }
+.dark .phone       { color: var(--text-on-dark-secondary); }
+.dark.scrolled .phone       { color: var(--gray-400); }
+.dark .hamburger span { background: var(--text-on-dark-primary); }
+.dark.scrolled .hamburger span { background: var(--gray-300); }
+.dark .logo {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ── v2.3.1 搜索栏（内联展开）── */
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 收起态：只显示图标按钮 */
+.searchIconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-600);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.searchIconBtn:hover {
+  background: var(--gray-200);
+  color: var(--primary);
+}
+.scrolled .searchIconBtn {
+  background: var(--gray-100);
+  border-color: var(--gray-200);
+  color: var(--gray-600);
+}
+.scrolled .searchIconBtn:hover {
+  background: var(--gray-200);
+  color: var(--primary);
+}
+
+/* 展开态输入框 */
+.searchInput {
+  width: 0;
+  max-width: 0;
+  height: 32px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: inherit;
+  background: transparent;
+  color: white;
+  padding: 0;
+  overflow: hidden;
+  transition: max-width 0.3s var(--ease-out), padding 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+.searchInput::placeholder {
+  color: var(--text-on-dark-muted);
+}
+.scrolled .searchInput {
+  color: var(--gray-900);
+}
+.scrolled .searchInput::placeholder {
+  color: var(--gray-400);
+}
+
+/* 展开态容器样式 */
+.searchExpanded .searchIconBtn {
+  background: var(--surface-on-dark-elevated);
+  color: white;
+}
+.scrolled.searchExpanded .searchIconBtn {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.searchExpanded .searchInput {
+  max-width: 200px;
+  padding: 0 10px;
+  opacity: 1;
+}
+
+/* 展开态外框 */
+.searchExpanded {
+  background: var(--border-on-dark-subtle);
+  border: 1px solid var(--border-on-dark);
+  border-radius: var(--radius-md);
+  padding: 0 4px 0 4px;
+  gap: 2px;
+}
+.scrolled .searchExpanded {
+  background: var(--gray-50);
+  border-color: var(--gray-200);
+}
+
+/* 关闭按钮 */
+.searchClose {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--surface-on-dark-elevated);
+  border: none;
+  color: var(--text-on-dark-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.searchClose:hover { background: rgba(255, 255, 255, 0.35); color: white; }
+.scrolled .searchClose { background: var(--gray-200); color: var(--gray-600); }
+.scrolled .searchClose:hover { background: var(--gray-300); }
+.searchExpanded .searchClose { display: flex; }
+
+@media (max-width: 1023px) {
+  .searchWrap { display: none; }
+}
