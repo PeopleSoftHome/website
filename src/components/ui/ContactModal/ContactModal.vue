@@ -6,9 +6,13 @@
     @close="emit('close')"
   >
     <div :class="s.card">
-      <button :class="s.close" @click="emit('close')" :aria-label="t('modal.close')">✕</button>
+      <button :class="s.close" @click="emit('close')" :aria-label="t('modal.close')">
+        <Icon name="close" :size="18" />
+      </button>
       <div :class="s.header">
-        <div :class="s.avatar">💬</div>
+        <div :class="s.avatar">
+          <Icon name="message-circle" :size="28" color="var(--primary)" />
+        </div>
         <div>
           <div :class="s.title">{{ t('contact.title') }}</div>
           <div :class="s.subtitle">{{ t('contact.subtitle') }}</div>
@@ -16,14 +20,14 @@
       </div>
       <div :class="s.divider" />
       <div :class="s.contactItem">
-        <span :class="s.contactIcon">📞</span>
+        <span :class="s.contactIcon"><Icon name="phone" :size="20" /></span>
         <div>
           <div :class="s.contactLabel">{{ t('contact.phoneLabel') }}</div>
           <a :class="s.contactValue" href="tel:4008888888">400-888-8888</a>
         </div>
       </div>
       <div :class="s.contactItem">
-        <span :class="s.contactIcon">🕘</span>
+        <span :class="s.contactIcon"><Icon name="clock" :size="20" /></span>
         <div>
           <div :class="s.contactLabel">{{ t('contact.timeLabel') }}</div>
           <div :class="s.contactValue">{{ t('contact.timeValue') }}</div>
@@ -66,6 +70,7 @@
 
 <script setup>
 import { inject } from 'vue';
+import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './ContactModal.module.css';
 

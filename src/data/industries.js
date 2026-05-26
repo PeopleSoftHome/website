@@ -5,7 +5,7 @@ export const INDUSTRY_TABS = [
   {
     id: 'mfg',
     label: '制造业',
-    emoji: '🏭',
+    icon: 'factory',
     features: [
       {
         badge: '特色一',
@@ -24,7 +24,7 @@ export const INDUSTRY_TABS = [
       },
     ],
     screenshot: {
-      title: '🏭 制造业 · 车间考勤看板',
+      title: '制造业 · 车间考勤看板',
       type: 'table',
       rows: [
         { name: '张三', shift: '早班', time: '08:01', status: 'green', label: '正常' },
@@ -32,20 +32,20 @@ export const INDUSTRY_TABS = [
         { name: '王五', shift: '中班', time: '—',     status: 'orange', label: '待打卡' },
         { name: '赵六', shift: '夜班', time: '20:00', status: 'blue',  label: '已排班' },
       ],
-      tip: '🔔 张三焊工资质将于 30 天后到期，请及时安排复训',
+      tip: '张三焊工资质将于 30 天后到期，请及时安排复训',
     },
   },
   {
     id: 'retail',
     label: '零售连锁',
-    emoji: '🏪',
+    icon: 'store',
     features: [
       { badge: '特色一', title: '店长招聘工作台', desc: '快速处理简历、安排面试及 Offer 发放，全流程跟进招聘环节，保证门店正常运营。' },
       { badge: '特色二', title: '门店人才培养', desc: '定期针对性培训，店长随时掌握店员学习进度，AI 学习助手提供个性化培养方案。' },
       { badge: '特色三', title: '多门店人事管理', desc: '支持数百家门店统一管控，快速入离职办理，灵活班次管理，保障薪资准时发放。' },
     ],
     screenshot: {
-      title: '🏪 零售 · 门店管理看板',
+      title: '零售 · 门店管理看板',
       type: 'metrics',
       metrics: [
         { value: '47', label: '待面试候选人', color: 'var(--primary)' },
@@ -58,14 +58,14 @@ export const INDUSTRY_TABS = [
   {
     id: 'internet',
     label: '互联网',
-    emoji: '💻',
+    icon: 'monitor',
     features: [
       { badge: '特色一', title: 'HRBP 工作台', desc: '从 BP 视角出发的部门管理工作台，让 HR 敏捷应对多变的外部环境，提升业务支持效率。' },
       { badge: '特色二', title: '全员招聘协作', desc: '业务经理工作台，解决互联网全员招聘管理诉求，及时提交需求、了解进度、处理流程。' },
       { badge: '特色三', title: '互联网人才培养', desc: '体系化标准化人才发展体系，提供个性化学习方案，快速构建技术人才梯队。' },
     ],
     screenshot: {
-      title: '💻 互联网 · HRBP 工作台',
+      title: '互联网 · HRBP 工作台',
       type: 'tasks',
       tasks: [
         { text: '张总 需要复核绩效评分',     status: '待处理', statusColor: 'var(--primary)' },
@@ -78,35 +78,35 @@ export const INDUSTRY_TABS = [
   {
     id: 'gov',
     label: '央国企',
-    emoji: '🏛️',
+    icon: 'landmark',
     features: [
       { badge: '特色一', title: '数字化校招', desc: '多元化传播吸引人才，数字化工具承载线上线下融合招聘，建立决策模型。' },
       { badge: '特色二', title: '年轻干部梯队建设', desc: '通过识别、选拔、培养、盘点与发展等一揽子方案，建设年轻干部队伍。' },
       { badge: '特色三', title: '干部任用与竞聘', desc: '通过竞聘、市场化选聘及动态人岗匹配，激活人才与组织活力。' },
     ],
     screenshot: {
-      title: '🏛️ 央国企 · 干部竞聘流程',
+      title: '央国企 · 干部竞聘流程',
       type: 'timeline',
       steps: [
-        { icon: '📢', label: '发布职位', desc: '干部职位公开发布' },
-        { icon: '📝', label: '报名申请', desc: '在线资格初审' },
-        { icon: '📋', label: '笔试考核', desc: '线上标准化测评' },
-        { icon: '🎤', label: '面试答辩', desc: '专家评委打分' },
-        { icon: '✅', label: '公示任命', desc: '结果公开透明' },
+        { icon: 'megaphone', label: '发布职位', desc: '干部职位公开发布' },
+        { icon: 'file-text', label: '报名申请', desc: '在线资格初审' },
+        { icon: 'clipboard-list', label: '笔试考核', desc: '线上标准化测评' },
+        { icon: 'mic', label: '面试答辩', desc: '专家评委打分' },
+        { icon: 'check-circle', label: '公示任命', desc: '结果公开透明' },
       ],
     },
   },
   {
     id: 'finance',
     label: '金融',
-    emoji: '🏦',
+    icon: 'bank',
     features: [
       { badge: '特色一', title: '校招创新管理', desc: '定义人才标准，系统化校招流程，借助测评工具提升校招质量与效率。' },
       { badge: '特色二', title: '后备人才库建设', desc: '分层分级人才盘点，在库培养建议，系统化后备人才梯队管理。' },
       { badge: '特色三', title: '营销员增员管理', desc: '外勤队伍分层分级，对目标客群与业务能力匹配，打造高产能队伍。' },
     ],
     screenshot: {
-      title: '🏦 金融 · 九宫格人才盘点',
+      title: '金融 · 九宫格人才盘点',
       type: 'grid9',
       cells: [
         { label: '高潜',  bg: '#FEE2E2', color: '#EF4444', count: 4 },

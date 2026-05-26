@@ -1,6 +1,18 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ref, nextTick } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
+import { mount } from '@vue/test-utils';
 import { useTheme } from './useTheme.js';
+
+function mountTheme() {
+  const comp = defineComponent({
+    setup() {
+      const theme = useTheme();
+      return { theme };
+    },
+    render() { return h('div'); },
+  });
+  return mount(comp);
+}
 
 describe('useTheme', () => {
   beforeEach(() => {
@@ -20,31 +32,38 @@ describe('useTheme', () => {
   });
 
   it('starts with light default', () => {
-    const { theme } = useTheme();
-    expect(theme.value).toBe('light');
+    const wrapper = mountTheme();
+    expect(wrapper.vm.theme.theme.value).toBe('light');
   });
 
   it('toggles theme', () => {
-    const { theme, toggle } = useTheme();
-    toggle();
-    expect(theme.value).toBe('dark');
-    toggle();
-    expect(theme.value).toBe('light');
+    const wrapper = mountTheme();
+    wrapper.vm.theme.toggle();
+    expect(wrapper.vm.theme.theme.value).toBe('dark');
+    wrapper.vm.theme.toggle();
+    expect(wrapper.vm.theme.theme.value).toBe('light');
   });
 
-  it('reads from localStorage', () => {
+  it('reads from localStorage on mount', async () => {
     localStorage.setItem('tp-theme', 'dark');
-    const { theme } = useTheme();
-    // Note: initialization happens in onMounted, so initial value is 'light'
-    // The actual localStorage read happens after mount
-    expect(theme.value).toBe('light');
+    const wrapper = mountTheme();
+    await nextTick();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(wrapper.vm.theme.theme.value).toBe('dark');
   });
 
   it('setTheme validates input', () => {
-    const { theme, setTheme } = useTheme();
-    setTheme('dark');
-    expect(theme.value).toBe('dark');
-    setTheme('invalid');
-    expect(theme.value).toBe('dark'); // unchanged
+    const wrapper = mountTheme();
+    wrapper.vm.theme.setTheme('dark');
+    expect(wrapper.vm.theme.theme.value).toBe('dark');
+    wrapper.vm.theme.setTheme('invalid');
+    expect(wrapper.vm.theme.theme.value).toBe('dark'); // unchanged
+  });
+
+  it('exposes isDark computed', () => {
+    const wrapper = mountTheme();
+    expect(wrapper.vm.theme.isDark.value).toBe(false);
+    wrapper.vm.theme.toggle();
+    expect(wrapper.vm.theme.isDark.value).toBe(true);
   });
 });

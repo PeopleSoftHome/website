@@ -6,7 +6,9 @@
     @close="handleClose"
   >
     <div :class="s.modal">
-      <button :class="s.closeBtn" @click="handleClose" :aria-label="t('video.close')">✕</button>
+      <button :class="s.closeBtn" @click="handleClose" :aria-label="t('video.close')">
+        <Icon name="close" :size="18" />
+      </button>
       <div :class="s.videoWrap">
         <iframe
           ref="iframeRef"
@@ -23,6 +25,7 @@
 
 <script setup>
 import { ref, inject } from 'vue';
+import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './VideoModal.module.css';
 

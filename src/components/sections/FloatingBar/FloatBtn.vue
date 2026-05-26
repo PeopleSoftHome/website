@@ -4,7 +4,9 @@
     @click="emit('click')"
     :aria-label="label"
   >
-    <span :class="s.btnIcon">{{ icon }}</span>
+    <span :class="s.btnIcon">
+      <slot name="icon" />
+    </span>
     <span :class="s.label">{{ label }}</span>
   </button>
 </template>
@@ -13,7 +15,6 @@
 import s from './FloatingBar.module.css';
 
 defineProps({
-  icon:      { type: String, required: true },
   label:     { type: String, required: true },
   className: { type: String, default: '' },
 });

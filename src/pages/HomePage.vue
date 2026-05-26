@@ -45,6 +45,7 @@
 <script setup>
 import { defineAsyncComponent } from 'vue';
 import HeroSection from '@/components/sections/HeroSection/HeroSection.vue';
+import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 
 const BrandScrollSection      = defineAsyncComponent(() => import('@/components/sections/BrandScrollSection/BrandScrollSection.vue'));
 const StatsSection            = defineAsyncComponent(() => import('@/components/sections/StatsSection/StatsSection.vue'));
@@ -58,14 +59,3 @@ const ResourceSection         = defineAsyncComponent(() => import('@/components/
 const CtaBannerSection        = defineAsyncComponent(() => import('@/components/sections/CtaBannerSection/CtaBannerSection.vue'));
 </script>
 
-<script>
-/* 骨架屏组件（不渲染任何内容，仅提供高度占位防 CLS） */
-export default {
-  components: {
-    SectionSkeleton: {
-      props: { height: { type: Number, default: 400 } },
-      template: '<div :style="{ minHeight: height + \'px\' }" aria-hidden="true" />',
-    },
-  },
-};
-</script>

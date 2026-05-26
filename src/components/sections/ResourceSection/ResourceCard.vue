@@ -1,7 +1,7 @@
 <template>
   <div :class="[s.card, 'reveal', delayClass]">
     <div :class="s.cover" :style="{ background: imgGrad }">
-      <div :class="s.coverIcon">{{ icon }}</div>
+      <div :class="s.coverIcon"><Icon :name="icon" :size="28" /></div>
       <span :class="s.typeTag" :style="{ background: typeStyle.bg, color: typeStyle.color }">
         {{ typeLabel }}
       </span>
@@ -20,6 +20,7 @@
 <script setup>
 import { computed } from 'vue';
 import { RESOURCE_TYPE_STYLES } from '@/data/resources.js';
+import Icon from '../../ui/Icon/Icon.vue';
 import s from './ResourceCard.module.css';
 
 const props = defineProps({

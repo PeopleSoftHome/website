@@ -5,7 +5,7 @@ import {
   IconAssessRecruit, IconAssess360, IconAssessExam, IconAssessModel,
   IconLowCode, IconAPI, IconEco, IconSecurity,
   ICON_COLORS, ICON_BG_COLORS,
-} from '../components/ui/ProductIcons/index.jsx';
+} from '../components/ui/ProductIcons/index.js';
 
 /**
  * 产品矩阵数据（SEC-05 ProductMatrixSection）

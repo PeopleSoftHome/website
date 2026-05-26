@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { config } from '@vue/test-utils';
 
 // Vue Test Utils 全局配置

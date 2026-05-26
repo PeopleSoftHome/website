@@ -5,37 +5,37 @@
 export const SECURITY_CERTS = [
   {
     id: 'djb3',
-    icon: '🔒',
+    icon: 'lock',
     label: '等保三级',
     desc: '国家信息安全最高认证',
   },
   {
     id: 'iso27001',
-    icon: '🏅',
+    icon: 'award',
     label: 'ISO 27001',
     desc: '国际信息安全管理标准',
   },
   {
     id: 'soc2',
-    icon: '✅',
+    icon: 'check-circle',
     label: 'SOC 2',
     desc: 'Type II 审计通过',
   },
   {
     id: 'bank',
-    icon: '🔐',
+    icon: 'lock',
     label: '银行级加密',
     desc: 'AES-256 数据全程加密',
   },
   {
     id: 'sm',
-    icon: '🛡️',
+    icon: 'shield',
     label: '国密算法',
     desc: 'SM2/SM3/SM4 合规',
   },
   {
     id: 'nine',
-    icon: '⚔️',
+    icon: 'shield-check',
     label: '九层防护',
     desc: '多维安全防御体系',
   },

@@ -1,18 +1,19 @@
 <template>
   <div :class="[s.card, 'reveal', delayClass]">
-    <span v-if="hot" :class="s.badge">{{ hotLabel }}</span>
+    <span v-if="hot" :class="s.badge"><Icon name="flame" :size="12" /> HOT</span>
     <div :class="s.icon" style="color: var(--ai-purple-light)">
       <component :is="icon" v-if="typeof icon === 'function'" />
-      <template v-else>{{ icon }}</template>
+      <template v-else><Icon :name="icon" :size="20" /></template>
     </div>
     <div :class="s.name">{{ name }}</div>
     <p :class="s.tagline">{{ tagline }}</p>
-    <span :class="s.link">{{ linkText }}</span>
+    <span :class="s.link">产品详情 <Icon name="arrow-right" :size="12" /></span>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import Icon from '../../ui/Icon/Icon.vue';
 import s from './AiCard.module.css';
 
 const props = defineProps({
@@ -20,8 +21,8 @@ const props = defineProps({
   name:     { type: String, required: true },
   tagline:  { type: String, required: true },
   hot:      { type: Boolean, default: false },
-  hotLabel: { type: String, default: 'HOT 🔥' },
-  linkText: { type: String, default: '产品详情 →' },
+  hotLabel: { type: String, default: 'HOT' },
+  linkText: { type: String, default: '产品详情' },
   delay:    { type: Number, default: 0 },
 });
 

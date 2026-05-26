@@ -19,7 +19,7 @@
                   : link.id === 'cases'     ? 'cases'
                   : link.id === 'resources' ? 'resources'
                   : link.id}`) }}
-                <span :class="s.arrow">▾</span>
+                <span :class="s.arrow"><Icon name="chevron-down" :size="14" /></span>
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
@@ -33,14 +33,14 @@
         <div :class="s.right">
           <span :class="s.phone">{{ t('nav.phone') }}</span>
 
-          <!-- 🔍 搜索栏（内联展开） -->
-          <div :class="[s.searchWrap, searchOpen ? s.searchExpanded : '', scrolled ? s.scrolled : '']">
+          <!-- 搜索栏（内联展开） -->
+          <div :class="[s.searchWrap, searchOpen ? s.searchExpanded : '', scrolled ? s.searchScrolled : '']">
             <button
               :class="s.searchIconBtn"
               @click="searchOpen ? closeSearchBar() : openSearchBar()"
               :aria-label="t('search.label')"
             >
-              🔍
+              <Icon name="search" :size="16" />
             </button>
             <input
               ref="searchInputRef"
@@ -51,10 +51,12 @@
               :placeholder="t('search.placeholder')"
               autocomplete="off"
             />
-            <button :class="s.searchClose" @click="closeSearchBar" aria-label="关闭搜索">✕</button>
+            <button :class="s.searchClose" @click="closeSearchBar" aria-label="关闭搜索">
+              <Icon name="close" :size="14" />
+            </button>
           </div>
 
-          <!-- 🌐 语言切换器 -->
+          <!-- 语言切换器 -->
           <div :class="s.langWrap">
             <button
               :class="s.langBtn"
@@ -62,7 +64,7 @@
               :aria-label="t('nav.langLabel')"
               :aria-expanded="langMenuOpen"
             >
-              🌐 {{ LOCALES[locale]?.label ?? t('nav.langLabel') }} ▾
+              <Icon name="globe" :size="14" /> {{ LOCALES[locale]?.label ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
             </button>
             <div v-if="langMenuOpen" :class="s.langMenu" role="menu">
               <button
@@ -77,13 +79,13 @@
             </div>
           </div>
 
-          <!-- ☀️/🌙 主题切换 -->
+          <!-- 主题切换 -->
           <button
             :class="s.themeBtn"
             @click="themeStore.toggle()"
             :aria-label="isDark ? t('nav.themeLight') : t('nav.themeDark')"
           >
-            {{ isDark ? '☀️' : '🌙' }}
+            <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
 
           <Button variant="ghost" size="sm" :class-name="scrolled ? s.loginScrolled : ''">
@@ -115,6 +117,7 @@ import { ref, computed, inject } from 'vue';
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { NAV_LINKS } from '@/data/navigation.js';
 import { LOCALES } from '@/stores/i18n.js';
+import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
 import MobileMenu from './MobileMenu.vue';
 import Button from '../../ui/Button/Button.vue';

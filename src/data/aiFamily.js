@@ -1,6 +1,6 @@
 import {
   IconAIRecruit, IconAIInterview, IconAICoach, IconAICourse,
-} from '../components/ui/ProductIcons/index.jsx';
+} from '../components/ui/ProductIcons/index.js';
 
 /**
  * AI Family 专区数据（SEC-06 AiFamilySection）
@@ -39,8 +39,8 @@ export const AI_CARDS = [
 ];
 
 export const AI_BANNER = {
-  label: '🏅 2025 AI 应用先锋实践案例',
+  label: '2025 AI 应用先锋实践案例',
   title: '蒙牛、京东方等行业先锋，AI+HR 标杆经验分享',
   sub:   '覆盖招聘、培训、绩效全场景，开启人力资源数字化新纪元',
-  cta:   '立即获取 →',
+  cta:   '立即获取',
 };

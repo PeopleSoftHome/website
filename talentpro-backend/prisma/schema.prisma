@@ -1,0 +1,516 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== Enums ====================
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+  PENDING
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  DEMOED
+  NEGOTIATION
+  WON
+  LOST
+}
+
+// ==================== Identity ====================
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  name      String?
+  avatar    String?
+  phone     String?
+  status    UserStatus @default(ACTIVE)
+  roleId    String
+  role      Role       @relation(fields: [roleId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  posts       BlogPost[]
+  topics      ForumTopic[]
+  replies     ForumPost[]
+  comments    Comment[]
+  bookings    DemoBooking[]
+  activities  UserActivity[]
+  auditLogs   AuditLog[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  permissions Permission[]
+  users       User[]
+  createdAt   DateTime     @default(now())
+
+  @@map("roles")
+}
+
+model Permission {
+  id        String @id @default(uuid())
+  resource  String
+  action    String
+  roles     Role[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+// ==================== CMS Core ====================
+
+model Page {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  title       String
+  metaTitle   String?
+  metaDesc    String?
+  isPublished Boolean   @default(false)
+  sections    Section[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("pages")
+}
+
+model Section {
+  id        String  @id @default(uuid())
+  pageId    String
+  page      Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      String
+  sortOrder Int     @default(0)
+  config    Json    @default("{}")
+  isActive  Boolean @default(true)
+
+  @@map("sections")
+}
+
+model Translation {
+  id      String @id @default(uuid())
+  locale  String
+  key     String
+  value   String @db.Text
+  context String?
+
+  @@unique([locale, key])
+  @@index([locale, context])
+  @@map("translations")
+}
+
+// ==================== Navigation ====================
+
+model Navigation {
+  id        String      @id @default(uuid())
+  key       String      @unique
+  label     String
+  location  String      @default("header")
+  items     NavItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@map("navigations")
+}
+
+model NavItem {
+  id            String  @id @default(uuid())
+  navigationId  String
+  navigation    Navigation @relation(fields: [navigationId], references: [id], onDelete: Cascade)
+  parentId      String?
+  parent        NavItem?   @relation("NavChildren", fields: [parentId], references: [id])
+  children      NavItem[]  @relation("NavChildren")
+  label         String
+  href          String?
+  icon          String?
+  description   String?
+  sortOrder     Int        @default(0)
+  isExternal    Boolean    @default(false)
+
+  @@map("nav_items")
+}
+
+// ==================== Products ====================
+
+model ProductTab {
+  id        String    @id @default(uuid())
+  label     String
+  slug      String    @unique
+  icon      String?
+  iconColor String?
+  iconBg    String?
+  sortOrder Int       @default(0)
+  products  Product[]
+
+  @@map("product_tabs")
+}
+
+model Product {
+  id          String     @id @default(uuid())
+  tabId       String
+  tab         ProductTab @relation(fields: [tabId], references: [id])
+  slug        String     @unique
+  name        String
+  tagline     String
+  description String?    @db.Text
+  icon        String?
+  features    Json?      @default("[]")
+  isPublished Boolean    @default(true)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("products")
+}
+
+// ==================== Industries ====================
+
+model Industry {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  label       String
+  icon        String?
+  features    Json?    @default("[]")
+  screenshot  Json?    @default("{}")
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("industries")
+}
+
+// ==================== Testimonials ====================
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  industry  String
+  product   String
+  text      String   @db.Text
+  name      String
+  title     String
+  avatar    String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("testimonials")
+}
+
+// ==================== Resources ====================
+
+model ResourceCategory {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  description String?
+  sortOrder   Int        @default(0)
+  resources   Resource[]
+
+  @@map("resource_categories")
+}
+
+model Resource {
+  id          String           @id @default(uuid())
+  categoryId  String
+  category    ResourceCategory @relation(fields: [categoryId], references: [id])
+  slug        String           @unique
+  title       String
+  description String?          @db.Text
+  coverImage  String?
+  fileUrl     String?
+  type        String           @default("article")
+  status      PostStatus       @default(DRAFT)
+  viewCount   Int              @default(0)
+  downloadCount Int            @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("resources")
+}
+
+// ==================== Blog ====================
+
+model BlogCategory {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  description String?
+  sortOrder   Int        @default(0)
+  posts       BlogPost[]
+
+  @@map("blog_categories")
+}
+
+model BlogPost {
+  id          String       @id @default(uuid())
+  title       String
+  slug        String       @unique
+  excerpt     String?
+  content     String       @db.Text
+  coverImage  String?
+  status      PostStatus   @default(DRAFT)
+  viewCount   Int          @default(0)
+  publishedAt DateTime?
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
+  categoryId  String
+  category    BlogCategory @relation(fields: [categoryId], references: [id])
+  tags        Tag[]
+  comments    Comment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([slug])
+  @@map("blog_posts")
+}
+
+model Tag {
+  id    String     @id @default(uuid())
+  name  String     @unique
+  slug  String     @unique
+  posts BlogPost[]
+
+  @@map("tags")
+}
+
+// ==================== Forum ====================
+
+model ForumCategory {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  sortOrder   Int          @default(0)
+  topics      ForumTopic[]
+
+  @@map("forum_categories")
+}
+
+model ForumTopic {
+  id         String        @id @default(uuid())
+  categoryId String
+  category   ForumCategory @relation(fields: [categoryId], references: [id])
+  authorId   String
+  author     User          @relation(fields: [authorId], references: [id])
+  title      String
+  content    String        @db.Text
+  isPinned   Boolean       @default(false)
+  isLocked   Boolean       @default(false)
+  viewCount  Int           @default(0)
+  replyCount Int           @default(0)
+  posts      ForumPost[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@map("forum_topics")
+}
+
+model ForumPost {
+  id         String     @id @default(uuid())
+  topicId    String
+  topic      ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  authorId   String
+  author     User       @relation(fields: [authorId], references: [id])
+  content    String     @db.Text
+  isSolution Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("forum_posts")
+}
+
+// ==================== Comments (Polymorphic) ====================
+
+model Comment {
+  id         String        @id @default(uuid())
+  entityType String
+  entityId   String
+  authorId   String
+  author     User          @relation(fields: [authorId], references: [id])
+  content    String        @db.Text
+  parentId   String?
+  parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[]     @relation("CommentReplies")
+  status     CommentStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+
+  @@index([entityType, entityId])
+  @@map("comments")
+}
+
+// ==================== Leads ====================
+
+model DemoBooking {
+  id          String     @id @default(uuid())
+  name        String
+  company     String
+  phone       String
+  email       String?
+  products    String[]   @default([])
+  scale       String
+  status      LeadStatus @default(NEW)
+  source      String     @default("website")
+  assignedTo  String?
+  notes       String?    @db.Text
+  followUps   FollowUp[]
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status, createdAt])
+  @@map("demo_bookings")
+}
+
+model FollowUp {
+  id        String      @id @default(uuid())
+  bookingId String
+  booking   DemoBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type      String
+  content   String      @db.Text
+  createdBy String
+  createdAt DateTime    @default(now())
+
+  @@map("follow_ups")
+}
+
+// ==================== Media ====================
+
+model Media {
+  id           String   @id @default(uuid())
+  filename     String
+  originalName String
+  url          String
+  mimeType     String
+  size         Int
+  width        Int?
+  height       Int?
+  alt          String?
+  createdBy    String
+  createdAt    DateTime @default(now())
+
+  @@map("medias")
+}
+
+// ==================== Analytics ====================
+
+model PageView {
+  id        String   @id @default(uuid())
+  path      String
+  referrer  String?
+  userAgent String?
+  ipAddress String?
+  userId    String?
+  sessionId String
+  duration  Int?
+  createdAt DateTime @default(now())
+
+  @@index([path, createdAt])
+  @@index([sessionId])
+  @@map("page_views")
+}
+
+model EventTrack {
+  id         String   @id @default(uuid())
+  event      String
+  properties Json?    @default("{}")
+  userId     String?
+  sessionId  String
+  createdAt  DateTime @default(now())
+
+  @@index([event, createdAt])
+  @@map("event_tracks")
+}
+
+model UserActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  metadata  Json?    @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("user_activities")
+}
+
+// ==================== System ====================
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  category  String   @default("general")
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@map("settings")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  resourceId String?
+  oldValue  Json?
+  newValue  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([resource, resourceId])
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
+
+model EmailTemplate {
+  id      String @id @default(uuid())
+  key     String @unique
+  subject String
+  body    String @db.Text
+  html    String? @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("email_templates")
+}

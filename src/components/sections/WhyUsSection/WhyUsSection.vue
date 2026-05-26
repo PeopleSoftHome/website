@@ -35,7 +35,7 @@
         <div :class="s.certTitle">{{ t('whyUs.security.title') }}</div>
         <div :class="s.certList">
           <div v-for="(cert, i) in SECURITY_CERTS" :key="cert.id" :class="s.certBadge">
-            <span style="font-size:16px">{{ cert.icon }}</span>
+            <span><Icon :name="cert.icon" :size="16" /></span>
             <span :class="s.certLabel">{{ certLabel(i) }}</span>
             <span :class="s.certDesc">{{ certDesc(i) }}</span>
           </div>
@@ -50,6 +50,7 @@ import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs.js';
 import { STATS_BAR } from '@/data/whyUs.js';
 import { SECURITY_CERTS } from '@/data/security.js';
+import Icon from '../../ui/Icon/Icon.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import MetricCard from './MetricCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';

@@ -4,7 +4,9 @@
       <!-- 顶部标题栏 -->
       <div :class="s.header">
         <div :class="s.headerLeft">
-          <div :class="s.avatar">{{ BOT_AVATAR }}</div>
+          <div :class="s.avatar">
+            <Icon name="message-circle" :size="20" color="#fff" />
+          </div>
           <div>
             <div :class="s.botName">{{ t('chatBot.botName') }}</div>
             <div :class="s.status">
@@ -14,8 +16,12 @@
           </div>
         </div>
         <div :class="s.headerActions">
-          <button :class="s.handoffBtn" @click="sendMessage(t('chatBot.handoffBtn'))" :title="t('chatBot.handoffBtn')" :aria-label="t('chatBot.handoffBtn')">👤</button>
-          <button :class="s.closeBtn" @click="emit('close')" :aria-label="t('chatBot.closeAria')">✕</button>
+          <button :class="s.handoffBtn" @click="sendMessage(t('chatBot.handoffBtn'))" :title="t('chatBot.handoffBtn')" :aria-label="t('chatBot.handoffBtn')">
+            <Icon name="user" :size="16" />
+          </button>
+          <button :class="s.closeBtn" @click="emit('close')" :aria-label="t('chatBot.closeAria')">
+            <Icon name="close" :size="16" />
+          </button>
         </div>
       </div>
 
@@ -26,7 +32,9 @@
           :key="msg.id"
           :class="[s.msgRow, msg.from === 'bot' ? s.botRow : s.userRow]"
         >
-          <span v-if="msg.from === 'bot'" :class="s.msgAvatar">{{ BOT_AVATAR }}</span>
+          <span v-if="msg.from === 'bot'" :class="s.msgAvatar">
+            <Icon name="message-circle" :size="16" color="#fff" />
+          </span>
           <div :class="s.msgGroup">
             <div :class="[s.bubble, msg.from === 'bot' ? s.botBubble : s.userBubble]">
               <span v-html="formatMessage(msg.text)" />
@@ -42,7 +50,9 @@
 
         <!-- 打字指示器 -->
         <div v-if="isTyping" :class="s.typingRow" aria-hidden="true">
-          <span :class="s.typingAvatar">{{ BOT_AVATAR }}</span>
+          <span :class="s.typingAvatar">
+            <Icon name="message-circle" :size="16" color="#fff" />
+          </span>
           <div :class="s.typingBubble">
             <span :class="s.dot" />
             <span :class="s.dot" />
@@ -52,7 +62,7 @@
 
         <!-- 人工接入提示条 -->
         <div v-if="isHandoff" :class="s.handoffBar">
-          <span>👤</span>
+          <span><Icon name="user" :size="16" /></span>
           <span>{{ t('chatBot.handoffMsg') }}</span>
           <a href="tel:4008888888" :class="s.handoffCall">{{ t('chatBot.handoffCall') }}</a>
         </div>
@@ -71,7 +81,9 @@
           :aria-label="t('chatBot.placeholder')"
           rows="1"
         />
-        <button :class="[s.sendBtn, input.trim() ? s.sendActive : '']" @click="sendMessage(input)" :aria-label="t('chatBot.sendAria')">➤</button>
+        <button :class="[s.sendBtn, input.trim() ? s.sendActive : '']" @click="sendMessage(input)" :aria-label="t('chatBot.sendAria')">
+          <Icon name="send" :size="16" />
+        </button>
       </div>
 
       <!-- 底部快捷入口 -->
@@ -88,6 +100,7 @@
 import { ref, computed, inject, watch, onMounted, onUnmounted } from 'vue';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
 import { BOT_AVATAR, FAQ_RULES_META, FALLBACK_REPLY_KEYS } from './chatData.js';
+import Icon from '../Icon/Icon.vue';
 import s from './ChatBot.module.css';
 
 const props = defineProps({ isOpen: { type: Boolean, default: false } });

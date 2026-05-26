@@ -6,7 +6,9 @@
     @close="modalStore.closeModal()"
   >
     <div :class="s.modal">
-      <button :class="s.closeBtn" @click="modalStore.closeModal()" :aria-label="t('modal.close')">✕</button>
+      <button :class="s.closeBtn" @click="modalStore.closeModal()" :aria-label="t('modal.close')">
+        <Icon name="close" :size="18" />
+      </button>
       <div v-if="!modalStore.isSuccess.value" :class="s.steps">
         <div
           v-for="i in 3"
@@ -27,6 +29,7 @@
 
 <script setup>
 import { inject } from 'vue';
+import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import ModalStep1 from './ModalStep1.vue';
 import ModalStep2 from './ModalStep2.vue';

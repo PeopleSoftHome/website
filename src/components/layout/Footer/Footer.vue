@@ -51,9 +51,9 @@
 <script setup>
 import { inject } from 'vue';
 import { FOOTER_LINKS, HOT_TAGS } from '@/data/navigation.js';
-import QrPlaceholder from '@/components/icons/QrPlaceholder.jsx';
-import ZhihuIcon from '@/components/icons/ZhihuIcon.jsx';
-import WeiboIcon from '@/components/icons/WeiboIcon.jsx';
+import QrPlaceholder from '@/components/icons/QrPlaceholder.vue';
+import ZhihuIcon from '@/components/icons/ZhihuIcon.vue';
+import WeiboIcon from '@/components/icons/WeiboIcon.vue';
 import s from './Footer.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });

@@ -8,14 +8,16 @@
         <input
           :class="[s.input, errors.name ? s.inputError : '']"
           name="name" :placeholder="t('modal.phName')"
-          v-model="fields.name" autocomplete="name"
+          v-model="fields.name" @input="clearError('name')"
+          autocomplete="name"
         />
       </Field>
       <Field :label="t('modal.labelCompany')" required :error="errors.company">
         <input
           :class="[s.input, errors.company ? s.inputError : '']"
           name="company" :placeholder="t('modal.phCompany')"
-          v-model="fields.company" autocomplete="organization"
+          v-model="fields.company" @input="clearError('company')"
+          autocomplete="organization"
         />
       </Field>
     </div>
@@ -24,7 +26,8 @@
       <input
         :class="[s.input, errors.phone ? s.inputError : '']"
         name="phone" :placeholder="t('modal.phPhone')" type="tel" maxlength="11"
-        v-model="fields.phone" autocomplete="tel"
+        v-model="fields.phone" @input="clearError('phone')"
+        autocomplete="tel"
       />
     </Field>
 
@@ -33,7 +36,7 @@
         <input
           :class="[s.input, errors.code ? s.inputError : '']"
           name="code" :placeholder="t('modal.phCode')" type="number" maxlength="6"
-          v-model="fields.code"
+          v-model="fields.code" @input="clearError('code')"
         />
         <button :class="s.verifyBtn" @click="sendCode" :disabled="countdown > 0">
           {{ countdown > 0 ? t('modal.resend', { n: countdown }) : t('modal.sendCode') }}
@@ -46,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onUnmounted } from 'vue';
+import { ref, reactive, inject, onUnmounted, h } from 'vue';
 import s from './DemoModal.module.css';
 
 const PHONE_REG = /^1[3-9]\d{9}$/;
@@ -62,6 +65,10 @@ let timer = null;
 onUnmounted(() => {
   if (timer) { clearInterval(timer); timer = null; }
 });
+
+const clearError = (key) => {
+  if (errors[key]) delete errors[key];
+};
 
 const sendCode = () => {
   if (!PHONE_REG.test(fields.phone)) {
@@ -90,5 +97,21 @@ const handleNext = () => {
   }
   Object.keys(errors).forEach(k => delete errors[k]);
   emit('next');
+};
+
+/* ═══════ Field 子组件（原 React 版本内部组件）═══════ */
+const Field = {
+  props: ['label', 'required', 'error'],
+  setup(props, { slots }) {
+    const i18n = inject('i18n', { t: (k) => k });
+    return () => h('div', { class: s.formGroup }, [
+      h('label', { class: s.label }, [
+        props.label,
+        props.required && h('span', { class: s.required }, i18n.t('modal.required')),
+      ]),
+      slots.default?.(),
+      props.error && h('span', { class: s.errorMsg }, props.error),
+    ]);
+  },
 };
 </script>

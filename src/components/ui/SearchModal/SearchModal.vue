@@ -7,7 +7,9 @@
   >
     <div :class="s.modal">
       <div :class="s.inputRow">
-        <span :class="s.searchIcon" aria-hidden="true">🔍</span>
+        <span :class="s.searchIcon" aria-hidden="true">
+          <Icon name="search" :size="18" />
+        </span>
         <input
           ref="inputRef"
           :class="s.input"
@@ -22,7 +24,9 @@
         />
         <div :class="s.inputRight">
           <span :class="s.shortcut" aria-hidden="true">{{ t('search.shortcut') }}</span>
-          <button :class="s.escBtn" @click="searchStore.closeSearch()" :aria-label="t('modal.close')">ESC</button>
+          <button :class="s.escBtn" @click="searchStore.closeSearch()" :aria-label="t('modal.close')">
+            <Icon name="close" :size="14" /> ESC
+          </button>
         </div>
       </div>
 
@@ -50,19 +54,23 @@
               :class="[s.resultItem, getGlobalIdx(type, idx) === focusIdx ? s.resultActive : '']"
               @click="selectItem(item)"
             >
-              <span :class="s.resultIcon" aria-hidden="true">{{ item.icon }}</span>
+              <span :class="s.resultIcon" aria-hidden="true"><Icon :name="item.icon" :size="18" /></span>
               <span :class="s.resultBody">
                 <span :class="s.resultTitle" v-html="highlight(item.title, query)" />
                 <span :class="s.resultDesc" v-html="highlight(item.desc, query)" />
               </span>
-              <span :class="s.resultArrow" aria-hidden="true">→</span>
+              <span :class="s.resultArrow" aria-hidden="true">
+                <Icon name="chevron-right" :size="16" />
+              </span>
             </button>
           </div>
         </div>
 
         <!-- 无结果 -->
         <div v-else :class="s.empty">
-          <div :class="s.emptyIcon">🔭</div>
+          <div :class="s.emptyIcon">
+            <Icon name="inbox" :size="40" color="var(--gray-300)" />
+          </div>
           <div :class="s.emptyTitle">{{ t('search.noResult', { query }) }}</div>
           <div :class="s.emptySub">{{ t('search.noResultSub') }}</div>
           <div :class="s.hotTags" style="justify-content:center;margin-top:16px">
@@ -86,6 +94,7 @@
 import { computed, watch, inject } from 'vue';
 import { HOT_SEARCHES } from '@/data/searchIndex.js';
 import { useSearch } from '@/composables/useSearch.js';
+import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './SearchModal.module.css';
 

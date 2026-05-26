@@ -1,6 +1,8 @@
 <template>
   <div :class="s.success">
-    <div :class="s.successIcon">🎉</div>
+    <div :class="s.successIcon">
+      <Icon name="check-circle" :size="48" color="var(--primary)" />
+    </div>
     <div :class="s.successTitle">{{ t('modal.successTitle') }}</div>
     <p :class="s.successSub">
       <span v-for="(line, i) in lines" :key="i">
@@ -13,6 +15,7 @@
 
 <script setup>
 import { computed, inject } from 'vue';
+import Icon from '../Icon/Icon.vue';
 import s from './DemoModal.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });

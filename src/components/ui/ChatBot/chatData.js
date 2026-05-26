@@ -8,7 +8,7 @@
  * 实际回复文本通过 t(`chatBot.faq.${id}.reply`) 读取。
  */
 
-export const BOT_AVATAR = '🤖';
+export const BOT_AVATAR = '';
 
 /** FAQ 规则元数据（文本在 i18n 中管理） */
 export const FAQ_RULES_META = [

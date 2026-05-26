@@ -1,7 +1,7 @@
 <template>
   <div>
     <div :class="s.grid9Label">
-      <span>绩效表现 →</span>
+      <span>绩效表现 <Icon name="arrow-right" :size="12" /></span>
       <span style="position:absolute;left:-20px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:10px;">潜力</span>
     </div>
     <div :class="s.grid9">
@@ -20,6 +20,7 @@
 
 <script setup>
 import s from '../ProductScreenshot.module.css';
+import Icon from '../../../ui/Icon/Icon.vue';
 
 defineProps({ data: { type: Object, required: true } });
 </script>

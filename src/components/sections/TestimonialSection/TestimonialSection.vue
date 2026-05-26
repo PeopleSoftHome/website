@@ -24,7 +24,9 @@
         </div>
       </div>
       <div :class="s.nav">
-        <button :class="s.navBtn" @click="goTo(currentIdx - 1); startAutoPlay()" :aria-label="t('testimonials.prevBtn')">‹</button>
+        <button :class="s.navBtn" @click="goTo(currentIdx - 1); startAutoPlay()" :aria-label="t('testimonials.prevBtn')">
+          <Icon name="chevron-left" :size="20" />
+        </button>
         <button
           v-for="(_, i) in itemCount"
           :key="i"
@@ -32,7 +34,9 @@
           @click="goTo(i); startAutoPlay()"
           :aria-label="`第 ${i + 1} 条`"
         />
-        <button :class="s.navBtn" @click="goTo(currentIdx + 1); startAutoPlay()" :aria-label="t('testimonials.nextBtn')">›</button>
+        <button :class="s.navBtn" @click="goTo(currentIdx + 1); startAutoPlay()" :aria-label="t('testimonials.nextBtn')">
+          <Icon name="chevron-right" :size="20" />
+        </button>
       </div>
     </div>
   </section>
@@ -42,6 +46,7 @@
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { TESTIMONIALS } from '@/data/testimonials.js';
 import { useCarousel } from '@/composables/useCarousel.js';
+import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import TestimonialCard from './TestimonialCard.vue';

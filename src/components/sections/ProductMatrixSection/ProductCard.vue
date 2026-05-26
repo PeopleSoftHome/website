@@ -2,16 +2,17 @@
   <div :class="[s.card, 'reveal', delayClass]">
     <div :class="s.icon" :style="iconStyles">
       <component :is="icon" v-if="typeof icon === 'function'" />
-      <template v-else>{{ icon }}</template>
+      <template v-else><Icon :name="icon" :size="20" /></template>
     </div>
     <div :class="s.name">{{ name }}</div>
     <p :class="s.desc">{{ desc }}</p>
-    <span :class="s.link">{{ linkText }}</span>
+    <span :class="s.link">产品详情 <Icon name="arrow-right" :size="12" /></span>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import Icon from '../../ui/Icon/Icon.vue';
 import s from './ProductCard.module.css';
 
 const props = defineProps({
@@ -20,7 +21,7 @@ const props = defineProps({
   desc:      { type: String, required: true },
   iconBg:    { type: String, default: '' },
   iconColor: { type: String, default: '' },
-  linkText:  { type: String, default: '产品详情 →' },
+  linkText:  { type: String, default: '产品详情' },
   delay:     { type: Number, default: 0 },
 });
 

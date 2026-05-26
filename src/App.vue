@@ -7,19 +7,15 @@
   <Footer />
   <FloatingBar @open-chat="chatOpen = true" @open-contact="contactOpen = true" />
 
-  <Suspense>
-    <template #default>
-      <DemoModal />
-      <VideoModal />
-      <SearchModal />
-      <ContactModal :is-open="contactOpen" @close="contactOpen = false" />
-      <ChatBot
-        :is-open="chatOpen"
-        @close="chatOpen = false"
-        @open-demo="modalStore.openModal(); chatOpen = false"
-      />
-    </template>
-  </Suspense>
+  <DemoModal />
+  <VideoModal />
+  <SearchModal />
+  <ContactModal :is-open="contactOpen" @close="contactOpen = false" />
+  <ChatBot
+    :is-open="chatOpen"
+    @close="chatOpen = false"
+    @open-demo="modalStore.openModal(); chatOpen = false"
+  />
 </template>
 
 <script setup>
