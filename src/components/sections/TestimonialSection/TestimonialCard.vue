@@ -7,7 +7,10 @@
     <div :class="s.quote" aria-hidden="true">"</div>
     <p :class="s.text">{{ text }}</p>
     <div :class="s.author">
-      <div :class="s.avatar" :style="{ background: avatarGrad }" aria-hidden="true">
+      <div v-if="avatar" :class="s.avatarImgWrap" aria-hidden="true">
+        <img :src="avatar" :alt="name" :class="s.avatarImg" />
+      </div>
+      <div v-else :class="s.avatar" :style="{ background: avatarGrad }" aria-hidden="true">
         {{ avatarChar }}
       </div>
       <div>
@@ -27,7 +30,8 @@ defineProps({
   text:       { type: String, required: true },
   name:       { type: String, required: true },
   title:      { type: String, required: true },
-  avatarGrad: { type: String, required: true },
-  avatarChar: { type: String, required: true },
+  avatar:     { type: String, default: null },
+  avatarGrad: { type: String, default: '' },
+  avatarChar: { type: String, default: '' },
 });
 </script>

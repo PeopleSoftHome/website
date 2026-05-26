@@ -14,7 +14,7 @@
           :style="{ transform: `translateX(-${getOffset()}px)` }"
         >
           <div
-            v-for="item in TESTIMONIALS"
+            v-for="item in displayItems"
             :key="item.id"
             :class="s.cardWrap"
             :style="{ flex: `0 0 ${cardWidth}`, marginRight: '20px' }"
@@ -46,6 +46,9 @@
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { TESTIMONIALS } from '@/data/testimonials.js';
 import { useCarousel } from '@/composables/useCarousel.js';
+import { useApiData } from '@/composables/useApiData.js';
+import { cmsApi } from '@/api/cms.js';
+import { transformTestimonials } from '@/api/transforms.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -53,7 +56,17 @@ import TestimonialCard from './TestimonialCard.vue';
 import s from './TestimonialSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const itemCount = TESTIMONIALS.length;
+
+// API 数据（fallback 为静态数据）
+const apiItems = ref([]);
+useApiData(async () => {
+  const data = await cmsApi.getTestimonials();
+  return transformTestimonials(data);
+}, apiItems);
+
+const displayItems = computed(() => (apiItems.value.length > 0 ? apiItems.value : TESTIMONIALS));
+const itemCount = computed(() => displayItems.value.length);
+
 const {
   currentIdx,
   goTo,

@@ -3,11 +3,25 @@
  * 状态：关闭 → Step0（联系信息）→ Step1（产品选择）→ Step2（企业规模）→ 成功 → 自动关闭
  */
 import { ref, onUnmounted } from 'vue';
+import { leadApi } from '@/api/lead.js';
 
 export function useModal() {
   const isOpen = ref(false);
   const step = ref(0);
   const isSuccess = ref(false);
+  const isSubmitting = ref(false);
+  const submitError = ref('');
+
+  // 表单数据（供各 Step 组件共享写入）
+  const formData = ref({
+    name: '',
+    company: '',
+    phone: '',
+    code: '',
+    products: [],
+    scale: '',
+  });
+
   let timer = null;
 
   const clearTimers = () => {
@@ -24,6 +38,8 @@ export function useModal() {
     timer = setTimeout(() => {
       step.value = 0;
       isSuccess.value = false;
+      submitError.value = '';
+      formData.value = { name: '', company: '', phone: '', code: '', products: [], scale: '' };
     }, 350);
   };
 
@@ -34,13 +50,32 @@ export function useModal() {
 
   const nextStep = () => { step.value = Math.min(step.value + 1, 2); };
 
-  const submitForm = () => {
+  const submitForm = async () => {
     clearTimers();
-    isSuccess.value = true;
-    timer = setTimeout(closeModal, 2500);
+    isSubmitting.value = true;
+    submitError.value = '';
+    try {
+      await leadApi.createBooking({
+        name: formData.value.name,
+        company: formData.value.company,
+        phone: formData.value.phone,
+        products: formData.value.products,
+        scale: formData.value.scale,
+      });
+      isSuccess.value = true;
+      timer = setTimeout(closeModal, 2500);
+    } catch (e) {
+      submitError.value = e.message || '提交失败，请稍后重试';
+      // 保持在当前步骤，不跳转成功页
+    } finally {
+      isSubmitting.value = false;
+    }
   };
 
   onUnmounted(clearTimers);
 
-  return { isOpen, step, isSuccess, openModal, closeModal, nextStep, submitForm };
+  return {
+    isOpen, step, isSuccess, isSubmitting, submitError, formData,
+    openModal, closeModal, nextStep, submitForm,
+  };
 }

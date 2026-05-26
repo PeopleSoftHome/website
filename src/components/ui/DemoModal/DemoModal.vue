@@ -19,6 +19,9 @@
             : '']"
         />
       </div>
+      <div v-if="modalStore.submitError.value" :class="s.apiError">
+        {{ modalStore.submitError.value }}
+      </div>
       <ModalSuccess v-if="modalStore.isSuccess.value" />
       <ModalStep1 v-else-if="modalStore.step.value === 0" @next="modalStore.nextStep()" />
       <ModalStep2 v-else-if="modalStore.step.value === 1" @next="modalStore.nextStep()" />

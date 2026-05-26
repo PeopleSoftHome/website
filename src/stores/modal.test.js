@@ -40,7 +40,7 @@ describe('createModal', () => {
     expect(wrapper.vm.modal.isOpen.value).toBe(false);
   });
 
-  it('advances through steps', () => {
+  it('advances through steps', async () => {
     const comp = defineComponent({
       setup() {
         const modal = createModal();
@@ -52,7 +52,7 @@ describe('createModal', () => {
     wrapper.vm.modal.openModal();
     wrapper.vm.modal.nextStep();
     expect(wrapper.vm.modal.step.value).toBe(1);
-    wrapper.vm.modal.submitForm();
+    await wrapper.vm.modal.submitForm();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
   });
 });

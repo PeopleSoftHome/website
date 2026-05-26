@@ -31,11 +31,11 @@ describe('useModal', () => {
     expect(wrapper.vm.modal.isOpen.value).toBe(true);
   });
 
-  it('closes modal and resets after delay', () => {
+  it('closes modal and resets after delay', async () => {
     const wrapper = mountModal();
     wrapper.vm.modal.openModal();
     wrapper.vm.modal.nextStep();
-    wrapper.vm.modal.submitForm();
+    await wrapper.vm.modal.submitForm();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
 
     wrapper.vm.modal.closeModal();
@@ -56,20 +56,20 @@ describe('useModal', () => {
     expect(wrapper.vm.modal.step.value).toBe(2); // capped
   });
 
-  it('submitForm triggers auto-close after 2500ms', () => {
+  it('submitForm triggers auto-close after 2500ms', async () => {
     const wrapper = mountModal();
     wrapper.vm.modal.openModal();
-    wrapper.vm.modal.submitForm();
+    await wrapper.vm.modal.submitForm();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
     expect(wrapper.vm.modal.isOpen.value).toBe(true);
     vi.advanceTimersByTime(2600);
     expect(wrapper.vm.modal.isOpen.value).toBe(false);
   });
 
-  it('clears timers on unmount', () => {
+  it('clears timers on unmount', async () => {
     const wrapper = mountModal();
     wrapper.vm.modal.openModal();
-    wrapper.vm.modal.submitForm();
+    await wrapper.vm.modal.submitForm();
     wrapper.unmount();
     // should not throw
     vi.advanceTimersByTime(3000);

@@ -34,10 +34,13 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { PRODUCT_TABS } from '@/data/products.js';
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
+import { useApiData } from '@/composables/useApiData.js';
+import { cmsApi } from '@/api/cms.js';
+import { transformProductTabs } from '@/api/transforms.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';
@@ -46,9 +49,18 @@ import s from './ProductMatrixSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const { activeIndex, selectTab } = useTabs(0);
-const activeTab = computed(() => PRODUCT_TABS[activeIndex.value]);
 
-const translatedTabs = computed(() => PRODUCT_TABS.map(tab => ({
+// API 数据（fallback 为静态数据）
+const apiTabs = ref([]);
+useApiData(async () => {
+  const data = await cmsApi.getProducts();
+  return transformProductTabs(data);
+}, apiTabs);
+
+const tabs = computed(() => (apiTabs.value.length > 0 ? apiTabs.value : PRODUCT_TABS));
+const activeTab = computed(() => tabs.value[activeIndex.value]);
+
+const translatedTabs = computed(() => tabs.value.map(tab => ({
   ...tab,
   label: t(`products.tabs.${TAB_KEY_MAP[tab.id] ?? tab.id}`),
 })));

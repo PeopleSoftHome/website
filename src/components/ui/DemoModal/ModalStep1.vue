@@ -49,18 +49,27 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onUnmounted, h } from 'vue';
+import { ref, reactive, inject, onUnmounted, h, watch } from 'vue';
 import s from './DemoModal.module.css';
 
 const PHONE_REG = /^1[3-9]\d{9}$/;
 
 const { t } = inject('i18n', { t: (k) => k });
+const modalStore = inject('modal', { formData: { value: {} } });
 const emit = defineEmits(['next']);
 
 const fields = reactive({ name: '', company: '', phone: '', code: '' });
 const errors = reactive({});
 const countdown = ref(0);
 let timer = null;
+
+// 同步到 store
+watch(fields, (val) => {
+  modalStore.formData.value.name = val.name;
+  modalStore.formData.value.company = val.company;
+  modalStore.formData.value.phone = val.phone;
+  modalStore.formData.value.code = val.code;
+}, { deep: true });
 
 onUnmounted(() => {
   if (timer) { clearInterval(timer); timer = null; }

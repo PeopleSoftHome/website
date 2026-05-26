@@ -40,10 +40,13 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { INDUSTRY_TABS } from '@/data/industries.js';
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
+import { useApiData } from '@/composables/useApiData.js';
+import { cmsApi } from '@/api/cms.js';
+import { transformIndustries } from '@/api/transforms.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductScreenshot from './ProductScreenshot.vue';
@@ -54,17 +57,33 @@ const { t } = inject('i18n', { t: (k) => k });
 const modalStore = inject('modal', { openModal: () => {} });
 const { activeIndex, selectTab } = useTabs(0);
 
-const panel = computed(() => INDUSTRY_TABS[activeIndex.value]);
+// API 数据（fallback 为静态数据）
+const apiIndustries = ref([]);
+useApiData(async () => {
+  const data = await cmsApi.getIndustries();
+  return transformIndustries(data);
+}, apiIndustries);
+
+const tabs = computed(() => (apiIndustries.value.length > 0 ? apiIndustries.value : INDUSTRY_TABS));
+
+const panel = computed(() => tabs.value[activeIndex.value]);
 const indKey = computed(() => INDUSTRY_KEY_MAP[panel.value.id] ?? panel.value.id);
 
-const translatedTabs = computed(() => INDUSTRY_TABS.map(tab => ({
+const translatedTabs = computed(() => tabs.value.map(tab => ({
   ...tab,
   label: t(`industry.tabs.${INDUSTRY_KEY_MAP[tab.id] ?? tab.id}`),
 })));
 
-const features = computed(() => [
-  { badge: t('industry.badges.f1'), title: t(`industry.${indKey.value}.f1title`), desc: t(`industry.${indKey.value}.f1desc`) },
-  { badge: t('industry.badges.f2'), title: t(`industry.${indKey.value}.f2title`), desc: t(`industry.${indKey.value}.f2desc`) },
-  { badge: t('industry.badges.f3'), title: t(`industry.${indKey.value}.f3title`), desc: t(`industry.${indKey.value}.f3desc`) },
-]);
+const features = computed(() => {
+  // 优先使用 API 返回的 features（如果有）
+  if (panel.value.features && panel.value.features.length > 0) {
+    return panel.value.features;
+  }
+  // 回退到 i18n
+  return [
+    { badge: t('industry.badges.f1'), title: t(`industry.${indKey.value}.f1title`), desc: t(`industry.${indKey.value}.f1desc`) },
+    { badge: t('industry.badges.f2'), title: t(`industry.${indKey.value}.f2title`), desc: t(`industry.${indKey.value}.f2desc`) },
+    { badge: t('industry.badges.f3'), title: t(`industry.${indKey.value}.f3title`), desc: t(`industry.${indKey.value}.f3desc`) },
+  ];
+});
 </script>

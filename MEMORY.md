@@ -90,44 +90,55 @@ talentpro-v2/
 
 ## 三、环境限制与待解决问题
 
-### 3.1 当前环境限制
+### 3.1 环境状态（已解决 ✅）
 
-1. **npm install 超时** — 在 `talentpro-backend/` 目录执行 `npm install` 时网络超时（180s）
-   - 解决：切换 npm registry 镜像（如淘宝/华为云），或使用 `yarn` / `pnpm`
-   
-2. **Docker 未运行** — 当前机器 Docker Desktop 未启动
-   - 解决：启动 Docker Desktop 后执行 `npm run docker:up`
+| 问题 | 状态 | 解决方式 |
+|------|------|---------|
+| npm install 超时 | ✅ 已解决 | 使用国内镜像 `--registry=https://registry.npmmirror.com` |
+| Docker Desktop 未启动 | ✅ 已解决 | 已启动并配置 DaoCloud/163/USTC 镜像加速器 |
+| PostgreSQL 15/16 数据冲突 | ✅ 已解决 | docker-compose.yml volume 重命名为 `talentpro_*` 前缀 |
+| Prisma 未生成 | ✅ 已解决 | 已执行 `npx prisma generate` |
+| 数据库迁移 | ✅ 已解决 | 已执行 `npx prisma migrate dev --name init` |
+| 种子数据 | ✅ 已解决 | 已执行 `npx prisma db seed` |
+| 开发服务器 | ✅ **运行中** | `npm run start:dev` 已在端口 4000 启动 |
 
-3. **Prisma 未生成** — 因未安装依赖，无法执行 `prisma generate`
-   - 解决：安装依赖后执行 `npx prisma generate`
+### 3.2 后端服务访问信息
 
-### 3.2 首次启动后端步骤（下次启动时执行）
+```
+API 基地址    → http://localhost:4000/api/v1
+Swagger 文档  → http://localhost:4000/api/docs
+默认管理员    → admin@talentpro.com / admin123456
+```
+
+### 3.3 基础设施端口
+
+| 服务 | 端口 | 状态 |
+|------|------|------|
+| PostgreSQL 16 | 5432 | ✅ 健康 |
+| Redis 7 | 6379 | ✅ 健康 |
+| Meilisearch | 7700 | ✅ 运行中 |
+| MinIO | 9000/9001 | ✅ 运行中 |
+| NestJS API | 4000 | ✅ 运行中 |
+
+### 3.4 常用命令
 
 ```bash
 cd talentpro-backend
 
-# 1. 安装依赖（如npm慢，换registry）
-npm install --registry=https://registry.npmmirror.com
-
-# 2. 启动Docker基础设施（需Docker Desktop运行）
+# 启动/停止基础设施
 npm run docker:up
+npm run docker:down
 
-# 3. 生成Prisma Client
-npx prisma generate
-
-# 4. 执行数据库迁移
-npx prisma migrate dev --name init
-
-# 5. 种子数据
+# 数据库迁移
+npx prisma migrate dev
 npx prisma db seed
+npx prisma studio
 
-# 6. 启动开发服务器
+# 开发服务器
 npm run start:dev
 
-# 验证：
-# API      → http://localhost:4000/api/v1
-# Swagger  → http://localhost:4000/api/docs
-# 默认账号 → admin@talentpro.com / admin123456
+# 构建
+npm run build
 ```
 
 ---

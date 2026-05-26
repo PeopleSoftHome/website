@@ -2,14 +2,16 @@
  * useSearch — 全局搜索状态管理 Composable
  *
  * 功能：
- *  - 前端全文检索（标题 + tags + 描述，加权评分）
+ *  - 优先调用后端搜索 API，失败时回退到前端本地索引检索
  *  - 150ms 防抖，避免每次键入都重算
  *  - ↑↓ 键盘导航 + Enter 跳转 + Esc 关闭
  *  - 搜索结果按 type 分组，每组最多 5 条
  *  - 关键词高亮（返回 HTML 字符串）
  */
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted, watch } from 'vue';
 import { SEARCH_INDEX, TYPE_LABELS } from '@/data/searchIndex.js';
+import { searchApi } from '@/api/search.js';
+import { transformSearchResults } from '@/api/transforms.js';
 
 export function useSearch(onClose) {
   const query = ref('');
@@ -17,8 +19,10 @@ export function useSearch(onClose) {
   let debouncedTimer = null;
   const inputRef = ref(null);
   const debouncedQuery = ref('');
+  const apiResults = ref([]);
+  const isSearching = ref(false);
 
-  /* ── 评分函数 ── */
+  /* ── 本地评分函数（fallback）── */
   const scoreItem = (item, q) => {
     const lq = q.toLowerCase();
     let score = 0;
@@ -49,17 +53,41 @@ export function useSearch(onClose) {
     }, 150);
   };
 
-  /* ── 搜索结果（按 type 分组，每组最多 5 条）── */
+  /* ── API 搜索 ── */
+  watch(debouncedQuery, async (q) => {
+    if (!q) {
+      apiResults.value = [];
+      return;
+    }
+    isSearching.value = true;
+    try {
+      const data = await searchApi.search(q);
+      apiResults.value = transformSearchResults(data);
+    } catch (e) {
+      apiResults.value = [];
+      if (import.meta.env.DEV) console.warn('[Search API]', e.message);
+    } finally {
+      isSearching.value = false;
+    }
+  });
+
+  /* ── 搜索结果（优先 API，fallback 本地索引）── */
   const groupedResults = computed(() => {
     if (!debouncedQuery.value) return {};
 
-    const scored = SEARCH_INDEX
-      .map(item => ({ item, score: scoreItem(item, debouncedQuery.value) }))
-      .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score);
+    let results = [];
+    if (apiResults.value.length > 0) {
+      results = apiResults.value;
+    } else {
+      results = SEARCH_INDEX
+        .map(item => ({ item, score: scoreItem(item, debouncedQuery.value) }))
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(({ item }) => item);
+    }
 
     const groups = {};
-    scored.forEach(({ item }) => {
+    results.forEach((item) => {
       if (!groups[item.type]) groups[item.type] = [];
       if (groups[item.type].length < 5) groups[item.type].push(item);
     });
@@ -95,6 +123,7 @@ export function useSearch(onClose) {
     query.value = '';
     debouncedQuery.value = '';
     focusIdx.value = -1;
+    apiResults.value = [];
   };
 
   /* ── 键盘事件 ── */
@@ -129,6 +158,7 @@ export function useSearch(onClose) {
     flatResults,
     focusIdx,
     totalResults,
+    isSearching,
     highlight,
     selectItem,
     handleKeyDown,

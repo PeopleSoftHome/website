@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - talentpro_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U talentpro -d talentpro"]
       interval: 5s
@@ -26,7 +26,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - talentpro_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -42,7 +42,7 @@ services:
     ports:
       - "7700:7700"
     volumes:
-      - meilisearch_data:/meili_data
+      - talentpro_meilisearch_data:/meili_data
 
   minio:
     image: minio/minio:latest
@@ -55,11 +55,11 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - minio_data:/data
+      - talentpro_minio_data:/data
     command: server /data --console-address ":9001"
 
 volumes:
-  postgres_data:
-  redis_data:
-  meilisearch_data:
-  minio_data:
+  talentpro_postgres_data:
+  talentpro_redis_data:
+  talentpro_meilisearch_data:
+  talentpro_minio_data:
