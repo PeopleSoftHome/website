@@ -1,10 +1,6 @@
 <template>
   <a href="#main-content" class="skip-link">Skip to main content</a>
-  <NavBar />
-  <main id="main-content">
-    <HomePage />
-  </main>
-  <Footer />
+  <router-view />
   <FloatingBar @open-chat="chatOpen = true" @open-contact="contactOpen = true" />
 
   <DemoModal />
@@ -34,10 +30,7 @@ import { createModal } from '@/stores/modal.js';
 import { createSearch } from '@/stores/search.js';
 import { createVideoModal } from '@/stores/videoModal.js';
 import { createAnalytics } from '@/stores/analytics.js';
-import NavBar from '@/components/layout/NavBar/NavBar.vue';
-import Footer from '@/components/layout/Footer/Footer.vue';
 import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
-import HomePage from '@/pages/HomePage.vue';
 import DemoModal from '@/components/ui/DemoModal/DemoModal.vue';
 import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
 import SearchModal from '@/components/ui/SearchModal/SearchModal.vue';

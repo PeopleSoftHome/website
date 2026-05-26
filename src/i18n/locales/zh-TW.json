@@ -8,6 +8,8 @@
     "solutions":      "解決方案",
     "cases":          "客戶案例",
     "resources":      "資源中心",
+    "blog":           "博客",
+    "forum":          "社區",
     "login":          "登入",
     "demo":           "預約演示",
     "phone":          "售前: 400-888-8888",
@@ -478,6 +480,19 @@
   "video": {
     "title": "TalentPro 產品演示影片",
     "close": "關閉影片"
+  },
+
+  "blog": {
+    "title": "TalentPro 博客",
+    "back": "返回博客列表",
+    "noPosts": "暫無文章"
+  },
+
+  "forum": {
+    "title": "TalentPro 社區",
+    "back": "返回社區",
+    "noTopics": "暫無話題",
+    "replies": "回覆"
   },
 
   "search": {

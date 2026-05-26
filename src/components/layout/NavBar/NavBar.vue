@@ -23,10 +23,13 @@
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
-            <a v-else :href="link.href ?? '#'" :class="s.item">
+            <a v-else-if="link.href?.startsWith('#')" :href="link.href ?? '#'" :class="s.item">
               {{ t(`nav.${link.id === 'cases' ? 'cases' : 'resources'}`) }}
             </a>
+            <router-link v-else :to="link.href" :class="s.item">{{ link.label }}</router-link>
           </template>
+          <router-link to="/blog" :class="s.item">{{ t('nav.blog') }}</router-link>
+          <router-link to="/forum" :class="s.item">{{ t('nav.forum') }}</router-link>
         </div>
 
         <!-- 右侧操作区 -->

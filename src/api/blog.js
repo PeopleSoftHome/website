@@ -1,23 +1,8 @@
-import { apiClient } from './client.js';
+import { apiClient as client } from './client.js';
 
 export const blogApi = {
-  getCategories() {
-    return apiClient.get('/blogs/categories').then((r) => r.data);
-  },
-
-  getPosts(params) {
-    return apiClient.get('/blogs/posts', { params }).then((r) => r.data);
-  },
-
-  getPostBySlug(slug) {
-    return apiClient.get(`/blogs/posts/${slug}`).then((r) => r.data);
-  },
-
-  getTags() {
-    return apiClient.get('/blogs/tags').then((r) => r.data);
-  },
-
-  createComment(data) {
-    return apiClient.post('/blogs/comments', data).then((r) => r.data);
-  },
+  getCategories: () => client.get('/blogs/categories'),
+  getPosts: (params) => client.get('/blogs/posts', { params }),
+  getPost: (slug) => client.get(`/blogs/posts/${slug}`),
+  getTags: () => client.get('/blogs/tags'),
 };

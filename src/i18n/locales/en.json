@@ -8,6 +8,8 @@
     "solutions":      "Solutions",
     "cases":          "Case Studies",
     "resources":      "Resources",
+    "blog":           "Blog",
+    "forum":          "Community",
     "login":          "Login",
     "demo":           "Book a Demo",
     "phone":          "Pre-sales: 400-888-8888",
@@ -482,6 +484,19 @@
   "video": {
     "title": "TalentPro Product Demo",
     "close": "Close video"
+  },
+
+  "blog": {
+    "title": "TalentPro Blog",
+    "back": "Back to Blog",
+    "noPosts": "No posts yet"
+  },
+
+  "forum": {
+    "title": "TalentPro Community",
+    "back": "Back to Community",
+    "noTopics": "No topics yet",
+    "replies": "Replies"
   },
 
   "search": {
