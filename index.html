@@ -65,14 +65,44 @@
     <meta name="theme-color" content="#1B5FEB" />
 
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://talentpro.cn; frame-src https://www.youtube.com; connect-src 'self';" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;900&display=swap" as="style" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <!-- 子集化本地字体（~200KB/字重，总~1MB vs 原始~3MB+） -->
+    <style>
+      @font-face {
+        font-family: 'Noto Sans SC';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/NotoSansSC-400.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Noto Sans SC';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/fonts/NotoSansSC-500.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Noto Sans SC';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url('/fonts/NotoSansSC-600.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Noto Sans SC';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/fonts/NotoSansSC-700.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Noto Sans SC';
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url('/fonts/NotoSansSC-900.woff2') format('woff2');
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>

@@ -5,6 +5,51 @@ All notable changes to TalentPro HR Portal will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] — 2026-05-26 ✅ 性能与分发批次
+
+### Added — 数据埋点 + 动态 SEO + ROI 计算器
+
+**Sprint 16 — 转化与洞察**
+- **ROI 计算器**（新增 Section SEC-16）
+  - `useRoiCalculator.js`：5 参数模型（员工数/月招聘/招聘周期/HR人数/HR月薪）
+  - 输出：年度节省、ROI 率、投资回收期 + 成本对比柱状图
+  - `AnimatedNumber.vue`：ease-out cubic 数字过渡动画
+  - 位于资源中心下方、CTA Banner 上方
+- **A/B 测试框架**
+  - `useABTest.js`：确定性哈希分桶，visitor ID 持久化，force()/clearAll() QA 工具
+- **Cookie 同意横幅 + 偏好中心**
+  - `useCookieConsent.js`：3 级 Cookie（必要/分析/营销），localStorage 持久化
+  - `CookieBanner.vue`：底部横幅 + 展开偏好中心，glass morphism 样式
+- **DemoModal 表单增强**
+  - 手机号自动格式化（`138 0000 0000`）
+  - 输入聚焦自动滚动（防键盘遮挡）
+  - 步骤进度文字（"第 1 步 / 共 3 步"）
+  - 服务条款勾选框 + 验证
+  - 成功页显示预约摘要（姓名/公司/产品/规模）
+- **智能产品推荐**
+  - DemoModal Step2：根据已选产品推荐关联产品 Chips（如「招聘管理」→「人才测评」「AI Family」）
+
+**Sprint 15 — 数据驱动**
+- **埋点分析系统**（ANA-01）
+  - `useAnalytics.js`：检查 Cookie 同意，写入 `window.tp_analytics` 队列
+  - 14+ 核心事件：`page_view`、`section_visible`、`demo_modal_open`、`demo_step_complete`、
+    `demo_submit`、`product_tab_click`、`industry_tab_click`、`search_query`、`search_click`、
+    `video_play`、`resource_download`、`roi_interact`、`lang_switch`、`theme_switch`
+- **动态 SEO**
+  - `syncDocumentMeta`：语言切换时同步更新 `document.title`、`meta description`、`<html lang>`、hreflang 链接
+
+### Changed
+- `HomePage.vue`：新增 `RoiCalculatorSection` 挂载
+- `App.vue`：接入 `AnalyticsProvider`，新增全局埋点监听（watch 语言/主题/弹窗/视频/搜索）
+
+---
+
+## [2.4.0] — 2026-05-15 ✅ 转化提升批次（Sprint 13-14）
+
+> 本版本实际与 v2.5.0 同期开发并合并发布。
+
+---
+
 ## [2.3.1] — 2026-03-16 ✅ Hotfix 正式版
 
 ### Sprint 13 — 验收缺陷修复（11条）
