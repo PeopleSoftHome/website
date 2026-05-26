@@ -418,7 +418,17 @@
     "successTitle":"Request Submitted!",
     "successSub":  "Our advisor will reach out within 1 business day.\nThank you for your interest in TalentPro.",
     "products": ["Recruiting", "Assessment", "Attendance", "Payroll", "HR & Org", "Performance", "AI Family", "Other"],
-    "scales":   ["< 200", "200–499", "500–999", "1,000–4,999", "5,000+"]
+    "scales":   ["< 200", "200–499", "500–999", "1,000–4,999", "5,000+"],
+    "stepText":  "Step {current} of {total}",
+    "autoFillPhone": "Auto-fill Phone",
+    "tosPrefix": "I agree to the",
+    "tosLink":   "Terms of Service",
+    "tosSuffix": "and Privacy Policy",
+    "errTos":    "Please agree to the terms",
+    "summaryName":     "Name",
+    "summaryCompany":  "Company",
+    "summaryProducts": "Products",
+    "summaryScale":    "Scale"
   },
 
   "floatingBar": {
@@ -427,6 +437,24 @@
     "phone":   "400-888-8888",
     "backTop": "Back to Top",
     "callTel": "Call Us"
+  },
+
+  "cookie": {
+    "banner":      "We use cookies to improve your experience, including essential site features, analytics, and personalized marketing.",
+    "learnMore":   "Learn more",
+    "acceptAll":   "Accept all",
+    "reject":      "Reject",
+    "rejectAll":   "Reject all",
+    "savePrefs":   "Save preferences",
+    "prefTitle":   "Cookie Preferences",
+    "prefDesc":    "Choose which types of cookies you allow. Essential cookies are always enabled to ensure the site works properly.",
+    "necessary":   "Necessary cookies",
+    "necessaryDesc": "Required for core site features such as session management and security. Cannot be disabled.",
+    "analytics":   "Analytics cookies",
+    "analyticsDesc": "Help us understand how users interact with the site so we can improve the experience.",
+    "marketing":   "Marketing cookies",
+    "marketingDesc": "Used to show more relevant marketing content and retargeting ads.",
+    "alwaysOn":    "Always on"
   },
 
   "video": {

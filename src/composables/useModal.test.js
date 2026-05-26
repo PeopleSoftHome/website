@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { useModal } from './useModal.js';
+
+vi.mock('@/api/lead.js', () => ({
+  leadApi: { createBooking: vi.fn(() => Promise.resolve({ id: 1 })) },
+}));
 
 function mountModal() {
   const comp = defineComponent({
@@ -36,12 +40,14 @@ describe('useModal', () => {
     wrapper.vm.modal.openModal();
     wrapper.vm.modal.nextStep();
     await wrapper.vm.modal.submitForm();
+    await nextTick();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
 
     wrapper.vm.modal.closeModal();
     expect(wrapper.vm.modal.isOpen.value).toBe(false);
     // step and isSuccess reset after 350ms
     vi.advanceTimersByTime(400);
+    await nextTick();
     expect(wrapper.vm.modal.step.value).toBe(0);
     expect(wrapper.vm.modal.isSuccess.value).toBe(false);
   });
@@ -60,9 +66,11 @@ describe('useModal', () => {
     const wrapper = mountModal();
     wrapper.vm.modal.openModal();
     await wrapper.vm.modal.submitForm();
+    await nextTick();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
     expect(wrapper.vm.modal.isOpen.value).toBe(true);
     vi.advanceTimersByTime(2600);
+    await nextTick();
     expect(wrapper.vm.modal.isOpen.value).toBe(false);
   });
 
@@ -70,6 +78,7 @@ describe('useModal', () => {
     const wrapper = mountModal();
     wrapper.vm.modal.openModal();
     await wrapper.vm.modal.submitForm();
+    await nextTick();
     wrapper.unmount();
     // should not throw
     vi.advanceTimersByTime(3000);

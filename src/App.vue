@@ -16,6 +16,14 @@
     @close="chatOpen = false"
     @open-demo="modalStore.openModal(); chatOpen = false"
   />
+  <CookieBanner
+    :show-banner="cookieConsent.showBanner"
+    :show-preferences="cookieConsent.showPreferences"
+    @accept-all="cookieConsent.acceptAll"
+    @reject-all="cookieConsent.rejectAll"
+    @save-prefs="cookieConsent.savePreferences"
+    @open-preferences="cookieConsent.openPreferences"
+  />
 </template>
 
 <script setup>
@@ -34,6 +42,8 @@ import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
 import SearchModal from '@/components/ui/SearchModal/SearchModal.vue';
 import ContactModal from '@/components/ui/ContactModal/ContactModal.vue';
 import ChatBot from '@/components/ui/ChatBot/ChatBot.vue';
+import CookieBanner from '@/components/ui/CookieBanner/CookieBanner.vue';
+import { useCookieConsent } from '@/composables/useCookieConsent.js';
 
 /* 全局状态 */
 const i18n = createI18n();
@@ -51,6 +61,9 @@ provide('videoModal', videoModal);
 const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
+
+/* Cookie 同意横幅 */
+const cookieConsent = useCookieConsent();
 
 /* 全局错误捕获 */
 onErrorCaptured((err, instance, info) => {

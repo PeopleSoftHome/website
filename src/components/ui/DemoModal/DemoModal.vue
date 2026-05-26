@@ -18,6 +18,7 @@
             : i - 1 === modalStore.step.value ? s.stepActive
             : '']"
         />
+        <div :class="s.stepText">{{ stepText }}</div>
       </div>
       <div v-if="modalStore.submitError.value" :class="s.apiError">
         {{ modalStore.submitError.value }}
@@ -31,7 +32,7 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
+import { inject, computed } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import ModalStep1 from './ModalStep1.vue';
@@ -42,4 +43,8 @@ import s from './DemoModal.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const modalStore = inject('modal', {});
+
+const stepText = computed(() =>
+  t('modal.stepText', { current: modalStore.step.value + 1, total: 3 }),
+);
 </script>

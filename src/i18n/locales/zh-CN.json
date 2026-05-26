@@ -418,7 +418,17 @@
     "successTitle":"预约成功！",
     "successSub":  "我们的专属顾问将在 1 个工作日内与您联系\n感谢您对 TalentPro 的信任",
     "products": ["招聘管理", "人才测评", "假勤管理", "薪酬管理", "组织人事", "绩效管理", "AI Family", "其他"],
-    "scales":   ["200人以下", "200-499人", "500-999人", "1000-4999人", "5000人以上"]
+    "scales":   ["200人以下", "200-499人", "500-999人", "1000-4999人", "5000人以上"],
+    "stepText":  "第{current}步 / 共{total}步",
+    "autoFillPhone": "一键填入手机号",
+    "tosPrefix": "我已阅读并同意",
+    "tosLink":   "服务条款",
+    "tosSuffix": "和隐私政策",
+    "errTos":    "请同意服务条款",
+    "summaryName":     "姓名",
+    "summaryCompany":  "公司",
+    "summaryProducts": "意向产品",
+    "summaryScale":    "企业规模"
   },
 
   "floatingBar": {
@@ -427,6 +437,24 @@
     "phone":   "400-888-8888",
     "backTop": "回到顶部",
     "callTel": "电话咨询"
+  },
+
+  "cookie": {
+    "banner":      "我们使用 Cookie 改善您的体验，包括必要的网站功能、访问分析和个性化营销。",
+    "learnMore":   "了解更多",
+    "acceptAll":   "接受全部",
+    "reject":      "拒绝",
+    "rejectAll":   "拒绝全部",
+    "savePrefs":   "保存偏好",
+    "prefTitle":   "Cookie 偏好设置",
+    "prefDesc":    "您可以选择允许哪些类型的 Cookie。必要 Cookie 始终启用，以确保网站正常运行。",
+    "necessary":   "必要 Cookie",
+    "necessaryDesc": "网站核心功能所需，如会话管理和安全认证。不可关闭。",
+    "analytics":   "分析 Cookie",
+    "analyticsDesc": "帮助我们了解用户如何与网站互动，用于改进用户体验。",
+    "marketing":   "营销 Cookie",
+    "marketingDesc": "用于展示更相关的营销内容和再营销广告。",
+    "alwaysOn":    "始终开启"
   },
 
   "video": {

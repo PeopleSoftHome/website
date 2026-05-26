@@ -414,7 +414,17 @@
     "successTitle":"預約成功！",
     "successSub":  "我們的專屬顧問將在 1 個工作日內與您聯絡\n感謝您對 TalentPro 的信任",
     "products": ["招募管理", "人才測評", "假勤管理", "薪資管理", "組織人事", "績效管理", "AI Family", "其他"],
-    "scales":   ["200人以下", "200-499人", "500-999人", "1000-4999人", "5000人以上"]
+    "scales":   ["200人以下", "200-499人", "500-999人", "1000-4999人", "5000人以上"],
+    "stepText":  "第{current}步 / 共{total}步",
+    "autoFillPhone": "一鍵填入手機號",
+    "tosPrefix": "我已閱讀並同意",
+    "tosLink":   "服務條款",
+    "tosSuffix": "和隱私政策",
+    "errTos":    "請同意服務條款",
+    "summaryName":     "姓名",
+    "summaryCompany":  "公司",
+    "summaryProducts": "意向產品",
+    "summaryScale":    "企業規模"
   },
 
   "floatingBar": {
@@ -423,6 +433,24 @@
     "phone":   "400-888-8888",
     "backTop": "回到頂部",
     "callTel": "電話諮詢"
+  },
+
+  "cookie": {
+    "banner":      "我們使用 Cookie 改善您的體驗，包括必要的網站功能、訪問分析和個人化行銷。",
+    "learnMore":   "了解更多",
+    "acceptAll":   "接受全部",
+    "reject":      "拒絕",
+    "rejectAll":   "拒絕全部",
+    "savePrefs":   "儲存偏好",
+    "prefTitle":   "Cookie 偏好設定",
+    "prefDesc":    "您可以選擇允許哪些類型的 Cookie。必要 Cookie 始終啟用，以確保網站正常運作。",
+    "necessary":   "必要 Cookie",
+    "necessaryDesc": "網站核心功能所需，如會話管理和安全認證。不可關閉。",
+    "analytics":   "分析 Cookie",
+    "analyticsDesc": "幫助我們了解使用者如何與網站互動，用於改進使用者體驗。",
+    "marketing":   "行銷 Cookie",
+    "marketingDesc": "用於展示更相關的行銷內容和再行銷廣告。",
+    "alwaysOn":    "始終開啟"
   },
 
   "video": {

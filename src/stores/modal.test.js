@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { createModal } from './modal.js';
+
+vi.mock('@/api/lead.js', () => ({
+  leadApi: { createBooking: vi.fn(() => Promise.resolve({ id: 1 })) },
+}));
 
 describe('createModal', () => {
   beforeEach(() => { vi.useFakeTimers(); });
@@ -53,6 +57,7 @@ describe('createModal', () => {
     wrapper.vm.modal.nextStep();
     expect(wrapper.vm.modal.step.value).toBe(1);
     await wrapper.vm.modal.submitForm();
+    await nextTick();
     expect(wrapper.vm.modal.isSuccess.value).toBe(true);
   });
 });
