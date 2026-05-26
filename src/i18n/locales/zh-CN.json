@@ -18,6 +18,8 @@
     "langLabel":      "语言",
     "themeLight":     "切换到亮色模式",
     "themeDark":      "切换到暗色模式",
+    "profile":        "个人中心",
+    "logout":         "退出登录",
     "aiItems": {
       "recruit":      "AI 招聘助手",
       "recruitDesc":  "让招聘更智能、更高效",
@@ -600,5 +602,35 @@
         "isHandoff": true
       }
     }
+  },
+
+  "auth": {
+    "loginTitle":         "欢迎回来",
+    "loginSubtitle":      "登录您的 TalentPro 账号",
+    "registerTitle":      "创建账号",
+    "registerSubtitle":   "立即注册，开启智能 HR 之旅",
+    "email":              "邮箱",
+    "emailPlaceholder":   "请输入邮箱",
+    "emailRequired":      "请输入邮箱",
+    "emailInvalid":       "邮箱格式不正确",
+    "password":           "密码",
+    "passwordPlaceholder":"请输入密码",
+    "passwordRequired":   "请输入密码",
+    "passwordMin":        "密码至少 6 位",
+    "confirmPassword":    "确认密码",
+    "confirmPasswordPlaceholder": "请再次输入密码",
+    "confirmRequired":    "请确认密码",
+    "passwordMismatch":   "两次输入的密码不一致",
+    "name":               "姓名",
+    "namePlaceholder":    "请输入姓名",
+    "nameMin":            "姓名至少 2 个字符",
+    "loginBtn":           "登录",
+    "registerBtn":        "注册",
+    "submitting":         "提交中...",
+    "noAccount":          "还没有账号？",
+    "hasAccount":         "已有账号？",
+    "toRegister":         "立即注册",
+    "toLogin":            "立即登录",
+    "genericError":       "操作失败，请稍后重试"
   }
 }

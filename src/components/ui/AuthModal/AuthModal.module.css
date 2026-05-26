@@ -1,0 +1,206 @@
+/* ── 遮罩 ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.overlayOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── 弹窗容器 ── */
+.modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 420px;
+  padding: 36px;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.35s var(--ease-out);
+  box-shadow: var(--shadow-xl);
+  margin: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.overlayOpen .modal {
+  transform: none;
+}
+
+/* ── 关闭按钮 ── */
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  color: var(--gray-600);
+}
+
+.closeBtn:hover {
+  background: var(--gray-200);
+}
+
+/* ── 标题 ── */
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+
+/* ── 表单元素 ── */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--gray-900);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.inputError {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: var(--error);
+  margin-top: 5px;
+  display: block;
+}
+
+.errorBox {
+  background: #FEF2F2;
+  color: #DC2626;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* ── 提交按钮 ── */
+.submitBtn {
+  width: 100%;
+  height: 48px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.25s;
+  margin-top: 8px;
+  font-family: inherit;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── 模式切换 ── */
+.switch {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gray-500);
+}
+
+.switchBtn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 4px;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+
+.switchBtn:hover {
+  color: var(--primary-dark);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 480px) {
+  .modal { padding: 24px 20px; margin: 12px; }
+}
+
+/* ── 暗色模式 ── */
+[data-theme="dark"] .overlay { background: var(--overlay-bg-deep); }
+[data-theme="dark"] .modal {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+[data-theme="dark"] .closeBtn { background: var(--surface-on-dark-hover); color: var(--gray-600); }
+[data-theme="dark"] .closeBtn:hover { background: var(--surface-on-dark-elevated); }
+[data-theme="dark"] .title { color: var(--gray-900); }
+[data-theme="dark"] .subtitle { color: var(--gray-600); }
+[data-theme="dark"] .label { color: var(--gray-700); }
+[data-theme="dark"] .input {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-color);
+}
+[data-theme="dark"] .input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+[data-theme="dark"] .input::placeholder { color: var(--gray-400); }
+[data-theme="dark"] .switch { color: var(--gray-600); }

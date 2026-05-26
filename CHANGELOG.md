@@ -5,6 +5,56 @@ All notable changes to TalentPro HR Portal will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] — 2026-05-26 ✅ 内容生态迭代
+
+### Added — 博客/论坛 + Admin 后台 + 用户认证
+
+**Sprint 18 — 内容生态与管理后台**
+- **博客系统**
+  - 前端：`BlogListView.vue`（分类筛选 + 分页）、`BlogDetailView.vue`（Markdown 渲染 + 面包屑）
+  - 后端：NestJS Blog 模块，完整 CRUD + 分类/标签管理 + 权限控制（`ADMIN`/`SUPER_ADMIN`）
+  - Admin：`BlogManagerView.vue` — 文章列表、新建/编辑弹窗、状态管理、分页、删除
+- **论坛系统**
+  - 前端：`ForumView.vue`（话题列表 + 分类 Tab）、`ForumTopicView.vue`（楼层回复 + 发帖）
+  - 后端：NestJS Forum 模块，完整 CRUD + 置顶/锁定 + 权限控制
+  - Admin：`ForumManagerView.vue` — 话题列表、置顶/锁定开关、删除、分页
+- **Admin Dashboard**
+  - `talentpro-admin/`：Vue 3 + Vite + Element Plus + Pinia + Vue Router
+  - 登录页（`LoginView.vue`）+ 布局骨架（`LayoutView.vue`）+ 路由守卫
+  - 仪表盘（`DashboardView.vue`）：概览卡片 + 线索趋势 + 最近线索
+  - 用户管理（`UsersView.vue`）+ 线索管理（`LeadsView.vue`）+ 内容管理（`ContentsView.vue`）
+  - **数据分析（`AnalyticsView.vue`）**：总页面浏览量/事件数/独立会话概览、转化漏斗（`el-progress`）、每日趋势 CSS 条形图、热门页面/事件 TOP10
+- **前端用户认证**
+  - `src/stores/auth.js`：Pinia-style auth store（login/register/fetchProfile/logout/refreshToken）
+  - `AuthModal.vue`：登录/注册双模式弹窗、表单验证、错误提示、模式切换
+  - `NavBar.vue`：未登录显示「登录」按钮 → 打开弹窗；已登录显示用户头像/名称下拉菜单（个人中心/退出）
+  - `MobileMenu.vue`：移动端同样支持登录状态展示 + 退出登录
+  - i18n key：`auth.*` 多语言（中/英/繁）
+
+**Sprint 17 — Vue 3 迁移 + 后端基础**
+- **前端框架迁移：React 18 → Vue 3.5**
+  - 全部 `.jsx` 组件重写为 `.vue`（SFC + `<script setup>`）
+  - Context → Vue `provide/inject`
+  - React Hooks → Vue Composables（`ref`/`computed`/`watch`/`onMounted`）
+  - 状态管理：自定义 store 模式（`createI18n`/`createTheme`/`createModal` 等工厂函数）
+- **Vue Router 集成**
+  - 首页 `/`、博客 `/blog`、博客详情 `/blog/:slug`、论坛 `/forum`、话题详情 `/forum/topic/:id`
+  - `router-view` 挂载于 `App.vue`
+- **后端 API（NestJS 11 + Prisma 6 + PostgreSQL 16 + Redis 7）**
+  - Blog/Forum/Analytics 模块完整 CRUD
+  - Auth 模块：注册/登录/JWT/刷新令牌/权限守卫（`RolesGuard`）
+  - 线索模块：演示预约表单提交 + 列表查询
+  - Meilisearch 全文搜索、MinIO 对象存储（预留）
+- **字体子集化**
+  - Python + fonttools 提取 1379 个字符，pyftsubset 生成 5 字重 woff2
+  - Noto Sans SC 从 55MB 降至 ~1MB，woff2 本地托管
+
+### Changed
+- `AGENTS.md`：技术栈更新为 Vue 3.5 + Vite 5 + Vue Router
+- `docs/architecture.md`：全面更新为 Vue 3 组件树 + 新增后端架构 + Admin 架构
+
+---
+
 ## [2.5.0] — 2026-05-26 ✅ 性能与分发批次
 
 ### Added — 数据埋点 + 动态 SEO + ROI 计算器

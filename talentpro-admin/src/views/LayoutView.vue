@@ -22,6 +22,18 @@
           <el-icon><Document /></el-icon>
           <span>内容管理</span>
         </el-menu-item>
+        <el-menu-item index="/blogs">
+          <el-icon><Reading /></el-icon>
+          <span>博客管理</span>
+        </el-menu-item>
+        <el-menu-item index="/forums">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>论坛管理</span>
+        </el-menu-item>
+        <el-menu-item index="/analytics">
+          <el-icon><DataAnalysis /></el-icon>
+          <span>数据分析</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 

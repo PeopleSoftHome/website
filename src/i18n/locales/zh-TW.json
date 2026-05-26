@@ -18,6 +18,8 @@
     "langLabel":      "語言",
     "themeLight":     "切換至亮色模式",
     "themeDark":      "切換至深色模式",
+    "profile":        "個人中心",
+    "logout":         "登出",
     "aiItems": {
       "recruit":      "AI 招募助手",
       "recruitDesc":  "讓招募更智慧、更高效",
@@ -596,5 +598,35 @@
         "isHandoff": true
       }
     }
+  },
+
+  "auth": {
+    "loginTitle":         "歡迎回來",
+    "loginSubtitle":      "登入您的 TalentPro 帳號",
+    "registerTitle":      "建立帳號",
+    "registerSubtitle":   "立即註冊，開啟智慧 HR 之旅",
+    "email":              "電子郵件",
+    "emailPlaceholder":   "請輸入電子郵件",
+    "emailRequired":      "請輸入電子郵件",
+    "emailInvalid":       "電子郵件格式不正確",
+    "password":           "密碼",
+    "passwordPlaceholder":"請輸入密碼",
+    "passwordRequired":   "請輸入密碼",
+    "passwordMin":        "密碼至少 6 位",
+    "confirmPassword":    "確認密碼",
+    "confirmPasswordPlaceholder": "請再次輸入密碼",
+    "confirmRequired":    "請確認密碼",
+    "passwordMismatch":   "兩次輸入的密碼不一致",
+    "name":               "姓名",
+    "namePlaceholder":    "請輸入姓名",
+    "nameMin":            "姓名至少 2 個字元",
+    "loginBtn":           "登入",
+    "registerBtn":        "註冊",
+    "submitting":         "提交中...",
+    "noAccount":          "還沒有帳號？",
+    "hasAccount":         "已有帳號？",
+    "toRegister":         "立即註冊",
+    "toLogin":            "立即登入",
+    "genericError":       "操作失敗，請稍後重試"
   }
 }

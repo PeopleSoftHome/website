@@ -27,14 +27,26 @@
 
 | 维度 | 决策 | 原因 |
 |------|------|------|
-| **框架** | React 18 | 组件化成熟，生态完善，与未来 v2.x 技术路线对齐 |
-| **构建工具** | Vite 5 | 冷启动 < 500ms，HMR 毫秒级，零配置 JSX 支持 |
-| **语言** | JavaScript（JSX）| 营销门户无复杂类型需求；TypeScript 后续可渐进迁移 |
+| **框架** | Vue 3.5 | SFC + `<script setup>` 组合式 API，与 Element Plus 生态对齐 |
+| **构建工具** | Vite 5 | 冷启动 < 500ms，HMR 毫秒级，原生支持 Vue SFC |
+| **语言** | JavaScript | 营销门户无复杂类型需求；TypeScript 后续可渐进迁移 |
 | **样式方案** | CSS Modules + CSS 自定义属性 | 零运行时开销，原生支持 Design Token，与现有变量体系无缝迁移 |
 | **动效** | CSS Keyframes + IntersectionObserver（原生）| 无需引入动效库，视觉还原度最高 |
-| **状态管理** | React useState / useReducer + Context | 无跨页面状态，Modal 状态通过 Context 透传，无需 Redux |
-| **路由** | 无（单页静态首页）| 预留 React Router 接入接口供后续多页面扩展 |
+| **状态管理** | Vue `ref`/`computed` + `provide/inject` | 自定义 store 工厂函数（`createI18n`/`createTheme`/`createModal` 等）|
+| **路由** | Vue Router 4 | 博客/论坛多页面路由，`<router-view>` 挂载于 App.vue |
 | **部署** | 静态站点（Vite build → dist/）| Vercel / Nginx / OSS+CDN 均可直接托管 |
+
+**后端技术栈**
+
+| 维度 | 决策 | 原因 |
+|------|------|------|
+| **框架** | NestJS 11 | 模块化架构，内置 DI/IOC，与 Prisma 生态深度整合 |
+| **ORM** | Prisma 6 | 类型安全查询，自动迁移，PostgreSQL 原生支持 |
+| **数据库** | PostgreSQL 16 | 关系型数据 + JSONB 扩展，ACID 保障 |
+| **缓存** | Redis 7 | 会话/缓存/限流，高性能 KV 存储 |
+| **搜索** | Meilisearch | 全文搜索，实时索引，轻量部署 |
+| **存储** | MinIO | S3 兼容对象存储，图片/文件托管 |
+| **认证** | JWT（Access + Refresh Token）| 无状态认证，refresh token 轮转防劫持 |
 
 **不引入 UI 组件库的原因**：现有设计系统高度定制（品牌渐变、玻璃态、AI 专区深色等），通用库无法复用；antd 等库压缩后仍 > 400KB，对 Lighthouse 分数不利；所有原子组件实现简单，自行封装成本低。
 
@@ -44,33 +56,45 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│                      React 应用（SPA）                           │
+│                     TalentPro 系统架构                           │
 │                                                                │
-│  ModalContext.Provider（全局弹窗状态透传）                        │
-│  │                                                             │
-│  ├── NavBar                    [SEC-01] 固定顶部导航             │
-│  │                                                             │
-│  ├── HomePage（所有 Section 的页面容器）                          │
-│  │   ├── HeroSection           [SEC-02]                        │
-│  │   ├── BrandScrollSection    [SEC-03]                        │
-│  │   ├── StatsSection          [SEC-04]                        │
-│  │   ├── ProductMatrixSection  [SEC-05]                        │
-│  │   ├── AiFamilySection       [SEC-06]                        │
-│  │   ├── IndustrySolutionSection [SEC-07]                      │
-│  │   ├── TestimonialSection    [SEC-08]                        │
-│  │   ├── LogoWallSection       [SEC-09]                        │
-│  │   ├── WhyUsSection          [SEC-10]                        │
-│  │   ├── ResourceSection       [SEC-11]                        │
-│  │   ├── CtaBannerSection      [SEC-12]                        │
-│  │   └── FloatingBar           [SEC-14]                        │
-│  │                                                             │
-│  ├── Footer                    [SEC-13]                        │
-│  └── DemoModal                 [SEC-15] 全局弹窗                │
-│                                                                │
-├── src/tokens/     Design Token JS 常量（唯一真相来源）            │
-├── src/data/       静态业务数据（products / industries / ...）     │
-├── src/hooks/      自定义 Hooks（carousel / countUp / modal...）  │
-└── src/styles/     全局 CSS（变量 / animations / reveal）         │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │               营销门户（Vue 3 SPA）                        │  │
+│  │  I18nProvider → ThemeProvider → SearchProvider            │  │
+│  │  → ModalContext → VideoModalContext → AuthProvider         │  │
+│  │  │                                                       │  │
+│  │  ├── NavBar                    [SEC-01] 固定顶部导航       │  │
+│  │  ├── <router-view>                                         │  │
+│  │  │   ├── HomePage           [SEC-02~14] 15 个 Section     │  │
+│  │  │   ├── BlogListView       博客列表（分类+分页）           │  │
+│  │  │   ├── BlogDetailView     博客详情（Markdown）            │  │
+│  │  │   ├── ForumView          论坛话题列表                   │  │
+│  │  │   └── ForumTopicView     话题详情+回复                  │  │
+│  │  ├── Footer                    [SEC-13]                   │  │
+│  │  └── DemoModal / AuthModal / SearchModal / ChatBot        │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                           ↑ HTTP API (REST)                    │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │               后端服务（NestJS 11 + Prisma 6）              │  │
+│  │  ├── Auth Module      注册/登录/JWT/刷新/权限              │  │
+│  │  ├── Blog Module      文章/分类/标签 CRUD                  │  │
+│  │  ├── Forum Module     话题/回复/置顶/锁定                  │  │
+│  │  ├── Lead Module      演示预约线索管理                     │  │
+│  │  ├── Analytics Module 页面浏览/事件/转化漏斗               │  │
+│  │  └── User Module      用户管理                             │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                           ↑ HTTP API (REST + JWT)              │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │               管理后台（Vue 3 + Element Plus）              │  │
+│  │  ├── LoginView.vue        登录页                           │  │
+│  │  ├── LayoutView.vue       侧边栏 + 顶部栏布局              │  │
+│  │  ├── DashboardView.vue    仪表盘                           │  │
+│  │  ├── BlogManagerView.vue  博客管理                         │  │
+│  │  ├── ForumManagerView.vue 论坛管理                         │  │
+│  │  ├── AnalyticsView.vue    数据分析                         │  │
+│  │  ├── UsersView.vue        用户管理                         │  │
+│  │  └── LeadsView.vue        线索管理                         │  │
+│  └──────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────────┘
          ↓ Vite Build
       dist/（静态产物）→ CDN / Vercel / Nginx
@@ -86,7 +110,7 @@
 App
 ├── ModalContext.Provider
 │
-├── NavBar                                  layout/NavBar/NavBar.jsx
+├── NavBar                                  layout/NavBar/NavBar.vue
 │   ├── NavLogo
 │   ├── NavLinks
 │   │   ├── NavItem（无下拉）×2            ← 客户案例、资源中心
@@ -95,13 +119,13 @@ App
 │   │           ├── NavDropItem ×4
 │   │           └── NavDropBanner（底部推广）
 │   ├── NavRight（电话 + 登录 + CTA 按钮）
-│   └── MobileMenu                          layout/NavBar/MobileMenu.jsx
+│   └── MobileMenu                          layout/NavBar/MobileMenu.vue
 │       ├── MobNavItem（可展开 accordion）×3
 │       │   └── MobSubItem ×4
 │       ├── MobDirectLink ×2
 │       └── MobileMenuFooter（电话 + CTA）
 │
-├── HomePage                                pages/HomePage.jsx
+├── HomePage                                pages/HomePage.vue
 │   │
 │   ├── HeroSection                         sections/HeroSection/
 │   │   ├── HeroTag（IDC 徽章）
@@ -168,11 +192,11 @@ App
 │       └── FloatingBtn ×4
 │           桌面：右侧竖排 | 移动：底部横排（< 768px）
 │
-├── Footer                                  layout/Footer/Footer.jsx
+├── Footer                                  layout/Footer/Footer.vue
 │   ├── FooterBrandCol（Logo+简介+电话+Tags）
 │   └── FooterLinkCol ×3（产品/资源/关于）
 │
-└── DemoModal                               ui/DemoModal/DemoModal.jsx
+└── DemoModal                               ui/DemoModal/DemoModal.vue
     ├── ModalOverlay（点击遮罩关闭）
     ├── StepIndicator（3 步进度条）
     ├── ModalStep1（姓名+公司+手机+验证码）
@@ -209,11 +233,24 @@ talentpro/
 │   └── favicon.ico
 │
 ├── src/
-│   ├── main.jsx                    # ReactDOM.createRoot
-│   ├── App.jsx                     # 根组件：ModalContext.Provider + 路由占位
+│   ├── main.js                     # createApp + router 挂载
+│   ├── App.vue                     # 根组件：5 层 Provider + router-view
+│   ├── router/
+│   │   └── index.js                # Vue Router：Home/Blog/BlogDetail/Forum/Topic
 │   │
-│   ├── context/
-│   │   └── ModalContext.js         # { isOpen, openModal, closeModal }
+│   ├── stores/
+│   │   ├── i18n.js                 # I18nProvider + useI18n
+│   │   ├── theme.js                # ThemeProvider + toggle
+│   │   ├── modal.js                # DemoModal 状态
+│   │   ├── videoModal.js           # VideoModal 状态
+│   │   ├── search.js               # SearchProvider
+│   │   ├── analytics.js            # 埋点队列
+│   │   └── auth.js                 # Auth store（login/register/logout）
+│   │
+│   ├── api/
+│   │   ├── client.js               # Axios 实例（含 token 拦截器）
+│   │   ├── blog.js                 # 博客 API 封装
+│   │   └── forum.js                # 论坛 API 封装
 │   │
 │   ├── tokens/
 │   │   └── index.js                # ⭐ Design Token JS 常量（唯一真相来源）
@@ -245,83 +282,83 @@ talentpro/
 │   ├── components/
 │   │   ├── layout/
 │   │   │   ├── NavBar/
-│   │   │   │   ├── NavBar.jsx
+│   │   │   │   ├── NavBar.vue
 │   │   │   │   ├── NavBar.module.css
-│   │   │   │   ├── NavDropdown.jsx
+│   │   │   │   ├── NavDropdown.vue
 │   │   │   │   ├── NavDropdown.module.css
-│   │   │   │   ├── MobileMenu.jsx
+│   │   │   │   ├── MobileMenu.vue
 │   │   │   │   └── MobileMenu.module.css
 │   │   │   └── Footer/
-│   │   │       ├── Footer.jsx
+│   │   │       ├── Footer.vue
 │   │   │       └── Footer.module.css
 │   │   │
 │   │   ├── sections/
 │   │   │   ├── HeroSection/
-│   │   │   │   ├── HeroSection.jsx
+│   │   │   │   ├── HeroSection.vue
 │   │   │   │   └── HeroSection.module.css
 │   │   │   ├── BrandScrollSection/
-│   │   │   │   ├── BrandScrollSection.jsx
+│   │   │   │   ├── BrandScrollSection.vue
 │   │   │   │   └── BrandScrollSection.module.css
 │   │   │   ├── StatsSection/
 │   │   │   ├── ProductMatrixSection/
-│   │   │   │   ├── ProductMatrixSection.jsx
+│   │   │   │   ├── ProductMatrixSection.vue
 │   │   │   │   ├── ProductMatrixSection.module.css
-│   │   │   │   └── ProductCard.jsx
+│   │   │   │   └── ProductCard.vue
 │   │   │   ├── AiFamilySection/
-│   │   │   │   ├── AiFamilySection.jsx
+│   │   │   │   ├── AiFamilySection.vue
 │   │   │   │   ├── AiFamilySection.module.css
-│   │   │   │   └── AiCard.jsx
+│   │   │   │   └── AiCard.vue
 │   │   │   ├── IndustrySolutionSection/
-│   │   │   │   ├── IndustrySolutionSection.jsx
+│   │   │   │   ├── IndustrySolutionSection.vue
 │   │   │   │   ├── IndustrySolutionSection.module.css
-│   │   │   │   ├── IndustryPanel.jsx
-│   │   │   │   └── ProductScreenshot.jsx
+│   │   │   │   ├── IndustryPanel.vue
+│   │   │   │   └── ProductScreenshot.vue
 │   │   │   ├── TestimonialSection/
-│   │   │   │   ├── TestimonialSection.jsx
+│   │   │   │   ├── TestimonialSection.vue
 │   │   │   │   ├── TestimonialSection.module.css
-│   │   │   │   └── TestimonialCard.jsx
+│   │   │   │   └── TestimonialCard.vue
 │   │   │   ├── LogoWallSection/
-│   │   │   │   ├── LogoWallSection.jsx
+│   │   │   │   ├── LogoWallSection.vue
 │   │   │   │   └── LogoWallSection.module.css
 │   │   │   ├── WhyUsSection/
-│   │   │   │   ├── WhyUsSection.jsx
+│   │   │   │   ├── WhyUsSection.vue
 │   │   │   │   ├── WhyUsSection.module.css
-│   │   │   │   └── MetricCard.jsx
+│   │   │   │   └── MetricCard.vue
 │   │   │   ├── ResourceSection/
-│   │   │   │   ├── ResourceSection.jsx
+│   │   │   │   ├── ResourceSection.vue
 │   │   │   │   ├── ResourceSection.module.css
-│   │   │   │   └── ResourceCard.jsx
+│   │   │   │   └── ResourceCard.vue
 │   │   │   ├── CtaBannerSection/
-│   │   │   │   ├── CtaBannerSection.jsx
+│   │   │   │   ├── CtaBannerSection.vue
 │   │   │   │   └── CtaBannerSection.module.css
 │   │   │   └── FloatingBar/
-│   │   │       ├── FloatingBar.jsx
+│   │   │       ├── FloatingBar.vue
 │   │   │       └── FloatingBar.module.css
 │   │   │
 │   │   └── ui/
 │   │       ├── Button/
-│   │       │   ├── Button.jsx
+│   │       │   ├── Button.vue
 │   │       │   └── Button.module.css
 │   │       ├── Tag/
 │   │       ├── Badge/
 │   │       ├── SectionHeader/
-│   │       │   ├── SectionHeader.jsx
+│   │       │   ├── SectionHeader.vue
 │   │       │   └── SectionHeader.module.css
 │   │       ├── TabNav/
-│   │       │   ├── TabNav.jsx
+│   │       │   ├── TabNav.vue
 │   │       │   └── TabNav.module.css
 │   │       ├── RevealWrapper/
-│   │       │   └── RevealWrapper.jsx
+│   │       │   └── RevealWrapper.vue
 │   │       └── DemoModal/
-│   │           ├── DemoModal.jsx
+│   │           ├── DemoModal.vue
 │   │           ├── DemoModal.module.css
-│   │           ├── ModalStep1.jsx
-│   │           ├── ModalStep2.jsx
-│   │           ├── ModalStep3.jsx
-│   │           └── ModalSuccess.jsx
+│   │           ├── ModalStep1.vue
+│   │           ├── ModalStep2.vue
+│   │           ├── ModalStep3.vue
+│   │           └── ModalSuccess.vue
 │   │
 │   └── pages/
-│       └── HomePage.jsx            # 组装所有 Section
+│       └── HomePage.vue            # 组装所有 Section
 │
 ├── docs/
 └── dist/                           # 构建产物（gitignore）
@@ -633,7 +670,7 @@ ProductCard.propTypes = {
 ### 9.1 导航滚动变色
 
 ```jsx
-// NavBar.jsx：通过 useNavScroll 返回 scrolled，
+// NavBar.vue：通过 useNavScroll 返回 scrolled，
 // 用 cx(styles.nav, { [styles.scrolled]: scrolled }) 动态切换 class
 ```
 
@@ -647,7 +684,7 @@ const { openModal } = useContext(ModalContext);
 
 ### 9.3 轮播 Resize 修复（BUG-02 根本性解决）
 
-React 版本通过 `useCarousel` Hook 的 resize 监听，在宽度变化后用 `setCurrentIdx(prev => prev)` 触发 effect 重新读取 DOM 宽度并重算 `translateX`，彻底告别旧版中外部变量陈旧问题。
+Vue 版本通过 `useCarousel` Composable 的 resize 监听，在宽度变化后用 `setCurrentIdx(prev => prev)` 触发 effect 重新读取 DOM 宽度并重算 `translateX`，彻底告别旧版中外部变量陈旧问题。
 
 ### 9.4 悬停暂停（BUG-03 根本性解决）
 
@@ -690,8 +727,90 @@ export default defineConfig({
 ---
 
 > 📌 **PO 确认项**：
-> 1. 技术栈：React 18 + Vite 5 + CSS Modules（无 TypeScript，无 UI 库）
-> 2. 数据策略：纯静态 JS 常量（无后端 API）
+> 1. 技术栈：Vue 3.5 + Vite 5 + CSS Modules + Vue Router（无 TypeScript，无 UI 库）
+> 2. 数据策略：营销门户纯静态 JS 常量；博客/论坛接入后端 NestJS API
 > 3. 部署平台：Vercel 静态站 / 其他
 
-*架构师 Agent 产出 | 2026-03-15*
+---
+
+## 11. 后端架构（v2.6.0 新增）
+
+### 11.1 技术栈
+
+| 层级 | 技术 | 版本 | 说明 |
+|------|------|------|------|
+| 运行时 | Node.js | ≥ 20 | LTS |
+| 框架 | NestJS | 11 | 模块化 + DI/IOC |
+| ORM | Prisma | 6 | 类型安全 + 自动迁移 |
+| 数据库 | PostgreSQL | 16 | 关系型 + JSONB |
+| 缓存 | Redis | 7 | 会话/缓存/限流 |
+| 搜索 | Meilisearch | — | 全文搜索 |
+| 存储 | MinIO | — | S3 兼容对象存储 |
+| 认证 | JWT + bcrypt | — | Access/Refresh Token 轮转 |
+
+### 11.2 模块结构
+
+```
+talentpro-backend/apps/api/src/modules/
+├── auth/          # 注册/登录/JWT/刷新/权限守卫
+├── blog/          # 文章/分类/标签 CRUD
+├── forum/         # 话题/回复/置顶/锁定
+├── lead/          # 演示预约线索
+├── analytics/     # 页面浏览/事件/转化漏斗
+└── user/          # 用户管理
+```
+
+### 11.3 认证流程
+
+1. **注册**：`POST /auth/register` → bcrypt 哈希 → 默认 `USER` 角色
+2. **登录**：`POST /auth/login` → 验证密码 → 签发 accessToken（15m）+ refreshToken（7d）
+3. **刷新**：`POST /auth/refresh` → 验证 refreshToken → 删除旧令牌 → 签发新令牌对
+4. **权限**：`@Roles('ADMIN', 'SUPER_ADMIN')` + `RolesGuard` → JWT 解码 → 角色校验
+
+---
+
+## 12. Admin 后台架构（v2.6.0 新增）
+
+### 12.1 技术栈
+
+| 维度 | 技术 | 版本 |
+|------|------|------|
+| 框架 | Vue | 3.5 |
+| 构建 | Vite | 5.4 |
+| UI 库 | Element Plus | 2.8 |
+| 状态 | Pinia | 2.2 |
+| 路由 | Vue Router | 4.4 |
+| 图标 | @element-plus/icons-vue | 2.3 |
+
+### 12.2 目录结构
+
+```
+talentpro-admin/
+├── src/
+│   ├── main.js              # createApp + Pinia + Router + ElementPlus
+│   ├── App.vue
+│   ├── router/
+│   │   └── index.js         # 路由守卫（JWT 校验）
+│   ├── stores/
+│   │   └── auth.js          # token + user + login/logout
+│   ├── api/
+│   │   └── client.js        # Axios + Bearer 拦截器
+│   └── views/
+│       ├── LoginView.vue
+│       ├── LayoutView.vue   # 侧边栏 + 顶部栏
+│       ├── DashboardView.vue
+│       ├── BlogManagerView.vue
+│       ├── ForumManagerView.vue
+│       ├── AnalyticsView.vue
+│       ├── UsersView.vue
+│       └── LeadsView.vue
+```
+
+### 12.3 权限模型
+
+- 登录页（`public`）：无需认证
+- 所有后台页面：路由守卫检查 `auth.isLoggedIn` → 未登录跳转 `/login`
+- API 请求：Axios 拦截器自动附加 `Authorization: Bearer ${token}`
+- 401 响应：自动 logout + 跳转登录页
+
+*架构师 Agent 产出 | 2026-03-15 | v2.6.0 更新 2026-05-26*

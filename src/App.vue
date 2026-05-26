@@ -7,6 +7,7 @@
   <VideoModal />
   <SearchModal />
   <ContactModal :is-open="contactOpen" @close="contactOpen = false" />
+  <AuthModal :is-open="authOpen" @close="authOpen = false" />
   <ChatBot
     :is-open="chatOpen"
     @close="chatOpen = false"
@@ -30,11 +31,13 @@ import { createModal } from '@/stores/modal.js';
 import { createSearch } from '@/stores/search.js';
 import { createVideoModal } from '@/stores/videoModal.js';
 import { createAnalytics } from '@/stores/analytics.js';
+import { createAuth } from '@/stores/auth.js';
 import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
 import DemoModal from '@/components/ui/DemoModal/DemoModal.vue';
 import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
 import SearchModal from '@/components/ui/SearchModal/SearchModal.vue';
 import ContactModal from '@/components/ui/ContactModal/ContactModal.vue';
+import AuthModal from '@/components/ui/AuthModal/AuthModal.vue';
 import ChatBot from '@/components/ui/ChatBot/ChatBot.vue';
 import CookieBanner from '@/components/ui/CookieBanner/CookieBanner.vue';
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
@@ -46,6 +49,7 @@ const modal = createModal();
 const search = createSearch();
 const videoModal = createVideoModal();
 const analytics = createAnalytics();
+const auth = createAuth();
 
 provide('i18n', i18n);
 provide('theme', theme);
@@ -53,10 +57,13 @@ provide('search', search);
 provide('modal', modal);
 provide('videoModal', videoModal);
 provide('analytics', analytics);
+provide('auth', auth);
+provide('authModal', { open: () => { authOpen.value = true; } });
 
 const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
+const authOpen = ref(false);
 
 /* Cookie 同意横幅 */
 const cookieConsent = useCookieConsent();

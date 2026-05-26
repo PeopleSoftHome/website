@@ -91,9 +91,28 @@
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
 
-          <Button variant="ghost" size="sm" :class-name="scrolled ? s.loginScrolled : ''">
-            {{ t('nav.login') }}
-          </Button>
+          <template v-if="auth.isLoggedIn.value">
+            <div :class="s.userWrap">
+              <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
+                <span :class="s.userAvatar">{{ userInitial }}</span>
+                <span :class="s.userName">{{ auth.user.value?.name || auth.user.value?.email }}</span>
+                <Icon name="chevron-down" :size="12" />
+              </button>
+              <div v-if="userMenuOpen" :class="s.userMenu" role="menu">
+                <button role="menuitem" :class="s.userMenuItem" @click="goProfile">
+                  <Icon name="user" :size="14" /> {{ t('nav.profile') }}
+                </button>
+                <button role="menuitem" :class="s.userMenuItem" @click="handleLogout">
+                  <Icon name="logout" :size="14" /> {{ t('nav.logout') }}
+                </button>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <Button variant="ghost" size="sm" :class-name="scrolled ? s.loginScrolled : ''" @click="openAuth">
+              {{ t('nav.login') }}
+            </Button>
+          </template>
           <Button variant="primary" size="sm" @click="modalStore.openModal()">
             {{ t('nav.demo') }}
           </Button>
@@ -112,11 +131,12 @@
     </div>
   </nav>
 
-  <MobileMenu :is-open="mobileOpen" @close="closeMobile" />
+  <MobileMenu :is-open="mobileOpen" @close="closeMobile" @open-auth="authOpen = true" />
 </template>
 
 <script setup>
 import { ref, computed, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { NAV_LINKS } from '@/data/navigation.js';
 import { LOCALES } from '@/stores/i18n.js';
@@ -132,18 +152,25 @@ const i18nStore   = inject('i18n', { t: (k) => k, locale: 'zh', setLocale: () =>
 const themeStore  = inject('theme', { theme: ref('light'), toggle: () => {} });
 const searchStore = inject('search', { openSearch: () => {} });
 const modalStore  = inject('modal', { openModal: () => {} });
+const auth        = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
+const authModal   = inject('authModal', { open: () => {} });
 
 const { t, locale, setLocale } = i18nStore;
 
 const mobileOpen = ref(false);
 const langMenuOpen = ref(false);
+const userMenuOpen = ref(false);
 const searchOpen = ref(false);
 const searchQuery = ref('');
 const searchInputRef = ref(null);
+const router = useRouter();
 
 const openMobile = () => { mobileOpen.value = true; };
 const closeMobile = () => { mobileOpen.value = false; };
 const pickLang = (l) => { setLocale(l); langMenuOpen.value = false; };
+const openAuth = () => { authModal.open(); };
+const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
+const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
 
 const openSearchBar = () => {
   searchOpen.value = true;
@@ -164,4 +191,8 @@ const handleSearchKey = (e) => {
 };
 
 const isDark = computed(() => themeStore.theme?.value === 'dark');
+const userInitial = computed(() => {
+  const name = auth.user.value?.name || auth.user.value?.email || '';
+  return name.charAt(0).toUpperCase();
+});
 </script>

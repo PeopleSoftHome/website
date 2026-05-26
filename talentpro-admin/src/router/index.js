@@ -12,6 +12,9 @@ const routes = [
       { path: 'leads', component: () => import('@/views/LeadsView.vue') },
       { path: 'users', component: () => import('@/views/UsersView.vue') },
       { path: 'contents', component: () => import('@/views/ContentsView.vue') },
+      { path: 'blogs', component: () => import('@/views/BlogManagerView.vue') },
+      { path: 'forums', component: () => import('@/views/ForumManagerView.vue') },
+      { path: 'analytics', component: () => import('@/views/AnalyticsView.vue') },
     ],
   },
 ];

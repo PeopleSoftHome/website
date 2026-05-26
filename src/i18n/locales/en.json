@@ -18,6 +18,8 @@
     "langLabel":      "Language",
     "themeLight":     "Switch to light mode",
     "themeDark":      "Switch to dark mode",
+    "profile":        "Profile",
+    "logout":         "Logout",
     "aiItems": {
       "recruit":      "AI Recruiter",
       "recruitDesc":  "Smarter, faster hiring",
@@ -600,5 +602,35 @@
         "isHandoff": true
       }
     }
+  },
+
+  "auth": {
+    "loginTitle":         "Welcome Back",
+    "loginSubtitle":      "Sign in to your TalentPro account",
+    "registerTitle":      "Create Account",
+    "registerSubtitle":   "Join us and start your smart HR journey",
+    "email":              "Email",
+    "emailPlaceholder":   "Enter your email",
+    "emailRequired":      "Email is required",
+    "emailInvalid":       "Invalid email format",
+    "password":           "Password",
+    "passwordPlaceholder":"Enter your password",
+    "passwordRequired":   "Password is required",
+    "passwordMin":        "Password must be at least 6 characters",
+    "confirmPassword":    "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "confirmRequired":    "Please confirm your password",
+    "passwordMismatch":   "Passwords do not match",
+    "name":               "Name",
+    "namePlaceholder":    "Enter your name",
+    "nameMin":            "Name must be at least 2 characters",
+    "loginBtn":           "Sign In",
+    "registerBtn":        "Sign Up",
+    "submitting":         "Submitting...",
+    "noAccount":          "Don't have an account?",
+    "hasAccount":         "Already have an account?",
+    "toRegister":         "Sign Up",
+    "toLogin":            "Sign In",
+    "genericError":       "Operation failed, please try again later"
   }
 }

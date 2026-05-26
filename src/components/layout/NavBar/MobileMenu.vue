@@ -37,6 +37,19 @@
         </template>
       </div>
       <div :class="s.panelFoot">
+        <template v-if="auth.isLoggedIn.value">
+          <div :class="s.userInfo">
+            <span :class="s.userAvatar">{{ userInitial }}</span>
+            <span>{{ auth.user.value?.name || auth.user.value?.email }}</span>
+          </div>
+          <router-link to="/profile" :class="s.directLink" @click="emit('close')">{{ t('nav.profile') }}</router-link>
+          <button :class="s.directLink" style="background:none;border:none;width:100%;text-align:left" @click="handleLogout">{{ t('nav.logout') }}</button>
+        </template>
+        <template v-else>
+          <Button variant="ghost" size="lg" block @click="openAuth(); emit('close')">
+            {{ t('nav.login') }}
+          </Button>
+        </template>
         <Button variant="primary" size="lg" block @click="modalStore.openModal(); emit('close')">
           {{ t('nav.demo') }}
         </Button>
@@ -46,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, computed } from 'vue';
 import { NAV_LINKS } from '@/data/navigation.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import Button from '../../ui/Button/Button.vue';
@@ -54,12 +67,28 @@ import s from './MobileMenu.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const modalStore = inject('modal', { openModal: () => {} });
+const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
+const authModal = inject('authModal', { open: () => {} });
 
 defineProps({ isOpen: { type: Boolean, default: false } });
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'open-auth']);
 
 const expandedId = ref(null);
 const toggle = (id) => {
   expandedId.value = expandedId.value === id ? null : id;
+};
+
+const userInitial = computed(() => {
+  const name = auth.user.value?.name || auth.user.value?.email || '';
+  return name.charAt(0).toUpperCase();
+});
+
+const openAuth = () => {
+  authModal.open();
+};
+
+const handleLogout = () => {
+  auth.logout();
+  emit('close');
 };
 </script>
