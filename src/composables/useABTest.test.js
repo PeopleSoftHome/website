@@ -21,7 +21,9 @@ describe('useABTest', () => {
   });
 
   it('persists the same variant for the same visitor', () => {
-    localStorage.getItem.mockReturnValue(null);
+    const store = {};
+    localStorage.getItem.mockImplementation((key) => store[key] ?? null);
+    localStorage.setItem.mockImplementation((key, value) => { store[key] = value; });
     const v1 = useABTest('test-2', ['a', 'b']);
     // Re-create should read from storage
     const v2 = useABTest('test-2', ['a', 'b']);
@@ -40,7 +42,10 @@ describe('useABTest', () => {
   });
 
   it('force() overrides variant', () => {
-    localStorage.getItem.mockReturnValue(null);
+    // use a real in-memory store so force() writes and reads back
+    const store = {};
+    localStorage.getItem.mockImplementation((key) => store[key] ?? null);
+    localStorage.setItem.mockImplementation((key, value) => { store[key] = value; });
     useABTest.force('test-4', 'variant-x');
     const variant = useABTest('test-4', ['control', 'variant-x', 'variant-y']);
     expect(variant.value).toBe('variant-x');

@@ -361,6 +361,27 @@
     }
   },
 
+  "roi": {
+    "sectionTag":   " ROI 计算器",
+    "sectionTitle": "算一笔账，看看 TalentPro 能为您的企业节省多少",
+    "sectionSub":   "基于 8000+ 企业真实数据，5 个参数快速估算年度投资回报",
+    "empCount":     "员工总数",
+    "monthHire":    "月均招聘人数",
+    "hireCycle":    "招聘平均周期",
+    "hrTeam":       "HR 团队人数",
+    "hrSalary":     "人均 HR 月薪",
+    "totalSavings": "年度总节省",
+    "roiRate":      "预估 ROI",
+    "payback":      "投资回收期",
+    "chartTitle":   "引入 TalentPro 前后成本对比",
+    "chartBefore":  "引入前（年）",
+    "chartAfter":   "引入后（年）",
+    "saveHr":       "节省 HR 工时成本",
+    "saveRecruit":  "减少招聘周期成本",
+    "saveTurnover": "降低人员流失成本",
+    "cta":          "基于您的规模获取定制方案 →"
+  },
+
   "cta": {
     "title":  "立即体验，让企业人才管理先人一步",
     "sub":    "专属顾问 1 个工作日内为您解答，量身定制解决方案",
@@ -428,7 +449,8 @@
     "summaryName":     "姓名",
     "summaryCompany":  "公司",
     "summaryProducts": "意向产品",
-    "summaryScale":    "企业规模"
+    "summaryScale":    "企业规模",
+    "recommendTitle":  "您可能还需要"
   },
 
   "floatingBar": {

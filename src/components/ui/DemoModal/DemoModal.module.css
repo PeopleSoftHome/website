@@ -240,6 +240,63 @@
   border-color: var(--primary);
 }
 
+/* ── 智能推荐 ── */
+.recommend {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--primary-faint-bg);
+  border: 1px dashed var(--primary-subtle-border);
+  border-radius: var(--radius-md);
+}
+
+.recTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.recChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recChip {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-subtle-border);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.recChip:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .recommend {
+  background: var(--primary-highlight-bg-dark);
+  border-color: var(--primary-subtle-border);
+}
+
+[data-theme="dark"] .recChip {
+  background: var(--primary-subtle-bg);
+  color: var(--primary);
+  border-color: var(--primary-subtle-border);
+}
+
+[data-theme="dark"] .recChip:hover {
+  background: var(--primary);
+  color: white;
+}
+
 /* ── 成功态 ── */
 .success {
   text-align: center;

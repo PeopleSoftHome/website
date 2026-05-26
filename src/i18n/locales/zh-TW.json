@@ -357,6 +357,27 @@
     }
   },
 
+  "roi": {
+    "sectionTag":   " ROI 計算器",
+    "sectionTitle": "算一筆賬，看看 TalentPro 能為您的企業節省多少",
+    "sectionSub":   "基於 8000+ 企業真實數據，5 個參數快速估算年度投資回報",
+    "empCount":     "員工總數",
+    "monthHire":    "月均招聘人數",
+    "hireCycle":    "招聘平均週期",
+    "hrTeam":       "HR 團隊人數",
+    "hrSalary":     "人均 HR 月薪",
+    "totalSavings": "年度總節省",
+    "roiRate":      "預估 ROI",
+    "payback":      "投資回收期",
+    "chartTitle":   "引入 TalentPro 前後成本對比",
+    "chartBefore":  "引入前（年）",
+    "chartAfter":   "引入後（年）",
+    "saveHr":       "節省 HR 工時成本",
+    "saveRecruit":  "減少招聘週期成本",
+    "saveTurnover": "降低人員流失成本",
+    "cta":          "基於您的規模獲取定製方案 →"
+  },
+
   "cta": {
     "title":  "立即體驗，讓企業人才管理先人一步",
     "sub":    "專屬顧問 1 個工作日內為您解答，量身定制解決方案",
@@ -424,7 +445,8 @@
     "summaryName":     "姓名",
     "summaryCompany":  "公司",
     "summaryProducts": "意向產品",
-    "summaryScale":    "企業規模"
+    "summaryScale":    "企業規模",
+    "recommendTitle":  "您可能還需要"
   },
 
   "floatingBar": {

@@ -37,6 +37,10 @@
     <ResourceSection />
   </Suspense>
   <Suspense>
+    <template #fallback><SectionSkeleton :height="720" /></template>
+    <RoiCalculatorSection />
+  </Suspense>
+  <Suspense>
     <template #fallback><SectionSkeleton :height="440" /></template>
     <CtaBannerSection />
   </Suspense>
@@ -56,6 +60,7 @@ const TestimonialSection      = defineAsyncComponent(() => import('@/components/
 const LogoWallSection         = defineAsyncComponent(() => import('@/components/sections/LogoWallSection/LogoWallSection.vue'));
 const WhyUsSection            = defineAsyncComponent(() => import('@/components/sections/WhyUsSection/WhyUsSection.vue'));
 const ResourceSection         = defineAsyncComponent(() => import('@/components/sections/ResourceSection/ResourceSection.vue'));
+const RoiCalculatorSection    = defineAsyncComponent(() => import('@/components/sections/RoiCalculatorSection/RoiCalculatorSection.vue'));
 const CtaBannerSection        = defineAsyncComponent(() => import('@/components/sections/CtaBannerSection/CtaBannerSection.vue'));
 </script>
 

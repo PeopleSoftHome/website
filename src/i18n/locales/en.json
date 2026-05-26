@@ -361,6 +361,27 @@
     }
   },
 
+  "roi": {
+    "sectionTag":   " ROI Calculator",
+    "sectionTitle": "Calculate how much TalentPro can save your organization",
+    "sectionSub":   "Based on real data from 8,000+ enterprises, estimate annual ROI with 5 parameters",
+    "empCount":     "Total Employees",
+    "monthHire":    "Monthly Hires",
+    "hireCycle":    "Avg. Hiring Cycle (days)",
+    "hrTeam":       "HR Team Size",
+    "hrSalary":     "Avg. HR Monthly Salary",
+    "totalSavings": "Annual Savings",
+    "roiRate":      "Estimated ROI",
+    "payback":      "Payback Period",
+    "chartTitle":   "Before vs After TalentPro",
+    "chartBefore":  "Before (Year)",
+    "chartAfter":   "After (Year)",
+    "saveHr":       "HR Time Savings",
+    "saveRecruit":  "Recruitment Cost Reduction",
+    "saveTurnover": "Turnover Cost Reduction",
+    "cta":          "Get a tailored quote for your scale →"
+  },
+
   "cta": {
     "title":  "Experience TalentPro — Stay Ahead of the Talent Curve",
     "sub":    "A dedicated advisor will respond within 1 business day with a tailored solution",
@@ -428,7 +449,8 @@
     "summaryName":     "Name",
     "summaryCompany":  "Company",
     "summaryProducts": "Products",
-    "summaryScale":    "Scale"
+    "summaryScale":    "Scale",
+    "recommendTitle":  "You may also need"
   },
 
   "floatingBar": {
