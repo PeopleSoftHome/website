@@ -658,5 +658,18 @@
     "joined":             "加入于",
     "loading":            "加载中...",
     "saveError":          "保存失败"
+  },
+  "pagination": {
+    "prev":               "上一页",
+    "next":               "下一页"
+  },
+  "notification": {
+    "title":              "通知中心",
+    "readAll":            "全部已读",
+    "empty":              "暂无通知"
+  },
+  "editor": {
+    "preview":            "预览",
+    "edit":               "编辑"
   }
 }

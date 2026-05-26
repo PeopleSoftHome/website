@@ -16,7 +16,14 @@
         </div>
 
         <div v-if="loading" class="blog-loading">
-          <el-skeleton :rows="3" animated v-for="i in 3" :key="i" />
+          <div v-for="i in 3" :key="i" class="skeleton-card">
+            <Skeleton width="100%" height="180px" radius="var(--radius-md)" />
+            <div style="padding:16px 0;display:flex;flex-direction:column;gap:10px">
+              <Skeleton width="60%" height="16px" />
+              <Skeleton width="40%" height="14px" />
+              <Skeleton width="100%" height="14px" />
+            </div>
+          </div>
         </div>
 
         <div v-else-if="posts.length" class="blog-grid">
@@ -45,14 +52,12 @@
           <p>{{ t('blog.noPosts') }}</p>
         </div>
 
-        <el-pagination
+        <Pagination
           v-if="total > pageSize"
-          layout="prev, pager, next"
           :total="total"
           :page-size="pageSize"
-          v-model:current-page="page"
-          @current-change="fetchPosts"
-          class="blog-pagination"
+          v-model="page"
+          @change="fetchPosts"
         />
       </div>
     </main>
@@ -65,6 +70,8 @@ import { ref, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
+import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
+import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog.js';
 
 const { t } = inject('i18n', { t: (k) => k });
@@ -152,8 +159,8 @@ onMounted(() => {
 .blog-tag { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); }
 
 .blog-empty { text-align: center; padding: 60px 0; color: var(--gray-500); }
-.blog-loading { display: flex; flex-direction: column; gap: 16px; }
-.blog-pagination { margin-top: 40px; justify-content: center; }
+.blog-loading { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.skeleton-card { display: flex; flex-direction: column; }
 
 [data-theme="dark"] .page-title { color: var(--gray-50); }
 [data-theme="dark"] .blog-post-title { color: var(--gray-50); }

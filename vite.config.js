@@ -56,9 +56,12 @@ export default defineConfig({
   ],
   build: {
     outDir: 'dist',
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
-        manualChunks: { vendor: ['vue'] },
+        manualChunks: {
+          vendor: ['vue', 'vue-router'],
+        },
       },
     },
   },

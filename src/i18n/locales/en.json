@@ -658,5 +658,18 @@
     "joined":             "Joined",
     "loading":            "Loading...",
     "saveError":          "Failed to save"
+  },
+  "pagination": {
+    "prev":               "Prev",
+    "next":               "Next"
+  },
+  "notification": {
+    "title":              "Notifications",
+    "readAll":            "Mark all as read",
+    "empty":              "No notifications"
+  },
+  "editor": {
+    "preview":            "Preview",
+    "edit":               "Edit"
   }
 }

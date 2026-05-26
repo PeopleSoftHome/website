@@ -17,6 +17,7 @@ import { BlogModule } from './modules/blog/blog.module';
 import { ForumModule } from './modules/forum/forum.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SystemModule } from './modules/system/system.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { SystemModule } from './modules/system/system.module';
     ForumModule,
     AnalyticsModule,
     SystemModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

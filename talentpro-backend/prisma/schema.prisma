@@ -375,6 +375,21 @@ model Comment {
   @@map("comments")
 }
 
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  content   String
+  data      Json?    @default("{}")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
 // ==================== Leads ====================
 
 model DemoBooking {

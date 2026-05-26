@@ -1,0 +1,17 @@
+.skeleton {
+  background: var(--gray-100);
+  flex-shrink: 0;
+}
+
+.animate {
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+[data-theme="dark"] .skeleton {
+  background: var(--gray-800);
+}

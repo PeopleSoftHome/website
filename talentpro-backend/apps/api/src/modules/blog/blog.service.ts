@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PostStatus, CommentStatus } from '@prisma/client';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class BlogService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   // ─── Categories ───
   async findAllCategories() {
@@ -148,13 +152,62 @@ export class BlogService {
     content: string;
     parentId?: string;
   }) {
-    return this.prisma.comment.create({
+    const comment = await this.prisma.comment.create({
       data: {
         ...data,
         status: CommentStatus.PENDING,
       },
       include: { author: { select: { id: true, name: true, avatar: true } } },
     });
+
+    // 异步发送通知（不阻塞评论创建）
+    this.sendNotifications(data, comment).catch(() => {});
+
+    return comment;
+  }
+
+  private async sendNotifications(
+    data: { authorId: string; content: string; parentId?: string; entityType: string; entityId: string },
+    comment: any,
+  ) {
+    const author = await this.prisma.user.findUnique({ where: { id: data.authorId }, select: { name: true } });
+    const authorName = author?.name || '有人';
+
+    // 1. 回复通知：给父评论作者
+    if (data.parentId) {
+      const parent = await this.prisma.comment.findUnique({
+        where: { id: data.parentId },
+        select: { authorId: true },
+      });
+      if (parent && parent.authorId !== data.authorId) {
+        await this.notificationService.create({
+          userId: parent.authorId,
+          type: 'COMMENT_REPLY',
+          title: '收到新回复',
+          content: `${authorName} 回复了你的评论`,
+          data: { commentId: comment.id, entityType: data.entityType, entityId: data.entityId },
+        });
+      }
+    }
+
+    // 2. @mention 通知
+    const mentions = data.content.match(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g) || [];
+    const uniqueNames = [...new Set(mentions.map((m) => m.slice(1)))];
+    for (const name of uniqueNames) {
+      const user = await this.prisma.user.findFirst({
+        where: { name, status: 'ACTIVE' },
+        select: { id: true },
+      });
+      if (user && user.id !== data.authorId) {
+        await this.notificationService.create({
+          userId: user.id,
+          type: 'MENTION',
+          title: '有人提到了你',
+          content: `${authorName} 在评论中提到了你`,
+          data: { commentId: comment.id, entityType: data.entityType, entityId: data.entityId },
+        });
+      }
+    }
   }
 
   async moderateComment(id: string, status: CommentStatus) {

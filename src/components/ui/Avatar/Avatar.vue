@@ -1,6 +1,6 @@
 <template>
   <div :class="s.avatarWrap" :style="wrapStyle">
-    <img v-if="src" :src="src" :alt="alt" :class="s.avatarImg" />
+    <img v-if="src" :src="src" :alt="alt" :class="s.avatarImg" loading="lazy" />
     <span v-else :class="s.avatarFallback">{{ initial }}</span>
   </div>
 </template>

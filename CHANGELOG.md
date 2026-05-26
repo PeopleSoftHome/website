@@ -5,6 +5,59 @@ All notable changes to TalentPro HR Portal will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0] — 2026-05-26 ✅ 体验深化 + 质量加固
+
+### Added — 通知中心 + 富文本编辑器 + 性能优化 + E2E 测试
+
+**Sprint 20 — 通知中心**
+- 后端: Prisma `Notification` 模型（type/title/content/data/isRead）+ 索引优化
+- 后端: 新建 `notification` 模块（Controller/Service/Module）
+- 后端: `GET /notifications` 分页列表、`PATCH /notifications/:id/read`、`PATCH /notifications/read-all`
+- 后端: `SSE /notifications/stream` 实时推送（NestJS `@Sse()` + Observable）
+- 后端: `BlogService.createComment` 自动触发 @mention 通知 + 评论回复通知
+- 后端: `ForumService.createPost` 自动触发 @mention 通知 + 话题回复通知
+- 前端: `NotificationBell.vue` 铃铛图标 + 未读红点 + 通知下拉列表
+- 前端: `NavBar.vue` 集成通知铃铛（登录后显示）
+- 前端: `src/api/notification.js` 封装 + EventSource SSE 连接
+
+**Sprint 21 — 富文本编辑器**
+- 前端: `MarkdownEditor.vue` 自研轻量 Markdown 编辑器
+  - 工具栏: 粗体、斜体、链接、引用、行内代码、代码块、图片
+  - 实时预览模式（编辑/预览切换）
+  - 保留 @mention autocomplete 功能
+- 前端: `CommentForm.vue` 替换纯文本 textarea 为 `MarkdownEditor`
+- 前端: 评论内容渲染支持 Markdown（粗体、斜体、链接、代码、引用、图片、@mention 高亮）
+
+**Sprint 22 — 前端性能全面优化**
+- Vite: `manualChunks` 拆分 `vue-router` 到 vendor chunk，提升缓存命中率
+- Vite: 添加 `chunkSizeWarningLimit: 500`
+- 前端: `useLazyImage.js` composable（IntersectionObserver + `loading="lazy"`）
+- 前端: `Avatar.vue` 添加 `loading="lazy"`
+- 前端: `Skeleton.vue` 自研骨架屏组件（替代 Element Plus `el-skeleton`）
+- 前端: `Pagination.vue` 自研分页组件（替代 Element Plus `el-pagination`）
+- 前端: `BlogListView.vue` / `ForumView.vue` 移除所有 Element Plus 依赖（`el-skeleton`、`el-avatar`、`el-icon`、`el-tag`、`el-pagination`）
+- 字体: `index.html` 已配置 `font-display: swap`
+
+**Sprint 23 — E2E 测试**
+- 安装 `@playwright/test` 并配置 `playwright.config.js`
+- 核心流程测试覆盖:
+  - `e2e/home.spec.js` — 首页加载、预约弹窗、暗色模式、博客导航
+  - `e2e/blog.spec.js` — 博客列表、详情、评论区
+  - `e2e/forum.spec.js` — 论坛列表、话题详情
+  - `e2e/auth.spec.js` — 登录弹窗、注册模式切换
+
+### Changed
+- i18n: 新增 `notification.*`、`editor.*`、`pagination.*` key（中/英/繁）
+- 后端: `AppModule` 注册 `NotificationModule`
+- 后端: `BlogModule` / `ForumModule` 导入 `NotificationModule`
+
+### Technical Debt Addressed
+- 前端: 彻底移除 Element Plus 组件库依赖（营销门户不再混用 UI 库）
+- 后端: 建立 SSE 实时通信基础设施（为 v2.9.0 WebSocket 铺垫）
+- 前端: 建立 E2E 测试基础设施（Playwright）
+
+---
+
 ## [2.7.0] — 2026-05-26 ✅ 社交互动迭代
 
 ### Added — 个人主页 + 评论系统 + @提及

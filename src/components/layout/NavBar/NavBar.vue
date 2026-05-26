@@ -92,6 +92,7 @@
           </button>
 
           <template v-if="auth.isLoggedIn.value">
+            <NotificationBell />
             <div :class="s.userWrap">
               <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
                 <span :class="s.userAvatar">{{ userInitial }}</span>

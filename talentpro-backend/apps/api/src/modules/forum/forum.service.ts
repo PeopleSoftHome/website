@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class ForumService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   // ─── Categories ───
   async findAllCategories() {
@@ -123,6 +127,9 @@ export class ForumService {
       data: { replyCount: { increment: 1 } },
     });
 
+    // 异步发送通知
+    this.sendNotifications(data, post, topic).catch(() => {});
+
     return post;
   }
 
@@ -139,6 +146,45 @@ export class ForumService {
       data: { replyCount: { decrement: 1 } },
     });
     return { message: '删除成功' };
+  }
+
+  private async sendNotifications(
+    data: { topicId: string; authorId: string; content: string },
+    post: any,
+    topic: any,
+  ) {
+    const author = await this.prisma.user.findUnique({ where: { id: data.authorId }, select: { name: true } });
+    const authorName = author?.name || '有人';
+
+    // 1. 回复话题通知：给话题作者
+    if (topic.authorId && topic.authorId !== data.authorId) {
+      await this.notificationService.create({
+        userId: topic.authorId,
+        type: 'COMMENT_REPLY',
+        title: '话题收到新回复',
+        content: `${authorName} 回复了你的话题《${topic.title}》`,
+        data: { postId: post.id, topicId: data.topicId },
+      });
+    }
+
+    // 2. @mention 通知
+    const mentions = data.content.match(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g) || [];
+    const uniqueNames = [...new Set(mentions.map((m) => m.slice(1)))];
+    for (const name of uniqueNames) {
+      const user = await this.prisma.user.findFirst({
+        where: { name, status: 'ACTIVE' },
+        select: { id: true },
+      });
+      if (user && user.id !== data.authorId) {
+        await this.notificationService.create({
+          userId: user.id,
+          type: 'MENTION',
+          title: '有人提到了你',
+          content: `${authorName} 在回复中提到了你`,
+          data: { postId: post.id, topicId: data.topicId },
+        });
+      }
+    }
   }
 
   async markAsSolution(postId: string) {

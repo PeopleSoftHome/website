@@ -17,7 +17,14 @@
         </div>
 
         <div v-if="loading" class="forum-loading">
-          <el-skeleton :rows="3" animated v-for="i in 3" :key="i" />
+          <div v-for="i in 3" :key="i" class="skeleton-row">
+            <Skeleton width="40px" height="40px" radius="50%" />
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <Skeleton width="60%" height="16px" />
+              <Skeleton width="40%" height="14px" />
+            </div>
+            <Skeleton width="80px" height="14px" />
+          </div>
         </div>
 
         <div v-else-if="topics.length" class="topic-list">
@@ -28,11 +35,11 @@
             @click="goToTopic(topic.id)"
           >
             <div class="topic-left">
-              <el-avatar :size="40" :icon="UserFilled" />
+              <Avatar :size="40" :name="topic.author?.name" />
               <div class="topic-info">
                 <h3 class="topic-title">
-                  <el-tag v-if="topic.isPinned" size="small" type="danger" style="margin-right:6px">置顶</el-tag>
-                  <el-tag v-if="topic.isLocked" size="small" type="info" style="margin-right:6px">已锁定</el-tag>
+                  <span v-if="topic.isPinned" class="tag tag-danger">置顶</span>
+                  <span v-if="topic.isLocked" class="tag tag-info">已锁定</span>
                   {{ topic.title }}
                 </h3>
                 <p class="topic-meta">
@@ -43,8 +50,8 @@
               </div>
             </div>
             <div class="topic-stats">
-              <span><el-icon><ChatDotSquare /></el-icon> {{ topic._count?.posts || 0 }}</span>
-              <span><el-icon><View /></el-icon> {{ topic.viewCount || 0 }}</span>
+              <span>💬 {{ topic._count?.posts || 0 }}</span>
+              <span>👁 {{ topic.viewCount || 0 }}</span>
             </div>
           </div>
         </div>
@@ -53,14 +60,12 @@
           <p>{{ t('forum.noTopics') }}</p>
         </div>
 
-        <el-pagination
+        <Pagination
           v-if="total > pageSize"
-          layout="prev, pager, next"
           :total="total"
           :page-size="pageSize"
-          v-model:current-page="page"
-          @current-change="fetchTopics"
-          class="forum-pagination"
+          v-model="page"
+          @change="fetchTopics"
         />
       </div>
     </main>
@@ -73,6 +78,9 @@ import { ref, onMounted, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
+import Avatar from '@/components/ui/Avatar/Avatar.vue';
+import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
+import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum.js';
 
 const { t } = inject('i18n', { t: (k) => k });
@@ -152,8 +160,13 @@ onMounted(() => {
 .topic-stats span { display: flex; align-items: center; gap: 4px; }
 
 .forum-empty { text-align: center; padding: 60px 0; color: var(--gray-500); }
-.forum-loading { display: flex; flex-direction: column; gap: 16px; }
-.forum-pagination { margin-top: 40px; justify-content: center; }
+.forum-loading { display: flex; flex-direction: column; gap: 12px; }
+.skeleton-row { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; margin-right: 6px; vertical-align: middle; }
+.tag-danger { background: #FEF2F2; color: #DC2626; }
+.tag-info { background: #F3F4F6; color: #6B7280; }
+[data-theme="dark"] .tag-danger { background: rgba(220, 38, 38, 0.15); color: #FCA5A5; }
+[data-theme="dark"] .tag-info { background: rgba(107, 114, 128, 0.15); color: #D1D5DB; }
 
 [data-theme="dark"] .page-title { color: var(--gray-50); }
 [data-theme="dark"] .topic-title { color: var(--gray-50); }
