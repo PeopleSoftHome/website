@@ -19,3 +19,7 @@ npm-debug.log*
 # Environment
 .env
 .env.local
+
+# Admin dashboard
+talentpro-admin/node_modules
+talentpro-admin/dist
