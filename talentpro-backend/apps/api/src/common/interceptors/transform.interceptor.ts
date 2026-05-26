@@ -25,7 +25,7 @@ export class TransformInterceptor<T>
       map((data) => {
         // If data already has success field, return as-is (for custom responses)
         if (data && typeof data === 'object' && 'success' in data) {
-          return data as Response<T>;
+          return data as unknown as Response<T>;
         }
         // If data has data/meta structure (paginated), unwrap
         if (data && typeof data === 'object' && 'data' in data && 'meta' in data) {

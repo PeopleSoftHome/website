@@ -1,4 +1,4 @@
-import { PrismaClient, LeadStatus, UserStatus, PostStatus } from '@prisma/client';
+import { PrismaClient, LeadStatus, UserStatus, PostStatus, CommentStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -32,6 +32,7 @@ async function main() {
   const resources = [
     'user', 'role', 'page', 'product', 'industry', 'testimonial',
     'resource', 'blog_post', 'forum_topic', 'demo_booking', 'setting',
+    'media', 'audit_log', 'email_template',
   ];
   const actions = ['create', 'read', 'update', 'delete'];
   for (const resource of resources) {
@@ -53,7 +54,7 @@ async function main() {
 
   // ─── Default Admin User ───
   const hashedPassword = await bcrypt.hash('admin123456', 12);
-  await prisma.user.upsert({
+  const adminUser = await prisma.user.upsert({
     where: { email: 'admin@talentpro.com' },
     update: {},
     create: {
@@ -174,6 +175,92 @@ async function main() {
       create: t,
     });
   }
+
+  // ─── Blog Categories ───
+  const blogCat = await prisma.blogCategory.upsert({
+    where: { slug: 'hr-insights' },
+    update: {},
+    create: { name: 'HR 洞察', slug: 'hr-insights', description: '人力资源行业深度分析与趋势', sortOrder: 0 },
+  });
+
+  // ─── Blog Tags ───
+  const aiTag = await prisma.tag.upsert({
+    where: { slug: 'ai' },
+    update: {},
+    create: { name: 'AI', slug: 'ai' },
+  });
+  const recruitTag = await prisma.tag.upsert({
+    where: { slug: 'recruitment' },
+    update: {},
+    create: { name: '招聘', slug: 'recruitment' },
+  });
+
+  // ─── Blog Posts ───
+  await prisma.blogPost.upsert({
+    where: { slug: 'ai-transforms-recruitment-2026' },
+    update: {},
+    create: {
+      title: 'AI 如何重塑 2026 年的招聘格局',
+      slug: 'ai-transforms-recruitment-2026',
+      excerpt: '从简历筛选到智能面试，AI 正在重新定义企业招聘的每一个环节。',
+      content: '# AI 如何重塑招聘\n\n随着大语言模型的快速发展，HR 领域迎来了前所未有的变革...',
+      coverImage: '/assets/blog-ai-recruit.jpg',
+      status: PostStatus.PUBLISHED,
+      publishedAt: new Date(),
+      authorId: adminUser.id,
+      categoryId: blogCat.id,
+      tags: { connect: [{ id: aiTag.id }, { id: recruitTag.id }] },
+    },
+  });
+
+  // ─── Forum Categories ───
+  const forumCat = await prisma.forumCategory.upsert({
+    where: { id: 'seed-forum-1' },
+    update: {},
+    create: { name: '产品交流', description: 'TalentPro 产品使用经验分享', sortOrder: 0 },
+  });
+
+  // ─── Forum Topics ───
+  await prisma.forumTopic.upsert({
+    where: { id: 'seed-topic-1' },
+    update: {},
+    create: {
+      categoryId: forumCat.id,
+      authorId: adminUser.id,
+      title: '如何配置智能排班规则？',
+      content: '我们工厂有三班倒需求，想咨询如何配置复杂排班规则...',
+      viewCount: 128,
+      replyCount: 0,
+    },
+  });
+
+  // ─── System Settings ───
+  const settings = [
+    { key: 'site.name', value: 'TalentPro', category: 'site' },
+    { key: 'site.logo', value: '/assets/logo.svg', category: 'site' },
+    { key: 'site.icp', value: '京ICP备XXXXXXXX号', category: 'site' },
+    { key: 'contact.phone', value: '400-888-8888', category: 'contact' },
+    { key: 'contact.email', value: 'contact@talentpro.com', category: 'contact' },
+  ];
+  for (const s of settings) {
+    await prisma.setting.upsert({
+      where: { key: s.key },
+      update: { value: s.value },
+      create: s,
+    });
+  }
+
+  // ─── Email Templates ───
+  await prisma.emailTemplate.upsert({
+    where: { key: 'demo-booking-success' },
+    update: {},
+    create: {
+      key: 'demo-booking-success',
+      subject: '【TalentPro】预约演示成功',
+      body: '您好 {name}，\n\n您已成功预约 TalentPro 产品演示，我们的顾问将在 1 个工作日内与您联系。',
+      html: '<p>您好 <strong>{name}</strong>，</p><p>您已成功预约 TalentPro 产品演示。</p>',
+    },
+  });
 
   // ─── Demo Bookings ───
   await prisma.demoBooking.create({
