@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
+import { inject, watch } from 'vue';
 import { useRoiCalculator } from '@/composables/useRoiCalculator.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -107,8 +107,31 @@ import s from './RoiCalculatorSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const modalStore = inject('modal', { openModal: () => {} });
+const analytics = inject('analytics', { track: () => {} });
 
 const calc = useRoiCalculator();
+
+// ROI 交互埋点（防抖 1s）
+let roiTimer = null;
+const trackRoi = () => {
+  clearTimeout(roiTimer);
+  roiTimer = setTimeout(() => {
+    analytics.track('roi_interact', {
+      employees: calc.employeeCount.value,
+      monthlyHires: calc.monthlyHires.value,
+      roi: Math.round(calc.roi.value),
+    });
+  }, 1000);
+};
+
+// 监听任一参数变化触发 ROI 埋点
+watch([
+  () => calc.employeeCount.value,
+  () => calc.monthlyHires.value,
+  () => calc.hireCycleDays.value,
+  () => calc.hrTeamSize.value,
+  () => calc.hrMonthlySalary.value,
+], trackRoi, { flush: 'post' });
 
 const fields = [
   { key: 'employeeCount',  labelKey: 'roi.empCount',  min: 100,  max: 50000, step: 100,  unit: '人' },

@@ -165,5 +165,6 @@ export function useSearch(onClose) {
     inputRef,
     focusInput,
     TYPE_LABELS,
+    debouncedQuery,
   };
 }

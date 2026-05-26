@@ -27,12 +27,13 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, onUnmounted, onErrorCaptured } from 'vue';
+import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
 import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';
 import { createSearch } from '@/stores/search.js';
 import { createVideoModal } from '@/stores/videoModal.js';
+import { createAnalytics } from '@/stores/analytics.js';
 import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
 import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
@@ -51,12 +52,14 @@ const theme = createTheme();
 const modal = createModal();
 const search = createSearch();
 const videoModal = createVideoModal();
+const analytics = createAnalytics();
 
 provide('i18n', i18n);
 provide('theme', theme);
 provide('search', search);
 provide('modal', modal);
 provide('videoModal', videoModal);
+provide('analytics', analytics);
 
 const modalStore = modal;
 const contactOpen = ref(false);
@@ -71,6 +74,36 @@ onErrorCaptured((err, instance, info) => {
   return false;
 });
 
+/* 页面加载埋点 */
+onMounted(() => {
+  analytics.track('page_view', { title: document.title });
+});
+
+/* 语言/主题切换埋点 */
+watch(() => i18n.locale.value, (loc, prev) => {
+  if (prev !== undefined) analytics.track('lang_switch', { from: prev, to: loc });
+});
+watch(() => theme.theme.value, (th, prev) => {
+  if (prev !== undefined) analytics.track('theme_switch', { theme: th });
+});
+
+/* 弹窗行为埋点 */
+watch(() => modal.isOpen.value, (open) => {
+  if (open) analytics.track('demo_modal_open');
+});
+watch(() => modal.step.value, (step, prev) => {
+  if (step > prev && prev !== undefined) analytics.track('demo_step_complete', { step });
+});
+watch(() => modal.isSuccess.value, (success) => {
+  if (success) analytics.track('demo_submit', { products: modal.formData.value.products });
+});
+watch(() => videoModal.isOpen.value, (open) => {
+  if (open) analytics.track('video_play');
+});
+watch(() => search.isOpen.value, (open) => {
+  if (open) analytics.track('search_open');
+});
+
 /* 全局 scroll reveal 观察器 */
 onMounted(() => {
   const io = new IntersectionObserver(
@@ -79,12 +112,18 @@ onMounted(() => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
           io.unobserve(entry.target);
+          const sectionId = entry.target.closest('section')?.id;
+          if (sectionId && !seenSections.has(sectionId)) {
+            seenSections.add(sectionId);
+            analytics.track('section_visible', { section: sectionId });
+          }
         }
       });
     },
     { threshold: 0.06 }
   );
 
+  const seenSections = new Set();
   const scan = () => {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
       io.observe(el);

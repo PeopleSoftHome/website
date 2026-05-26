@@ -13,7 +13,7 @@
           :tabs="translatedTabs"
           :active-index="activeIndex"
           variant="segment"
-          @select="selectTab"
+          @select="trackedSelectTab"
         />
       </RevealWrapper>
       <div :class="s.grid" role="tabpanel">
@@ -48,7 +48,14 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './ProductMatrixSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
+const analytics = inject('analytics', { track: () => {} });
 const { activeIndex, selectTab } = useTabs(0);
+
+const originalSelectTab = selectTab;
+const trackedSelectTab = (idx) => {
+  originalSelectTab(idx);
+  analytics.track('product_tab_click', { tab: tabs.value[idx]?.id, index: idx });
+};
 
 // API 数据（fallback 为静态数据）
 const apiTabs = ref([]);

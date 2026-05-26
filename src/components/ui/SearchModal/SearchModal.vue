@@ -16,7 +16,7 @@
           type="text"
           :value="query"
           @input="handleQueryChange($event.target.value)"
-          @keydown="handleKeyDown"
+          @keydown="trackedHandleKeyDown"
           :placeholder="t('search.placeholder')"
           autocomplete="off"
           autocorrect="off"
@@ -52,7 +52,7 @@
               v-for="(item, idx) in items"
               :key="item.id"
               :class="[s.resultItem, getGlobalIdx(type, idx) === focusIdx ? s.resultActive : '']"
-              @click="selectItem(item)"
+              @click="trackedSelectItem(item)"
             >
               <span :class="s.resultIcon" aria-hidden="true"><Icon :name="item.icon" :size="18" /></span>
               <span :class="s.resultBody">
@@ -91,7 +91,7 @@
 </template>
 
 <script setup>
-import { computed, watch, inject } from 'vue';
+import { computed, watch, inject, ref } from 'vue';
 import { HOT_SEARCHES } from '@/data/searchIndex.js';
 import { useSearch } from '@/composables/useSearch.js';
 import Icon from '../Icon/Icon.vue';
@@ -100,6 +100,7 @@ import s from './SearchModal.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const searchStore = inject('search', { isOpen: { value: false }, closeSearch: () => {} });
+const analytics = inject('analytics', { track: () => {} });
 
 const {
   query, handleQueryChange,
@@ -107,8 +108,24 @@ const {
   totalResults, highlight,
   selectItem, handleKeyDown,
   inputRef, focusInput,
-  TYPE_LABELS,
+  TYPE_LABELS, debouncedQuery, flatResults,
 } = useSearch(() => searchStore.closeSearch());
+
+const trackedSelectItem = (item) => {
+  analytics.track('search_click', { id: item.id, type: item.type, query: query.value });
+  selectItem(item);
+};
+
+// 搜索查询埋点（防抖，至少 2 个字符）
+let searchQueryTimer = null;
+watch(() => debouncedQuery.value, (q) => {
+  if (q && q.length >= 2) {
+    clearTimeout(searchQueryTimer);
+    searchQueryTimer = setTimeout(() => {
+      analytics.track('search_query', { query: q });
+    }, 300);
+  }
+});
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 const hasResults = computed(() => totalResults.value > 0);
@@ -118,6 +135,16 @@ const resultEntries = computed(() => Object.entries(groupedResults.value));
 watch(() => searchStore.isOpen.value, (open) => {
   if (open) focusInput();
 });
+
+// Enter 选择时也会触发 search_click（在 handleKeyDown 内部已调用 selectItem）
+// 为了埋点，需要包装 handleKeyDown
+const trackedHandleKeyDown = (e) => {
+  if (e.key === 'Enter' && focusIdx.value >= 0) {
+    const item = flatResults.value[focusIdx.value];
+    if (item) analytics.track('search_click', { id: item.id, type: item.type, query: query.value });
+  }
+  handleKeyDown(e);
+};
 
 // 计算全局索引（用于 focusIdx 对照）
 const getGlobalIdx = (type, idx) => {

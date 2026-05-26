@@ -1,5 +1,5 @@
 <template>
-  <div :class="[s.card, 'reveal', delayClass]">
+  <div :class="[s.card, 'reveal', delayClass]" @click="handleClick">
     <div :class="s.cover" :style="{ background: imgGrad }">
       <div :class="s.coverIcon"><Icon :name="icon" :size="28" /></div>
       <span :class="s.typeTag" :style="{ background: typeStyle.bg, color: typeStyle.color }">
@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './ResourceCard.module.css';
@@ -37,4 +37,9 @@ const props = defineProps({
 
 const delayClass = computed(() => props.delay > 0 ? `reveal-delay-${props.delay}` : '');
 const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type] ?? RESOURCE_TYPE_STYLES.article);
+
+const analytics = inject('analytics', { track: () => {} });
+const handleClick = () => {
+  analytics.track('resource_download', { title: props.title, type: props.type });
+};
 </script>
