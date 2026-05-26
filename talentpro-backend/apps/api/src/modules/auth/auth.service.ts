@@ -117,12 +117,32 @@ export class AuthService {
         name: true,
         avatar: true,
         phone: true,
+        bio: true,
         status: true,
         role: { select: { id: true, name: true } },
         createdAt: true,
       },
     });
     return user;
+  }
+
+  async updateProfile(userId: string, dto: { name?: string; avatar?: string; phone?: string; bio?: string }) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: dto,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        avatar: true,
+        phone: true,
+        bio: true,
+        status: true,
+        role: { select: { id: true, name: true } },
+        createdAt: true,
+      },
+    });
+    return { message: '更新成功', user };
   }
 
   private async generateTokens(userId: string, email: string) {

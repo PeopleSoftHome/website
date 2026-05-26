@@ -628,5 +628,31 @@
     "toRegister":         "立即註冊",
     "toLogin":            "立即登入",
     "genericError":       "操作失敗，請稍後重試"
+  },
+  "comment": {
+    "title":              "評論",
+    "placeholder":        "寫下你的評論... 使用 @ 提及用戶",
+    "replyPlaceholder":     "寫下你的回覆...",
+    "submit":             "發表評論",
+    "submitting":         "提交中...",
+    "reply":              "回覆",
+    "cancel":             "取消",
+    "noComments":         "暫無評論，快來搶沙發吧！",
+    "loginToComment":     "登入後發表評論",
+    "anonymous":          "匿名用戶",
+    "loading":            "載入中...",
+    "noUser":             "未找到用戶",
+    "submitError":        "評論發表失敗"
+  },
+  "profile": {
+    "title":              "個人中心",
+    "edit":               "編輯資料",
+    "save":               "儲存",
+    "name":               "暱稱",
+    "bio":                "個人簡介",
+    "avatar":             "頭像連結",
+    "joined":             "加入於",
+    "loading":            "載入中...",
+    "saveError":          "儲存失敗"
   }
 }

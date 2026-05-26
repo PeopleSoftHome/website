@@ -75,6 +75,7 @@ export function createAuth() {
     token,
     user,
     isLoggedIn,
+    setUser,
     login,
     register,
     fetchProfile,

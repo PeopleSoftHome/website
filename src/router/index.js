@@ -26,6 +26,11 @@ const routes = [
     name: 'ForumTopic',
     component: () => import('@/pages/ForumTopicView.vue'),
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/pages/ProfilePage.vue'),
+  },
 ];
 
 const router = createRouter({

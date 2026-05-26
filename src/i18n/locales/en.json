@@ -632,5 +632,31 @@
     "toRegister":         "Sign Up",
     "toLogin":            "Sign In",
     "genericError":       "Operation failed, please try again later"
+  },
+  "comment": {
+    "title":              "Comments",
+    "placeholder":        "Write a comment... Use @ to mention users",
+    "replyPlaceholder":     "Write a reply...",
+    "submit":             "Post Comment",
+    "submitting":         "Submitting...",
+    "reply":              "Reply",
+    "cancel":             "Cancel",
+    "noComments":         "No comments yet. Be the first!",
+    "loginToComment":     "Log in to post a comment",
+    "anonymous":          "Anonymous",
+    "loading":            "Loading...",
+    "noUser":             "No users found",
+    "submitError":        "Failed to post comment"
+  },
+  "profile": {
+    "title":              "Profile",
+    "edit":               "Edit Profile",
+    "save":               "Save",
+    "name":               "Name",
+    "bio":                "Bio",
+    "avatar":             "Avatar URL",
+    "joined":             "Joined",
+    "loading":            "Loading...",
+    "saveError":          "Failed to save"
   }
 }

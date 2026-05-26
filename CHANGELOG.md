@@ -5,6 +5,36 @@ All notable changes to TalentPro HR Portal will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] — 2026-05-26 ✅ 社交互动迭代
+
+### Added — 个人主页 + 评论系统 + @提及
+
+**Sprint 19 — 用户互动与社交**
+- **个人主页**
+  - `ProfilePage.vue`：用户资料展示（头像、昵称、邮箱、bio、加入时间）
+  - 资料编辑表单（昵称、bio、头像链接），调用 `PATCH /auth/profile`
+  - `NavBar` 头像下拉点击「个人中心」跳转 `/profile`
+- **评论系统**
+  - `CommentSection.vue` + `CommentItem.vue`：通用评论列表组件，支持嵌套回复展示
+  - `CommentForm.vue`：评论/回复表单，支持 `@提及` 自动补全（↑↓ 选择、Enter 确认、Esc 关闭）
+  - `Avatar.vue`：通用头像组件（替代 Element Plus `el-avatar`）
+  - 博客详情页集成评论：`BlogDetailView.vue` 底部接入 `CommentSection`
+  - 论坛话题页集成回复：`ForumTopicView.vue` 支持发表新回复（调用 `POST /forums/posts`）
+- **@提及功能**
+  - 评论/回复输入框输入 `@` 触发用户搜索自动补全（`GET /users/search?q=`）
+  - 评论内容渲染时高亮 `@用户名`（蓝色 + 粗体）
+- **后端 API 补充**
+  - Prisma：`User` 模型新增 `bio` 字段
+  - `PATCH /auth/profile`：用户自助更新资料（name/avatar/phone/bio）
+  - `GET /users/search?q=`：公开用户搜索（用于 @mention autocomplete）
+- **i18n**：新增 `comment.*` 和 `profile.*` 多语言 key（中/英/繁）
+
+### Fixed
+- `BlogDetailView.vue` / `ForumTopicView.vue`：移除 Element Plus `el-icon`、`el-skeleton`、`el-avatar`，改用项目自研组件
+- `talentpro-admin/src/router/index.js`：修复重复的 `blogs` / `forums` 路由
+
+---
+
 ## [2.6.0] — 2026-05-26 ✅ 内容生态迭代
 
 ### Added — 博客/论坛 + Admin 后台 + 用户认证

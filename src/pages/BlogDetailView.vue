@@ -4,7 +4,7 @@
     <main class="blog-detail-page">
       <div class="container">
         <button class="back-btn" @click="$router.push('/blog')">
-          <el-icon><ArrowLeft /></el-icon> {{ t('blog.back') }}
+          ← {{ t('blog.back') }}
         </button>
 
         <article v-if="post" class="blog-article">
@@ -21,8 +21,21 @@
         </article>
 
         <div v-else-if="loading" class="detail-loading">
-          <el-skeleton :rows="6" animated />
+          <div class="skeleton-wrap">
+            <div class="skeleton-line" style="width:60%;height:24px" />
+            <div class="skeleton-line" style="width:40%;height:16px;margin-top:12px" />
+            <div class="skeleton-line" style="width:100%;height:120px;margin-top:20px" />
+            <div class="skeleton-line" style="width:100%;height:16px;margin-top:12px" />
+            <div class="skeleton-line" style="width:80%;height:16px;margin-top:8px" />
+            <div class="skeleton-line" style="width:90%;height:16px;margin-top:8px" />
+          </div>
         </div>
+
+        <CommentSection
+          v-if="post"
+          entity-type="BlogPost"
+          :entity-id="post.id"
+        />
       </div>
     </main>
     <Footer />
@@ -32,8 +45,10 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue';
 import { useRoute } from 'vue-router';
+import Icon from '@/components/ui/Icon/Icon.vue';
 import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
+import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
 
 const { t } = inject('i18n', { t: (k) => k });

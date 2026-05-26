@@ -47,6 +47,7 @@ model User {
   name      String?
   avatar    String?
   phone     String?
+  bio       String?
   status    UserStatus @default(ACTIVE)
   roleId    String
   role      Role       @relation(fields: [roleId], references: [id])

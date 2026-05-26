@@ -66,4 +66,19 @@ export class UserService {
     await this.prisma.user.delete({ where: { id } });
     return { message: '删除成功' };
   }
+
+  async search(q: string, limit = 10) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        status: 'ACTIVE',
+        OR: [
+          { name: { contains: q, mode: 'insensitive' } },
+          { email: { contains: q, mode: 'insensitive' } },
+        ],
+      },
+      select: { id: true, name: true, email: true, avatar: true },
+      take: limit,
+    });
+    return { data: users };
+  }
 }

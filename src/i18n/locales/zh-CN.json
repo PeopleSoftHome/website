@@ -632,5 +632,31 @@
     "toRegister":         "立即注册",
     "toLogin":            "立即登录",
     "genericError":       "操作失败，请稍后重试"
+  },
+  "comment": {
+    "title":              "评论",
+    "placeholder":        "写下你的评论... 使用 @ 提及用户",
+    "replyPlaceholder":   "写下你的回复...",
+    "submit":             "发表评论",
+    "submitting":         "提交中...",
+    "reply":              "回复",
+    "cancel":             "取消",
+    "noComments":         "暂无评论，快来抢沙发吧！",
+    "loginToComment":     "登录后发表评论",
+    "anonymous":          "匿名用户",
+    "loading":            "加载中...",
+    "noUser":             "未找到用户",
+    "submitError":        "评论发表失败"
+  },
+  "profile": {
+    "title":              "个人中心",
+    "edit":               "编辑资料",
+    "save":               "保存",
+    "name":               "昵称",
+    "bio":                "个人简介",
+    "avatar":             "头像链接",
+    "joined":             "加入于",
+    "loading":            "加载中...",
+    "saveError":          "保存失败"
   }
 }

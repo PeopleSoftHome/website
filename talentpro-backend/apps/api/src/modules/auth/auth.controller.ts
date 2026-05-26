@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -49,5 +49,16 @@ export class AuthController {
   @ApiOperation({ summary: '获取当前用户信息' })
   getMe(@CurrentUser('id') userId: string) {
     return this.authService.getMe(userId);
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '更新当前用户资料' })
+  updateProfile(
+    @CurrentUser('id') userId: string,
+    @Body() dto: { name?: string; avatar?: string; phone?: string; bio?: string },
+  ) {
+    return this.authService.updateProfile(userId, dto);
   }
 }

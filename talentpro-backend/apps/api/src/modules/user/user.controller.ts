@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Public } from '@/common/decorators/public.decorator';
 
 @ApiTags('用户管理')
 @Controller('users')
@@ -13,6 +14,15 @@ import { Roles } from '@/common/decorators/roles.decorator';
 @ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get('search')
+  @Public()
+  @ApiOperation({ summary: '搜索用户（公开，用于 @提及）' })
+  @ApiQuery({ name: 'q', required: true, type: String })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  search(@Query('q') q: string, @Query('limit') limit?: string) {
+    return this.userService.search(q, limit ? parseInt(limit, 10) : 10);
+  }
 
   @Get()
   @Roles('ADMIN', 'SUPER_ADMIN')
