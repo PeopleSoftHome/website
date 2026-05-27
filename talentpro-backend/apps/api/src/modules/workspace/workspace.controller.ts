@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { WorkspaceService } from './workspace.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
