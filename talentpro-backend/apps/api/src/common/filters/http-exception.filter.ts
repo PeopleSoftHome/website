@@ -16,6 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const requestId = (request as any)['requestId'];
 
     const status =
       exception instanceof HttpException
@@ -53,6 +54,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         code: HttpStatus[status] || 'UNKNOWN_ERROR',
         message: Array.isArray(message) ? message[0] : message,
         details: errors,
+        requestId,
       },
     });
   }

@@ -44,6 +44,7 @@ import { ExportModule } from './modules/export/export.module';
 import { ExperimentModule } from './modules/experiment/experiment.module';
 import { DownloadModule } from './modules/download/download.module';
 import { HealthModule } from './modules/health/health.module';
+import { MiddlewareModule } from './common/middleware/middleware.module';
 
 @Module({
   imports: [
@@ -109,6 +110,7 @@ import { HealthModule } from './modules/health/health.module';
     DownloadModule,
     HealthModule,
     MetricsModule,
+    MiddlewareModule,
   ],
   providers: [
     NotificationListener,
