@@ -2,7 +2,6 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } f
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { BlogService } from './blog.service';
 import { PostStatus, CommentStatus } from '@prisma/client';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
@@ -22,7 +21,7 @@ export class BlogController {
   }
 
   @Post('categories')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建分类' })
@@ -31,7 +30,7 @@ export class BlogController {
   }
 
   @Patch('categories/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新分类' })
@@ -40,7 +39,7 @@ export class BlogController {
   }
 
   @Delete('categories/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除分类' })
@@ -76,7 +75,7 @@ export class BlogController {
   }
 
   @Post('posts')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
@@ -98,7 +97,7 @@ export class BlogController {
   }
 
   @Patch('posts/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新文章' })
@@ -110,7 +109,7 @@ export class BlogController {
   }
 
   @Delete('posts/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除文章' })
@@ -127,7 +126,7 @@ export class BlogController {
   }
 
   @Post('tags')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建标签' })
@@ -136,7 +135,7 @@ export class BlogController {
   }
 
   @Delete('tags/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除标签' })
@@ -158,7 +157,6 @@ export class BlogController {
   }
 
   @Post('comments')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: '发表评论' })
   createComment(
@@ -175,7 +173,7 @@ export class BlogController {
   }
 
   @Patch('comments/:id/moderate')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '审核评论' })
@@ -184,7 +182,7 @@ export class BlogController {
   }
 
   @Post('comments/batch-moderate')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '批量审核评论' })
@@ -193,7 +191,7 @@ export class BlogController {
   }
 
   @Get('admin/comments')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Admin 评论列表（支持按状态过滤）' })
@@ -212,7 +210,7 @@ export class BlogController {
   }
 
   @Delete('comments/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除评论' })

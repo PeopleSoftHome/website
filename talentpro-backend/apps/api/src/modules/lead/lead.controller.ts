@@ -2,7 +2,6 @@ import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Req } from
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { LeadService } from './lead.service';
 import { LeadStatus } from '@prisma/client';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
@@ -15,7 +14,7 @@ export class LeadController {
   constructor(private leadService: LeadService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '线索列表' })
@@ -33,7 +32,7 @@ export class LeadController {
   }
 
   @Get('stats')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '线索统计' })
@@ -42,7 +41,7 @@ export class LeadController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '线索详情' })
@@ -71,7 +70,7 @@ export class LeadController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新线索状态' })
@@ -83,7 +82,7 @@ export class LeadController {
   }
 
   @Post(':id/follow-ups')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '添加跟进记录' })

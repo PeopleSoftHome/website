@@ -2,7 +2,6 @@ import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ExportService } from './export.service';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
@@ -10,7 +9,7 @@ import { LeadStatus } from '@prisma/client';
 
 @ApiTags('数据导出')
 @Controller('admin/export')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(RolesGuard)
 @Roles('ADMIN', 'SUPER_ADMIN')
 @ApiBearerAuth()
 export class ExportController {

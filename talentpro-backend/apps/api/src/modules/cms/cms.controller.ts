@@ -2,7 +2,6 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } f
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CmsService } from './cms.service';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
@@ -30,7 +29,7 @@ export class CmsController {
   }
 
   @Post('pages')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:pages' })
@@ -49,7 +48,7 @@ export class CmsController {
   }
 
   @Post('product-tabs')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:products' })
@@ -68,7 +67,7 @@ export class CmsController {
   }
 
   @Post('industries')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:industries' })
@@ -96,7 +95,7 @@ export class CmsController {
   }
 
   @Post('stats')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:stats' })
@@ -115,7 +114,7 @@ export class CmsController {
   }
 
   @Post('logos')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:logos' })
@@ -134,7 +133,7 @@ export class CmsController {
   }
 
   @Post('why-us')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:why-us' })
@@ -153,7 +152,7 @@ export class CmsController {
   }
 
   @Post('ai-cards')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:ai-cards' })
@@ -183,7 +182,7 @@ export class CmsController {
   }
 
   @Post('resources')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:resources' })
