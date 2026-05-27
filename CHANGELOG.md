@@ -40,3 +40,40 @@
 - `Resource` 新增 `requiresLeadInfo` 字段
 - `Comment` 新增 `aiRiskScore`、`aiFlags` 字段
 - `User` 新增 `abVariant` 字段
+- 核心模型新增软删除 `deletedAt` 字段
+- 新增枚举：`ResourceType`、`WorkspacePlan`、`WorkspaceStatus`、`TokenType`、`NotificationType`
+- 新增复合唯一索引 `@@unique([slug, workspaceId])` 于 `BlogPost`
+- 新增外键约束：`Notification.userId`、`Media.createdBy`、`FollowUp.createdBy`、`DemoBooking.assignedTo`、`Setting.updatedBy`、`DownloadRecord.resourceId`
+- 新增性能索引：`Section.pageId`、`NavItem.navigationId/parentId`、`Comment.parentId` + 复合索引
+
+### 🔒 安全修复（v3.0.0 审计批次）
+
+- **XSS 防护**：BlogDetailView / ForumTopicView `renderMarkdown` 前增加 `escapeHtml` 转义；提取为 `src/utils/markdown.js`
+- **SSE Token 安全**：前端 `FetchEventSource` 优先通过 `Authorization` header 传递 token，降级到 query param；后端 `SseAuthGuard` 优先读取 header
+- **全局 JWT 黑名单**：`JwtAuthGuard` 作为 `APP_GUARD` 全局注册，`@Public()` 元数据控制公开路由
+- **密码策略**：注册正则增加 `$` 锚点，防止前缀匹配绕过
+- **审计日志**：`AuditInterceptor` 全局注册，自动记录 POST/PATCH/DELETE 操作
+- **CSP 加固**：Helmet 中间件 + 严格内容安全策略
+- **API 限流细化**：auth 端点独立限流桶 + `auth` 限流名称
+
+### 🏗 架构改进
+
+- **Prisma 扩展**：`$extends` 中间件自动注入 `workspaceId` 过滤（模型白名单）+ `softDeleteExtension` 自动过滤已删除记录
+- **Redis 缓存**：`CacheInterceptor` DI 注入 `REDIS_CLIENT` + `@CacheEvict` 写失效
+- **Prometheus 监控**：`MetricsModule` + `MetricsInterceptor` + `MetricsController`（`/metrics`）占位，安装 `prom-client` 后启用
+- **Sentry 错误监控**：`src/utils/sentry.js` 占位，安装 `@sentry/vue` 后启用
+- **nginx 生产配置**：`nginx.conf` 含 SSL、Gzip、缓存、API 反向代理、SSE 长连接、SPA fallback
+- **Playwright E2E**：新增 firefox、webkit、mobile chrome、mobile safari 浏览器矩阵
+- **Admin RBAC**：`v-permission` 指令（single/all/any 模式）+ auth store 权限辅助方法
+- **前端错误上报**：`window.onerror` / `onunhandledrejection` beacon 上报到 `/api/v1/analytics/errors`
+- **单元测试示例**：`auth.controller.spec.ts` 提供 NestJS Controller 测试模板
+- **API 类型定义**：`src/api/types.d.ts` JSDoc 类型补充
+
+### ⚠️ 待执行（手动）
+
+```bash
+cd talentpro-backend
+npm install          # 安装 @nestjs/schedule, helmet
+npx prisma migrate dev --name p1_enums_indexes_soft_delete
+npx prisma generate
+```
