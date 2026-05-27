@@ -21,6 +21,11 @@ export class TransformInterceptor<T>
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<Response<T>> {
+    const request = context.switchToHttp().getRequest();
+    // 跳过 Prometheus 指标端点（纯文本输出）
+    if (request.url === '/api/v1/metrics') {
+      return next.handle();
+    }
     return next.handle().pipe(
       map((data) => {
         // If data already has success field, return as-is (for custom responses)
