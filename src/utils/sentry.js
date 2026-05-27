@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/vue';
-import { BrowserTracing } from '@sentry/tracing';
 
 export function initSentry(app) {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
@@ -11,7 +10,7 @@ export function initSentry(app) {
   Sentry.init({
     app,
     dsn,
-    integrations: [new BrowserTracing()],
+    integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
     environment: import.meta.env.VITE_APP_ENV || 'development',
     beforeSend(event) {
