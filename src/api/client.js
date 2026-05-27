@@ -13,18 +13,6 @@ export const apiClient = axios.create({
 // 请求取消帮助函数
 export const createRequestController = () => new AbortController();
 
-// 在请求拦截器中透传 signal
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('tp_access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
 // 请求拦截器：添加 auth token
 apiClient.interceptors.request.use(
   (config) => {
