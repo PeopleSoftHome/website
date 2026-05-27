@@ -616,7 +616,8 @@
     "password":           "Password",
     "passwordPlaceholder":"Enter your password",
     "passwordRequired":   "Password is required",
-    "passwordMin":        "Password must be at least 6 characters",
+    "passwordMin":        "Password must be at least 8 characters",
+    "passwordComplexity": "Password must contain uppercase, lowercase, number and special character",
     "confirmPassword":    "Confirm Password",
     "confirmPasswordPlaceholder": "Re-enter your password",
     "confirmRequired":    "Please confirm your password",
@@ -671,5 +672,16 @@
   "editor": {
     "preview":            "Preview",
     "edit":               "Edit"
+  },
+  "downloadGate": {
+    "title":              "Download {title}",
+    "subtitle":           "Please fill in your info and we'll send the material to your email",
+    "name":               "Your Name",
+    "email":              "Work Email",
+    "company":            "Company (optional)",
+    "submit":             "Confirm & Download",
+    "submitting":         "Submitting...",
+    "required":           "Please fill in name and email",
+    "error":              "Submission failed, please try again"
   }
 }

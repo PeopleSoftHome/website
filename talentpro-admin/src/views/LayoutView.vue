@@ -30,6 +30,22 @@
           <el-icon><ChatDotRound /></el-icon>
           <span>论坛管理</span>
         </el-menu-item>
+        <el-menu-item index="/comment-moderation">
+          <el-icon><Warning /></el-icon>
+          <span>评论审核</span>
+        </el-menu-item>
+        <el-menu-item index="/experiments">
+          <el-icon><Aim /></el-icon>
+          <span>A/B 测试</span>
+        </el-menu-item>
+        <el-menu-item index="/download-records">
+          <el-icon><Download /></el-icon>
+          <span>下载留资</span>
+        </el-menu-item>
+        <el-menu-item index="/sensitive-words">
+          <el-icon><Lock /></el-icon>
+          <span>敏感词</span>
+        </el-menu-item>
         <el-menu-item index="/analytics">
           <el-icon><DataAnalysis /></el-icon>
           <span>数据分析</span>

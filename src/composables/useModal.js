@@ -55,12 +55,26 @@ export function useModal() {
     isSubmitting.value = true;
     submitError.value = '';
     try {
+      // 获取 reCAPTCHA token（如果配置了）
+      let recaptchaToken = '';
+      if (window.grecaptcha) {
+        try {
+          recaptchaToken = await window.grecaptcha.execute(
+            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            { action: 'demo_booking' },
+          );
+        } catch {
+          // reCAPTCHA 未加载或失败，继续提交（后端会跳过验证）
+        }
+      }
+
       await leadApi.createBooking({
         name: formData.value.name,
         company: formData.value.company,
         phone: formData.value.phone,
         products: formData.value.products,
         scale: formData.value.scale,
+        recaptchaToken,
       });
       isSuccess.value = true;
       timer = setTimeout(closeModal, 2500);

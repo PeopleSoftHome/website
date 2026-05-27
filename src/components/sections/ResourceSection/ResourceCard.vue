@@ -39,7 +39,9 @@ const delayClass = computed(() => props.delay > 0 ? `reveal-delay-${props.delay}
 const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type] ?? RESOURCE_TYPE_STYLES.article);
 
 const analytics = inject('analytics', { track: () => {} });
+const emit = defineEmits(['download']);
 const handleClick = () => {
   analytics.track('resource_download', { title: props.title, type: props.type });
+  emit('download', { title: props.title, type: props.type });
 };
 </script>

@@ -8,7 +8,7 @@
       <RevealWrapper>
         <TabNav :tabs="tabs" :active-index="activeIndex" variant="underline" @select="selectTab" />
       </RevealWrapper>
-      <div :class="s.grid" :key="TAB_KEYS[activeIndex]">
+      <div :class="s.grid" :key="currentTabId">
         <MetricCard
           v-for="(m, i) in currentMetrics"
           :key="m.label"
@@ -48,6 +48,9 @@
 <script setup>
 import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs.js';
+import { useApiData } from '@/composables/useApiData.js';
+import { cmsApi } from '@/api/cms.js';
+import { transformWhyUsTabs } from '@/api/transforms.js';
 import { STATS_BAR } from '@/data/whyUs.js';
 import { SECURITY_CERTS } from '@/data/security.js';
 import Icon from '../../ui/Icon/Icon.vue';
@@ -59,11 +62,25 @@ import s from './WhyUsSection.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const { activeIndex, selectTab } = useTabs(0);
 
-const TAB_KEYS = ['product', 'brand', 'success'];
+const apiTabs = ref([]);
+useApiData(async () => {
+  const data = await cmsApi.getWhyUs();
+  return transformWhyUsTabs(data);
+}, apiTabs);
 
-const tabs = computed(() => TAB_KEYS.map(k => ({ id: k, label: t(`whyUs.tabs.${k}`) })));
+const staticTabs = [
+  { id: 'product', label: t('whyUs.tabs.product') },
+  { id: 'brand', label: t('whyUs.tabs.brand') },
+  { id: 'success', label: t('whyUs.tabs.success') },
+];
+
+const tabs = computed(() => (apiTabs.value.length > 0 ? apiTabs.value.map((t) => ({ id: t.id, label: t.label })) : staticTabs));
+const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'product');
+
 const currentMetrics = computed(() => {
-  const m = t(`whyUs.metrics.${TAB_KEYS[activeIndex.value]}`);
+  const apiTab = apiTabs.value[activeIndex.value];
+  if (apiTab?.metrics?.length) return apiTab.metrics;
+  const m = t(`whyUs.metrics.${currentTabId.value}`);
   return Array.isArray(m) ? m : [];
 });
 

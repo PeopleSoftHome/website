@@ -108,6 +108,56 @@ export function transformNavigation(apiNav) {
   }));
 }
 
+/* ─── Stats ─── */
+export function transformStats(apiStats) {
+  if (!Array.isArray(apiStats)) return [];
+  return apiStats.map((s) => ({
+    id: s.key,
+    target: parseInt(s.value.replace(/\D/g, ''), 10) || 0,
+    suffix: s.suffix || '',
+    prefix: s.prefix || '',
+  }));
+}
+
+/* ─── Logos ─── */
+export function transformLogos(apiLogos) {
+  if (!Array.isArray(apiLogos)) return [];
+  return apiLogos.map((l) => ({
+    id: l.name.toLowerCase().replace(/\s+/g, '-'),
+    name: l.name,
+    initial: l.name.charAt(0),
+    brandColor: l.industry === 'tech' ? '#1B5FEB' : l.industry === 'mfg' ? '#059669' : l.industry === 'retail' ? '#D97706' : '#7C3AED',
+    industry: l.industry || 'all',
+  }));
+}
+
+/* ─── WhyUs ─── */
+export function transformWhyUsTabs(apiTabs) {
+  if (!Array.isArray(apiTabs)) return [];
+  return apiTabs.map((t) => ({
+    id: t.slug,
+    label: t.label,
+    icon: t.icon,
+    metrics: (t.metrics || []).map((m) => ({
+      num: m.num || m.value || 0,
+      label: m.label,
+      desc: m.desc,
+    })),
+  }));
+}
+
+/* ─── AI Cards ─── */
+export function transformAiCards(apiCards) {
+  if (!Array.isArray(apiCards)) return [];
+  return apiCards.map((c) => ({
+    id: c.slug,
+    icon: c.icon || 'sparkles',
+    name: c.name,
+    tagline: c.tagline,
+    hot: c.slug === 'ai-interview',
+  }));
+}
+
 /* ─── Search Results ─── */
 export function transformSearchResults(apiResults) {
   if (!Array.isArray(apiResults)) return [];

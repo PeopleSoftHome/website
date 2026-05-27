@@ -1,0 +1,148 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - run: npx vitest run --coverage
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Run E2E tests
+        run: npx playwright test
+        env:
+          CI: true
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/master'
+        with:
+          name: frontend-dist
+          path: dist/
+          retention-days: 30
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: coverage/
+          retention-days: 14
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  test-backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: talentpro
+          POSTGRES_PASSWORD: talentpro_dev
+          POSTGRES_DB: talentpro
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: cd talentpro-backend && npm ci
+      - run: cd talentpro-backend && npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
+      - run: cd talentpro-backend && npm run build
+      - run: cd talentpro-backend && npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-jwt-secret-ci
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage
+          path: talentpro-backend/coverage/
+          retention-days: 14
+
+  build-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: cd talentpro-admin && npm ci
+      - run: cd talentpro-admin && npm run build
+      - name: Upload admin build artifact
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/master'
+        with:
+          name: admin-dist
+          path: talentpro-admin/dist/
+          retention-days: 30
+
+  # CD 部署阶段（master 分支且测试通过后触发）
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend, build-admin]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/
+      - name: Download admin artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: admin-dist
+          path: talentpro-admin/dist/
+      # TODO: 接入实际部署目标（Vercel / OSS / K8s / Docker Registry）
+      # 以下为示例占位，请根据实际部署环境替换：
+      # - name: Deploy frontend to OSS
+      #   run: |
+      #     npm install -g @alicloud/ossutil
+      #     ossutil cp -rf dist/ oss://talentpro-static/
+      #   env:
+      #     OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+      #     OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+      # - name: Build and push Docker image
+      #   run: |
+      #     cd talentpro-backend
+      #     docker build -t talentpro-api:${{ github.sha }} -f docker/Dockerfile .
+      #     docker push talentpro-api:${{ github.sha }}
+      - name: Deployment placeholder
+        run: echo "CD stage ready — add your deployment steps here"

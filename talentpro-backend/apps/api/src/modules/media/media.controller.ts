@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 @ApiTags('媒体库')
 @Controller('medias')
@@ -50,18 +51,20 @@ export class MediaController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建媒体记录（上传后调用）' })
-  create(@Body() dto: {
-    filename: string;
-    originalName: string;
-    url: string;
-    mimeType: string;
-    size: number;
-    width?: number;
-    height?: number;
-    alt?: string;
-    createdBy: string;
-  }) {
-    return this.mediaService.create(dto);
+  create(
+    @CurrentUser('id') userId: string,
+    @Body() dto: {
+      filename: string;
+      originalName: string;
+      url: string;
+      mimeType: string;
+      size: number;
+      width?: number;
+      height?: number;
+      alt?: string;
+    },
+  ) {
+    return this.mediaService.create({ ...dto, createdBy: userId });
   }
 
   @Patch(':id')

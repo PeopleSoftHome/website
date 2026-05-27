@@ -64,6 +64,17 @@
           <span v-if="fieldError.name" :class="s.errorMsg">{{ fieldError.name }}</span>
         </div>
 
+        <div v-if="mode === 'register'" :class="s.formGroup">
+          <label :class="s.label">{{ t('auth.company') || '公司/团队名称' }}</label>
+          <input
+            v-model="form.company"
+            type="text"
+            :class="[s.input, fieldError.company ? s.inputError : '']"
+            :placeholder="t('auth.companyPlaceholder') || '请输入公司或团队名称（可选）'"
+          />
+          <span v-if="fieldError.company" :class="s.errorMsg">{{ fieldError.company }}</span>
+        </div>
+
         <button type="submit" :class="s.submitBtn" :disabled="submitting">
           {{ submitting ? t('auth.submitting') : (mode === 'login' ? t('auth.loginBtn') : t('auth.registerBtn')) }}
         </button>
@@ -99,7 +110,7 @@ const auth = inject('auth', {});
 const mode = ref(props.defaultMode);
 const error = ref('');
 const submitting = ref(false);
-const form = ref({ email: '', password: '', confirmPassword: '', name: '' });
+const form = ref({ email: '', password: '', confirmPassword: '', name: '', company: '' });
 const fieldError = ref({});
 
 watch(() => props.isOpen, (open) => {
@@ -107,7 +118,7 @@ watch(() => props.isOpen, (open) => {
     mode.value = props.defaultMode;
     error.value = '';
     fieldError.value = {};
-    form.value = { email: '', password: '', confirmPassword: '', name: '' };
+    form.value = { email: '', password: '', confirmPassword: '', name: '', company: '' };
   }
 });
 
@@ -127,7 +138,10 @@ const validate = () => {
   else if (!/^\S+@\S+\.\S+$/.test(form.value.email)) errors.email = t('auth.emailInvalid');
 
   if (!form.value.password) errors.password = t('auth.passwordRequired');
-  else if (form.value.password.length < 6) errors.password = t('auth.passwordMin');
+  else if (form.value.password.length < 8) errors.password = t('auth.passwordMin');
+  else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/.test(form.value.password)) {
+    errors.password = t('auth.passwordComplexity');
+  }
 
   if (mode.value === 'register') {
     if (!form.value.confirmPassword) errors.confirmPassword = t('auth.confirmRequired');
@@ -148,10 +162,24 @@ const handleSubmit = async () => {
     if (mode.value === 'login') {
       await auth.login(form.value.email, form.value.password);
     } else {
+      // 注册时获取 reCAPTCHA token
+      let recaptchaToken = '';
+      if (window.grecaptcha) {
+        try {
+          recaptchaToken = await window.grecaptcha.execute(
+            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            { action: 'register' },
+          );
+        } catch {
+          // reCAPTCHA 未加载时继续提交
+        }
+      }
       await auth.register({
         email: form.value.email,
         password: form.value.password,
         name: form.value.name,
+        company: form.value.company,
+        recaptchaToken,
       });
       // 注册成功后自动登录
       await auth.login(form.value.email, form.value.password);

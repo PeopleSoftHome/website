@@ -85,7 +85,7 @@ function main() {
   const prerenderHtml = `
 <!-- ════════════════════════════════════════════════
      Prerendered content for SEO / crawlers / no-JS
-     React will hydrate and replace this on load.
+     Vue will hydrate and replace this on load.
      ════════════════════════════════════════════════ -->
 <article style="display:none;visibility:hidden;position:absolute;left:-9999px;" aria-hidden="true">
   <header>

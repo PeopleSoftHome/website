@@ -120,8 +120,8 @@
 }
 
 .errorBox {
-  background: #FEF2F2;
-  color: #DC2626;
+  background: var(--error-bg);
+  color: var(--error);
   padding: 10px 14px;
   border-radius: var(--radius-md);
   font-size: 13px;

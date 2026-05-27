@@ -4,6 +4,7 @@ import { LeadService } from './lead.service';
 import { LeadStatus } from '@prisma/client';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { Request } from 'express';
@@ -51,6 +52,7 @@ export class LeadController {
 
   @Post()
   @Public()
+  @UseGuards(RecaptchaGuard)
   @ApiOperation({ summary: '提交预约演示' })
   create(@Body() dto: {
     name: string;
@@ -59,6 +61,7 @@ export class LeadController {
     email?: string;
     products?: string[];
     scale: string;
+    workspaceId?: string;
   }, @Req() req: Request) {
     return this.leadService.create({
       ...dto,

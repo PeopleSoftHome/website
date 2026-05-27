@@ -1,168 +1,42 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { Injectable } from '@nestjs/common';
+import { AuthUserService } from './auth-user.service';
+import { AuthTokenService } from './auth-token.service';
 
+/**
+ * AuthService — Facade
+ * 组合 User / Token 两个子服务，对外保持统一接口
+ */
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private userService: AuthUserService,
+    private tokenService: AuthTokenService,
   ) {}
 
-  async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-    if (existing) {
-      throw new ConflictException('邮箱已被注册');
-    }
-
-    const hashedPassword = await bcrypt.hash(dto.password, 12);
-    const defaultRole = await this.prisma.role.findUnique({
-      where: { name: 'USER' },
-    });
-
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        name: dto.name,
-        phone: dto.phone,
-        roleId: defaultRole?.id || '',
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        status: true,
-        createdAt: true,
-      },
-    });
-
-    return { message: '注册成功', user };
+  async register(dto: Parameters<AuthUserService['register']>[0]) {
+    return this.userService.register(dto);
   }
 
-  async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-      include: { role: true },
-    });
-    if (!user) {
-      throw new UnauthorizedException('邮箱或密码错误');
-    }
-
-    const isMatch = await bcrypt.compare(dto.password, user.password);
-    if (!isMatch) {
-      throw new UnauthorizedException('邮箱或密码错误');
-    }
-
-    if (user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('账号已被禁用');
-    }
-
-    const tokens = await this.generateTokens(user.id, user.email);
-    await this.saveRefreshToken(user.id, tokens.refreshToken);
-
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role.name,
-      },
-      ...tokens,
-    };
+  async login(dto: Parameters<AuthUserService['login']>[0]) {
+    const { user } = await this.userService.login(dto);
+    const tokens = await this.tokenService.generateTokens(user.id, user.email, user.workspaceId);
+    await this.tokenService.saveRefreshToken(user.id, tokens.refreshToken);
+    return { user, ...tokens };
   }
 
   async refresh(refreshToken: string) {
-    const stored = await this.prisma.refreshToken.findUnique({
-      where: { token: refreshToken },
-    });
-    if (!stored || stored.expiresAt < new Date()) {
-      throw new UnauthorizedException('Refresh token 无效或已过期');
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { id: stored.userId },
-    });
-    if (!user || user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('用户不存在');
-    }
-
-    await this.prisma.refreshToken.delete({ where: { id: stored.id } });
-    const tokens = await this.generateTokens(user.id, user.email);
-    await this.saveRefreshToken(user.id, tokens.refreshToken);
-
-    return tokens;
+    return this.tokenService.refresh(refreshToken);
   }
 
-  async logout(refreshToken: string) {
-    await this.prisma.refreshToken.deleteMany({
-      where: { token: refreshToken },
-    });
-    return { message: '登出成功' };
+  async logout(refreshToken: string, accessToken?: string) {
+    return this.tokenService.logout(refreshToken, accessToken);
   }
 
   async getMe(userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        avatar: true,
-        phone: true,
-        bio: true,
-        status: true,
-        role: { select: { id: true, name: true } },
-        createdAt: true,
-      },
-    });
-    return user;
+    return this.userService.getMe(userId);
   }
 
-  async updateProfile(userId: string, dto: { name?: string; avatar?: string; phone?: string; bio?: string }) {
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: dto,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        avatar: true,
-        phone: true,
-        bio: true,
-        status: true,
-        role: { select: { id: true, name: true } },
-        createdAt: true,
-      },
-    });
-    return { message: '更新成功', user };
-  }
-
-  private async generateTokens(userId: string, email: string) {
-    const payload = { sub: userId, email };
-    const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '15m'),
-    });
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION', '7d'),
-    });
-    return { accessToken, refreshToken };
-  }
-
-  private async saveRefreshToken(userId: string, token: string) {
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
-    await this.prisma.refreshToken.create({
-      data: { token, userId, expiresAt },
-    });
+  async updateProfile(userId: string, dto: Parameters<AuthUserService['updateProfile']>[1]) {
+    return this.userService.updateProfile(userId, dto);
   }
 }

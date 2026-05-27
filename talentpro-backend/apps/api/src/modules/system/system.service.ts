@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
 
 @Injectable()
 export class SystemService {
@@ -101,5 +102,38 @@ export class SystemService {
   async deleteEmailTemplate(key: string) {
     await this.prisma.emailTemplate.delete({ where: { key } });
     return { message: '删除成功' };
+  }
+
+  // ─── SensitiveWords ───
+  async findAllSensitiveWords() {
+    return this.prisma.sensitiveWord.findMany({ orderBy: { createdAt: 'desc' } });
+  }
+
+  async createSensitiveWord(data: { word: string; category?: string; severity?: number }) {
+    return this.prisma.sensitiveWord.create({
+      data: { word: data.word, category: data.category || 'spam', severity: data.severity || 2 },
+    });
+  }
+
+  async deleteSensitiveWord(id: string) {
+    await this.prisma.sensitiveWord.delete({ where: { id } });
+    return { message: '删除成功' };
+  }
+
+  async testModeration(content: string) {
+    const sensitiveWords = await this.prisma.sensitiveWord.findMany({ where: { isActive: true } });
+    const lowerContent = content.toLowerCase();
+    const sensitiveFlags: string[] = [];
+    const severities: number[] = [];
+    for (const sw of sensitiveWords) {
+      if (lowerContent.includes(sw.word.toLowerCase())) {
+        sensitiveFlags.push(sw.category);
+        severities.push(sw.severity);
+      }
+    }
+    const { spamFlags } = checkSpamPatterns(content);
+    const { isSuspicious } = checkSuspiciousLength(content);
+    const { riskScore, flags } = calculateRiskScore(sensitiveFlags, spamFlags, isSuspicious, severities);
+    return { riskScore, flags, autoApprove: riskScore < 0.3 && flags.length === 0 };
   }
 }

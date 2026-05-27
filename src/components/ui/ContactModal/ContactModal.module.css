@@ -165,5 +165,5 @@ a.contactValue:hover { color: var(--primary); }
   background: var(--surface-on-dark-hover);
   color: var(--gray-400);
 }
-[data-theme="dark"] .close:hover { background: rgba(255,255,255,0.14); }
+[data-theme="dark"] .close:hover { background: var(--surface-on-dark-hover); }
 [data-theme="dark"] .contactItem { border-color: var(--card-border); }

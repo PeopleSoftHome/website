@@ -12,5 +12,6 @@ export default defineConfig({
   server: { port: 3457 },
   build: {
     outDir: 'dist',
+    sourcemap: process.env.SOURCE_MAP === 'true',
   },
 });

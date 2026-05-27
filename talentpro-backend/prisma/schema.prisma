@@ -16,6 +16,12 @@ enum UserStatus {
   PENDING
 }
 
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 enum PostStatus {
   DRAFT
   PUBLISHED
@@ -38,29 +44,101 @@ enum LeadStatus {
   LOST
 }
 
+enum WorkspacePlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum WorkspaceStatus {
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+}
+
+enum DemoBookingScale {
+  SCALE_1_10
+  SCALE_11_50
+  SCALE_51_200
+  SCALE_200_PLUS
+}
+
+enum LeadSource {
+  WEBSITE
+  ADS
+  REFERRAL
+  ORGANIC
+}
+
+enum ResourceType {
+  ARTICLE
+  WHITEPAPER
+  VIDEO
+  CASE_STUDY
+}
+
+enum ExperimentStatus {
+  DRAFT
+  RUNNING
+  PAUSED
+  ENDED
+}
+
+enum SensitiveWordCategory {
+  SPAM
+  AD
+  OFFENSIVE
+  POLITICAL
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
+}
+
+enum NotificationType {
+  COMMENT_REPLY
+  MENTION
+  SYSTEM
+  FOLLOW_UP
+}
+
 // ==================== Identity ====================
 
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  password  String
-  name      String?
-  avatar    String?
-  phone     String?
-  bio       String?
-  status    UserStatus @default(ACTIVE)
-  roleId    String
-  role      Role       @relation(fields: [roleId], references: [id])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  name           String?
+  avatar         String?
+  phone          String?
+  bio            String?
+  status         UserStatus      @default(ACTIVE)
+  roleId         String
+  role           Role            @relation(fields: [roleId], references: [id])
+  workspaceId    String?
+  workspace      Workspace?      @relation(fields: [workspaceId], references: [id])
+  workspaceRole  WorkspaceRole?  @default(MEMBER)
+  abVariant      String?         // A/B测试分组
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
 
-  posts       BlogPost[]
-  topics      ForumTopic[]
-  replies     ForumPost[]
-  comments    Comment[]
-  activities  UserActivity[]
-  auditLogs   AuditLog[]
+  posts           BlogPost[]
+  topics          ForumTopic[]
+  replies         ForumPost[]
+  comments        Comment[]
+  activities      UserActivity[]
+  auditLogs       AuditLog[]
+  downloads       DownloadRecord[]
+  notifications   Notification[]
+  medias          Media[]
+  followUps       FollowUp[]
+  assignedBookings DemoBooking[] @relation("AssignedBookings")
+  updatedSettings Setting[]
+  ownedWorkspaces Workspace[]    @relation("WorkspaceOwner")
 
+  @@index([workspaceId])
   @@map("users")
 }
 
@@ -85,6 +163,21 @@ model Permission {
   @@map("permissions")
 }
 
+model Workspace {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  plan      WorkspacePlan   @default(FREE)
+  status    WorkspaceStatus @default(ACTIVE)
+  ownerId   String   @unique
+  owner     User     @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("workspaces")
+}
+
 model RefreshToken {
   id        String   @id @default(uuid())
   token     String   @unique
@@ -92,6 +185,7 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@map("refresh_tokens")
 }
 
@@ -120,6 +214,7 @@ model Section {
   config    Json    @default("{}")
   isActive  Boolean @default(true)
 
+  @@index([pageId])
   @@map("sections")
 }
 
@@ -163,6 +258,8 @@ model NavItem {
   sortOrder     Int        @default(0)
   isExternal    Boolean    @default(false)
 
+  @@index([navigationId])
+  @@index([parentId])
   @@map("nav_items")
 }
 
@@ -196,6 +293,8 @@ model Product {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
+  @@index([tabId])
+  @@index([isPublished])
   @@map("products")
 }
 
@@ -233,6 +332,69 @@ model Testimonial {
   @@map("testimonials")
 }
 
+// ==================== Stats ====================
+
+model Stat {
+  id        String  @id @default(uuid())
+  key       String  @unique
+  label     String
+  value     String
+  suffix    String?
+  prefix    String?
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("stats")
+}
+
+// ==================== Client Logos ====================
+
+model ClientLogo {
+  id        String  @id @default(uuid())
+  name      String
+  logo      String
+  industry  String?
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("client_logos")
+}
+
+// ==================== WhyUs ====================
+
+model WhyUsTab {
+  id        String  @id @default(uuid())
+  label     String
+  slug      String  @unique
+  icon      String?
+  metrics   Json?   @default("[]")
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("why_us_tabs")
+}
+
+// ==================== AI Family ====================
+
+model AiCard {
+  id          String  @id @default(uuid())
+  slug        String  @unique
+  name        String
+  tagline     String
+  description String? @db.Text
+  icon        String?
+  features    Json?   @default("[]")
+  color       String?
+  sortOrder   Int     @default(0)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("ai_cards")
+}
+
 // ==================== Resources ====================
 
 model ResourceCategory {
@@ -247,23 +409,45 @@ model ResourceCategory {
 }
 
 model Resource {
-  id          String           @id @default(uuid())
-  categoryId  String
-  category    ResourceCategory @relation(fields: [categoryId], references: [id])
-  slug        String           @unique
-  title       String
-  description String?          @db.Text
-  coverImage  String?
-  fileUrl     String?
-  type        String           @default("article")
-  status      PostStatus       @default(DRAFT)
-  viewCount   Int              @default(0)
-  downloadCount Int            @default(0)
-  publishedAt DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id             String           @id @default(uuid())
+  categoryId     String
+  category       ResourceCategory @relation(fields: [categoryId], references: [id])
+  slug           String           @unique
+  title          String
+  description    String?          @db.Text
+  coverImage     String?
+  fileUrl        String?
+  type           ResourceType     @default(ARTICLE)
+  status         PostStatus       @default(DRAFT)
+  requiresLeadInfo Boolean        @default(false) // 下载前是否需要留资
+  viewCount      Int              @default(0)
+  downloadCount  Int              @default(0)
+  publishedAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  downloads      DownloadRecord[]
 
+  @@index([categoryId])
+  @@index([status])
   @@map("resources")
+}
+
+model DownloadRecord {
+  id         String   @id @default(uuid())
+  resourceId String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  name       String
+  email      String
+  company    String?
+  phone      String?
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([resourceId])
+  @@index([userId])
+  @@map("download_records")
 }
 
 // ==================== Blog ====================
@@ -282,7 +466,7 @@ model BlogCategory {
 model BlogPost {
   id          String       @id @default(uuid())
   title       String
-  slug        String       @unique
+  slug        String
   excerpt     String?
   content     String       @db.Text
   coverImage  String?
@@ -293,12 +477,18 @@ model BlogPost {
   author      User         @relation(fields: [authorId], references: [id])
   categoryId  String
   category    BlogCategory @relation(fields: [categoryId], references: [id])
+  workspaceId String?
   tags        Tag[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
 
+  @@unique([slug, workspaceId])
   @@index([status, publishedAt])
   @@index([slug])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([workspaceId])
   @@map("blog_posts")
 }
 
@@ -324,69 +514,101 @@ model ForumCategory {
 }
 
 model ForumTopic {
-  id         String        @id @default(uuid())
-  categoryId String
-  category   ForumCategory @relation(fields: [categoryId], references: [id])
-  authorId   String
-  author     User          @relation(fields: [authorId], references: [id])
-  title      String
-  content    String        @db.Text
-  isPinned   Boolean       @default(false)
-  isLocked   Boolean       @default(false)
-  viewCount  Int           @default(0)
-  replyCount Int           @default(0)
-  posts      ForumPost[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id          String        @id @default(uuid())
+  categoryId  String
+  category    ForumCategory @relation(fields: [categoryId], references: [id])
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id])
+  title       String
+  content     String        @db.Text
+  isPinned    Boolean       @default(false)
+  isLocked    Boolean       @default(false)
+  viewCount   Int           @default(0)
+  replyCount  Int           @default(0)
+  workspaceId String?
+  posts       ForumPost[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
 
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([workspaceId])
   @@map("forum_topics")
 }
 
 model ForumPost {
-  id         String     @id @default(uuid())
-  topicId    String
-  topic      ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  authorId   String
-  author     User       @relation(fields: [authorId], references: [id])
-  content    String     @db.Text
-  isSolution Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id          String     @id @default(uuid())
+  topicId     String
+  topic       ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id])
+  content     String     @db.Text
+  isSolution  Boolean    @default(false)
+  workspaceId String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
 
+  @@index([topicId])
+  @@index([authorId])
+  @@index([workspaceId])
   @@map("forum_posts")
 }
 
 // ==================== Comments (Polymorphic) ====================
 
 model Comment {
-  id         String        @id @default(uuid())
-  entityType String
-  entityId   String
-  authorId   String
-  author     User          @relation(fields: [authorId], references: [id])
-  content    String        @db.Text
-  parentId   String?
-  parent     Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
-  replies    Comment[]     @relation("CommentReplies")
-  status     CommentStatus @default(PENDING)
-  createdAt  DateTime      @default(now())
+  id          String        @id @default(uuid())
+  entityType  String
+  entityId    String
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id])
+  content     String        @db.Text
+  parentId    String?
+  parent      Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[]     @relation("CommentReplies")
+  status      CommentStatus @default(PENDING)
+  aiRiskScore Float?        // AI 内容审核风险分数 0-1
+  aiFlags     String[]      @default([]) // AI 标记的标签 [spam, ad, offensive]
+  workspaceId String?
+  createdAt   DateTime      @default(now())
+  deletedAt   DateTime?
 
-  @@index([entityType, entityId])
+  @@index([entityType, entityId, status, parentId])
+  @@index([parentId, createdAt])
+  @@index([workspaceId])
   @@map("comments")
 }
 
-model Notification {
+model SensitiveWord {
   id        String   @id @default(uuid())
-  userId    String
-  type      String
-  title     String
-  content   String
-  data      Json?    @default("{}")
-  isRead    Boolean  @default(false)
+  word      String   @unique
+  category  SensitiveWordCategory @default(SPAM)
+  severity  Int      @default(1) // 1=low, 2=medium, 3=high
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+
+  @@map("sensitive_words")
+}
+
+// ==================== Notifications ====================
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        NotificationType
+  title       String
+  content     String
+  data        Json?    @default("{}")
+  isRead      Boolean  @default(false)
+  workspaceId String?
+  createdAt   DateTime @default(now())
 
   @@index([userId, isRead])
   @@index([userId, createdAt])
+  @@index([workspaceId])
   @@map("notifications")
 }
 
@@ -399,11 +621,13 @@ model DemoBooking {
   phone       String
   email       String?
   products    String[]   @default([])
-  scale       String
-  status      LeadStatus @default(NEW)
-  source      String     @default("website")
+  scale       DemoBookingScale @default(SCALE_1_10)
+  status      LeadStatus       @default(NEW)
+  source      LeadSource       @default(WEBSITE)
   assignedTo  String?
+  assignee    User?      @relation("AssignedBookings", fields: [assignedTo], references: [id])
   notes       String?    @db.Text
+  workspaceId String?
   followUps   FollowUp[]
   ipAddress   String?
   userAgent   String?
@@ -411,6 +635,7 @@ model DemoBooking {
   updatedAt   DateTime   @updatedAt
 
   @@index([status, createdAt])
+  @@index([workspaceId])
   @@map("demo_bookings")
 }
 
@@ -421,8 +646,10 @@ model FollowUp {
   type      String
   content   String      @db.Text
   createdBy String
+  creator   User        @relation(fields: [createdBy], references: [id])
   createdAt DateTime    @default(now())
 
+  @@index([bookingId])
   @@map("follow_ups")
 }
 
@@ -439,6 +666,7 @@ model Media {
   height       Int?
   alt          String?
   createdBy    String
+  creator      User     @relation(fields: [createdBy], references: [id])
   createdAt    DateTime @default(now())
 
   @@map("medias")
@@ -475,15 +703,52 @@ model EventTrack {
 }
 
 model UserActivity {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action    String
-  metadata  Json?    @default("{}")
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action      String
+  metadata    Json?    @default("{}")
+  workspaceId String?
+  createdAt   DateTime @default(now())
 
   @@index([userId, createdAt])
+  @@index([workspaceId])
   @@map("user_activities")
+}
+
+// ==================== A/B Testing ====================
+
+model Experiment {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String?
+  variantA    Json     @default("{}") // { name, config }
+  variantB    Json     @default("{}")
+  trafficSplit Float   @default(0.5) // B 组流量占比
+  status      ExperimentStatus @default(DRAFT)
+  winner      String?  // A | B | null
+  startAt     DateTime?
+  endAt       DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("experiments")
+}
+
+model ExperimentEvent {
+  id           String   @id @default(uuid())
+  experimentId String
+  variant      String   // A | B
+  eventType    String   // impression, conversion, click
+  userId       String?
+  sessionId    String
+  properties   Json?    @default("{}")
+  createdAt    DateTime @default(now())
+
+  @@index([experimentId, variant, eventType])
+  @@index([sessionId])
+  @@map("experiment_events")
 }
 
 // ==================== System ====================
@@ -494,6 +759,7 @@ model Setting {
   value     Json
   category  String   @default("general")
   updatedBy String?
+  updater   User?    @relation(fields: [updatedBy], references: [id])
   updatedAt DateTime @updatedAt
 
   @@index([category])
@@ -527,4 +793,17 @@ model EmailTemplate {
   updatedAt DateTime @updatedAt
 
   @@map("email_templates")
+}
+
+model TokenBlacklist {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  type      TokenType @default(ACCESS)
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@map("token_blacklist")
 }

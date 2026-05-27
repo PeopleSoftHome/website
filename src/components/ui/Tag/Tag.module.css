@@ -26,5 +26,5 @@
 .ai {
   background: var(--ai-purple-bg);
   color: var(--ai-purple-text);
-  border: 1px solid rgba(124, 58, 237, 0.4);
+  border: 1px solid var(--ai-purple-alpha-60);
 }

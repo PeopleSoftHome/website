@@ -5,8 +5,7 @@
  * 开发模式打印日志，生产模式写入 window.tp_analytics 队列。
  */
 import { ref, readonly } from 'vue';
-
-const QUEUE_KEY = 'tp_analytics_queue';
+import { apiClient } from '@/api/client.js';
 
 function readConsent() {
   try {
@@ -27,6 +26,18 @@ function flushQueue() {
   };
 }
 
+// 批量上报到后端（防抖）
+let flushTimer = null;
+function scheduleFlush() {
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = setTimeout(() => {
+    const queue = window.tp_analytics?._queue || [];
+    if (queue.length === 0) return;
+    window.tp_analytics._queue = [];
+    apiClient.post('/analytics/events', { events: queue }).catch(() => {});
+  }, 5000);
+}
+
 export function useAnalytics() {
   const enabled = ref(readConsent());
 
@@ -35,6 +46,9 @@ export function useAnalytics() {
     const payload = { event, ...props, ts: Date.now(), url: location.href };
     if (typeof window !== 'undefined') {
       window.tp_analytics?.push?.(payload);
+      if (!window.tp_analytics._queue) window.tp_analytics._queue = [];
+      window.tp_analytics._queue.push(payload);
+      scheduleFlush();
     }
   };
 
@@ -46,6 +60,15 @@ export function useAnalytics() {
   if (typeof window !== 'undefined') {
     window.addEventListener('storage', (e) => {
       if (e.key === 'tp-cookie-consent') refreshConsent();
+    });
+    // 页面卸载前立即上报
+    window.addEventListener('beforeunload', () => {
+      const queue = window.tp_analytics?._queue || [];
+      if (queue.length === 0) return;
+      navigator.sendBeacon?.(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1'}/analytics/events`,
+        JSON.stringify({ events: queue }),
+      );
     });
   }
 

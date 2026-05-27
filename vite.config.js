@@ -15,6 +15,7 @@ export default defineConfig({
       manifest: {
         name: 'TalentPro HR Portal',
         short_name: 'TalentPro',
+        lang: 'zh-CN',
         description: 'TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案',
         theme_color: '#1B5FEB',
         background_color: '#ffffff',
@@ -27,7 +28,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -56,11 +57,13 @@ export default defineConfig({
   ],
   build: {
     outDir: 'dist',
+    sourcemap: process.env.SOURCE_MAP === 'true',
     chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['vue', 'vue-router'],
+          http: ['axios'],
         },
       },
     },

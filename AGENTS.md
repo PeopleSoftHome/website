@@ -25,7 +25,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 | 框架 | Vue | 3.5.0 | SFC + `<script setup>`，组合式 API |
 | 构建工具 | Vite | 5.4.2 | 开发端口 3000 |
 | 插件 | @vitejs/plugin-vue | 5.1.0 | 含 Fast Refresh |
-| 路由 | Vue Router | 4.4.0 | 博客/论坛多页面路由 |
+| 路由 | Vue Router | 5.0.7 | 博客/论坛多页面路由 |
 | 样式 | CSS Modules | 原生 | 零运行时开销 |
 | 语言 | JavaScript | ES Module | 无 TypeScript（后续可渐进迁移） |
 
@@ -265,24 +265,33 @@ I18nProvider       → 多语言（zh / en / zh-TW）
 
 ### 6.1 测试现状
 
-本项目**无自动化测试套件**（无 Jest、Vitest、Cypress、Playwright）。测试依赖**手动验证**。
+本项目已具备以下自动化测试能力：
+
+| 类型 | 工具 | 命令 | 说明 |
+|------|------|------|------|
+| 前端单元测试 | Vitest | `npm run test` | 27+ 个测试文件，覆盖 composables / utils |
+| 前端 E2E | Playwright | `npx playwright test` | 4 个 spec 文件，覆盖首页 / 博客 / 论坛 / 认证 |
+| 后端单元测试 | Jest | `cd talentpro-backend && npm run test` | 配置就绪，核心模块持续补充中 |
+| 后端 E2E | Jest | `cd talentpro-backend && npm run test:e2e` | 配置就绪，核心流程持续补充中 |
 
 ### 6.2 手动验证清单（每次变更后必须执行）
 
 **P0 — 核心流程**：
 1. `npm run dev` 正常启动，控制台无报错
 2. `npm run build` 构建成功，无 warning
-3. 首页 15 个 Section 全部可见，无白屏
-4. 导航下拉菜单：鼠标从一级移向二级时**不消失**
-5. 产品矩阵 / 行业方案 / 为什么选我们：Tab 切换正常，内容联动
-6. 客户证言轮播：自动播放、左右切换、hover 暂停、resize 不跳位
-7. Logo 墙：行业筛选后 grid 不错位
-8. 预约演示弹窗：3 步骤流程、表单填写、成功态、ESC 关闭
-9. 全局搜索：Cmd+K 触发、输入关键词、↑↓ 导航、Enter 跳转、Esc 关闭
-10. 暗色模式：切换后所有 Section 颜色正常，无硬编码未覆盖色值
-11. 多语言：切换语言后所有文本正常，无遗漏 key
-12. **博客/论坛**：路由跳转正常，列表加载、详情渲染、分页/筛选正常
-13. **用户认证**：登录/注册弹窗、表单验证、登录后头像下拉、退出登录正常
+3. `npm run test` 和 `npx playwright test` 全部通过
+4. 首页 15 个 Section 全部可见，无白屏
+5. 导航下拉菜单：鼠标从一级移向二级时**不消失**
+6. 产品矩阵 / 行业方案 / 为什么选我们：Tab 切换正常，内容联动
+7. 客户证言轮播：自动播放、左右切换、hover 暂停、resize 不跳位
+8. Logo 墙：行业筛选后 grid 不错位
+9. 预约演示弹窗：3 步骤流程、表单填写、成功态、ESC 关闭
+10. 全局搜索：Cmd+K 触发、输入关键词、↑↓ 导航、Enter 跳转、Esc 关闭
+11. 暗色模式：切换后所有 Section 颜色正常，无硬编码未覆盖色值
+12. 多语言：切换语言后所有文本正常，无遗漏 key
+13. **博客/论坛**：路由跳转正常，列表加载、详情渲染、分页/筛选正常
+14. **用户认证**：登录/注册弹窗、表单验证、登录后头像下拉、退出登录正常
+15. **后端 API**：Swagger 文档正常，`/health` 端点返回 200
 
 **响应式**：
 - Mobile (375px)：Hamburger 菜单、底部浮动栏横排、Hero 无 Dashboard 图
@@ -380,4 +389,29 @@ npm run build
 
 ---
 
-*TalentPro HR Portal · Vue 3.5 + Vite 5 + NestJS 11 · AGENTS.md v2.6.0*
+## 11. v3.0.0 新增架构规范
+
+### 安全
+- ChatBot 消息渲染必须使用 `escapeHtml` 转义后再 `v-html`
+- 所有 API 端点默认受 `ThrottlerGuard` 限流保护（全局注册）
+- JWT logout 必须将 Access Token 写入 `TokenBlacklist`
+- 密码策略：≥8位，含大小写+数字+特殊字符
+
+### 缓存
+- CMS 公开 GET 接口必须使用 `@Cacheable({ key, ttl })`
+- CacheInterceptor 已全局注册，无需额外导入
+
+### 事件驱动
+- BullMQ Processor 必须配置 `attempts: 3` + `exponential backoff`
+- 必须实现 `@OnWorkerEvent('failed')` 记录死信
+
+### SEO
+- Blog/Forum 详情页加载后必须动态更新 `document.title` + `meta description`
+
+### CI/CD
+- 代码提交触发 GitHub Actions：前端构建 + Vitest + 后端 Nest build + E2E
+- 生产部署使用 `docker/Dockerfile` 多阶段构建
+
+---
+
+*TalentPro HR Portal · Vue 3.5 + Vite 5 + NestJS 11 · AGENTS.md v3.0.0*

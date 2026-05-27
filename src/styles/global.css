@@ -34,6 +34,7 @@
   --ai-purple-text:  #A78BFA;
   --success:         #059669;
   --error:           #EF4444;
+  --error-bg:        #FEF2F2;
   --warning:         #D97706;
   --warning-bg:      #FFF7ED;
   --warning-border:  #FED7AA;
@@ -97,6 +98,14 @@
   --input-color:    #0F172A;
   --section-alt-bg: #F8FAFB;
 
+  /* Hero Section 背景 Token */
+  --hero-bg-start:  #F0F6FF;
+  --hero-bg-mid:    #EBF1FF;
+  --hero-bg-end:    #F5F0FF;
+  --grid-line:      rgba(27, 95, 235, 0.05);
+  --glow-primary:   rgba(27, 95, 235, 0.1);
+  --glow-ai:        rgba(124, 58, 237, 0.07);
+
   /* ── 深色背景上的透明度 Token（v2.4.0 Phase 6）── */
   --overlay-bg:              rgba(0, 0, 0, 0.45);
   --overlay-bg-deep:         rgba(0, 0, 0, 0.88);
@@ -155,6 +164,7 @@
   /* 功能色：在深色背景下略微提亮 */
   --success:      #10B981;
   --error:        #F87171;
+  --error-bg:     rgba(248, 113, 113, 0.12);
   --warning:      #FBBF24;
   --warning-bg:   rgba(251, 191, 36, 0.1);
   --warning-border:rgba(251, 191, 36, 0.3);

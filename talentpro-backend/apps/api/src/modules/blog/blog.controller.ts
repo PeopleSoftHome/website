@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 @ApiTags('博客管理')
 @Controller('blogs')
@@ -79,18 +80,21 @@ export class BlogController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
-  createPost(@Body() dto: {
-    title: string;
-    slug: string;
-    excerpt?: string;
-    content: string;
-    coverImage?: string;
-    authorId: string;
-    categoryId: string;
-    tagIds?: string[];
-    status?: PostStatus;
-  }) {
-    return this.blogService.createPost(dto);
+  createPost(
+    @CurrentUser() user: any,
+    @Body() dto: {
+      title: string;
+      slug: string;
+      excerpt?: string;
+      content: string;
+      coverImage?: string;
+      authorId: string;
+      categoryId: string;
+      tagIds?: string[];
+      status?: PostStatus;
+    },
+  ) {
+    return this.blogService.createPost({ ...dto, workspaceId: user.workspaceId });
   }
 
   @Patch('posts/:id')
@@ -154,16 +158,20 @@ export class BlogController {
   }
 
   @Post('comments')
-  @Public()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '发表评论' })
-  createComment(@Body() dto: {
-    entityType: string;
-    entityId: string;
-    authorId: string;
-    content: string;
-    parentId?: string;
-  }) {
-    return this.blogService.createComment(dto);
+  createComment(
+    @CurrentUser('id') authorId: string,
+    @Body() dto: {
+      entityType: string;
+      entityId: string;
+      content: string;
+      parentId?: string;
+      workspaceId?: string;
+    },
+  ) {
+    return this.blogService.createComment({ ...dto, authorId });
   }
 
   @Patch('comments/:id/moderate')
@@ -173,6 +181,34 @@ export class BlogController {
   @ApiOperation({ summary: '审核评论' })
   moderateComment(@Param('id') id: string, @Body() dto: { status: CommentStatus }) {
     return this.blogService.moderateComment(id, dto.status);
+  }
+
+  @Post('comments/batch-moderate')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '批量审核评论' })
+  batchModerateComments(@Body() dto: { ids: string[]; status: CommentStatus }) {
+    return this.blogService.batchModerateComments(dto.ids, dto.status);
+  }
+
+  @Get('admin/comments')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Admin 评论列表（支持按状态过滤）' })
+  findCommentsForAdmin(
+    @Query('status') status?: CommentStatus,
+    @Query('entityType') entityType?: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.blogService.findCommentsForAdmin({
+      status,
+      entityType,
+      page: page ? parseInt(page, 10) : 1,
+      pageSize: pageSize ? parseInt(pageSize, 10) : 20,
+    });
   }
 
   @Delete('comments/:id')

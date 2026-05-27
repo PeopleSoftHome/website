@@ -4,14 +4,18 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
     const status =
       exception instanceof HttpException
@@ -34,6 +38,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
           ? (exceptionResponse as any).message
           : undefined
         : undefined;
+
+    // 记录 500 级错误日志（含请求路径和堆栈）
+    if (status >= 500) {
+      this.logger.error(
+        `[${request.method}] ${request.url} => ${status} | ${Array.isArray(message) ? message.join(', ') : message}`,
+        exception instanceof Error ? exception.stack : undefined,
+      );
+    }
 
     response.status(status).json({
       success: false,

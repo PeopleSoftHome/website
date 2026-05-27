@@ -14,7 +14,11 @@ const routes = [
       { path: 'contents', component: () => import('@/views/ContentsView.vue') },
       { path: 'blogs', component: () => import('@/views/BlogManagerView.vue') },
       { path: 'forums', component: () => import('@/views/ForumManagerView.vue') },
+      { path: 'comment-moderation', component: () => import('@/views/CommentModerationView.vue') },
       { path: 'analytics', component: () => import('@/views/AnalyticsView.vue') },
+      { path: 'experiments', component: () => import('@/views/ExperimentView.vue') },
+      { path: 'download-records', component: () => import('@/views/DownloadRecordView.vue') },
+      { path: 'sensitive-words', component: () => import('@/views/SensitiveWordView.vue') },
     ],
   },
 ];

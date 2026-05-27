@@ -1,5 +1,7 @@
 <template>
-  <HeroSection />
+  <NavBar />
+  <main id="main-content">
+    <HeroSection />
   <Suspense>
     <template #fallback><SectionSkeleton :height="260" /></template>
     <BrandScrollSection />
@@ -44,11 +46,15 @@
     <template #fallback><SectionSkeleton :height="440" /></template>
     <CtaBannerSection />
   </Suspense>
+  </main>
+  <Footer />
 </template>
 
 <script setup>
 import { defineAsyncComponent } from 'vue';
 import HeroSection from '@/components/sections/HeroSection/HeroSection.vue';
+import NavBar from '@/components/layout/NavBar/NavBar.vue';
+import Footer from '@/components/layout/Footer/Footer.vue';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 
 const BrandScrollSection      = defineAsyncComponent(() => import('@/components/sections/BrandScrollSection/BrandScrollSection.vue'));

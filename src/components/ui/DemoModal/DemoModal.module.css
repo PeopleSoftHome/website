@@ -330,8 +330,8 @@
 
 /* ── API 错误提示 ── */
 .apiError {
-  background: #FEF2F2;
-  color: #DC2626;
+  background: var(--error-bg);
+  color: var(--error);
   padding: 10px 14px;
   border-radius: var(--radius-md);
   font-size: 13px;
@@ -353,7 +353,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.autoFillBtn:hover { background: #DBEAFE; }
+.autoFillBtn:hover { background: var(--primary-light); }
 
 /* ── 服务条款复选框 ── */
 .tosRow {

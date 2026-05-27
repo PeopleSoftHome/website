@@ -13,7 +13,24 @@
           :key="res.id"
           v-bind="res"
           :delay="i"
+          @download="openGate(res)"
         />
+      </div>
+    </div>
+
+    <!-- 下载留资弹窗 -->
+    <div v-if="gateOpen" :class="s.gateOverlay" @click.self="gateOpen = false">
+      <div :class="s.gateModal">
+        <button :class="s.gateClose" @click="gateOpen = false">✕</button>
+        <h3 :class="s.gateTitle">{{ t('downloadGate.title', { title: gateResource?.title }) }}</h3>
+        <p :class="s.gateSub">{{ t('downloadGate.subtitle') }}</p>
+        <input v-model="gateForm.name" :class="s.gateInput" :placeholder="t('downloadGate.name')" />
+        <input v-model="gateForm.email" :class="s.gateInput" :placeholder="t('downloadGate.email')" type="email" />
+        <input v-model="gateForm.company" :class="s.gateInput" :placeholder="t('downloadGate.company')" />
+        <button :class="s.gateSubmit" :disabled="gateLoading" @click="submitGate">
+          {{ gateLoading ? t('downloadGate.submitting') : t('downloadGate.submit') }}
+        </button>
+        <p v-if="gateError" :class="s.gateError">{{ gateError }}</p>
       </div>
     </div>
   </section>
@@ -25,6 +42,7 @@ import { RESOURCES } from '@/data/resources.js';
 import { useApiData } from '@/composables/useApiData.js';
 import { cmsApi } from '@/api/cms.js';
 import { transformResources } from '@/api/transforms.js';
+import { apiClient } from '@/api/client.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import ResourceCard from './ResourceCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -40,4 +58,39 @@ useApiData(async () => {
 }, apiResources);
 
 const displayResources = computed(() => (apiResources.value.length > 0 ? apiResources.value : RESOURCES));
+
+// 下载留资
+const gateOpen = ref(false);
+const gateResource = ref(null);
+const gateLoading = ref(false);
+const gateError = ref('');
+const gateForm = ref({ name: '', email: '', company: '' });
+
+const openGate = (res) => {
+  gateResource.value = res;
+  gateOpen.value = true;
+  gateError.value = '';
+};
+
+const submitGate = async () => {
+  if (!gateForm.value.name || !gateForm.value.email) {
+    gateError.value = t('downloadGate.required');
+    return;
+  }
+  gateLoading.value = true;
+  try {
+    await apiClient.post('/downloads', {
+      resourceId: gateResource.value.id,
+      name: gateForm.value.name,
+      email: gateForm.value.email,
+      company: gateForm.value.company,
+    });
+    gateOpen.value = false;
+    gateForm.value = { name: '', email: '', company: '' };
+  } catch (e) {
+    gateError.value = e.response?.data?.error?.message || t('downloadGate.error');
+  } finally {
+    gateLoading.value = false;
+  }
+};
 </script>

@@ -99,6 +99,7 @@
 <script setup>
 import { ref, computed, inject, watch, onMounted, onUnmounted } from 'vue';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
+import { aiApi } from '@/api/ai.js';
 import { BOT_AVATAR, FAQ_RULES_META, FALLBACK_REPLY_KEYS } from './chatData.js';
 import Icon from '../Icon/Icon.vue';
 import s from './ChatBot.module.css';
@@ -117,6 +118,7 @@ const windowRef = ref(null);
 const bottomRef = ref(null);
 const inputRef = ref(null);
 const timers = ref([]);
+const abortController = ref(null);
 
 useFocusTrap(() => props.isOpen, windowRef);
 
@@ -138,6 +140,11 @@ const clearAllTimers = () => {
   timers.value = [];
 };
 
+const nowTime = () => {
+  const loc = locale.value === 'en' ? 'en-US' : locale.value === 'zh-TW' ? 'zh-TW' : 'zh-CN';
+  return new Date().toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+};
+
 const matchRule = (text) => {
   const lower = text.toLowerCase();
   for (const rule of faqRules.value) {
@@ -151,14 +158,36 @@ const matchRule = (text) => {
   };
 };
 
-const nowTime = () => {
-  const loc = locale.value === 'en' ? 'en-US' : locale.value === 'zh-TW' ? 'zh-TW' : 'zh-CN';
-  return new Date().toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+// 本地快捷操作检测（无需调用 API）
+const LOCAL_ACTIONS = {
+  demo: ['演示', '预约', 'demo', 'book', 'trial', '试用', '体验'],
+  human: ['人工', '客服', 'agent', 'human', 'service', '真人', '转人工'],
 };
 
-const sendMessage = (text) => {
+const detectLocalAction = (text) => {
+  const lower = text.toLowerCase();
+  if (LOCAL_ACTIONS.demo.some(k => lower.includes(k))) return 'demo';
+  if (LOCAL_ACTIONS.human.some(k => lower.includes(k))) return 'human';
+  return null;
+};
+
+const pushBotMessage = (text, quickReplies = []) => {
+  messages.value.push({
+    id: Date.now(),
+    from: 'bot',
+    text,
+    quickReplies,
+    time: nowTime(),
+  });
+};
+
+const sendMessage = async (text) => {
   const trimmed = text.trim();
   if (!trimmed) return;
+
+  if (abortController.value) {
+    abortController.value.abort();
+  }
 
   messages.value.push({
     id: Date.now(),
@@ -169,23 +198,83 @@ const sendMessage = (text) => {
   input.value = '';
   isTyping.value = true;
 
-  const matched = matchRule(trimmed);
-  const delay = 800 + Math.random() * 600;
-
-  const id = setTimeout(() => {
+  // 本地快捷操作（演示 / 人工）直接前端处理
+  const action = detectLocalAction(trimmed);
+  if (action === 'demo') {
     isTyping.value = false;
-    if (matched.action === 'openModal') emit('openDemo');
-    if (matched.isHandoff) isHandoff.value = true;
+    emit('openDemo');
+    pushBotMessage(t('chatBot.faq.demo.reply'), t('chatBot.faq.demo.quickReplies') || []);
+    return;
+  }
+  if (action === 'human') {
+    isTyping.value = false;
+    isHandoff.value = true;
+    pushBotMessage(t('chatBot.faq.human.reply'), t('chatBot.faq.human.quickReplies') || []);
+    return;
+  }
 
-    messages.value.push({
-      id: Date.now(),
-      from: 'bot',
-      text: matched.reply,
-      quickReplies: matched.quickReplies,
-      time: nowTime(),
-    });
-  }, delay);
-  timers.value.push(id);
+  // 构建对话历史（最近 3 轮，不含当前消息）
+  const history = messages.value
+    .slice(0, -1)
+    .filter(m => m.from === 'user' || m.from === 'bot')
+    .slice(-6)
+    .map(m => ({
+      role: m.from === 'user' ? 'user' : 'assistant',
+      content: m.text,
+    }));
+
+  abortController.value = new AbortController();
+
+  try {
+    // 使用 SSE 流式输出
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
+    const url = `${baseUrl}/ai/chat-stream?message=${encodeURIComponent(trimmed)}`;
+    const es = new EventSource(url);
+    let replyText = '';
+    const botMsgId = Date.now() + '_stream';
+
+    es.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.chunk) {
+          replyText += data.chunk;
+          // 更新或追加消息
+          const existing = messages.value.find(m => m.id === botMsgId);
+          if (existing) {
+            existing.text = replyText;
+          } else {
+            messages.value.push({ id: botMsgId, from: 'bot', text: replyText, time: nowTime() });
+          }
+          scrollToBottom();
+        }
+        if (data.done) {
+          es.close();
+          isTyping.value = false;
+          abortController.value = null;
+        }
+      } catch {
+        // ignore parse error
+      }
+    };
+
+    es.onerror = () => {
+      es.close();
+      isTyping.value = false;
+      abortController.value = null;
+      if (!replyText) {
+        const matched = matchRule(trimmed);
+        pushBotMessage(matched.reply || t('chatBot.fallback1'), matched.quickReplies || []);
+      }
+    };
+
+    abortController.value = { abort: () => es.close() };
+  } catch (err) {
+    if (import.meta.env.DEV) console.error('[ChatBot] API error:', err);
+    const matched = matchRule(trimmed);
+    isTyping.value = false;
+    pushBotMessage(matched.reply || t('chatBot.fallback1'), matched.quickReplies || []);
+    abortController.value = null;
+  }
 };
 
 const handleQuickReply = (text) => {
@@ -247,18 +336,29 @@ onMounted(() => document.addEventListener('keydown', onEsc));
 onUnmounted(() => {
   document.removeEventListener('keydown', onEsc);
   clearAllTimers();
+  if (abortController.value) abortController.value.abort();
 });
 
 // 格式化消息文本（**bold** → <strong>, \n → <br>）
+const escapeHtml = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 const formatMessage = (text) => {
   if (!text) return '';
   return text
     .split(/(\*\*[^*]+\*\*)/g)
     .map((part) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return `<strong>${part.slice(2, -2)}</strong>`;
+        return `<strong>${escapeHtml(part.slice(2, -2))}</strong>`;
       }
-      return part.replace(/\n/g, '<br>');
+      return escapeHtml(part).replace(/\n/g, '<br>');
     })
     .join('');
 };

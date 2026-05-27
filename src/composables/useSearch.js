@@ -54,17 +54,24 @@ export function useSearch(onClose) {
   };
 
   /* ── API 搜索 ── */
+  const suggestions = ref([]);
   watch(debouncedQuery, async (q) => {
     if (!q) {
       apiResults.value = [];
+      suggestions.value = [];
       return;
     }
     isSearching.value = true;
     try {
-      const data = await searchApi.search(q);
-      apiResults.value = transformSearchResults(data);
+      const [searchRes, suggestRes] = await Promise.all([
+        searchApi.search(q),
+        q.length >= 2 ? searchApi.getSuggestions(q) : Promise.resolve([]),
+      ]);
+      apiResults.value = transformSearchResults(searchRes);
+      suggestions.value = suggestRes || [];
     } catch (e) {
       apiResults.value = [];
+      suggestions.value = [];
       if (import.meta.env.DEV) console.warn('[Search API]', e.message);
     } finally {
       isSearching.value = false;
@@ -166,5 +173,6 @@ export function useSearch(onClose) {
     focusInput,
     TYPE_LABELS,
     debouncedQuery,
+    suggestions,
   };
 }

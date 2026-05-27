@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 
 @ApiTags('社区论坛')
 @Controller('forums')
@@ -71,10 +72,14 @@ export class ForumController {
   }
 
   @Post('topics')
-  @Public()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '发布话题' })
-  createTopic(@Body() dto: { categoryId: string; authorId: string; title: string; content: string }) {
-    return this.forumService.createTopic(dto);
+  createTopic(
+    @CurrentUser('id') authorId: string,
+    @Body() dto: { categoryId: string; title: string; content: string; workspaceId?: string },
+  ) {
+    return this.forumService.createTopic({ ...dto, authorId });
   }
 
   @Patch('topics/:id')
@@ -115,10 +120,14 @@ export class ForumController {
 
   // Posts (Replies)
   @Post('posts')
-  @Public()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: '回复话题' })
-  createPost(@Body() dto: { topicId: string; authorId: string; content: string }) {
-    return this.forumService.createPost(dto);
+  createPost(
+    @CurrentUser('id') authorId: string,
+    @Body() dto: { topicId: string; content: string; workspaceId?: string },
+  ) {
+    return this.forumService.createPost({ ...dto, authorId });
   }
 
   @Patch('posts/:id')

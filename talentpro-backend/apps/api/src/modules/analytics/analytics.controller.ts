@@ -37,15 +37,34 @@ export class AnalyticsController {
     return this.analyticsService.trackEvent(dto);
   }
 
-  @Post('activities')
+  @Post('client-errors')
   @Public()
-  @ApiOperation({ summary: '记录用户行为' })
-  logUserActivity(@Body() dto: {
-    userId: string;
-    action: string;
-    metadata?: Record<string, any>;
+  @ApiOperation({ summary: '接收前端错误上报' })
+  reportClientError(@Body() dto: {
+    type: string;
+    message: string;
+    stack?: string;
+    url?: string;
+    ua?: string;
+    time?: string;
   }) {
-    return this.analyticsService.logUserActivity(dto);
+    // 仅记录日志，不入库存储敏感信息
+    console.error('[Client Error]', dto.type, dto.message, dto.url);
+    return { received: true };
+  }
+
+  @Post('activities')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '记录用户行为' })
+  logUserActivity(
+    @CurrentUser('id') userId: string,
+    @Body() dto: {
+      action: string;
+      metadata?: Record<string, any>;
+    },
+  ) {
+    return this.analyticsService.logUserActivity({ userId, ...dto });
   }
 
   @Get('dashboard')

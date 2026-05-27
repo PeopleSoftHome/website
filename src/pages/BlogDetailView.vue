@@ -62,6 +62,12 @@ const fetchPost = async () => {
   try {
     const res = await blogApi.getPost(route.params.slug);
     post.value = res.data || res;
+    // 动态 SEO
+    if (post.value) {
+      document.title = `${post.value.title} | TalentPro 博客`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', post.value.excerpt?.slice(0, 160) || post.value.title);
+    }
   } catch (e) {
     console.error(e);
   }
@@ -73,10 +79,24 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString('zh-CN');
 };
 
-// 简单 Markdown 渲染：标题、粗体、链接、段落
+// XSS-safe HTML escape
+const escapeHtml = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+// 简单 Markdown 渲染：标题、粗体、链接、段落（输入先转义，再应用安全标签）
 const renderMarkdown = (md) => {
   if (!md) return '';
-  return md
+  // 先对原始文本进行 HTML 转义，防止注入
+  const safe = escapeHtml(md);
+  // 在已转义的文本上应用 markdown 标签替换
+  return safe
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')

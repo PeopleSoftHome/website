@@ -71,7 +71,9 @@ export class SystemController {
   }
 
   @Post('audit-logs')
-  @Public()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
   @ApiOperation({ summary: '记录审计日志' })
   createAuditLog(@Body() dto: {
     userId?: string;
@@ -121,5 +123,42 @@ export class SystemController {
   @ApiOperation({ summary: '删除邮件模板' })
   deleteEmailTemplate(@Param('key') key: string) {
     return this.systemService.deleteEmailTemplate(key);
+  }
+
+  // SensitiveWords
+  @Get('sensitive-words')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '敏感词列表' })
+  findAllSensitiveWords() {
+    return this.systemService.findAllSensitiveWords();
+  }
+
+  @Post('sensitive-words')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '添加敏感词' })
+  createSensitiveWord(@Body() dto: { word: string; category?: string; severity?: number }) {
+    return this.systemService.createSensitiveWord(dto);
+  }
+
+  @Delete('sensitive-words/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '删除敏感词' })
+  deleteSensitiveWord(@Param('id') id: string) {
+    return this.systemService.deleteSensitiveWord(id);
+  }
+
+  @Post('moderation-test')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '内容检测模拟' })
+  testModeration(@Body() dto: { content: string }) {
+    return this.systemService.testModeration(dto.content);
   }
 }

@@ -1,10 +1,27 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import { PrismaModule } from './common/prisma/prisma.module';
+import { RedisModule } from './common/redis/redis.module';
+import { QueueModule } from './modules/queue/queue.module';
+import { MeilisearchModule } from './modules/meilisearch/meilisearch.module';
+import { NotificationListener } from './listeners/notification.listener';
+import { SearchIndexListener } from './listeners/search-index.listener';
+import { NotificationProcessor } from './processors/notification.processor';
+import { SearchIndexProcessor } from './processors/search-index.processor';
+import { LeadNurtureProcessor } from './processors/lead-nurture.processor';
+import { CacheInterceptor } from './common/interceptors/cache.interceptor';
+import { TimingInterceptor } from './common/interceptors/timing.interceptor';
+import { WorkspaceInterceptor } from './common/interceptors/workspace.interceptor';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -18,6 +35,13 @@ import { ForumModule } from './modules/forum/forum.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { SystemModule } from './modules/system/system.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { MailModule } from './modules/mail/mail.module';
+import { AiModule } from './modules/ai/ai.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { ExportModule } from './modules/export/export.module';
+import { ExperimentModule } from './modules/experiment/experiment.module';
+import { DownloadModule } from './modules/download/download.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -30,12 +54,38 @@ import { NotificationModule } from './modules/notification/notification.module';
       useFactory: () => ({
         throttlers: [
           {
+            name: 'default',
             ttl: 60000,
             limit: 100,
+          },
+          {
+            name: 'auth',
+            ttl: 60000,
+            limit: 10,
+          },
+          {
+            name: 'search',
+            ttl: 60000,
+            limit: 30,
           },
         ],
       }),
     }),
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot({ wildcard: true }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRATION', '15m') as any,
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    RedisModule,
+    QueueModule,
+    MeilisearchModule,
     PrismaModule,
     AuthModule,
     UserModule,
@@ -49,6 +99,44 @@ import { NotificationModule } from './modules/notification/notification.module';
     AnalyticsModule,
     SystemModule,
     NotificationModule,
+    MailModule,
+    AiModule,
+    WorkspaceModule,
+    ExportModule,
+    ExperimentModule,
+    DownloadModule,
+    HealthModule,
+  ],
+  providers: [
+    NotificationListener,
+    SearchIndexListener,
+    NotificationProcessor,
+    SearchIndexProcessor,
+    LeadNurtureProcessor,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TimingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: WorkspaceInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

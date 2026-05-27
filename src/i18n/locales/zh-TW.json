@@ -612,7 +612,8 @@
     "password":           "密碼",
     "passwordPlaceholder":"請輸入密碼",
     "passwordRequired":   "請輸入密碼",
-    "passwordMin":        "密碼至少 6 位",
+    "passwordMin":        "密碼至少 8 位",
+    "passwordComplexity": "密碼需包含大小寫字母、數字和特殊字元",
     "confirmPassword":    "確認密碼",
     "confirmPasswordPlaceholder": "請再次輸入密碼",
     "confirmRequired":    "請確認密碼",
@@ -667,5 +668,16 @@
   "editor": {
     "preview":            "預覽",
     "edit":               "編輯"
+  },
+  "downloadGate": {
+    "title":              "下載《{title}》",
+    "subtitle":           "請填寫以下信息，我們將把資料發送到您的郵箱",
+    "name":               "您的姓名",
+    "email":               "工作郵箱",
+    "company":            "公司名稱（選填）",
+    "submit":             "確認並下載",
+    "submitting":         "提交中...",
+    "required":           "請填寫姓名和郵箱",
+    "error":              "提交失敗，請重試"
   }
 }

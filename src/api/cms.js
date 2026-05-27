@@ -26,6 +26,26 @@ export const cmsApi = {
     return apiClient.get(`/cms/navigations/${key}`).then((r) => r.data);
   },
 
+  // Stats
+  getStats() {
+    return apiClient.get('/cms/stats').then((r) => r.data);
+  },
+
+  // Logos
+  getLogos() {
+    return apiClient.get('/cms/logos').then((r) => r.data);
+  },
+
+  // WhyUs
+  getWhyUs() {
+    return apiClient.get('/cms/why-us').then((r) => r.data);
+  },
+
+  // AI Cards
+  getAiCards() {
+    return apiClient.get('/cms/ai-cards').then((r) => r.data);
+  },
+
   // Translations
   getTranslations(locale, context) {
     return apiClient.get('/cms/translations', { params: { locale, context } }).then((r) => r.data);

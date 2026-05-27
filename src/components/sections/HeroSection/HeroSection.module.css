@@ -1,7 +1,7 @@
 /* ── Hero 容器 — v2.3.1 浅色背景重设计 ── */
 .hero {
   position: relative;
-  background: linear-gradient(160deg, #F0F6FF 0%, #EBF1FF 40%, #F5F0FF 100%);
+  background: linear-gradient(160deg, var(--hero-bg-start) 0%, var(--hero-bg-mid) 40%, var(--hero-bg-end) 100%);
   min-height: 100vh;
   overflow: hidden;
   padding-top: 64px;
@@ -12,8 +12,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(27,95,235,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(27,95,235,0.05) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
 }
@@ -25,7 +25,7 @@
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(27,95,235,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--glow-primary) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -36,7 +36,7 @@
   right: 20%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--glow-ai) 0%, transparent 70%);
   pointer-events: none;
 }
 

@@ -1,10 +1,12 @@
-import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus, Headers } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 
@@ -14,6 +16,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @UseGuards(RecaptchaGuard)
+  @Throttle('auth')
   @Post('register')
   @ApiOperation({ summary: '用户注册' })
   register(@Body() dto: RegisterDto) {
@@ -21,6 +25,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle('auth')
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '用户登录' })
@@ -29,6 +34,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle('auth')
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '刷新 Token' })
@@ -39,8 +45,9 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '登出' })
-  logout(@Body() dto: RefreshTokenDto) {
-    return this.authService.logout(dto.refreshToken);
+  logout(@Body() dto: RefreshTokenDto, @Headers('authorization') auth?: string) {
+    const accessToken = auth?.replace('Bearer ', '');
+    return this.authService.logout(dto.refreshToken, accessToken);
   }
 
   @Get('me')

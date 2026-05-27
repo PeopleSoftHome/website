@@ -14,17 +14,17 @@
     @open-demo="modalStore.openModal(); chatOpen = false"
   />
   <CookieBanner
-    :show-banner="cookieConsent.showBanner"
-    :show-preferences="cookieConsent.showPreferences"
-    @accept-all="cookieConsent.acceptAll"
-    @reject-all="cookieConsent.rejectAll"
-    @save-prefs="cookieConsent.savePreferences"
-    @open-preferences="cookieConsent.openPreferences"
+    :show-banner="showBanner"
+    :show-preferences="showPreferences"
+    @accept-all="acceptAll"
+    @reject-all="rejectAll"
+    @save-prefs="savePreferences"
+    @open-preferences="openPreferences"
   />
 </template>
 
 <script setup>
-import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
+import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch, getCurrentInstance } from 'vue';
 import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';
@@ -32,14 +32,18 @@ import { createSearch } from '@/stores/search.js';
 import { createVideoModal } from '@/stores/videoModal.js';
 import { createAnalytics } from '@/stores/analytics.js';
 import { createAuth } from '@/stores/auth.js';
+import { useAbTest } from '@/composables/useAbTest.js';
+import { defineAsyncComponent } from 'vue';
 import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
 import DemoModal from '@/components/ui/DemoModal/DemoModal.vue';
 import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
-import SearchModal from '@/components/ui/SearchModal/SearchModal.vue';
-import ContactModal from '@/components/ui/ContactModal/ContactModal.vue';
-import AuthModal from '@/components/ui/AuthModal/AuthModal.vue';
-import ChatBot from '@/components/ui/ChatBot/ChatBot.vue';
 import CookieBanner from '@/components/ui/CookieBanner/CookieBanner.vue';
+
+/* 按需异步加载的大体积弹窗/组件，降低主包体积 */
+const SearchModal = defineAsyncComponent(() => import('@/components/ui/SearchModal/SearchModal.vue'));
+const ContactModal = defineAsyncComponent(() => import('@/components/ui/ContactModal/ContactModal.vue'));
+const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/AuthModal.vue'));
+const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
 
 /* 全局状态 */
@@ -66,17 +70,72 @@ const chatOpen = ref(false);
 const authOpen = ref(false);
 
 /* Cookie 同意横幅 */
-const cookieConsent = useCookieConsent();
+const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
 
-/* 全局错误捕获 */
+/* A/B 测试 + 热力图 */
+const abTest = useAbTest();
+provide('abTest', abTest);
+
+/* 全局错误捕获 + 上报 */
+const reportError = (type, message, stack) => {
+  try {
+    const payload = {
+      type,
+      message: String(message).slice(0, 500),
+      stack: String(stack).slice(0, 2000),
+      url: window.location.href,
+      ua: navigator.userAgent,
+      time: new Date().toISOString(),
+    };
+    // 优先使用 Beacon API（不阻塞卸载）
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1'}/analytics/client-errors`, JSON.stringify(payload));
+    } else {
+      fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1'}/analytics/client-errors`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(() => {});
+    }
+  } catch {
+    // 上报失败静默处理
+  }
+};
+
 onErrorCaptured((err, instance, info) => {
   console.error('[Vue Error]', err, info);
+  reportError('vue', err?.message, err?.stack);
   return false;
 });
 
-/* 页面加载埋点 */
+onMounted(() => {
+  window.onerror = (message, source, lineno, colno, error) => {
+    reportError('js', message, error?.stack);
+  };
+  window.onunhandledrejection = (event) => {
+    reportError('promise', event.reason?.message || event.reason, event.reason?.stack);
+  };
+});
+
+/* 页面加载埋点 + 热力图 + 滚动深度（动态加载，降低主包体积） */
 onMounted(() => {
   analytics.track('page_view', { title: document.title });
+
+  let cleanupHeatmap = null;
+  let cleanupScroll = null;
+
+  import('@/composables/useHeatmap.js').then(({ useHeatmap }) => {
+    cleanupHeatmap = useHeatmap(analytics.track).initHeatmap();
+  });
+  import('@/composables/useScrollDepth.js').then(({ useScrollDepth }) => {
+    cleanupScroll = useScrollDepth(analytics.track).initScrollDepth();
+  });
+
+  onUnmounted(() => {
+    cleanupHeatmap?.();
+    cleanupScroll?.();
+  });
 });
 
 /* 语言/主题切换埋点 */

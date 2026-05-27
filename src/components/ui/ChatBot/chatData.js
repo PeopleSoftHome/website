@@ -1,9 +1,9 @@
 /**
  * Chatbot 知识库元数据 — TalentPro 智能客服
  *
- * v2.3.2 Phase 2：文本内容已迁移至 i18n locales，本文件仅保留：
- *   - 匹配规则结构（id、keywords、action、isHandoff）
- *   - keywords 已覆盖中英双语，支持多语言用户输入
+ * v2.10.0 (Sprint 33)：主回答链路已迁移到后端 AI RAG API。
+ * 本文件保留的 FAQ_RULES_META 仅作为网络异常时的前端 fallback，
+ * 实际日常回答由后端 AiService（OpenAI + Meilisearch RAG）生成。
  *
  * 实际回复文本通过 t(`chatBot.faq.${id}.reply`) 读取。
  */

@@ -31,6 +31,14 @@
       </div>
 
       <div :class="s.body">
+        <!-- 搜索建议 -->
+        <div v-if="hasQuery && suggestions.length > 0 && !hasResults" :class="s.suggestions">
+          <div v-for="sug in suggestions.slice(0, 6)" :key="sug" :class="s.suggestionItem" @click="handleQueryChange(sug)">
+            <Icon name="search" :size="14" />
+            <span>{{ sug }}</span>
+          </div>
+        </div>
+
         <!-- 无输入：热门搜索 -->
         <div v-if="!hasQuery" :class="s.hotSection">
           <div :class="s.hotTitle">{{ t('search.hot') }}</div>
@@ -109,6 +117,7 @@ const {
   selectItem, handleKeyDown,
   inputRef, focusInput,
   TYPE_LABELS, debouncedQuery, flatResults,
+  suggestions,
 } = useSearch(() => searchStore.closeSearch());
 
 const trackedSelectItem = (item) => {

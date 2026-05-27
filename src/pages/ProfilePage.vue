@@ -9,6 +9,9 @@
             <div class="profile-info">
               <h1 class="profile-name">{{ user.name || user.email }}</h1>
               <p class="profile-email">{{ user.email }}</p>
+              <p v-if="user.workspaceName" class="profile-workspace">
+                {{ user.workspaceName }} · {{ user.workspaceRole }}
+              </p>
               <p v-if="user.bio" class="profile-bio">{{ user.bio }}</p>
               <p class="profile-meta">{{ t('profile.joined') }} {{ formatDate(user.createdAt) }}</p>
             </div>
@@ -74,6 +77,12 @@ const loadUser = async () => {
       avatar: user.value?.avatar || '',
     };
   } catch (e) {
+    if (e.response?.status === 401 || e.message?.includes('未授权')) {
+      // 未登录，提示并打开登录弹窗
+      auth.logout();
+      alert(t('auth.noAccount') || '请先登录');
+      window.location.href = '/';
+    }
     console.error(e);
   }
 };

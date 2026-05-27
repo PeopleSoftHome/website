@@ -31,7 +31,7 @@ export class SearchController {
   @ApiOperation({ summary: '搜索建议' })
   @ApiQuery({ name: 'q', required: true })
   async getSuggestions(@Query('q') q: string) {
-    const suggestions = await this.searchService.getSuggestions(q);
+    const suggestions = await this.searchService.suggest(q);
     return { data: suggestions };
   }
 }

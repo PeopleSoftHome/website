@@ -49,6 +49,7 @@ export class NotificationService {
     title: string;
     content: string;
     data?: Record<string, unknown>;
+    workspaceId?: string;
   }) {
     const notif = await this.prisma.notification.create({
       data: {
@@ -56,6 +57,7 @@ export class NotificationService {
         type: data.type,
         title: data.title,
         content: data.content,
+        workspaceId: data.workspaceId,
         data: (data.data || {}) as any,
       },
     });

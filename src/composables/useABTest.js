@@ -1,91 +1,72 @@
-/**
- * Lightweight A/B Testing Framework
- * ─────────────────────────────────
- * Assigns users to variants deterministically using localStorage + stable hash.
- * Persists assignment so the same user always sees the same variant.
- *
- * Usage:
- *   const variant = useABTest('hero-cta-2026q2', ['control', 'variant-a', 'variant-b']);
- *   // variant.value = 'control' | 'variant-a' | 'variant-b'
- */
-import { ref, readonly } from 'vue';
+import { ref, onMounted } from 'vue';
+import { apiClient } from '@/api/client.js';
 
-const STORAGE_PREFIX = 'tp-ab-';
+const experiments = ref([]);
+const variants = ref({}); // { experimentKey: 'A' | 'B' }
+const sessionId = ref('');
 
-function djb2Hash(str) {
-  let hash = 5381;
+function getSessionId() {
+  let sid = sessionStorage.getItem('tp-session-id');
+  if (!sid) {
+    sid = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    sessionStorage.setItem('tp-session-id', sid);
+  }
+  return sid;
+}
+
+function hashString(str) {
+  let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i); // hash * 33 + c
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
   }
   return Math.abs(hash);
 }
 
-function getVisitorId() {
-  let id = localStorage.getItem('tp-visitor-id');
-  if (!id) {
-    id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    try { localStorage.setItem('tp-visitor-id', id); } catch { /* ignore */ }
-  }
-  return id;
+function assignVariant(experiment, sid) {
+  const hash = hashString(`${experiment.key}-${sid}`);
+  const bucket = hash % 100;
+  return bucket < (experiment.trafficSplit || 0.5) * 100 ? 'B' : 'A';
 }
 
-function readStoredVariant(testId) {
-  try {
-    const raw = localStorage.getItem(`${STORAGE_PREFIX}${testId}`);
-    if (raw) return JSON.parse(raw).variant;
-  } catch { /* ignore */ }
-  return null;
+export function useAbTest() {
+  sessionId.value = getSessionId();
+
+  const loadExperiments = async () => {
+    try {
+      const res = await apiClient.get('/experiments/running');
+      experiments.value = res.data?.data || [];
+      for (const exp of experiments.value) {
+        variants.value[exp.key] = assignVariant(exp, sessionId.value);
+        // 上报 impression
+        apiClient.post(`/experiments/${exp.id}/events`, {
+          variant: variants.value[exp.key],
+          eventType: 'impression',
+          sessionId: sessionId.value,
+        }).catch(() => {});
+      }
+    } catch {
+      experiments.value = [];
+    }
+  };
+
+  const getVariant = (key) => {
+    return variants.value[key] || 'A';
+  };
+
+  const trackConversion = (key) => {
+    const exp = experiments.value.find(e => e.key === key);
+    if (!exp) return;
+    apiClient.post(`/experiments/${exp.id}/events`, {
+      variant: variants.value[key],
+      eventType: 'conversion',
+      sessionId: sessionId.value,
+    }).catch(() => {});
+  };
+
+  onMounted(() => {
+    loadExperiments();
+  });
+
+  return { experiments, variants, getVariant, trackConversion, sessionId };
 }
-
-function writeStoredVariant(testId, variant) {
-  try {
-    localStorage.setItem(`${STORAGE_PREFIX}${testId}`, JSON.stringify({ variant, ts: Date.now() }));
-  } catch { /* ignore */ }
-}
-
-/**
- * Assign a user to an A/B test variant.
- * @param {string} testId — unique test identifier
- * @param {string[]} variants — list of variant names (first = control)
- * @returns {Readonly<Ref<string>>} — assigned variant name
- */
-export function useABTest(testId, variants) {
-  if (!testId || !Array.isArray(variants) || variants.length === 0) {
-    console.warn('[useABTest] Invalid arguments');
-    return readonly(ref(''));
-  }
-
-  let variant = readStoredVariant(testId);
-
-  if (!variant || !variants.includes(variant)) {
-    const visitorId = getVisitorId();
-    const hash = djb2Hash(`${testId}:${visitorId}`);
-    const idx = hash % variants.length;
-    variant = variants[idx];
-    writeStoredVariant(testId, variant);
-  }
-
-  return readonly(ref(variant));
-}
-
-/**
- * Force a specific variant for testing / QA.
- * Call in browser console: useABTest.force('hero-cta-2026q2', 'variant-a')
- */
-useABTest.force = (testId, variant) => {
-  if (!testId || !variant) return;
-  writeStoredVariant(testId, variant);
-  console.log(`[useABTest] Forced ${testId} → ${variant}. Refresh to apply.`);
-};
-
-/**
- * Clear all stored A/B test assignments.
- */
-useABTest.clearAll = () => {
-  try {
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith(STORAGE_PREFIX))
-      .forEach((k) => localStorage.removeItem(k));
-    console.log('[useABTest] All assignments cleared.');
-  } catch { /* ignore */ }
-};

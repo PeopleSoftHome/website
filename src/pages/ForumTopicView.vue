@@ -92,6 +92,11 @@ const fetchTopic = async () => {
     const res = await forumApi.getTopic(route.params.id);
     topic.value = res.data || res;
     replies.value = topic.value?.posts || [];
+    if (topic.value) {
+      document.title = `${topic.value.title} | TalentPro 论坛`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', topic.value.content?.slice(0, 160) || topic.value.title);
+    }
   } catch (e) {
     console.error(e);
   }
@@ -103,9 +108,21 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString('zh-CN');
 };
 
+// XSS-safe HTML escape
+const escapeHtml = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 const renderMarkdown = (md) => {
   if (!md) return '';
-  return md
+  const safe = escapeHtml(md);
+  return safe
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>');
 };
