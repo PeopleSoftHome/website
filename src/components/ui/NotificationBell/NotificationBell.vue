@@ -85,6 +85,8 @@ const formatTime = (d) => {
   return new Date(d).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
+let reconnectTimer = null;
+
 const connectSSE = () => {
   if (!auth.token.value) return;
   try {
@@ -100,7 +102,7 @@ const connectSSE = () => {
     };
     es.onerror = () => {
       es.close();
-      setTimeout(connectSSE, 5000);
+      reconnectTimer = setTimeout(connectSSE, 5000);
     };
   } catch (e) {
     console.error(e);
@@ -113,6 +115,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (es) es.close();
+  if (es) { es.close(); es = null; }
+  if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
 });
 </script>

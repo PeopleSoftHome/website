@@ -136,7 +136,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, defineAsyncComponent } from 'vue';
+import { ref, computed, inject, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
 import { useRouter } from 'vue-router';
 import { useNavScroll } from '@/composables/useNavScroll.js';
@@ -174,9 +174,11 @@ const openAuth = () => { authModal.open(); };
 const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
 const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
 
+let searchFocusTimer = null;
+
 const openSearchBar = () => {
   searchOpen.value = true;
-  setTimeout(() => searchInputRef.value?.focus(), 50);
+  searchFocusTimer = setTimeout(() => searchInputRef.value?.focus(), 50);
 };
 
 const closeSearchBar = () => {
@@ -196,5 +198,9 @@ const isDark = computed(() => themeStore.theme?.value === 'dark');
 const userInitial = computed(() => {
   const name = auth.user.value?.name || auth.user.value?.email || '';
   return name.charAt(0).toUpperCase();
+});
+
+onUnmounted(() => {
+  if (searchFocusTimer) clearTimeout(searchFocusTimer);
 });
 </script>
