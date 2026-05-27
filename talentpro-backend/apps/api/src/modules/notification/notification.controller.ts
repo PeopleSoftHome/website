@@ -38,7 +38,7 @@ export class NotificationController {
 
   @Sse('stream')
   @UseGuards(SseAuthGuard)
-  @ApiOperation({ summary: 'SSE 实时推送（token 通过 query parameter 传递）' })
+  @ApiOperation({ summary: 'SSE 实时推送（token 优先通过 Authorization header 传递，降级通过 query parameter）' })
   stream(@CurrentUser('id') userId: string): Observable<MessageEvent> {
     return this.notificationService.getStream(userId).pipe(
       map((event) => ({

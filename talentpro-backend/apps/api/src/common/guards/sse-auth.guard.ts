@@ -11,7 +11,9 @@ export class SseAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.query?.token;
+    // 优先从 Authorization header 读取 token，防止 token 泄露到 URL / 日志
+    const authHeader = request.headers?.authorization;
+    const token = authHeader?.replace('Bearer ', '') || request.query?.token;
 
     if (!token) {
       throw new UnauthorizedException('Missing SSE token');

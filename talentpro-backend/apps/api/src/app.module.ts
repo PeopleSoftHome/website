@@ -21,7 +21,9 @@ import { CacheInterceptor } from './common/interceptors/cache.interceptor';
 import { TimingInterceptor } from './common/interceptors/timing.interceptor';
 import { WorkspaceInterceptor } from './common/interceptors/workspace.interceptor';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { MetricsModule } from './common/metrics/metrics.module';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -106,6 +108,7 @@ import { HealthModule } from './modules/health/health.module';
     ExperimentModule,
     DownloadModule,
     HealthModule,
+    MetricsModule,
   ],
   providers: [
     NotificationListener,
@@ -128,6 +131,10 @@ import { HealthModule } from './modules/health/health.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
     },
     {
       provide: APP_GUARD,

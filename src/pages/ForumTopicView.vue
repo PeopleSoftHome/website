@@ -72,6 +72,7 @@ import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
+import { escapeHtml, renderMarkdown } from '@/utils/markdown.js';
 
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
@@ -108,29 +109,9 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString('zh-CN');
 };
 
-// XSS-safe HTML escape
-const escapeHtml = (text) => {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
-
-const renderMarkdown = (md) => {
-  if (!md) return '';
-  const safe = escapeHtml(md);
-  return safe
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-};
-
 const renderMentions = (text) => {
   if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return escapeHtml(text)
     .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span class="mention-highlight">@$1</span>');
 };
 

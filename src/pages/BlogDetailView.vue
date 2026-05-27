@@ -50,6 +50,7 @@ import NavBar from '@/components/layout/NavBar/NavBar.vue';
 import Footer from '@/components/layout/Footer/Footer.vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
+import { renderMarkdown } from '@/utils/markdown.js';
 
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
@@ -79,32 +80,7 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString('zh-CN');
 };
 
-// XSS-safe HTML escape
-const escapeHtml = (text) => {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
 
-// 简单 Markdown 渲染：标题、粗体、链接、段落（输入先转义，再应用安全标签）
-const renderMarkdown = (md) => {
-  if (!md) return '';
-  // 先对原始文本进行 HTML 转义，防止注入
-  const safe = escapeHtml(md);
-  // 在已转义的文本上应用 markdown 标签替换
-  return safe
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
-    .replace(/\n/g, '<br>');
-};
 
 onMounted(fetchPost);
 </script>
