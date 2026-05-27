@@ -78,10 +78,12 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: cd talentpro-backend && npm ci
+      - run: cd talentpro-backend && npx prisma generate
       - run: cd talentpro-backend && npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
       - run: cd talentpro-backend && npm run build
+      - run: cd talentpro-backend && npm run test:cov
       - run: cd talentpro-backend && npm run test:e2e
         env:
           DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
