@@ -14,7 +14,11 @@ export class UserService {
       this.prisma.user.findMany({
         skip,
         take: pageSize,
-        include: { role: { select: { id: true, name: true } } },
+        select: {
+          id: true, email: true, name: true, phone: true,
+          avatar: true, status: true, roleId: true, createdAt: true,
+          role: { select: { id: true, name: true } },
+        },
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.user.count(),
@@ -25,7 +29,11 @@ export class UserService {
   async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: { role: { select: { id: true, name: true } } },
+      select: {
+        id: true, email: true, name: true, phone: true,
+        avatar: true, status: true, roleId: true, createdAt: true, updatedAt: true,
+        role: { select: { id: true, name: true } },
+      },
     });
     if (!user) throw new NotFoundException('用户不存在');
     return user;

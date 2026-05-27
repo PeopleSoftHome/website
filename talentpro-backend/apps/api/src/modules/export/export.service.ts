@@ -41,7 +41,12 @@ export class ExportService {
 
     const users = await this.prisma.user.findMany({
       where,
-      include: { role: { select: { name: true } }, workspace: { select: { name: true } } },
+      select: {
+        id: true, name: true, email: true, phone: true,
+        status: true, workspaceRole: true, createdAt: true,
+        role: { select: { name: true } },
+        workspace: { select: { name: true } },
+      },
       orderBy: { createdAt: 'desc' },
     });
 
