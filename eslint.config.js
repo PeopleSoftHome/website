@@ -6,13 +6,31 @@ export default [
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   {
-    files: ['src/**/*.{js,vue}'],
+    files: ['src/**/*.{js,vue,ts}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
         ...globals.browser,
         ...globals.node,
+        // Nuxt 3 运行时全局 API
+        useState: 'readonly',
+        definePageMeta: 'readonly',
+        defineNuxtRouteMiddleware: 'readonly',
+        useNuxtApp: 'readonly',
+        navigateTo: 'readonly',
+        abortNavigation: 'readonly',
+        useRoute: 'readonly',
+        useRouter: 'readonly',
+        useHead: 'readonly',
+        useSeoMeta: 'readonly',
+        useRuntimeConfig: 'readonly',
+        useAsyncData: 'readonly',
+        useFetch: 'readonly',
+        useLazyFetch: 'readonly',
+        useLazyAsyncData: 'readonly',
+        defineNuxtConfig: 'readonly',
+        defineNuxtPlugin: 'readonly',
       },
     },
     rules: {

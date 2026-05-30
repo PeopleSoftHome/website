@@ -1,8 +1,6 @@
 <template>
   <NavBar />
-  <main id="main-content">
-    <slot />
-  </main>
+  <slot />
   <Footer />
 </template>
 

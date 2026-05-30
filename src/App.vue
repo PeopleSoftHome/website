@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';
@@ -55,7 +55,6 @@ const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/A
 const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
 import { API_BASE_URL } from '@/api/baseUrl';
-import { setupRouterGuards } from '@/router/guards.js';
 
 /* 全局状态 */
 const i18n = createI18n();
@@ -76,13 +75,33 @@ provide('analytics', analytics);
 provide('auth', auth);
 provide('authModal', { open: () => { authOpen.value = true; } });
 
-const router = useRouter();
+/* 将核心 store 注入 useState，供全局中间件共享同一实例 */
+useState('auth', () => auth);
+useState('i18n', () => i18n);
+
 const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
-const authOpen = ref(false);
+const authOpen = useState('authOpen', () => false);
 
-setupRouterGuards(router, auth, i18n, authOpen);
+/* 语言切换时同步更新页面 title / meta description */
+const route = useRoute();
+const syncPageMeta = () => {
+  const titleKey = route.meta?.title;
+  if (titleKey) {
+    const translated = i18n.t(titleKey);
+    document.title = translated.startsWith('TalentPro')
+      ? translated
+      : `TalentPro — ${translated}`;
+  }
+  const descKey = route.meta?.description;
+  if (descKey) {
+    const translated = i18n.t(descKey);
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', translated);
+  }
+};
+watch(() => i18n.locale.value, syncPageMeta);
 
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
