@@ -1,9 +1,11 @@
 <template>
   <IconSprite />
   <a href="#main-content" class="skip-link">{{ t('skipLink') }}</a>
-  <ErrorBoundary>
-    <router-view />
-  </ErrorBoundary>
+  <NuxtLayout>
+    <ErrorBoundary>
+      <NuxtPage />
+    </ErrorBoundary>
+  </NuxtLayout>
   <FloatingBar @open-chat="chatOpen = true" @open-contact="contactOpen = true" />
 
   <DemoModal />
@@ -52,7 +54,7 @@ const ContactModal = defineAsyncComponent(() => import('@/components/ui/ContactM
 const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/AuthModal.vue'));
 const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
-import { API_BASE_URL } from '@/api/baseUrl.js';
+import { API_BASE_URL } from '@/api/baseUrl';
 import { setupRouterGuards } from '@/router/guards.js';
 
 /* 全局状态 */
@@ -75,7 +77,6 @@ provide('auth', auth);
 provide('authModal', { open: () => { authOpen.value = true; } });
 
 const router = useRouter();
-
 const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
@@ -94,7 +95,6 @@ useRum();
 /* 全局错误捕获 + 上报 */
 const reportError = (type, message, stack) => {
   try {
-    // 过滤 URL 中的敏感参数
     const url = new URL(window.location.href);
     const sensitiveParams = ['token', 'refreshToken', 'invite', 'reset', 'password'];
     sensitiveParams.forEach((p) => url.searchParams.delete(p));
@@ -108,7 +108,6 @@ const reportError = (type, message, stack) => {
       time: new Date().toISOString(),
     };
     const baseUrl = API_BASE_URL;
-    // 优先使用 Beacon API（不阻塞卸载）
     if (navigator.sendBeacon) {
       navigator.sendBeacon(`${baseUrl}/analytics/client-errors`, JSON.stringify(payload));
     } else {
