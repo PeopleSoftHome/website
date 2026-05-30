@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, IsEnum, Matches } from 'class-validator';
 import { UserStatus } from '@prisma/client';
 
 export class CreateUserDto {
@@ -6,7 +6,10 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @MinLength(6, { message: '密码至少6位' })
+  @MinLength(8, { message: '密码至少8位' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+    message: '密码需包含大小写字母、数字和特殊字符',
+  })
   password: string;
 
   @IsString()

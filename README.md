@@ -2,7 +2,7 @@
 
 > 面向中大型企业的一体化 HR SaaS 平台官方营销门户 + 管理后台 + NestJS 后端
 > **当前版本**：v3.0.0
-> **技术栈**：Vue 3.5 + Vite 5 + CSS Modules + Vue Router 5 + NestJS 11 + Prisma 6 + PostgreSQL + Redis
+> **技术栈**：Vue 3.5 + Vite 8 + CSS Modules + Vue Router 5 + NestJS 11 + Prisma 6 + PostgreSQL + Redis
 
 ---
 
@@ -86,6 +86,8 @@ docker-compose up -d   # 拉起 postgres + redis + meilisearch + minio + api
 
 | 文档 | 路径 | 说明 |
 |------|------|------|
+| **使用教程** | `docs/getting-started.md` | **完整部署指南、环境配置、权限设置** |
+| 修复报告 | `docs/v3.0.0-fix-report.md` | v3.0.0 全维度修复报告 |
 | 产品需求文档 | `docs/prd.md` | 完整 PRD，含用户故事 |
 | 项目规格 | `docs/project-spec.md` | 技术规格与验收标准 |
 | 技术架构 | `docs/architecture.md` | 组件树、数据流、Hook 设计 |

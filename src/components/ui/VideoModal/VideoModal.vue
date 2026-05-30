@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, onUnmounted } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './VideoModal.module.css';
@@ -37,8 +37,12 @@ const videoStore = inject('videoModal', { isOpen: ref(false), closeVideo: () => 
 const iframeRef = ref(null);
 const isOpen = videoStore.isOpen;
 
+let closeTimer = null;
 const handleClose = () => {
   if (iframeRef.value) iframeRef.value.src = '';
-  setTimeout(() => videoStore.closeVideo(), 50);
+  closeTimer = setTimeout(() => videoStore.closeVideo(), 50);
 };
+onUnmounted(() => {
+  if (closeTimer) clearTimeout(closeTimer);
+});
 </script>

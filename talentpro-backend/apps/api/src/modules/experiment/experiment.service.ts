@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ExperimentStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class ExperimentService {
 
   async findRunning() {
     return this.prisma.experiment.findMany({
-      where: { status: 'running' },
+      where: { status: ExperimentStatus.RUNNING },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -29,11 +30,11 @@ export class ExperimentService {
     trafficSplit?: number;
   }) {
     return this.prisma.experiment.create({
-      data: { ...data, status: 'draft' },
+      data: { ...data, status: ExperimentStatus.DRAFT },
     });
   }
 
-  async updateStatus(id: string, status: string) {
+  async updateStatus(id: string, status: ExperimentStatus) {
     return this.prisma.experiment.update({
       where: { id },
       data: { status },

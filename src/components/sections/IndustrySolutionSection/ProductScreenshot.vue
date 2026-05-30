@@ -1,5 +1,5 @@
 <template>
-  <div :class="s.card">
+  <div v-if="screenshot && type" :class="s.card">
     <div :class="s.header">
       <span :class="s.title">{{ screenshot.title }}</span>
     </div>
@@ -22,8 +22,8 @@ import TimelineView from './ProductScreenshotViews/TimelineView.vue';
 import Grid9View from './ProductScreenshotViews/Grid9View.vue';
 
 const props = defineProps({
-  screenshot: { type: Object, required: true },
+  screenshot: { type: Object, default: () => ({}) },
 });
 
-const type = props.screenshot.type;
+const type = props.screenshot?.type;
 </script>

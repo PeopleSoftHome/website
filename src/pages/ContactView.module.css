@@ -1,0 +1,31 @@
+.page { padding: 80px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.hero { text-align: center; margin-bottom: 48px; }
+.title { font-size: 36px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; line-height: 1.2; }
+.subtitle { font-size: 18px; color: var(--gray-500); max-width: 640px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start; }
+.info { display: flex; flex-direction: column; gap: 20px; }
+.infoCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 28px; text-align: center; }
+.infoIcon { font-size: 32px; margin-bottom: 10px; }
+.infoTitle { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.infoValue { font-size: 14px; color: var(--gray-600); }
+.formWrap { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 32px; }
+.formTitle { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 14px; font-weight: 500; color: var(--gray-700); }
+.input { padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); background: var(--page-bg); color: var(--gray-900); font-size: 15px; }
+.input:focus { outline: none; border-color: var(--primary); }
+.textarea { padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); background: var(--page-bg); color: var(--gray-900); font-size: 15px; resize: vertical; }
+.textarea:focus { outline: none; border-color: var(--primary); }
+.submit { padding: 12px 28px; border-radius: var(--radius-md); border: none; background: var(--primary); color: var(--white); font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.submit:hover { background: var(--primary-dark); }
+.submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 1023px) {
+  .grid { grid-template-columns: 1fr; }
+  .title { font-size: 28px; }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .formTitle { color: var(--gray-50); }
+[data-theme="dark"] .infoTitle { color: var(--gray-50); }

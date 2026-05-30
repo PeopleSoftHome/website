@@ -3,6 +3,8 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @ApiTags('角色权限')
 @Controller('roles')
@@ -28,14 +30,14 @@ export class RoleController {
   @Post()
   @Roles('SUPER_ADMIN')
   @ApiOperation({ summary: '创建角色' })
-  create(@Body() dto: { name: string; description?: string; permissionIds?: string[] }) {
+  create(@Body() dto: CreateRoleDto) {
     return this.roleService.create(dto);
   }
 
   @Patch(':id')
   @Roles('SUPER_ADMIN')
   @ApiOperation({ summary: '更新角色' })
-  update(@Param('id') id: string, @Body() dto: { name?: string; description?: string; permissionIds?: string[] }) {
+  update(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
     return this.roleService.update(id, dto);
   }
 

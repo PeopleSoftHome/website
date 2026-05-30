@@ -107,7 +107,7 @@ enum NotificationType {
 
 model User {
   id             String          @id @default(uuid())
-  email          String          @unique
+  email          String
   password       String
   name           String?
   avatar         String?
@@ -138,7 +138,9 @@ model User {
   updatedSettings Setting[]
   ownedWorkspaces Workspace[]    @relation("WorkspaceOwner")
 
+  @@unique([email, workspaceId])
   @@index([workspaceId])
+  @@index([roleId])
   @@map("users")
 }
 
@@ -169,7 +171,7 @@ model Workspace {
   slug      String   @unique
   plan      WorkspacePlan   @default(FREE)
   status    WorkspaceStatus @default(ACTIVE)
-  ownerId   String   @unique
+  ownerId   String
   owner     User     @relation("WorkspaceOwner", fields: [ownerId], references: [id])
   users     User[]
   createdAt DateTime @default(now())
@@ -578,6 +580,7 @@ model Comment {
   @@index([entityType, entityId, status, parentId])
   @@index([parentId, createdAt])
   @@index([workspaceId])
+  @@index([authorId])
   @@map("comments")
 }
 
@@ -660,6 +663,8 @@ model Media {
   filename     String
   originalName String
   url          String
+  webpUrl      String?
+  thumbUrl     String?
   mimeType     String
   size         Int
   width        Int?
@@ -669,6 +674,7 @@ model Media {
   creator      User     @relation(fields: [createdBy], references: [id])
   createdAt    DateTime @default(now())
 
+  @@index([createdBy])
   @@map("medias")
 }
 
@@ -806,4 +812,178 @@ model TokenBlacklist {
   @@index([token])
   @@index([userId])
   @@map("token_blacklist")
+}
+
+// ==================== Case Studies ====================
+
+model CaseStudy {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  subtitle    String?
+  industry    String
+  companyName String
+  companyLogo String?
+  coverImage  String?
+  excerpt     String   @db.Text
+  challenge   String   @db.Text
+  solution    String   @db.Text
+  results     String   @db.Text
+  quote       String?  @db.Text
+  quoteAuthor String?
+  quoteTitle  String?
+  featured    Boolean  @default(false)
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+  viewCount   Int      @default(0)
+  sortOrder   Int      @default(0)
+  workspaceId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  metrics     CaseStudyMetric[]
+
+  @@index([industry])
+  @@index([featured])
+  @@index([status])
+  @@index([workspaceId])
+  @@map("case_studies")
+}
+
+model CaseStudyMetric {
+  id          String    @id @default(uuid())
+  caseStudyId String
+  caseStudy   CaseStudy @relation(fields: [caseStudyId], references: [id], onDelete: Cascade)
+  label       String
+  value       String
+  beforeValue String?
+  unit        String?
+  sortOrder   Int       @default(0)
+
+  @@index([caseStudyId])
+  @@map("case_study_metrics")
+}
+
+// ==================== News ====================
+
+model News {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  summary     String?  @db.Text
+  content     String   @db.Text
+  coverImage  String?
+  category    String   @default("company") // company, product, event
+  author      String?
+  authorAvatar String?
+  featured    Boolean  @default(false)
+  status      PostStatus @default(DRAFT)
+  publishedAt DateTime?
+  viewCount   Int      @default(0)
+  workspaceId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@index([category])
+  @@index([featured])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([workspaceId])
+  @@map("news")
+}
+
+// ==================== Careers ====================
+
+model Job {
+  id            String   @id @default(uuid())
+  title         String
+  department    String
+  location      String
+  type          String   @default("social") // campus, social, intern
+  experience    String   @default("1-3年")
+  salaryMin     Int?
+  salaryMax     Int?
+  salaryCurrency String @default("CNY")
+  description   String   @db.Text
+  responsibilities String @db.Text
+  requirements  String   @db.Text
+  benefits      String?  @db.Text
+  tags          String[] @default([])
+  status        String   @default("open") // open, closed, paused
+  sortOrder     Int      @default(0)
+  workspaceId   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+  applications  JobApplication[]
+
+  @@index([department])
+  @@index([type])
+  @@index([status])
+  @@index([workspaceId])
+  @@map("jobs")
+}
+
+model JobApplication {
+  id          String   @id @default(uuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  phone       String?
+  resumeUrl   String?
+  coverLetter String?  @db.Text
+  portfolioUrl String?
+  status      String   @default("pending") // pending, reviewing, interview, offer, rejected
+  source      String   @default("website")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([jobId])
+  @@index([status])
+  @@map("job_applications")
+}
+
+// ==================== About / Team ====================
+
+model TeamMember {
+  id          String   @id @default(uuid())
+  name        String
+  role        String
+  title       String
+  bio         String?  @db.Text
+  avatar      String?
+  email       String?
+  linkedin    String?
+  twitter     String?
+  sortOrder   Int      @default(0)
+  featured    Boolean  @default(false)
+  department  String   @default("leadership") // leadership, engineering, product, sales, marketing
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([department])
+  @@index([featured])
+  @@map("team_members")
+}
+
+// ==================== Partners ====================
+
+model Partner {
+  id          String   @id @default(uuid())
+  name        String
+  logo        String?
+  website     String?
+  description String?  @db.Text
+  type        String   @default("technology") // technology, consulting, channel
+  level       String   @default("partner") // partner, premier, strategic
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([featured])
+  @@map("partners")
 }

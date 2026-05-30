@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import { WorkspaceStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -26,23 +27,28 @@ export class WorkspaceService {
     }
 
     const slug = await this.generateUniqueSlug(data.name);
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        name: data.name,
-        slug,
-        ownerId: userId,
-      },
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const workspace = await tx.workspace.create({
+        data: {
+          name: data.name,
+          slug,
+          ownerId: userId,
+        },
+      });
+
+      await tx.user.update({
+        where: { id: userId },
+        data: { workspaceId: workspace.id, workspaceRole: 'OWNER' },
+      });
+
+      return workspace;
     });
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { workspaceId: workspace.id, workspaceRole: 'OWNER' },
-    });
-
-    return workspace;
+    return result;
   }
 
-  async update(userId: string, workspaceId: string, data: { name?: string; status?: string }) {
+  async update(userId: string, workspaceId: string, data: { name?: string; status?: WorkspaceStatus }) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (user?.workspaceId !== workspaceId) {
       throw new ForbiddenException('无权操作该工作空间');
@@ -67,7 +73,7 @@ export class WorkspaceService {
       throw new ForbiddenException('需要管理员权限');
     }
 
-    const invitee = await this.prisma.user.findUnique({
+    const invitee = await this.prisma.user.findFirst({
       where: { email: inviteeEmail },
     });
     if (!invitee) {

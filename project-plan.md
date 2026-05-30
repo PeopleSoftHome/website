@@ -46,16 +46,21 @@ v2.2.0 GA 已完成全部预定目标，形成坚实的技术与视觉基线：
 ```
 v2.2.0  GA      ████████████████  ✅ 2026-03-15  基线版本
                                                    11 个问题全部清零
-v2.3.0          ░░░░░░░░░░░░░░░░  📋 2026-04-20  体验增强
+v2.3.0          ████████████████  ✅ 2026-04-20  体验增强
                 Sprint 11-12       多语言（EN/繁中）+ 暗色模式 + 全局搜索
                                    
-v2.4.0          ░░░░░░░░░░░░░░░░  📋 2026-05-15  转化提升
+v2.4.0          ████████████████  ✅ 2026-05-15  转化提升
                 Sprint 13-14       ROI 计算器 + 智能推荐 + 表单增强
                                    + Cookies 偏好 + A/B 测试框架
                                    
-v2.5.0          ░░░░░░░░░░░░░░░░  📋 2026-06-10  性能与分发
+v2.5.0          ████████████████  ✅ 2026-05-26  性能与分发
                 Sprint 15-16       SEO / SSR 改造 + 埋点分析
                                    + 性能优化 + PWA 支持
+
+v3.0.0          ████████████████  ✅ 2026-05-27  安全与架构升级
+                Sprint 19-20       CMS 动态化 + Workspace 隔离 + JWT 黑名单
+                                   + PII 加密 + Redis 缓存 + SSE 流式输出
+                                   + 审计日志 + CI/CD 流水线
 ```
 
 ---
@@ -725,17 +730,17 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | ROI-01 | 🆕 新增 | 🟡 P1 | ROI 计算器 Section（SEC-16）| v2.4.0 | S13 | ✅ |
 | ROI-02 | 🆕 新增 | 🟡 P1 | useRoiCalculator Hook + 5 维计算模型 | v2.4.0 | S13 | ✅ |
 | REC-01 | 🆕 新增 | 🟢 P2 | DemoModal 智能产品推荐 | v2.4.0 | S13 | ✅ |
-| FORM-01 | 🆕 新增 | 🟡 P1 | 弹窗表单增强（格式化/滚动/摘要）| v2.4.0 | S14 | ⏳ |
-| COOK-01 | 🆕 新增 | 🟡 P1 | Cookie 同意横幅 + 偏好中心 | v2.4.0 | S14 | ⏳ |
-| AB-01   | 🆕 新增 | 🟢 P2 | A/B 测试框架（useABTest Hook）| v2.4.0 | S14 | ⏳ |
+| FORM-01 | 🆕 新增 | 🟡 P1 | 弹窗表单增强（格式化/滚动/摘要）| v2.4.0 | S14 | ✅ |
+| COOK-01 | 🆕 新增 | 🟡 P1 | Cookie 同意横幅 + 偏好中心 | v2.4.0 | S14 | ✅ |
+| AB-01   | 🆕 新增 | 🟢 P2 | A/B 测试框架（useABTest Hook + 后端实验管理）| v2.4.0 | S14 | ✅ |
 | **v2.5.0** | | | | | | |
-| SEO-01 | 🆕 新增 | 🟡 P1 | react-helmet-async 动态 meta | v2.5.0 | S15 | ⏳ |
-| SEO-02 | 🆕 新增 | 🟡 P1 | Vite SSG 预渲染 | v2.5.0 | S15 | ⏳ |
+| SEO-01 | 🆕 新增 | 🟡 P1 | 动态 title / meta（Blog/Forum 详情页手动更新）| v2.5.0 | S15 | ✅ |
+| SEO-02 | 🆕 新增 | 🟡 P1 | 构建时语义化 HTML 预渲染（prerender.js）| v2.5.0 | S15 | ✅ |
 | SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ⏳ |
-| ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 | v2.5.0 | S15 | ⏳ |
-| PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 lazy() 代码分割 | v2.5.0 | S16 | ⏳ |
+| ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 + 热力图/滚动深度 | v2.5.0 | S15 | ✅ |
+| PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 defineAsyncComponent 代码分割 | v2.5.0 | S16 | ✅ |
 | PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ⏳ |
-| PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker | v2.5.0 | S16 | ⏳ |
+| PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker + Manifest | v2.5.0 | S16 | ✅ |
 
 ---
 
@@ -748,8 +753,9 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | M3 v2.1.0 视觉 | 2026-03-15 | SVG图标 + 资源中心 + 页脚 + Hero | ✅ |
 | M4 v2.2.0 媒体 | 2026-03-15 | Logo图形化 + 安全认证 + 视频弹窗 | ✅ |
 | M5 v2.3.0 体验 | 2026-03-15 | 多语言（EN/繁中）+ 暗色模式 + 全局搜索 | ✅ |
-| M6 v2.4.0 转化 | 2026-05-15 | ROI计算器 + 智能推荐 + 表单增强 + Cookie | 📋 |
-| M7 v2.5.0 分发 | 2026-06-10 | SEO/SSG + 埋点 + 性能优化 + PWA | 📋 |
+| M6 v2.4.0 转化 | 2026-05-15 | ROI计算器 + 智能推荐 + 表单增强 + Cookie | ✅ |
+| M7 v2.5.0 分发 | 2026-06-10 | SEO/SSG + 埋点 + 性能优化 + PWA | ✅ |
+| M8 v3.0.0 安全架构 | 2026-05-27 | CMS动态化 + Workspace隔离 + PII加密 + JWT黑名单 + CI/CD | ✅ |
 
 ---
 
@@ -803,7 +809,7 @@ ROI 计算器需要与销售团队对齐计算参数（行业基准数据、Tale
 | BUG-106 ✅ | 🐛 | 🔴 P0 | 产品矩阵 Tab 内容空白 | 裸 .reveal 无全局观察者 | S13 | ✅ |
 | BUG-107 ✅ | 🐛 | 🔴 P0 | AI Family 区域空白 | 同上 + AiCard linkText 默认值错误 | S13 | ✅ |
 | BUG-108 ✅ | 🐛 | 🟡 P1 | 客户口碑需轮播+hover 悬停 | reveal 影响 + 轮播验证 | S13 | ✅ |
-| BUG-109 ✅ | 🐛 | 🔴 P0 | Logo 筛选错位；WhyUs Tab 内容空 | hidden 占位 + 裸 reveal | S13 | ⏳ |
-| BUG-110 ✅ | 🐛 | 🔴 P0 | 资源中心区域空白 | 裸 .reveal 无全局观察者 | S13 | ⏳ |
-| BUG-111 ✅ | 🐛 | 🟡 P1 | 在线咨询无功能 | FloatingBar 无 onClick | S13 | ⏳ |
+| BUG-109 ✅ | 🐛 | 🔴 P0 | Logo 筛选错位；WhyUs Tab 内容空 | hidden 占位 + 裸 reveal | S13 | ✅ |
+| BUG-110 ✅ | 🐛 | 🔴 P0 | 资源中心区域空白 | 裸 .reveal 无全局观察者 | S13 | ✅ |
+| BUG-111 ✅ | 🐛 | 🟡 P1 | 在线咨询无功能 | FloatingBar 无 onClick | S13 | ✅ |
 

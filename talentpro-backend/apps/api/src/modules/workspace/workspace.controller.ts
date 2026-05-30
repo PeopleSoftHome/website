@@ -2,6 +2,9 @@ import { Controller, Get, Post, Patch, Body } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { WorkspaceService } from './workspace.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
+import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+import { InviteMemberDto } from './dto/invite-member.dto';
 
 @ApiTags('工作空间')
 @Controller('workspaces')
@@ -17,7 +20,7 @@ export class WorkspaceController {
 
   @Post()
   @ApiOperation({ summary: '创建工作空间' })
-  create(@CurrentUser('id') userId: string, @Body() dto: { name: string }) {
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateWorkspaceDto) {
     return this.workspaceService.create(userId, dto);
   }
 
@@ -26,7 +29,7 @@ export class WorkspaceController {
   update(
     @CurrentUser('id') userId: string,
     @Body('id') workspaceId: string,
-    @Body() dto: { name?: string; status?: string },
+    @Body() dto: UpdateWorkspaceDto,
   ) {
     return this.workspaceService.update(userId, workspaceId, dto);
   }
@@ -36,7 +39,7 @@ export class WorkspaceController {
   invite(
     @CurrentUser('id') userId: string,
     @Body('id') workspaceId: string,
-    @Body() dto: { email: string },
+    @Body() dto: InviteMemberDto,
   ) {
     return this.workspaceService.inviteMember(userId, workspaceId, dto.email);
   }

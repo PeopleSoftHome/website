@@ -1,6 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import { TokenType } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -25,8 +27,12 @@ export class AuthTokenService {
   }
 
   async saveRefreshToken(userId: string, token: string) {
+    const expirationDays = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRATION', '7d').replace(/\D/g, ''),
+      10,
+    ) || 7;
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    expiresAt.setDate(expiresAt.getDate() + expirationDays);
     await this.prisma.refreshToken.create({
       data: { token, userId, expiresAt },
     });
@@ -47,7 +53,7 @@ export class AuthTokenService {
       throw new UnauthorizedException('用户不存在');
     }
 
-    await this.prisma.refreshToken.delete({ where: { id: stored.id } });
+    await this.prisma.refreshToken.deleteMany({ where: { id: stored.id } });
     const tokens = await this.generateTokens(user.id, user.email);
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
@@ -65,7 +71,7 @@ export class AuthTokenService {
           await this.prisma.tokenBlacklist.create({
             data: {
               token: accessToken,
-              type: 'access',
+              type: TokenType.ACCESS,
               userId: decoded.sub,
               expiresAt: new Date(decoded.exp * 1000),
             },
@@ -76,5 +82,38 @@ export class AuthTokenService {
       }
     }
     return { message: '登出成功' };
+  }
+
+  /* ── Cookie 辅助方法 ── */
+  setAuthCookies(res: Response, tokens: { accessToken: string; refreshToken: string }) {
+    const isProduction = this.configService.get('NODE_ENV') === 'production';
+    const accessMaxAge = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRATION', '15m').replace(/\D/g, ''),
+      10,
+    ) * 60 * 1000;
+    const refreshMaxAge = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRATION', '7d').replace(/\D/g, ''),
+      10,
+    ) * 24 * 60 * 60 * 1000;
+
+    res.cookie('tp_access_token', tokens.accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'strict' : 'lax',
+      maxAge: accessMaxAge,
+      path: '/',
+    });
+    res.cookie('tp_refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'strict' : 'lax',
+      maxAge: refreshMaxAge,
+      path: '/',
+    });
+  }
+
+  clearAuthCookies(res: Response) {
+    res.clearCookie('tp_access_token', { path: '/' });
+    res.clearCookie('tp_refresh_token', { path: '/' });
   }
 }

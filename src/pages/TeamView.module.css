@@ -1,0 +1,21 @@
+.page { padding: 80px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.hero { text-align: center; margin-bottom: 48px; }
+.title { font-size: 36px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; line-height: 1.2; }
+.subtitle { font-size: 18px; color: var(--gray-500); max-width: 640px; margin: 0 auto; }
+.loading { text-align: center; padding: 60px 0; color: var(--gray-500); }
+.error { text-align: center; padding: 60px 0; color: var(--accent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+.member { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 28px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+.member:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 14px; background-size: cover; background-position: center; }
+.name { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+.role { font-size: 14px; color: var(--primary); font-weight: 500; margin-bottom: 8px; }
+.bio { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+
+@media (max-width: 767px) {
+  .title { font-size: 28px; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .name { color: var(--gray-50); }

@@ -46,6 +46,11 @@ export const cmsApi = {
     return apiClient.get('/cms/ai-cards').then((r) => r.data);
   },
 
+  // Page (首页配置)
+  getPage(slug = 'home') {
+    return apiClient.get(`/cms/pages/${slug}`).then((r) => r.data);
+  },
+
   // Translations
   getTranslations(locale, context) {
     return apiClient.get('/cms/translations', { params: { locale, context } }).then((r) => r.data);

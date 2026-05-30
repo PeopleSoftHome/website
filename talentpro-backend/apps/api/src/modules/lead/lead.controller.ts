@@ -5,8 +5,14 @@ import { LeadStatus } from '@prisma/client';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Request } from 'express';
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { CreateLeadDto } from './dto/create-lead.dto';
+import { UpdateLeadStatusDto } from './dto/update-lead-status.dto';
+import { AddFollowUpDto } from './dto/add-follow-up.dto';
 
 @ApiTags('线索管理')
 @Controller('demo-bookings')
@@ -20,14 +26,16 @@ export class LeadController {
   @ApiOperation({ summary: '线索列表' })
   @ApiQuery({ name: 'status', required: false, enum: LeadStatus })
   findAll(
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
+    @CurrentUser() user: any,
+    @Query() pagination: PaginationDto,
     @Query('status') status?: LeadStatus,
   ) {
+    const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
     return this.leadService.findAll(
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
       status,
+      workspaceId,
     );
   }
 
@@ -45,23 +53,16 @@ export class LeadController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '线索详情' })
-  findOne(@Param('id') id: string) {
-    return this.leadService.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+    const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
+    return this.leadService.findOne(id, workspaceId);
   }
 
   @Post()
   @Public()
   @UseGuards(RecaptchaGuard)
   @ApiOperation({ summary: '提交预约演示' })
-  create(@Body() dto: {
-    name: string;
-    company: string;
-    phone: string;
-    email?: string;
-    products?: string[];
-    scale: string;
-    workspaceId?: string;
-  }, @Req() req: Request) {
+  create(@Body() dto: CreateLeadDto, @Req() req: Request) {
     return this.leadService.create({
       ...dto,
       ipAddress: req.ip,
@@ -72,13 +73,16 @@ export class LeadController {
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('lead:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新线索状态' })
   updateStatus(
     @Param('id') id: string,
-    @Body() dto: { status: LeadStatus; assignedTo?: string; notes?: string },
+    @CurrentUser() user: any,
+    @Body() dto: UpdateLeadStatusDto,
   ) {
-    return this.leadService.updateStatus(id, dto.status, dto.assignedTo, dto.notes);
+    const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
+    return this.leadService.updateStatus(id, dto.status, dto.assignedTo, dto.notes, workspaceId);
   }
 
   @Post(':id/follow-ups')
@@ -86,7 +90,8 @@ export class LeadController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '添加跟进记录' })
-  addFollowUp(@Param('id') id: string, @Body() dto: { type: string; content: string; createdBy: string }) {
-    return this.leadService.addFollowUp(id, dto);
+  addFollowUp(@Param('id') id: string, @CurrentUser() user: any, @Body() dto: AddFollowUpDto) {
+    const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
+    return this.leadService.addFollowUp(id, dto, workspaceId);
   }
 }

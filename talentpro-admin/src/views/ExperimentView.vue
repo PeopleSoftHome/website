@@ -2,7 +2,7 @@
   <div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <h2 style="margin:0">A/B 测试管理</h2>
-      <el-button type="primary" size="small" @click="showCreate = true">新建实验</el-button>
+      <el-button type="primary" size="small" @click="showCreate = true" v-permission="'experiment:create'">新建实验</el-button>
     </div>
 
     <el-row :gutter="16">
@@ -114,7 +114,7 @@ const fetchExperiments = async () => {
   loading.value = true;
   try {
     const res = await client.get('/experiments');
-    experiments.value = res.data.data ?? [];
+    experiments.value = res.data ?? [];
   } catch (e) {
     ElMessage.error('加载实验列表失败');
   }

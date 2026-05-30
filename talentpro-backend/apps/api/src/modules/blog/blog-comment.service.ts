@@ -4,6 +4,7 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 import { CommentStatus } from '@prisma/client';
 import { CommentCreatedEvent } from '../../events/comment-created.event';
 import { CommentModerationService } from './comment-moderation.service';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class BlogCommentService {
@@ -14,7 +15,7 @@ export class BlogCommentService {
   ) {}
 
   async findComments(entityType: string, entityId: string, page = 1, pageSize = 20) {
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const [data, total] = await Promise.all([
       this.prisma.comment.findMany({
         skip,
@@ -25,7 +26,7 @@ export class BlogCommentService {
       }),
       this.prisma.comment.count({ where: { entityType, entityId, status: CommentStatus.APPROVED } }),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
   async createComment(data: {

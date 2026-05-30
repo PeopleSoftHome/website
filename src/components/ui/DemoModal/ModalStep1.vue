@@ -151,7 +151,7 @@ const autoFillPhone = async () => {
     // 静默失败
   }
   // Fallback：尝试读取已保存的表单数据
-  const savedPhone = localStorage.getItem('tp_last_phone');
+  const savedPhone = sessionStorage.getItem('tp_last_phone');
   if (savedPhone && PHONE_REG.test(savedPhone)) {
     fields.phone = savedPhone;
     clearError('phone');
@@ -194,7 +194,7 @@ const handleNext = () => {
   }
   Object.keys(errors).forEach(k => delete errors[k]);
   // 保存手机号供下次自动填入
-  localStorage.setItem('tp_last_phone', fields.phone);
+  sessionStorage.setItem('tp_last_phone', fields.phone);
   emit('next');
 };
 

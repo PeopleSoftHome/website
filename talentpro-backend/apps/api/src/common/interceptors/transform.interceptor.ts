@@ -13,6 +13,9 @@ export interface Response<T> {
   meta?: Record<string, any>;
 }
 
+/** 内部标记：已包装为统一响应格式，避免重复包装 */
+const TRANSFORMED = Symbol('transformed');
+
 @Injectable()
 export class TransformInterceptor<T>
   implements NestInterceptor<T, Response<T>>
@@ -24,26 +27,28 @@ export class TransformInterceptor<T>
     const request = context.switchToHttp().getRequest();
     // 跳过 Prometheus 指标端点（纯文本输出）
     if (request.url === '/api/v1/metrics') {
-      return next.handle();
+      return next.handle() as unknown as Observable<Response<T>>;
     }
     return next.handle().pipe(
       map((data) => {
-        // If data already has success field, return as-is (for custom responses)
-        if (data && typeof data === 'object' && 'success' in data) {
+        // 已转换过，直接返回（避免误伤含 success 字段的业务数据）
+        if (data && typeof data === 'object' && (data as any)[TRANSFORMED] === true) {
           return data as unknown as Response<T>;
         }
-        // If data has data/meta structure (paginated), unwrap
+        // 分页结构：解包 data + meta
         if (data && typeof data === 'object' && 'data' in data && 'meta' in data) {
           return {
             success: true,
             data: (data as any).data,
             meta: (data as any).meta,
-          };
+            [TRANSFORMED]: true,
+          } as unknown as Response<T>;
         }
         return {
           success: true,
           data,
-        };
+          [TRANSFORMED]: true,
+        } as unknown as Response<T>;
       }),
     );
   }

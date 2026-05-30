@@ -1,176 +1,245 @@
 {
   "pageTitle": "TalentPro — 新一代一体化人才管理平台",
   "pageDesc": "TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案",
-
+  "skipLink": "跳转到主内容",
   "nav": {
-    "aiFamily":       "AI Family",
-    "products":       "产品",
-    "solutions":      "解决方案",
-    "cases":          "客户案例",
-    "resources":      "资源中心",
-    "blog":           "博客",
-    "forum":          "社区",
-    "login":          "登录",
-    "demo":           "预约演示",
-    "phone":          "售前: 400-888-8888",
-    "menuOpen":       "打开菜单",
-    "menuClose":      "关闭菜单",
-    "langLabel":      "语言",
-    "themeLight":     "切换到亮色模式",
-    "themeDark":      "切换到暗色模式",
-    "profile":        "个人中心",
-    "logout":         "退出登录",
+    "aiFamily": "AI Family",
+    "products": "产品",
+    "solutions": "解决方案",
+    "cases": "客户案例",
+    "resources": "资源中心",
+    "blog": "博客",
+    "forum": "社区",
+    "login": "登录",
+    "demo": "预约演示",
+    "phone": "售前: 400-888-8888",
+    "menuOpen": "打开菜单",
+    "menuClose": "关闭菜单",
+    "langLabel": "语言",
+    "themeLight": "切换到亮色模式",
+    "themeDark": "切换到暗色模式",
+    "profile": "个人中心",
+    "logout": "退出登录",
+    "searchClose": "关闭搜索",
     "aiItems": {
-      "recruit":      "AI 招聘助手",
-      "recruitDesc":  "让招聘更智能、更高效",
-      "interview":    "AI 面试官",
-      "interviewDesc":"不止评能力，更要测潜力",
-      "learning":     "AI 学习助手",
+      "recruit": "AI 招聘助手",
+      "recruitDesc": "让招聘更智能、更高效",
+      "interview": "AI 面试官",
+      "interviewDesc": "不止评能力，更要测潜力",
+      "learning": "AI 学习助手",
       "learningDesc": "陪伴员工个性化成长",
-      "coach":        "AI 领导力教练",
-      "coachDesc":    "管理者专属成长伙伴"
+      "coach": "AI 领导力教练",
+      "coachDesc": "管理者专属成长伙伴"
     },
     "productItems": {
-      "recruit":      "招聘管理系统",
-      "recruitDesc":  "全流程数字化招聘",
-      "performance":  "绩效管理系统",
-      "performDesc":  "目标对齐、绩效驱动",
-      "org":          "组织人事系统",
-      "orgDesc":      "集团化组织管控",
-      "payroll":      "薪酬管理系统",
-      "payrollDesc":  "精准薪酬，自动核算"
+      "recruit": "招聘管理系统",
+      "recruitDesc": "全流程数字化招聘",
+      "performance": "绩效管理系统",
+      "performDesc": "目标对齐、绩效驱动",
+      "org": "组织人事系统",
+      "orgDesc": "集团化组织管控",
+      "payroll": "薪酬管理系统",
+      "payrollDesc": "精准薪酬，自动核算"
     },
     "solutionItems": {
-      "mfg":          "制造业方案",
-      "mfgDesc":      "精细化管理，加速转型",
-      "retail":       "零售连锁方案",
-      "retailDesc":   "精益门店运营，协同提效",
-      "internet":     "互联网方案",
+      "mfg": "制造业方案",
+      "mfgDesc": "精细化管理，加速转型",
+      "retail": "零售连锁方案",
+      "retailDesc": "精益门店运营，协同提效",
+      "internet": "互联网方案",
       "internetDesc": "智慧决策，极致体验",
-      "gov":          "央国企方案",
-      "govDesc":      "推进人才强企战略"
+      "gov": "央国企方案",
+      "govDesc": "推进人才强企战略"
     },
     "banners": {
-      "aiTitle":   "2026 AI+HR 最佳实践案例集",
-      "aiDesc":    "蒙牛、京东方等先锋企业的 AI 落地经验",
+      "aiTitle": "2026 AI+HR 最佳实践案例集",
+      "aiDesc": "蒙牛、京东方等先锋企业的 AI 落地经验",
       "prodTitle": "《2026 HR 数智化成熟度模型白皮书》",
-      "prodDesc":  "权威调研，免费下载",
-      "solTitle":  "制造业 HR 数字化转型实战指南",
-      "solDesc":   "覆盖排班 / 考勤 / 蓝领招聘全场景"
+      "prodDesc": "权威调研，免费下载",
+      "solTitle": "制造业 HR 数字化转型实战指南",
+      "solDesc": "覆盖排班 / 考勤 / 蓝领招聘全场景"
     },
     "mobile": {
-      "phone":    "售前咨询",
+      "phone": "售前咨询",
       "phoneNum": "400-888-8888",
-      "cta":      "预约演示 "
+      "cta": "预约演示 "
     }
   },
-
   "hero": {
-    "badge":    " IDC 连续五年 HR SaaS 市场占有率第一",
-    "title1":   "用",
-    "titleAI":  " AI ",
-    "title2":   "重新定义",
-    "titleLine2":"人才管理",
+    "badge": " IDC 连续五年 HR SaaS 市场占有率第一",
+    "title1": "用",
+    "titleAI": " AI ",
+    "title2": "重新定义",
+    "titleLine2": "人才管理",
     "subtitle": "TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案，帮助企业数字化管理员工全生命周期，提升人才竞争力与组织效能。",
-    "cta1":     "预约演示 ",
-    "cta2":     "▶ 观看产品演示",
-    "trust1":   "8000+ 企业客户",
-    "trust2":   "2000万+ 活跃用户",
-    "trust3":   "99.9% SLA 保障",
-    "trust4":   "20年技术积累",
-    "dashTitle":"人才驾驶舱",
+    "cta1": "预约演示 ",
+    "cta2": "▶ 观看产品演示",
+    "trust1": "8000+ 企业客户",
+    "trust2": "2000万+ 活跃用户",
+    "trust3": "99.9% SLA 保障",
+    "trust4": "20年技术积累",
+    "dashTitle": "人才驾驶舱",
     "dashDate": "2026.03",
-    "dash1":    "本月新增员工",
-    "dash2":    "在招职位",
-    "dash3":    "绩效完成率",
-    "chartTitle":"招聘漏斗 · 本季度",
-    "chart1":   "投递",
-    "chart2":   "筛选",
-    "chart3":   "面试",
-    "chart4":   "Offer",
-    "chart5":   "入职",
-    "aiRec":    "AI 推荐",
-    "aiRecText":" 发现 12 位高潜候选人"
+    "dash1": "本月新增员工",
+    "dash2": "在招职位",
+    "dash3": "绩效完成率",
+    "chartTitle": "招聘漏斗 · 本季度",
+    "chart1": "投递",
+    "chart2": "筛选",
+    "chart3": "面试",
+    "chart4": "Offer",
+    "chart5": "入职",
+    "aiRec": "AI 推荐",
+    "aiRecText": " 发现 12 位高潜候选人",
+    "jsonLdName": "TalentPro — 用 AI 重新定义人才管理",
+    "jsonLdDesc": "TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案，帮助企业数字化管理员工全生命周期，提升人才竞争力与组织效能。"
   },
-
   "marquee": {
     "label": "已服务 8000+ 企业，覆盖各行各业"
   },
-
   "stats": {
     "clients": "企业客户",
-    "users":   "活跃用户",
-    "sla":     "SLA 可用性",
-    "years":   "年技术积累",
-    "scenes":  "AI 能力覆盖场景",
+    "users": "活跃用户",
+    "sla": "SLA 可用性",
+    "years": "年技术积累",
+    "scenes": "AI 能力覆盖场景",
     "fortune": "五百强企业选择"
   },
-
   "products": {
-    "sectionTag":   "️ 全产品矩阵",
+    "sectionTag": "️ 全产品矩阵",
     "sectionTitle": "一体化 HR SaaS，加速人力资源数字化",
-    "sectionSub":   "人才管理全生命周期，选·育·用·留一体化覆盖",
-    "linkText":     "产品详情",
+    "sectionSub": "人才管理全生命周期，选·育·用·留一体化覆盖",
+    "linkText": "产品详情",
     "tabs": {
-      "hrSaas":     "一体化 HR SaaS",
-      "aiFamily":   "AI Family",
+      "hrSaas": "一体化 HR SaaS",
+      "aiFamily": "AI Family",
       "assessment": "人才测评",
-      "paas":       "PaaS 平台"
+      "paas": "PaaS 平台"
     },
     "items": {
-      "recruit":     { "name": "招聘管理系统",  "desc": "全流程数字化招聘，提升人才获取效率，覆盖校招社招全场景" },
-      "performance": { "name": "绩效管理系统",  "desc": "目标对齐、绩效驱动，支持 OKR、KPI 等多种绩效模式" },
-      "org":         { "name": "组织人事系统",  "desc": "集团化组织管控，多法人多区域跨境运营的人事管理" },
-      "attendance":  { "name": "假勤管理系统",  "desc": "智能排班、自动考勤，应对复杂考勤场景，提升人效" },
-      "payroll":     { "name": "薪酬管理系统",  "desc": "精准薪酬核算，合规个税处理，支持多种薪酬架构" },
-      "learning":    { "name": "在线学习系统",  "desc": "AI 赋能学习发展，个性化培养路径，促进知识沉淀" },
-      "talent":      { "name": "盘点发展系统",  "desc": "科学发现高潜人才，数字化继任管理，支撑战略人才储备" },
-      "analytics":   { "name": "数字人力分析",  "desc": "400+ 行业指标，BI 可视化洞察，赋能管理者科学决策" },
-      "aiRecruit":   { "name": "AI 招聘助手",   "desc": "智能简历筛选、JD 生成，让招聘更快更准" },
-      "aiInterview": { "name": "AI 面试官",     "desc": "不止评能力，更要测潜力，7×24小时自动面试" },
-      "aiCoach":     { "name": "AI 领导力教练", "desc": "管理者身边的个人教练，个性化领导力提升" },
-      "aiCourse":    { "name": "AI 做课助手",   "desc": "沉淀知识，让人人成为讲师，AI 生成高质量课程" },
-      "assessRecruit":{ "name": "招聘测评",     "desc": "科学评估候选人综合素质，提升招聘命中率" },
-      "assess360":   { "name": "360度评估",    "desc": "多维度反馈系统，全面了解员工能力短板" },
-      "assessExam":  { "name": "在线考试系统",  "desc": "安全可靠的在线考试，支持多题型、防作弊" },
-      "assessModel": { "name": "人才模型构建",  "desc": "科学构建岗位胜任力模型，定义人才标准" },
-      "paasLowcode": { "name": "低代码平台",   "desc": "NoCode/LowCode 快速构建个性化 HR 应用" },
-      "paasApi":     { "name": "开放 API",     "desc": "标准化接口，轻松对接企业现有系统" },
-      "paasEco":     { "name": "生态广场",     "desc": "200+ 生态伙伴，链接全行业服务能力" },
-      "paasSec":     { "name": "安全合规",     "desc": "九层安全防护，等保三级认证，数据安全" }
+      "recruit": {
+        "name": "招聘管理系统",
+        "desc": "全流程数字化招聘，提升人才获取效率，覆盖校招社招全场景"
+      },
+      "performance": {
+        "name": "绩效管理系统",
+        "desc": "目标对齐、绩效驱动，支持 OKR、KPI 等多种绩效模式"
+      },
+      "org": {
+        "name": "组织人事系统",
+        "desc": "集团化组织管控，多法人多区域跨境运营的人事管理"
+      },
+      "attendance": {
+        "name": "假勤管理系统",
+        "desc": "智能排班、自动考勤，应对复杂考勤场景，提升人效"
+      },
+      "payroll": {
+        "name": "薪酬管理系统",
+        "desc": "精准薪酬核算，合规个税处理，支持多种薪酬架构"
+      },
+      "learning": {
+        "name": "在线学习系统",
+        "desc": "AI 赋能学习发展，个性化培养路径，促进知识沉淀"
+      },
+      "talent": {
+        "name": "盘点发展系统",
+        "desc": "科学发现高潜人才，数字化继任管理，支撑战略人才储备"
+      },
+      "analytics": {
+        "name": "数字人力分析",
+        "desc": "400+ 行业指标，BI 可视化洞察，赋能管理者科学决策"
+      },
+      "aiRecruit": {
+        "name": "AI 招聘助手",
+        "desc": "智能简历筛选、JD 生成，让招聘更快更准"
+      },
+      "aiInterview": {
+        "name": "AI 面试官",
+        "desc": "不止评能力，更要测潜力，7×24小时自动面试"
+      },
+      "aiCoach": {
+        "name": "AI 领导力教练",
+        "desc": "管理者身边的个人教练，个性化领导力提升"
+      },
+      "aiCourse": {
+        "name": "AI 做课助手",
+        "desc": "沉淀知识，让人人成为讲师，AI 生成高质量课程"
+      },
+      "assessRecruit": {
+        "name": "招聘测评",
+        "desc": "科学评估候选人综合素质，提升招聘命中率"
+      },
+      "assess360": {
+        "name": "360度评估",
+        "desc": "多维度反馈系统，全面了解员工能力短板"
+      },
+      "assessExam": {
+        "name": "在线考试系统",
+        "desc": "安全可靠的在线考试，支持多题型、防作弊"
+      },
+      "assessModel": {
+        "name": "人才模型构建",
+        "desc": "科学构建岗位胜任力模型，定义人才标准"
+      },
+      "paasLowcode": {
+        "name": "低代码平台",
+        "desc": "NoCode/LowCode 快速构建个性化 HR 应用"
+      },
+      "paasApi": {
+        "name": "开放 API",
+        "desc": "标准化接口，轻松对接企业现有系统"
+      },
+      "paasEco": {
+        "name": "生态广场",
+        "desc": "200+ 生态伙伴，链接全行业服务能力"
+      },
+      "paasSec": {
+        "name": "安全合规",
+        "desc": "九层安全防护，等保三级认证，数据安全"
+      }
     }
   },
-
   "aiFamily": {
-    "sectionTag":   " AI Family",
+    "sectionTag": " AI Family",
     "sectionTitle": "更懂人才的全场景 AI 助手",
-    "sectionSub":   "10 大 AI 助手，覆盖 50+ 人力资源场景，让 HR 工作真正提效",
-    "linkText":     "产品详情",
-    "hotBadge":     "HOT",
+    "sectionSub": "10 大 AI 助手，覆盖 50+ 人力资源场景，让 HR 工作真正提效",
+    "linkText": "产品详情",
+    "hotBadge": "HOT",
     "cards": {
-      "aiRecruit":   { "name": "AI 招聘助手",   "tagline": "让招聘更轻松，智能处理简历、生成 JD、安排面试" },
-      "aiInterview": { "name": "AI 面试官",     "tagline": "不止评能力，更要测潜力，7×24 无间断智能面试" },
-      "aiCoach":     { "name": "AI 领导力教练", "tagline": "管理者身边的 AI 个人教练，个性化领导力提升" },
-      "aiLearning":  { "name": "AI 学习助手",   "tagline": "从学到用，陪伴员工个性化成长，知识即时答疑" }
+      "aiRecruit": {
+        "name": "AI 招聘助手",
+        "tagline": "让招聘更轻松，智能处理简历、生成 JD、安排面试"
+      },
+      "aiInterview": {
+        "name": "AI 面试官",
+        "tagline": "不止评能力，更要测潜力，7×24 无间断智能面试"
+      },
+      "aiCoach": {
+        "name": "AI 领导力教练",
+        "tagline": "管理者身边的 AI 个人教练，个性化领导力提升"
+      },
+      "aiLearning": {
+        "name": "AI 学习助手",
+        "tagline": "从学到用，陪伴员工个性化成长，知识即时答疑"
+      }
     },
     "banner": {
       "label": " 2025 AI 应用先锋实践案例",
       "title": "蒙牛、京东方等行业先锋，AI+HR 标杆经验分享",
-      "sub":   "覆盖招聘、培训、绩效全场景，开启人力资源数字化新纪元",
-      "cta":   "立即获取 "
+      "sub": "覆盖招聘、培训、绩效全场景，开启人力资源数字化新纪元",
+      "cta": "立即获取 "
     }
   },
-
   "industry": {
-    "sectionTag":   " 行业方案",
+    "sectionTag": " 行业方案",
     "sectionTitle": "根据行业特点，打造更贴合业务的解决方案",
-    "sectionSub":   "行业化方案专属定制，帮助企业业务成功",
-    "getCta":       "获取行业方案",
+    "sectionSub": "行业化方案专属定制，帮助企业业务成功",
+    "getCta": "获取行业方案",
     "tabs": {
-      "mfg":     "制造业",
-      "retail":  "零售连锁",
-      "internet":"互联网",
-      "gov":     "央国企",
+      "mfg": "制造业",
+      "retail": "零售连锁",
+      "internet": "互联网",
+      "gov": "央国企",
       "finance": "金融"
     },
     "badges": {
@@ -180,21 +249,21 @@
     },
     "mfg": {
       "f1title": "智能排班与考勤",
-      "f1desc":  "员工打卡自动匹配班次，应对复杂排班场景，5000+ 考勤规则自动处理，移动端即时排班，大幅提升生产效率。",
+      "f1desc": "员工打卡自动匹配班次，应对复杂排班场景，5000+ 考勤规则自动处理，移动端即时排班，大幅提升生产效率。",
       "f2title": "试工管理场景",
-      "f2desc":  "试工期间扫码入系统，实现打卡、评价、录用全流程线上化管理，让蓝领招聘更高效合规。",
+      "f2desc": "试工期间扫码入系统，实现打卡、评价、录用全流程线上化管理，让蓝领招聘更高效合规。",
       "f3title": "人员资质合规追踪",
-      "f3desc":  "持续追踪研发、质量等岗位资质备案，提醒到期时间，在线签署培训协议，满足制造业严格合规要求。",
+      "f3desc": "持续追踪研发、质量等岗位资质备案，提醒到期时间，在线签署培训协议，满足制造业严格合规要求。",
       "ssTitle": " 制造业 · 车间考勤看板",
-      "tip":     " 张三焊工资质将于 30 天后到期，请及时安排复训"
+      "tip": " 张三焊工资质将于 30 天后到期，请及时安排复训"
     },
     "retail": {
       "f1title": "店长招聘工作台",
-      "f1desc":  "快速处理简历、安排面试及 Offer 发放，全流程跟进招聘环节，保证门店正常运营。",
+      "f1desc": "快速处理简历、安排面试及 Offer 发放，全流程跟进招聘环节，保证门店正常运营。",
       "f2title": "门店人才培养",
-      "f2desc":  "定期针对性培训，店长随时掌握店员学习进度，AI 学习助手提供个性化培养方案。",
+      "f2desc": "定期针对性培训，店长随时掌握店员学习进度，AI 学习助手提供个性化培养方案。",
       "f3title": "多门店人事管理",
-      "f3desc":  "支持数百家门店统一管控，快速入离职办理，灵活班次管理，保障薪资准时发放。",
+      "f3desc": "支持数百家门店统一管控，快速入离职办理，灵活班次管理，保障薪资准时发放。",
       "ssTitle": " 零售 · 门店管理看板",
       "m1label": "待面试候选人",
       "m2label": "本月新入职",
@@ -203,485 +272,872 @@
     },
     "internet": {
       "f1title": "HRBP 工作台",
-      "f1desc":  "从 BP 视角出发的部门管理工作台，让 HR 敏捷应对多变的外部环境，提升业务支持效率。",
+      "f1desc": "从 BP 视角出发的部门管理工作台，让 HR 敏捷应对多变的外部环境，提升业务支持效率。",
       "f2title": "全员招聘协作",
-      "f2desc":  "业务经理工作台，解决互联网全员招聘管理诉求，及时提交需求、了解进度、处理流程。",
+      "f2desc": "业务经理工作台，解决互联网全员招聘管理诉求，及时提交需求、了解进度、处理流程。",
       "f3title": "互联网人才培养",
-      "f3desc":  "体系化标准化人才发展体系，提供个性化学习方案，快速构建技术人才梯队。",
+      "f3desc": "体系化标准化人才发展体系，提供个性化学习方案，快速构建技术人才梯队。",
       "ssTitle": " 互联网 · HRBP 工作台",
       "taskHeader": "待处理事项",
-      "t1text":  "张总 需要复核绩效评分",
-      "t1status":"待处理",
-      "t2text":  "研发部 3 名员工转正申请",
-      "t2status":"审批中",
-      "t3text":  "P9 候选人背调报告已就绪",
-      "t3status":"待查看",
-      "t4text":  "Q2 OKR 对齐会议待确认",
-      "t4status":"待处理"
+      "t1text": "张总 需要复核绩效评分",
+      "t1status": "待处理",
+      "t2text": "研发部 3 名员工转正申请",
+      "t2status": "审批中",
+      "t3text": "P9 候选人背调报告已就绪",
+      "t3status": "待查看",
+      "t4text": "Q2 OKR 对齐会议待确认",
+      "t4status": "待处理"
     },
     "gov": {
       "f1title": "数字化校招",
-      "f1desc":  "多元化传播吸引人才，数字化工具承载线上线下融合招聘，建立决策模型。",
+      "f1desc": "多元化传播吸引人才，数字化工具承载线上线下融合招聘，建立决策模型。",
       "f2title": "年轻干部梯队建设",
-      "f2desc":  "通过识别、选拔、培养、盘点与发展等一揽子方案，建设年轻干部队伍。",
+      "f2desc": "通过识别、选拔、培养、盘点与发展等一揽子方案，建设年轻干部队伍。",
       "f3title": "干部任用与竞聘",
-      "f3desc":  "通过竞聘、市场化选聘及动态人岗匹配，激活人才与组织活力。",
+      "f3desc": "通过竞聘、市场化选聘及动态人岗匹配，激活人才与组织活力。",
       "ssTitle": "️ 央国企 · 干部竞聘流程",
-      "s1label": "发布职位", "s1desc": "干部职位公开发布",
-      "s2label": "报名申请", "s2desc": "在线资格初审",
-      "s3label": "笔试考核", "s3desc": "线上标准化测评",
-      "s4label": "面试答辩", "s4desc": "专家评委打分",
-      "s5label": "公示任命", "s5desc": "结果公开透明"
+      "s1label": "发布职位",
+      "s1desc": "干部职位公开发布",
+      "s2label": "报名申请",
+      "s2desc": "在线资格初审",
+      "s3label": "笔试考核",
+      "s3desc": "线上标准化测评",
+      "s4label": "面试答辩",
+      "s4desc": "专家评委打分",
+      "s5label": "公示任命",
+      "s5desc": "结果公开透明"
     },
     "finance": {
       "f1title": "校招创新管理",
-      "f1desc":  "定义人才标准，系统化校招流程，借助测评工具提升校招质量与效率。",
+      "f1desc": "定义人才标准，系统化校招流程，借助测评工具提升校招质量与效率。",
       "f2title": "后备人才库建设",
-      "f2desc":  "分层分级人才盘点，在库培养建议，系统化后备人才梯队管理。",
+      "f2desc": "分层分级人才盘点，在库培养建议，系统化后备人才梯队管理。",
       "f3title": "营销员增员管理",
-      "f3desc":  "外勤队伍分层分级，对目标客群与业务能力匹配，打造高产能队伍。",
+      "f3desc": "外勤队伍分层分级，对目标客群与业务能力匹配，打造高产能队伍。",
       "ssTitle": " 金融 · 九宫格人才盘点",
-      "g9axis":  "绩效表现 "
+      "g9axis": "绩效表现 "
     }
   },
-
   "testimonials": {
-    "sectionTag":   " 客户口碑",
+    "sectionTag": " 客户口碑",
     "sectionTitle": "来自 8000+ 合作伙伴的口碑认证",
-    "prevBtn":      "上一条",
-    "nextBtn":      "下一条",
-    "dotLabel":     "第 {n} 条",
+    "prevBtn": "上一条",
+    "nextBtn": "下一条",
+    "dotLabel": "第 {n} 条",
     "items": {
       "wang": {
         "industry": "互联网",
-        "product":  "AI 面试官",
-        "text":     "TalentPro 的 AI 面试官彻底改变了我们的校招流程。候选人可以随时完成面试，我们的 HR 效率提升了 300%。更重要的是，AI 评估的维度非常全面，和我们的企业文化高度匹配，让我们在竞争激烈的校招季中脱颖而出。",
-        "name":     "王志远",
-        "title":    "某头部互联网公司 · 招聘负责人"
+        "product": "AI 面试官",
+        "text": "TalentPro 的 AI 面试官彻底改变了我们的校招流程。候选人可以随时完成面试，我们的 HR 效率提升了 300%。更重要的是，AI 评估的维度非常全面，和我们的企业文化高度匹配，让我们在竞争激烈的校招季中脱颖而出。",
+        "name": "王志远",
+        "title": "某头部互联网公司 · 招聘负责人"
       },
       "li": {
         "industry": "制造业",
-        "product":  "考勤管理",
-        "text":     "我们工厂有接近 3000 名员工，考勤制度非常复杂。TalentPro 帮我们自动处理了近 200 种考勤规则，移动端排班让工长不再为排班发愁。每个月薪资核算时间从 5 天缩短到了半天，员工投诉率下降了 80%。",
-        "name":     "李秀华",
-        "title":    "某汽车零部件集团 · 人力资源总监"
+        "product": "考勤管理",
+        "text": "我们工厂有接近 3000 名员工，考勤制度非常复杂。TalentPro 帮我们自动处理了近 200 种考勤规则，移动端排班让工长不再为排班发愁。每个月薪资核算时间从 5 天缩短到了半天，员工投诉率下降了 80%。",
+        "name": "李秀华",
+        "title": "某汽车零部件集团 · 人力资源总监"
       },
       "chen": {
         "industry": "新能源",
-        "product":  "AI 领导力教练",
-        "text":     "作为快速扩张的新能源企业，我们面临大量年轻干部快速成长的挑战。TalentPro 的 AI 领导力教练为每位管理者提供个性化的成长方案，配合 360 度测评，让干部培养真正落地，管理效能显著提升。",
-        "name":     "陈建国",
-        "title":    "某新能源集团 · 集团 CHRO"
+        "product": "AI 领导力教练",
+        "text": "作为快速扩张的新能源企业，我们面临大量年轻干部快速成长的挑战。TalentPro 的 AI 领导力教练为每位管理者提供个性化的成长方案，配合 360 度测评，让干部培养真正落地，管理效能显著提升。",
+        "name": "陈建国",
+        "title": "某新能源集团 · 集团 CHRO"
       },
       "zhang": {
         "industry": "零售连锁",
-        "product":  "招聘系统",
-        "text":     "旺季门店扩张，每次都要大规模招聘蓝领员工。TalentPro 的批量招聘和 AI 初筛功能，让我们的招聘效率提升了 5 倍，真正实现了让业务等人才而不是人才等流程。",
-        "name":     "张明月",
-        "title":    "某连锁餐饮品牌 · 人才招募总监"
+        "product": "招聘系统",
+        "text": "旺季门店扩张，每次都要大规模招聘蓝领员工。TalentPro 的批量招聘和 AI 初筛功能，让我们的招聘效率提升了 5 倍，真正实现了让业务等人才而不是人才等流程。",
+        "name": "张明月",
+        "title": "某连锁餐饮品牌 · 人才招募总监"
       }
     }
   },
-
   "logoWall": {
-    "title":   "70% 的世界五百强持续选择 TalentPro",
+    "title": "70% 的世界五百强持续选择 TalentPro",
     "filterAll": "全部",
     "industries": {
-      "mfg":     "先进制造",
-      "retail":  "消费零售",
-      "internet":"互联网",
-      "energy":  "新能源",
+      "mfg": "先进制造",
+      "retail": "消费零售",
+      "internet": "互联网",
+      "energy": "新能源",
       "finance": "金融"
     },
     "filterLabel": "行业筛选"
   },
-
   "whyUs": {
     "sectionTitle": "为什么 70% 的五百强企业持续选择 TalentPro？",
-    "sectionSub":   "聚焦一体化 HR SaaS 的创新与服务",
+    "sectionSub": "聚焦一体化 HR SaaS 的创新与服务",
     "tabs": {
       "product": "产品创新",
-      "brand":   "品牌保障",
+      "brand": "品牌保障",
       "success": "客户成功"
     },
     "metrics": {
       "product": [
-        { "num": "2000+", "label": "产品特性",   "desc": "一体化 HR SaaS 年度持续迭代，紧跟业务场景需求" },
-        { "num": "200+",  "label": "生态伙伴",   "desc": "链接全行业生态伙伴，构建开放的 HR 生态系统" },
-        { "num": "10大",  "label": "AI Agent",  "desc": "多场景智能助手，覆盖 HR 全业务链路" },
-        { "num": "18大",  "label": "角色工作台", "desc": "新生代员工全职涯体验，人人都有专属工作台" }
+        {
+          "num": "2000+",
+          "label": "产品特性",
+          "desc": "一体化 HR SaaS 年度持续迭代，紧跟业务场景需求"
+        },
+        {
+          "num": "200+",
+          "label": "生态伙伴",
+          "desc": "链接全行业生态伙伴，构建开放的 HR 生态系统"
+        },
+        {
+          "num": "10大",
+          "label": "AI Agent",
+          "desc": "多场景智能助手，覆盖 HR 全业务链路"
+        },
+        {
+          "num": "18大",
+          "label": "角色工作台",
+          "desc": "新生代员工全职涯体验，人人都有专属工作台"
+        }
       ],
       "brand": [
-        { "num": "20+年", "label": "专业沉淀",   "desc": "人才管理技术积累，深耕 HR SaaS 领域" },
-        { "num": "24家",  "label": "分支机构",   "desc": "原厂实施，本地化服务，快速响应客户需求" },
-        { "num": "IDC",   "label": "连续九年第一","desc": "中国 HR SaaS 市场连续九年占有率第一" },
-        { "num": "106%",  "label": "NDR 净留存", "desc": "客户持续信任，续约率业界最高水平" }
+        {
+          "num": "20+年",
+          "label": "专业沉淀",
+          "desc": "人才管理技术积累，深耕 HR SaaS 领域"
+        },
+        {
+          "num": "24家",
+          "label": "分支机构",
+          "desc": "原厂实施，本地化服务，快速响应客户需求"
+        },
+        {
+          "num": "IDC",
+          "label": "连续九年第一",
+          "desc": "中国 HR SaaS 市场连续九年占有率第一"
+        },
+        {
+          "num": "106%",
+          "label": "NDR 净留存",
+          "desc": "客户持续信任，续约率业界最高水平"
+        }
       ],
       "success": [
-        { "num": "5S",    "label": "实施服务体系","desc": "领先的客户成功服务，确保系统稳定上线" },
-        { "num": "1100+", "label": "BCA 认证",   "desc": "赋能 HRIS 专业人才成长，建设专业服务能力" },
-        { "num": "7×24",  "label": "全天候支持", "desc": "1 小时内迅速响应，确保业务连续性" },
-        { "num": "3万+",  "label": "共享资源",   "desc": "HR 成长社区，实战资源共享共建" }
+        {
+          "num": "5S",
+          "label": "实施服务体系",
+          "desc": "领先的客户成功服务，确保系统稳定上线"
+        },
+        {
+          "num": "1100+",
+          "label": "BCA 认证",
+          "desc": "赋能 HRIS 专业人才成长，建设专业服务能力"
+        },
+        {
+          "num": "7×24",
+          "label": "全天候支持",
+          "desc": "1 小时内迅速响应，确保业务连续性"
+        },
+        {
+          "num": "3万+",
+          "label": "共享资源",
+          "desc": "HR 成长社区，实战资源共享共建"
+        }
       ]
     },
     "statsBar": [
-      { "label": "中大型企业客户" },
-      { "label": "日数据处理条数" },
-      { "label": "年专业测评人次" },
-      { "label": "年完成面试场次" },
-      { "label": "年用户打卡量"   },
-      { "label": "年学习人次"     }
+      {
+        "label": "中大型企业客户"
+      },
+      {
+        "label": "日数据处理条数"
+      },
+      {
+        "label": "年专业测评人次"
+      },
+      {
+        "label": "年完成面试场次"
+      },
+      {
+        "label": "年用户打卡量"
+      },
+      {
+        "label": "年学习人次"
+      }
     ],
     "security": {
       "title": "数据安全 · 合规认证",
       "certs": [
-        { "label": "等保三级",   "desc": "国家信息安全最高认证" },
-        { "label": "ISO 27001", "desc": "国际信息安全管理标准" },
-        { "label": "SOC 2",     "desc": "Type II 审计通过" },
-        { "label": "银行级加密", "desc": "AES-256 数据全程加密" },
-        { "label": "国密算法",   "desc": "SM2/SM3/SM4 合规" },
-        { "label": "九层防护",   "desc": "多维安全防御体系" }
+        {
+          "label": "等保三级",
+          "desc": "国家信息安全最高认证"
+        },
+        {
+          "label": "ISO 27001",
+          "desc": "国际信息安全管理标准"
+        },
+        {
+          "label": "SOC 2",
+          "desc": "Type II 审计通过"
+        },
+        {
+          "label": "银行级加密",
+          "desc": "AES-256 数据全程加密"
+        },
+        {
+          "label": "国密算法",
+          "desc": "SM2/SM3/SM4 合规"
+        },
+        {
+          "label": "九层防护",
+          "desc": "多维安全防御体系"
+        }
       ]
     }
   },
-
   "resources": {
-    "sectionTag":   " 资源中心",
+    "sectionTag": " 资源中心",
     "sectionTitle": "更多行业洞察，打开新思路",
     "types": {
-      "report":  "白皮书",
-      "case":    "案例集",
+      "report": "白皮书",
+      "case": "案例集",
       "article": "干货文章",
-      "guide":   "报告",
-      "video":   "直播视频"
+      "guide": "报告",
+      "video": "直播视频"
     },
     "items": {
-      "whitepaper":    { "title": "《2026 HR 数智化成熟度模型白皮书》",       "desc": "首次发布 AI+HR 数智化成熟度模型 HRDIMM，整合 567 家企业调研洞察，适配不同成熟度企业的三阶转型方案。", "cta": "立即获取 ", "date": "2026-01-15" },
-      "aiCases":       { "title": "《2026 AI 面试官精选案例集》",              "desc": "茶颜悦色、海尔、信达生物等 11 家行业领军企业实战亲测，覆盖校招、社招、蓝领招聘全场景。", "cta": "立即获取 ", "date": "2026-03-01" },
-      "aiTalent":      { "title": "如何应用 AI 重塑企业人才盘点体系",          "desc": "从传统九宫格到 AI 驱动的数字化盘点，帮助 HR 实现更科学、更高效的人才评估，支撑战略人才储备。", "cta": "查看详情 ", "date": "2026-02-20" },
-      "campusGuide":   { "title": "《2026 企业校园招聘 AI 应用实用指南》",     "desc": "从 JD 生成到 AI 面试，全链路校招提效方案，附 50+ 一线企业实战案例，覆盖制造、互联网、金融三大赛道。", "cta": "立即获取 ", "date": "2026-02-10" },
-      "digitalGuide":  { "title": "《HR 数字化升级全景指南》",                 "desc": "系统梳理从制度设计到系统落地的完整路径，覆盖 8 大业务模块、12 个关键决策节点，帮助 HR 少走弯路。", "cta": "立即下载 ", "date": "2026-01-20" },
-      "liveVideo":     { "title": "人才选用育留一体化：从理念到实践",           "desc": "TalentPro 首席专家主讲，系统分享如何用数字化工具打通人才全生命周期管理，附完整方法论 PPT 下载。", "cta": "观看回放 ", "date": "2026-03-05" }
+      "whitepaper": {
+        "title": "《2026 HR 数智化成熟度模型白皮书》",
+        "desc": "首次发布 AI+HR 数智化成熟度模型 HRDIMM，整合 567 家企业调研洞察，适配不同成熟度企业的三阶转型方案。",
+        "cta": "立即获取 ",
+        "date": "2026-01-15"
+      },
+      "aiCases": {
+        "title": "《2026 AI 面试官精选案例集》",
+        "desc": "茶颜悦色、海尔、信达生物等 11 家行业领军企业实战亲测，覆盖校招、社招、蓝领招聘全场景。",
+        "cta": "立即获取 ",
+        "date": "2026-03-01"
+      },
+      "aiTalent": {
+        "title": "如何应用 AI 重塑企业人才盘点体系",
+        "desc": "从传统九宫格到 AI 驱动的数字化盘点，帮助 HR 实现更科学、更高效的人才评估，支撑战略人才储备。",
+        "cta": "查看详情 ",
+        "date": "2026-02-20"
+      },
+      "campusGuide": {
+        "title": "《2026 企业校园招聘 AI 应用实用指南》",
+        "desc": "从 JD 生成到 AI 面试，全链路校招提效方案，附 50+ 一线企业实战案例，覆盖制造、互联网、金融三大赛道。",
+        "cta": "立即获取 ",
+        "date": "2026-02-10"
+      },
+      "digitalGuide": {
+        "title": "《HR 数字化升级全景指南》",
+        "desc": "系统梳理从制度设计到系统落地的完整路径，覆盖 8 大业务模块、12 个关键决策节点，帮助 HR 少走弯路。",
+        "cta": "立即下载 ",
+        "date": "2026-01-20"
+      },
+      "liveVideo": {
+        "title": "人才选用育留一体化：从理念到实践",
+        "desc": "TalentPro 首席专家主讲，系统分享如何用数字化工具打通人才全生命周期管理，附完整方法论 PPT 下载。",
+        "cta": "观看回放 ",
+        "date": "2026-03-05"
+      }
     }
   },
-
   "roi": {
-    "sectionTag":   " ROI 计算器",
+    "sectionTag": " ROI 计算器",
     "sectionTitle": "算一笔账，看看 TalentPro 能为您的企业节省多少",
-    "sectionSub":   "基于 8000+ 企业真实数据，5 个参数快速估算年度投资回报",
-    "empCount":     "员工总数",
-    "monthHire":    "月均招聘人数",
-    "hireCycle":    "招聘平均周期",
-    "hrTeam":       "HR 团队人数",
-    "hrSalary":     "人均 HR 月薪",
+    "sectionSub": "基于 8000+ 企业真实数据，5 个参数快速估算年度投资回报",
+    "empCount": "员工总数",
+    "monthHire": "月均招聘人数",
+    "hireCycle": "招聘平均周期",
+    "hrTeam": "HR 团队人数",
+    "hrSalary": "人均 HR 月薪",
     "totalSavings": "年度总节省",
-    "roiRate":      "预估 ROI",
-    "payback":      "投资回收期",
-    "chartTitle":   "引入 TalentPro 前后成本对比",
-    "chartBefore":  "引入前（年）",
-    "chartAfter":   "引入后（年）",
-    "saveHr":       "节省 HR 工时成本",
-    "saveRecruit":  "减少招聘周期成本",
+    "roiRate": "预估 ROI",
+    "payback": "投资回收期",
+    "chartTitle": "引入 TalentPro 前后成本对比",
+    "chartBefore": "引入前（年）",
+    "chartAfter": "引入后（年）",
+    "saveHr": "节省 HR 工时成本",
+    "saveRecruit": "减少招聘周期成本",
     "saveTurnover": "降低人员流失成本",
-    "cta":          "基于您的规模获取定制方案 →"
+    "months": "个月",
+    "cta": "基于您的规模获取定制方案 →"
   },
-
   "cta": {
-    "title":  "立即体验，让企业人才管理先人一步",
-    "sub":    "专属顾问 1 个工作日内为您解答，量身定制解决方案",
-    "btn1":   "预约产品演示 ",
-    "btn2":   "在线咨询"
+    "title": "立即体验，让企业人才管理先人一步",
+    "sub": "专属顾问 1 个工作日内为您解答，量身定制解决方案",
+    "btn1": "预约产品演示 ",
+    "btn2": "在线咨询"
   },
-
   "footer": {
-    "desc":       "新一代一体化人才管理平台，为中大型企业提供全生命周期 HR SaaS 解决方案。",
-    "preSale":    "售前咨询: 400-888-8888",
-    "afterSale":  "售后支持: 400-888-8889",
-    "qr1":        "官方公众号",
-    "qr2":        "视频号",
-    "hotTitle":   "热门推荐",
-    "hotTags":    ["AI 招聘", "人才盘点", "校园招聘", "绩效管理", "央国企", "中企出海"],
+    "desc": "新一代一体化人才管理平台，为中大型企业提供全生命周期 HR SaaS 解决方案。",
+    "preSale": "售前咨询: 400-888-8888",
+    "afterSale": "售后支持: 400-888-8889",
+    "qr1": "官方公众号",
+    "qr2": "视频号",
+    "hotTitle": "热门推荐",
+    "hotTags": [
+      "AI 招聘",
+      "人才盘点",
+      "校园招聘",
+      "绩效管理",
+      "央国企",
+      "中企出海"
+    ],
     "cols": {
-      "products":  "产品",
+      "products": "产品",
       "resources": "资源中心",
-      "about":     "了解我们"
+      "about": "了解我们"
     },
-    "productLinks":  ["一体化 HR SaaS", "AI Family", "人才测评", "PaaS 平台", "数字人力分析"],
-    "resourceLinks": ["研究报告", "干货文章", "客户案例", "直播视频", "用户社区"],
-    "aboutLinks":    ["公司介绍", "新闻动态", "安全保障", "联系我们", "加入我们"],
-    "copyright":  "© 2026 TalentPro 人才科技有限公司版权所有",
-    "icp":        "京ICP备XXXXXXXX号",
-    "privacy":    "隐私政策",
-    "terms":      "服务条款",
-    "sitemap":    "网站地图"
+    "productLinks": [
+      "一体化 HR SaaS",
+      "AI Family",
+      "人才测评",
+      "PaaS 平台",
+      "数字人力分析"
+    ],
+    "resourceLinks": [
+      "研究报告",
+      "干货文章",
+      "客户案例",
+      "直播视频",
+      "用户社区"
+    ],
+    "aboutLinks": [
+      "公司介绍",
+      "新闻动态",
+      "安全保障",
+      "联系我们",
+      "加入我们"
+    ],
+    "copyright": "© 2026 TalentPro 人才科技有限公司版权所有",
+    "icp": "京ICP备XXXXXXXX号",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "sitemap": "网站地图",
+    "zhihuAria": "知乎",
+    "weiboAria": "微博"
   },
-
   "modal": {
-    "step1Title":  "预约产品演示",
-    "step1Sub":    "专属顾问将在 1 个工作日内联系您",
-    "step2Title":  "您想演示的产品",
-    "step2Sub":    "可多选，我们将为您定制演示内容",
-    "step3Title":  "您的企业规模",
-    "step3Sub":    "帮助我们为您匹配最合适的方案",
-    "labelName":   "姓名",
-    "labelCompany":"公司名称",
-    "labelPhone":  "手机号码",
-    "labelCode":   "验证码",
-    "phName":      "请输入您的姓名",
-    "phCompany":   "请输入公司名称",
-    "phPhone":     "请输入手机号",
-    "phCode":      "请输入 6 位验证码",
-    "sendCode":    "获取验证码",
-    "resend":      "{n}s 后重新获取",
-    "required":    "*",
-    "errName":     "请输入至少 2 个字符",
-    "errPhone":    "请输入正确的手机号",
-    "errCode":     "请输入 6 位验证码",
-    "next":        "下一步 ",
-    "submit":      "提交预约 ",
-    "close":       "关闭",
-    "successTitle":"预约成功！",
-    "successSub":  "我们的专属顾问将在 1 个工作日内与您联系\n感谢您对 TalentPro 的信任",
-    "products": ["招聘管理", "人才测评", "假勤管理", "薪酬管理", "组织人事", "绩效管理", "AI Family", "其他"],
-    "scales":   ["200人以下", "200-499人", "500-999人", "1000-4999人", "5000人以上"],
-    "stepText":  "第{current}步 / 共{total}步",
+    "step1Title": "预约产品演示",
+    "step1Sub": "专属顾问将在 1 个工作日内联系您",
+    "step2Title": "您想演示的产品",
+    "step2Sub": "可多选，我们将为您定制演示内容",
+    "step3Title": "您的企业规模",
+    "step3Sub": "帮助我们为您匹配最合适的方案",
+    "labelName": "姓名",
+    "labelCompany": "公司名称",
+    "labelPhone": "手机号码",
+    "labelCode": "验证码",
+    "phName": "请输入您的姓名",
+    "phCompany": "请输入公司名称",
+    "phPhone": "请输入手机号",
+    "phCode": "请输入 6 位验证码",
+    "sendCode": "获取验证码",
+    "resend": "{n}s 后重新获取",
+    "required": "*",
+    "errName": "请输入至少 2 个字符",
+    "errPhone": "请输入正确的手机号",
+    "errCode": "请输入 6 位验证码",
+    "next": "下一步 ",
+    "submit": "提交预约 ",
+    "close": "关闭",
+    "successTitle": "预约成功！",
+    "successSub": "我们的专属顾问将在 1 个工作日内与您联系\n感谢您对 TalentPro 的信任",
+    "products": [
+      "招聘管理",
+      "人才测评",
+      "假勤管理",
+      "薪酬管理",
+      "组织人事",
+      "绩效管理",
+      "AI Family",
+      "其他"
+    ],
+    "scales": [
+      "200人以下",
+      "200-499人",
+      "500-999人",
+      "1000-4999人",
+      "5000人以上"
+    ],
+    "stepText": "第{current}步 / 共{total}步",
     "autoFillPhone": "一键填入手机号",
     "tosPrefix": "我已阅读并同意",
-    "tosLink":   "服务条款",
+    "tosLink": "服务条款",
     "tosSuffix": "和隐私政策",
-    "errTos":    "请同意服务条款",
-    "summaryName":     "姓名",
-    "summaryCompany":  "公司",
+    "errTos": "请同意服务条款",
+    "summaryName": "姓名",
+    "summaryCompany": "公司",
     "summaryProducts": "意向产品",
-    "summaryScale":    "企业规模",
-    "recommendTitle":  "您可能还需要"
+    "summaryScale": "企业规模",
+    "recommendTitle": "您可能还需要"
   },
-
   "floatingBar": {
-    "demo":    "预约演示",
-    "chat":    "在线咨询",
-    "phone":   "400-888-8888",
+    "demo": "预约演示",
+    "chat": "在线咨询",
+    "phone": "400-888-8888",
     "backTop": "回到顶部",
     "callTel": "电话咨询"
   },
-
   "cookie": {
-    "banner":      "我们使用 Cookie 改善您的体验，包括必要的网站功能、访问分析和个性化营销。",
-    "learnMore":   "了解更多",
-    "acceptAll":   "接受全部",
-    "reject":      "拒绝",
-    "rejectAll":   "拒绝全部",
-    "savePrefs":   "保存偏好",
-    "prefTitle":   "Cookie 偏好设置",
-    "prefDesc":    "您可以选择允许哪些类型的 Cookie。必要 Cookie 始终启用，以确保网站正常运行。",
-    "necessary":   "必要 Cookie",
+    "banner": "我们使用 Cookie 改善您的体验，包括必要的网站功能、访问分析和个性化营销。",
+    "learnMore": "了解更多",
+    "acceptAll": "接受全部",
+    "reject": "拒绝",
+    "rejectAll": "拒绝全部",
+    "savePrefs": "保存偏好",
+    "prefTitle": "Cookie 偏好设置",
+    "prefDesc": "您可以选择允许哪些类型的 Cookie。必要 Cookie 始终启用，以确保网站正常运行。",
+    "necessary": "必要 Cookie",
     "necessaryDesc": "网站核心功能所需，如会话管理和安全认证。不可关闭。",
-    "analytics":   "分析 Cookie",
+    "analytics": "分析 Cookie",
     "analyticsDesc": "帮助我们了解用户如何与网站互动，用于改进用户体验。",
-    "marketing":   "营销 Cookie",
+    "marketing": "营销 Cookie",
     "marketingDesc": "用于展示更相关的营销内容和再营销广告。",
-    "alwaysOn":    "始终开启"
+    "alwaysOn": "始终开启"
   },
-
   "video": {
     "title": "TalentPro 产品演示视频",
     "close": "关闭视频"
   },
-
   "blog": {
     "title": "TalentPro 博客",
+    "pageTitle": "TalentPro 博客",
     "back": "返回博客列表",
-    "noPosts": "暂无文章"
+    "noPosts": "暂无文章",
+    "jsonLdName": "TalentPro 博客",
+    "jsonLdDesc": "人力资源数字化转型的前沿洞察"
   },
-
   "forum": {
     "title": "TalentPro 社区",
+    "pageTitle": "TalentPro 论坛",
     "back": "返回社区",
     "noTopics": "暂无话题",
-    "replies": "回复"
+    "replies": "回复",
+    "pinned": "置顶",
+    "locked": "已锁定"
   },
-
   "search": {
     "placeholder": "搜索产品、行业方案、资源...",
-    "shortcut":    "⌘K",
-    "hot":         " 热门搜索",
-    "noResult":    "未找到 \"{query}\"",
+    "shortcut": "⌘K",
+    "hot": " 热门搜索",
+    "noResult": "未找到 \"{query}\"",
     "noResultSub": "试试其他关键词",
-    "navUp":       "↑↓ 导航",
-    "navEnter":    "Enter 跳转",
-    "navEsc":      "Esc 关闭",
-    "label":       "搜索"
+    "navUp": "↑↓ 导航",
+    "navEnter": "Enter 跳转",
+    "navEsc": "Esc 关闭",
+    "label": "搜索"
   },
-
-  "contact": {
-    "ariaLabel":     "在线咨询",
-    "title":         "在线咨询",
-    "subtitle":      "专属顾问实时响应",
-    "phoneLabel":    "售前咨询热线",
-    "timeLabel":     "服务时间",
-    "timeValue":     "周一至周五 9:00 – 18:00",
-    "qrWechat":      "扫码添加企业微信",
-    "qrOfficial":    "关注官方公众号",
-    "cta":           "预约产品演示 "
+  "contactModal": {
+    "ariaLabel": "在线咨询",
+    "title": "在线咨询",
+    "subtitle": "专属顾问实时响应",
+    "phoneLabel": "售前咨询热线",
+    "timeLabel": "服务时间",
+    "timeValue": "周一至周五 9:00 – 18:00",
+    "qrWechat": "扫码添加企业微信",
+    "qrOfficial": "关注官方公众号",
+    "cta": "预约产品演示 "
   },
-
   "chatBot": {
-    "botName":       "TalentPro 小才",
-    "statusOnline":  "在线 · 智能助手",
+    "botName": "TalentPro 小才",
+    "statusOnline": "在线 · 智能助手",
     "statusHandoff": "人工客服接入中...",
-    "placeholder":   "输入问题，按 Enter 发送...",
-    "closeAria":     "关闭客服",
-    "handoffBtn":    "转人工客服",
-    "handoffMsg":    "人工客服排队中，预计等待 3 分钟",
-    "handoffCall":   "立即电话联系",
-    "sendAria":      "发送",
-    "welcome1":      "您好！我是 TalentPro 智能助手**小才** \n欢迎咨询一体化 HR SaaS 解决方案。",
-    "welcome2":      "请问您对哪方面感兴趣？",
-    "welcomeQuickReplies": ["了解产品功能", "获取行业方案", "预约产品演示", "价格与收费"],
-    "quickRepliesDefault": ["了解产品功能", "获取行业方案", "预约产品演示", "价格与收费", "联系人工客服"],
-    "fallback1":     "感谢您的咨询！这个问题我需要确认一下，建议您：\n\n 拨打 **400-888-8888** 获取专业解答\n 或预约演示，专属顾问为您详细介绍",
-    "fallback2":     "您的问题很专业！建议联系我们的**产品顾问**为您提供准确信息。\n\n是否需要我帮您预约一位专属顾问？",
-    "fallback3":     "这个问题稍微超出了我的知识范围。我来帮您转接**人工客服**，他们可以为您提供更专业的解答。",
+    "placeholder": "输入问题，按 Enter 发送...",
+    "closeAria": "关闭客服",
+    "handoffBtn": "转人工客服",
+    "handoffMsg": "人工客服排队中，预计等待 3 分钟",
+    "handoffCall": "立即电话联系",
+    "sendAria": "发送",
+    "welcome1": "您好！我是 TalentPro 智能助手**小才** \n欢迎咨询一体化 HR SaaS 解决方案。",
+    "welcome2": "请问您对哪方面感兴趣？",
+    "welcomeQuickReplies": [
+      "了解产品功能",
+      "获取行业方案",
+      "预约产品演示",
+      "价格与收费"
+    ],
+    "quickRepliesDefault": [
+      "了解产品功能",
+      "获取行业方案",
+      "预约产品演示",
+      "价格与收费",
+      "联系人工客服"
+    ],
+    "fallback1": "感谢您的咨询！这个问题我需要确认一下，建议您：\n\n 拨打 **400-888-8888** 获取专业解答\n 或预约演示，专属顾问为您详细介绍",
+    "fallback2": "您的问题很专业！建议联系我们的**产品顾问**为您提供准确信息。\n\n是否需要我帮您预约一位专属顾问？",
+    "fallback3": "这个问题稍微超出了我的知识范围。我来帮您转接**人工客服**，他们可以为您提供更专业的解答。",
     "faq": {
       "product": {
         "reply": "TalentPro 提供**全套 HR SaaS 产品**，覆盖：\n\n• ‍ 招聘管理 — 全流程数字化招聘\n•  绩效管理 — OKR/KPI 目标对齐\n• ⏰ 假勤管理 — 智能排班自动考勤\n•  薪酬管理 — 精准核算合规个税\n•  AI Family — 10大 AI 助手\n\n您想深入了解哪个模块？",
-        "quickReplies": ["AI招聘助手", "AI面试官", "考勤排班", "薪酬管理", "查看全部产品"]
+        "quickReplies": [
+          "AI招聘助手",
+          "AI面试官",
+          "考勤排班",
+          "薪酬管理",
+          "查看全部产品"
+        ]
       },
       "ai": {
         "reply": "我们的 **AI Family** 包含 10 大 AI 助手：\n\n **AI 招聘助手** — 简历筛选、JD生成、面试安排\n **AI 面试官** — 7×24自动面试，精准测潜力\n **AI 领导力教练** — 管理者个人成长\n **AI 学习助手** — 个性化员工培养\n\n覆盖 50+ HR 场景，平均提效 300%。\n想了解哪款 AI 产品的详情？",
-        "quickReplies": ["AI招聘助手详情", "AI面试官详情", "预约演示"]
+        "quickReplies": [
+          "AI招聘助手详情",
+          "AI面试官详情",
+          "预约演示"
+        ]
       },
       "recruit": {
         "reply": "**TalentPro 招聘管理系统**全面覆盖：\n\n 校招 + 社招双线并行\n AI 智能简历初筛（减少80%筛选工作）\n 一键生成岗位 JD\n 候选人状态实时追踪\n 面试安排自动化\n\n已有 **蒙牛、海尔** 等 8000+ 企业使用，招聘效率提升5倍。",
-        "quickReplies": ["查看案例", "预约演示", "了解价格"]
+        "quickReplies": [
+          "查看案例",
+          "预约演示",
+          "了解价格"
+        ]
       },
       "attendance": {
         "reply": "**假勤管理系统** 专为复杂场景设计：\n\n 支持 **5000+ 考勤规则**自动处理\n 移动端即时排班，工长一键搞定\n 支持弹性、轮班、综合工时等\n 薪资核算时间从5天半天\n\n特别适合制造业、零售连锁等多班次场景。",
-        "quickReplies": ["制造业方案", "零售方案", "预约演示"]
+        "quickReplies": [
+          "制造业方案",
+          "零售方案",
+          "预约演示"
+        ]
       },
       "payroll": {
         "reply": "**薪酬管理系统**核心能力：\n\n 自动化薪资核算（误差率<0.01%）\n 合规个税处理（支持全国差异政策）\n 与考勤、绩效数据自动联动\n 薪酬分析报表，支持多维度对比\n\n支持 **多法人、多薪资体系**，适合集团化企业。",
-        "quickReplies": ["集团方案", "预约演示", "了解价格"]
+        "quickReplies": [
+          "集团方案",
+          "预约演示",
+          "了解价格"
+        ]
       },
       "performance": {
         "reply": "**绩效管理系统**支持多种模式：\n\n OKR、KPI、360度评估全支持\n 目标层层分解，上下对齐可视化\n 绩效结果自动联动薪酬、晋升\n AI辅助制定个性化发展建议\n\n客户平均绩效完成率提升 **35%**。",
-        "quickReplies": ["预约演示", "查看案例"]
+        "quickReplies": [
+          "预约演示",
+          "查看案例"
+        ]
       },
       "manufacturing": {
         "reply": " **制造业专属方案**重点解决：\n\n• 复杂班次排班自动化\n• 蓝领试工扫码入系统\n• 员工资质到期提醒\n• 车间考勤实时看板\n\n已服务**比亚迪、美的**等头部制造企业。\n\n需要了解详细方案吗？",
-        "quickReplies": ["查看制造业案例", "预约专项演示"]
+        "quickReplies": [
+          "查看制造业案例",
+          "预约专项演示"
+        ]
       },
       "retail": {
         "reply": " **零售连锁方案**核心能力：\n\n• 店长招聘工作台（一站式处理）\n• 多门店统一人事管控\n• 旺季批量招聘+AI初筛\n• 灵活班次管理\n\n已服务**周大福、正大**等头部零售企业。",
-        "quickReplies": ["查看零售案例", "预约专项演示"]
+        "quickReplies": [
+          "查看零售案例",
+          "预约专项演示"
+        ]
       },
       "internet": {
         "reply": " **互联网/科技方案**聚焦：\n\n• HRBP 智能工作台\n• 全员招聘协作（业务经理可参与）\n• OKR 目标管理\n• 快速构建技术人才梯队\n\n已服务**百度、美团、京东**等互联网企业。",
-        "quickReplies": ["查看互联网案例", "预约专项演示"]
+        "quickReplies": [
+          "查看互联网案例",
+          "预约专项演示"
+        ]
       },
       "gov": {
         "reply": "️ **央国企方案**专注：\n\n• 数字化校园招聘\n• 年轻干部梯队建设\n• 干部竞聘全流程线上化\n• 人才盘点与继任管理\n\n已服务**招商银行、中国平安**等大型国企。",
-        "quickReplies": ["查看央国企案例", "预约专项演示"]
+        "quickReplies": [
+          "查看央国企案例",
+          "预约专项演示"
+        ]
       },
       "demo": {
         "reply": "**预约产品演示**非常简单：\n\n 电话预约：**400-888-8888**\n 在线预约：点击下方按钮\n⏱️ 专属顾问将在 **1 个工作日**内联系您\n\n演示内容可定制，针对您的行业和需求量身安排。",
-        "quickReplies": ["立即预约演示", "先了解更多"],
+        "quickReplies": [
+          "立即预约演示",
+          "先了解更多"
+        ],
         "action": "openModal"
       },
       "price": {
         "reply": "**TalentPro 采用订阅制定价**，根据：\n\n• 企业员工人数\n• 所选产品模块\n• 合同周期\n\n灵活定制报价方案。\n\n 通常 **500人企业**全模块年费约在 **15-30万元**区间，具体以实际配置为准。\n\n建议预约专属顾问，获取精准报价。",
-        "quickReplies": ["预约获取报价", "联系人工客服"]
+        "quickReplies": [
+          "预约获取报价",
+          "联系人工客服"
+        ]
       },
       "security": {
         "reply": "TalentPro 通过**多重安全认证**：\n\n 等保三级（国家最高信息安全标准）\n ISO 27001 国际安全管理\n SOC 2 Type II 审计通过\n AES-256 银行级全程加密\n️ 国密算法 SM2/SM3/SM4\n\n**99.9% SLA 可用性**，7×24小时安全监控。",
-        "quickReplies": ["了解更多安全信息", "预约演示"]
+        "quickReplies": [
+          "了解更多安全信息",
+          "预约演示"
+        ]
       },
       "human": {
         "reply": "已为您申请接入**人工客服**。\n\n⏱️ 当前排队：**约3分钟**\n\n您也可以通过以下方式立即联系：\n **400-888-8888**（工作日 9:00-18:00）\n\n在等待期间，我可以继续回答您的问题~",
-        "quickReplies": ["继续咨询", "我可以等"],
+        "quickReplies": [
+          "继续咨询",
+          "我可以等"
+        ],
         "isHandoff": true
       }
     }
   },
-
   "auth": {
-    "loginTitle":         "欢迎回来",
-    "loginSubtitle":      "登录您的 TalentPro 账号",
-    "registerTitle":      "创建账号",
-    "registerSubtitle":   "立即注册，开启智能 HR 之旅",
-    "email":              "邮箱",
-    "emailPlaceholder":   "请输入邮箱",
-    "emailRequired":      "请输入邮箱",
-    "emailInvalid":       "邮箱格式不正确",
-    "password":           "密码",
-    "passwordPlaceholder":"请输入密码",
-    "passwordRequired":   "请输入密码",
-    "passwordMin":        "密码至少 8 位",
+    "loginTitle": "欢迎回来",
+    "loginSubtitle": "登录您的 TalentPro 账号",
+    "registerTitle": "创建账号",
+    "registerSubtitle": "立即注册，开启智能 HR 之旅",
+    "email": "邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "emailRequired": "请输入邮箱",
+    "emailInvalid": "邮箱格式不正确",
+    "password": "密码",
+    "passwordPlaceholder": "请输入密码",
+    "passwordRequired": "请输入密码",
+    "passwordMin": "密码至少 8 位",
     "passwordComplexity": "密码需包含大小写字母、数字和特殊字符",
-    "confirmPassword":    "确认密码",
+    "confirmPassword": "确认密码",
     "confirmPasswordPlaceholder": "请再次输入密码",
-    "confirmRequired":    "请确认密码",
-    "passwordMismatch":   "两次输入的密码不一致",
-    "name":               "姓名",
-    "namePlaceholder":    "请输入姓名",
-    "nameMin":            "姓名至少 2 个字符",
-    "loginBtn":           "登录",
-    "registerBtn":        "注册",
-    "submitting":         "提交中...",
-    "noAccount":          "还没有账号？",
-    "hasAccount":         "已有账号？",
-    "toRegister":         "立即注册",
-    "toLogin":            "立即登录",
-    "genericError":       "操作失败，请稍后重试"
+    "confirmRequired": "请确认密码",
+    "passwordMismatch": "两次输入的密码不一致",
+    "name": "姓名",
+    "namePlaceholder": "请输入姓名",
+    "nameMin": "姓名至少 2 个字符",
+    "loginBtn": "登录",
+    "registerBtn": "注册",
+    "submitting": "提交中...",
+    "noAccount": "还没有账号？",
+    "hasAccount": "已有账号？",
+    "toRegister": "立即注册",
+    "toLogin": "立即登录",
+    "genericError": "操作失败，请稍后重试"
   },
   "comment": {
-    "title":              "评论",
-    "placeholder":        "写下你的评论... 使用 @ 提及用户",
-    "replyPlaceholder":   "写下你的回复...",
-    "submit":             "发表评论",
-    "submitting":         "提交中...",
-    "reply":              "回复",
-    "cancel":             "取消",
-    "noComments":         "暂无评论，快来抢沙发吧！",
-    "loginToComment":     "登录后发表评论",
-    "anonymous":          "匿名用户",
-    "loading":            "加载中...",
-    "noUser":             "未找到用户",
-    "submitError":        "评论发表失败"
+    "title": "评论",
+    "placeholder": "写下你的评论... 使用 @ 提及用户",
+    "replyPlaceholder": "写下你的回复...",
+    "submit": "发表评论",
+    "submitting": "提交中...",
+    "reply": "回复",
+    "cancel": "取消",
+    "noComments": "暂无评论，快来抢沙发吧！",
+    "loginToComment": "登录后发表评论",
+    "anonymous": "匿名用户",
+    "loading": "加载中...",
+    "noUser": "未找到用户",
+    "submitError": "评论发表失败"
   },
   "profile": {
-    "title":              "个人中心",
-    "edit":               "编辑资料",
-    "save":               "保存",
-    "name":               "昵称",
-    "bio":                "个人简介",
-    "avatar":             "头像链接",
-    "joined":             "加入于",
-    "loading":            "加载中...",
-    "saveError":          "保存失败"
+    "title": "个人中心",
+    "edit": "编辑资料",
+    "save": "保存",
+    "name": "昵称",
+    "bio": "个人简介",
+    "avatar": "头像链接",
+    "joined": "加入于",
+    "loading": "加载中...",
+    "saveError": "保存失败",
+    "jsonLdName": "TalentPro 个人中心",
+    "jsonLdDesc": "管理您的 TalentPro 账户和个人资料"
   },
   "pagination": {
-    "prev":               "上一页",
-    "next":               "下一页"
+    "prev": "上一页",
+    "next": "下一页"
   },
   "notification": {
-    "title":              "通知中心",
-    "readAll":            "全部已读",
-    "empty":              "暂无通知"
+    "title": "通知中心",
+    "readAll": "全部已读",
+    "empty": "暂无通知"
   },
   "editor": {
-    "preview":            "预览",
-    "edit":               "编辑"
+    "preview": "预览",
+    "edit": "编辑"
   },
   "downloadGate": {
-    "title":              "下载《{title}》",
-    "subtitle":           "请填写以下信息，我们将把资料发送到您的邮箱",
-    "name":               "您的姓名",
-    "email":              "工作邮箱",
-    "company":            "公司名称（选填）",
-    "submit":             "确认并下载",
-    "submitting":         "提交中...",
-    "required":           "请填写姓名和邮箱",
-    "error":              "提交失败，请重试"
+    "title": "下载《{title}》",
+    "subtitle": "请填写以下信息，我们将把资料发送到您的邮箱",
+    "name": "您的姓名",
+    "email": "工作邮箱",
+    "company": "公司名称（选填）",
+    "submit": "确认并下载",
+    "submitting": "提交中...",
+    "required": "请填写姓名和邮箱",
+    "error": "提交失败，请重试"
+  },
+  "productPage": {
+    "title": "产品",
+    "subtitle": "一体化 HR SaaS，加速人力资源数字化",
+    "detail": "产品详情",
+    "tag": "产品",
+    "all": "全部",
+    "learnMore": "了解详情",
+    "features": "核心功能",
+    "scenarios": "应用场景",
+    "specs": "技术规格",
+    "related": "相关产品",
+    "docCta": "查看文档",
+    "demoCta": "预约演示",
+    "ctaTitle": "不确定哪款产品适合您？",
+    "ctaDesc": "我们的顾问团队将为您量身定制解决方案",
+    "notFound": "未找到该产品"
+  },
+  "solutions": {
+    "title": "解决方案",
+    "subtitle": "根据行业特点，打造更贴合业务的解决方案",
+    "detail": "方案详情",
+    "suffix": "解决方案",
+    "industryDesc": "{name}行业面临独特的人力资源挑战，TalentPro 提供专属解决方案，帮助企业实现人才管理数字化转型。",
+    "keyFeatures": "核心能力",
+    "features": "项特色能力",
+    "painPoints": "行业痛点",
+    "architecture": "方案架构",
+    "roadmap": "实施路径",
+    "caseStudy": "客户案例",
+    "roi": "投资回报",
+    "learnMore": "了解方案",
+    "demoCta": "预约方案咨询",
+    "ctaTitle": "需要行业专属解决方案？",
+    "ctaDesc": "我们的行业专家将为您提供一对一咨询",
+    "notFound": "未找到该方案"
+  },
+  "cases": {
+    "title": "客户案例",
+    "subtitle": "8000+ 企业的信任选择，见证数字化转型的力量",
+    "detail": "案例详情",
+    "all": "全部",
+    "featured": "精选案例",
+    "readMore": "阅读全文",
+    "challenge": "业务挑战",
+    "solution": "解决方案",
+    "results": "成果收益",
+    "usedProducts": "使用产品",
+    "notFound": "未找到该案例",
+    "jsonLdName": "TalentPro 客户案例"
+  },
+  "resourcePage": {
+    "title": "资源中心",
+    "subtitle": "行业洞察、实战案例与方法论，助力 HR 数字化升级",
+    "detail": "资源详情",
+    "all": "全部",
+    "readTime": "阅读",
+    "downloads": "次下载",
+    "download": "立即下载",
+    "featured": "精选资源",
+    "related": "相关资源",
+    "demoCta": "预约产品演示",
+    "notFound": "未找到该资源"
+  },
+  "news": {
+    "title": "新闻动态",
+    "subtitle": "TalentPro 最新资讯与行业动态",
+    "detail": "新闻详情",
+    "featured": "精选",
+    "notFound": "未找到该新闻"
+  },
+  "careers": {
+    "title": "加入我们",
+    "subtitle": "与我们一起，用科技重新定义人才管理",
+    "detail": "职位详情",
+    "all": "全部",
+    "campus": "校园招聘",
+    "social": "社会招聘",
+    "apply": "立即申请",
+    "description": "职位描述",
+    "requirements": "任职要求",
+    "benefits": "福利待遇",
+    "notFound": "未找到该职位",
+    "viewJobs": "查看全部职位",
+    "campusSubtitle": "开启你的职业旅程，在 TalentPro 成长",
+    "socialSubtitle": "寻找下一个挑战，与顶尖人才一起工作",
+    "gradProgram": "管培生计划",
+    "gradProgramDesc": "为期 18 个月的轮岗培养计划，深入了解 HR SaaS 全业务链路，快速成长为业务骨干。",
+    "internship": "实习生计划",
+    "internshipDesc": "面向在校大学生的实习机会，提供真实项目历练和导师一对一指导。",
+    "research": "研究合作",
+    "researchDesc": "与高校和研究机构合作，探索 AI+HR 前沿课题，发表顶级会议论文。",
+    "culture": "开放文化",
+    "cultureDesc": "扁平化管理，鼓励创新和试错，每个人都有发言权。",
+    "growth": "成长体系",
+    "growthDesc": "完善的职级体系和培训机制，技术与管理双通道发展。",
+    "benefitsDesc": "有竞争力的薪酬、弹性工作、年度体检、补充医疗保险等。",
+    "noDescription": "暂无详细职位描述，请联系 HR 获取更多信息。",
+    "noRequirements": "暂无详细任职要求，请联系 HR 获取更多信息。",
+    "applyPrompt": "申请已提交，我们会尽快与您联系！",
+    "jsonLdName": "TalentPro 加入我们",
+    "jsonLdDesc": "与我们一起，用科技重新定义人才管理"
+  },
+  "about": {
+    "title": "了解我们",
+    "subtitle": "用科技连接人与组织，让人才管理更高效",
+    "story": "我们的故事",
+    "storyBody": "TalentPro 成立于 2018 年，由一群深耕人力资源科技领域超过 20 年的专家创立。我们相信，优秀的人才管理是企业成功的基石。通过 AI 和数字化技术，我们帮助中大型企业重新定义人才管理，覆盖招聘、绩效、薪酬、学习发展等全生命周期。",
+    "values": "核心价值观",
+    "val1Title": "客户第一",
+    "val1Desc": "始终以客户成功为导向，深入理解业务痛点，提供真正有价值的解决方案。",
+    "val2Title": "创新驱动",
+    "val2Desc": "持续投入 AI 和前沿技术研发，引领 HR SaaS 行业变革。",
+    "val3Title": "开放协作",
+    "val3Desc": "与生态伙伴共建开放平台，为客户创造更大价值。",
+    "val4Title": "追求卓越",
+    "val4Desc": "对产品品质和用户体验永无止境的追求，细节决定成败。",
+    "founded": "成立时间",
+    "employees": "员工数量",
+    "customers": "企业客户",
+    "countries": "覆盖国家",
+    "learnMore": "了解更多",
+    "jsonLdName": "TalentPro 了解我们",
+    "jsonLdDesc": "用科技连接人与组织，让人才管理更高效"
+  },
+  "team": {
+    "title": "团队介绍",
+    "subtitle": "汇聚行业顶尖人才，共创 HR 科技未来",
+    "jsonLdName": "TalentPro 团队介绍",
+    "jsonLdDesc": "汇聚行业顶尖人才，共创 HR 科技未来"
+  },
+  "partners": {
+    "title": "合作伙伴",
+    "subtitle": "与全球领先企业携手，共建 HR 生态",
+    "jsonLdName": "TalentPro 合作伙伴",
+    "jsonLdDesc": "与全球领先企业携手，共建 HR 生态"
+  },
+  "contactPage": {
+    "title": "联系我们",
+    "subtitle": "我们期待与您交流，解答任何疑问",
+    "formTitle": "发送消息",
+    "name": "姓名",
+    "email": "邮箱",
+    "message": "留言",
+    "send": "发送",
+    "sending": "发送中...",
+    "sent": "消息已发送，我们会尽快与您联系！",
+    "emailTitle": "邮箱",
+    "phoneTitle": "电话",
+    "addressTitle": "地址",
+    "addressValue": "北京市海淀区中关村软件园",
+    "jsonLdName": "TalentPro 联系我们",
+    "jsonLdDesc": "我们期待与您交流，解答任何疑问"
+  },
+  "common": {
+    "loadError": "加载失败，请重试",
+    "retry": "重试",
+    "loading": "加载中...",
+    "other": "其他"
+  },
+  "errors": {
+    "requestFailed": "请求失败",
+    "networkError": "网络请求失败",
+    "noRefreshToken": "无刷新令牌",
+    "loadFailed": "加载失败"
+  },
+  "units": {
+    "people": "人",
+    "days": "天",
+    "yuan": "元",
+    "tenThousand": "万"
+  },
+  "notFound": {
+    "title": "页面不存在",
+    "desc": "抱歉，您访问的页面已被移除或暂时无法访问。",
+    "backHome": "返回首页"
+  },
+  "careersType": {
+    "campus": "校招",
+    "social": "社招"
   }
 }

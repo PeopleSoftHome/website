@@ -18,7 +18,7 @@
       </RevealWrapper>
       <div :class="s.grid" role="tabpanel">
         <ProductCard
-          v-for="(product, i) in activeTab.products"
+          v-for="(product, i) in activeTab?.products || []"
           :key="product.id"
           :icon="product.icon"
           :name="productKey(product.id) ? t(`products.items.${productKey(product.id)}.name`) : product.name"
@@ -35,12 +35,10 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue';
-import { PRODUCT_TABS } from '@/data/products.js';
+
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
-import { transformProductTabs } from '@/api/transforms.js';
+import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';
@@ -54,23 +52,47 @@ const { activeIndex, selectTab } = useTabs(0);
 const originalSelectTab = selectTab;
 const trackedSelectTab = (idx) => {
   originalSelectTab(idx);
-  analytics.track('product_tab_click', { tab: tabs.value[idx]?.id, index: idx });
+  analytics.track('product_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-// API 数据（fallback 为静态数据）
-const apiTabs = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getProducts();
-  return transformProductTabs(data);
-}, apiTabs);
+const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('products', {
+  transform: (active) => {
+    if (!active || active.length === 0) return [];
+    const groups = {};
+    active.forEach((item) => {
+      const tabName = item.tabName || t('common.other');
+      if (!groups[tabName]) groups[tabName] = [];
+      groups[tabName].push(item);
+    });
+    return Object.entries(groups).map(([tabName, products]) => ({
+      id: tabName.toLowerCase().replace(/\s+/g, '-'),
+      label: tabName,
+      iconColor: '',
+      iconBg: '',
+      products: products.map((p, pIdx) => ({
+        id: p.name
+          ? p.name.toLowerCase().replace(/\s+/g, '-')
+          : `product-${pIdx}`,
+        icon: p.icon || 'box',
+        name: p.name || '',
+        desc: p.description || '',
+      })),
+    }));
+  },
+  fallbackKey: 'products',
+});
 
-const tabs = computed(() => (apiTabs.value.length > 0 ? apiTabs.value : PRODUCT_TABS));
-const activeTab = computed(() => tabs.value[activeIndex.value]);
 
-const translatedTabs = computed(() => tabs.value.map(tab => ({
-  ...tab,
-  label: t(`products.tabs.${TAB_KEY_MAP[tab.id] ?? tab.id}`),
-})));
+const activeTab = computed(() => tabs.value[activeIndex.value] ?? { products: [], iconBg: '', iconColor: '' });
+
+const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
+  const key = TAB_KEY_MAP[tab.id] ?? tab.id;
+  const translated = t(`products.tabs.${key}`);
+  return {
+    ...tab,
+    label: translated === `products.tabs.${key}` ? tab.label : translated,
+  };
+}));
 
 const productKey = (id) => PRODUCT_KEY_MAP[id];
 </script>

@@ -3,13 +3,14 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(page = 1, pageSize = 20) {
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({
         skip,
@@ -23,7 +24,7 @@ export class UserService {
       }),
       this.prisma.user.count(),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
   async findOne(id: string) {
@@ -40,7 +41,7 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
-    const existing = await this.prisma.user.findUnique({
+    const existing = await this.prisma.user.findFirst({
       where: { email: dto.email },
     });
     if (existing) throw new ConflictException('邮箱已被注册');

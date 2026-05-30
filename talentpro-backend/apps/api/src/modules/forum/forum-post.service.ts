@@ -15,20 +15,21 @@ export class ForumPostService {
     if (!topic) throw new NotFoundException('话题不存在');
     if (topic.isLocked) throw new BadRequestException('话题已锁定，无法回复');
 
-    const post = await this.prisma.forumPost.create({
-      data: {
-        topicId: data.topicId,
-        authorId: data.authorId,
-        content: data.content,
-        workspaceId: data.workspaceId,
-      },
-      include: { author: { select: { id: true, name: true, avatar: true } } },
-    });
-
-    await this.prisma.forumTopic.update({
-      where: { id: data.topicId },
-      data: { replyCount: { increment: 1 } },
-    });
+    const [post] = await this.prisma.$transaction([
+      this.prisma.forumPost.create({
+        data: {
+          topicId: data.topicId,
+          authorId: data.authorId,
+          content: data.content,
+          workspaceId: data.workspaceId,
+        },
+        include: { author: { select: { id: true, name: true, avatar: true } } },
+      }),
+      this.prisma.forumTopic.update({
+        where: { id: data.topicId },
+        data: { replyCount: { increment: 1 } },
+      }),
+    ]);
 
     const author = await this.prisma.user.findUnique({
       where: { id: data.authorId },
@@ -50,18 +51,29 @@ export class ForumPostService {
     return post;
   }
 
-  async updatePost(id: string, data: { content: string }) {
+  async updatePost(id: string, data: { content: string }, workspaceId?: string) {
+    if (workspaceId) {
+      const existing = await this.prisma.forumPost.findFirst({ where: { id, workspaceId } });
+      if (!existing) throw new NotFoundException('回复不存在或无权访问');
+    }
     return this.prisma.forumPost.update({ where: { id }, data });
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: string, workspaceId?: string) {
     const post = await this.prisma.forumPost.findUnique({ where: { id } });
     if (!post) throw new NotFoundException('回复不存在');
-    await this.prisma.forumPost.delete({ where: { id } });
-    await this.prisma.forumTopic.update({
-      where: { id: post.topicId },
-      data: { replyCount: { decrement: 1 } },
-    });
+    if (workspaceId && post.workspaceId !== workspaceId) {
+      throw new NotFoundException('回复不存在或无权访问');
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.forumPost.delete({ where: { id } }),
+      this.prisma.forumTopic.update({
+        where: { id: post.topicId },
+        data: { replyCount: { decrement: 1 } },
+      }),
+    ]);
+
     return { message: '删除成功' };
   }
 

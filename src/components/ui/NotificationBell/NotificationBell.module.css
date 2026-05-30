@@ -70,7 +70,7 @@
 }
 .item:hover { background: var(--gray-100); }
 .itemUnread { background: var(--primary-light); }
-.itemUnread:hover { background: rgba(27, 95, 235, 0.12); }
+.itemUnread:hover { background: var(--primary-alpha-12); }
 
 .itemDot {
   width: 8px;
@@ -93,5 +93,5 @@
 [data-theme="dark"] .bellWrap:hover { background: var(--surface-on-dark-hover); }
 [data-theme="dark"] .dropdownTitle { color: var(--gray-50); }
 [data-theme="dark"] .item:hover { background: var(--surface-on-dark-hover); }
-[data-theme="dark"] .itemUnread { background: rgba(27, 95, 235, 0.1); }
+[data-theme="dark"] .itemUnread { background: var(--primary-alpha-10); }
 [data-theme="dark"] .itemTitle { color: var(--gray-50); }

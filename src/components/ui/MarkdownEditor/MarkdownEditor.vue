@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, onUnmounted } from 'vue';
 import { userApi } from '@/api/user.js';
 import Avatar from '../Avatar/Avatar.vue';
 import s from './MarkdownEditor.module.css';
@@ -71,6 +71,7 @@ const mentionUsers = ref([]);
 const mentionLoading = ref(false);
 const mentionIndex = ref(0);
 let mentionTimer = null;
+const timers = [];
 let mentionStartPos = -1;
 
 const onInput = (e) => {
@@ -107,7 +108,7 @@ const searchMentions = (q) => {
       const res = await userApi.searchUsers(q, 6);
       const data = res.data || res;
       mentionUsers.value = data.data || data || [];
-    } catch (e) { mentionUsers.value = []; }
+    } catch { mentionUsers.value = []; }
     mentionLoading.value = false;
   }, 150);
 };
@@ -124,7 +125,7 @@ const selectMention = (user) => {
   const after = text.slice(textareaRef.value.selectionStart);
   emit('update:modelValue', `${before}@${user.name} ${after}`);
   closeMention();
-  setTimeout(() => textareaRef.value?.focus(), 0);
+  timers.push(setTimeout(() => textareaRef.value?.focus(), 0));
 };
 
 const handleKeydown = (e) => {
@@ -144,10 +145,10 @@ const wrap = (before, after) => {
   const selected = text.slice(start, end);
   const newText = text.slice(0, start) + before + selected + after + text.slice(end);
   emit('update:modelValue', newText);
-  setTimeout(() => {
+  timers.push(setTimeout(() => {
     el.focus();
     el.setSelectionRange(start + before.length, start + before.length + selected.length);
-  }, 0);
+  }, 0));
 };
 
 const prefix = (prefixStr) => {
@@ -158,7 +159,7 @@ const prefix = (prefixStr) => {
   const lineStart = text.lastIndexOf('\n', start - 1) + 1;
   const newText = text.slice(0, lineStart) + prefixStr + text.slice(lineStart);
   emit('update:modelValue', newText);
-  setTimeout(() => { el.focus(); el.setSelectionRange(start + prefixStr.length, start + prefixStr.length); }, 0);
+  timers.push(setTimeout(() => { el.focus(); el.setSelectionRange(start + prefixStr.length, start + prefixStr.length); }, 0));
 };
 
 const renderPreview = (md) => {
@@ -172,7 +173,10 @@ const renderPreview = (md) => {
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/```\n([\s\S]*?)\n```/g, '<pre><code>$1</code></pre>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+      const safeUrl = /^https?:\/\//i.test(url) ? url : '#';
+      return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    })
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
     .replace(/^&gt; (.*$)/gim, '<blockquote>$1</blockquote>')
     .replace(/^- (.*$)/gim, '<ul><li>$1</li></ul>')
@@ -180,4 +184,9 @@ const renderPreview = (md) => {
     .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span style="color:var(--primary);font-weight:600">@$1</span>')
     .replace(/\n/g, '<br>');
 };
+
+onUnmounted(() => {
+  timers.forEach(id => clearTimeout(id));
+  timers.length = 0;
+});
 </script>

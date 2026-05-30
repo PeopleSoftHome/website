@@ -72,7 +72,7 @@
 .tagDot {
   width: 6px;
   height: 6px;
-  background: var(--cyan-400, #22D3EE);
+  background: var(--cyan-400);
   border-radius: 50%;
   flex-shrink: 0;
   animation: pulse 2s ease-in-out infinite;
@@ -89,7 +89,7 @@
 
 /* 渐变高亮关键词 */
 .highlight {
-  background: linear-gradient(135deg, #1B5FEB, #7C3AED);
+  background: var(--grad-primary-ai);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -129,7 +129,7 @@
 .ctaPrimary:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 30px var(--black-alpha-30);
 }
 
 .ctaGhost {
@@ -158,7 +158,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--gray-500, #6b7280);
+  color: var(--gray-500);
   font-size: 12px;
   padding: 0 16px;
   position: relative;
@@ -227,20 +227,20 @@
   position: relative;
   animation: float 6s ease-in-out infinite;
   filter:
-    drop-shadow(0 8px 32px rgba(27, 95, 235, 0.18))
-    drop-shadow(0 2px 8px rgba(0, 0, 0, 0.06));
+    drop-shadow(0 8px 32px var(--primary-alpha-18))
+    drop-shadow(0 2px 8px var(--black-alpha-6));
 }
 
 .deviceFrame {
   background: white;
   border-radius: var(--radius-lg);
-  box-shadow: 0 24px 60px rgba(27, 95, 235, 0.15), 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 24px 60px var(--primary-glow), 0 4px 16px var(--black-alpha-8);
   overflow: hidden;
   transition: transform 0.4s var(--ease-out), box-shadow 0.4s;
 }
 .deviceFrame:hover {
   transform: translateY(-6px);
-  box-shadow: 0 36px 80px rgba(27, 95, 235, 0.2), 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 36px 80px var(--primary-alpha-20), 0 8px 24px var(--black-alpha-10);
 }
 
 /* 浏览器顶栏 */

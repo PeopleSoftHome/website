@@ -3,7 +3,14 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { SystemService } from './system.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { UpsertSettingDto } from './dto/upsert-setting.dto';
+import { CreateAuditLogDto } from './dto/create-audit-log.dto';
+import { UpsertEmailTemplateDto } from './dto/upsert-email-template.dto';
+import { CreateSensitiveWordDto } from './dto/create-sensitive-word.dto';
+import { TestModerationDto } from './dto/test-moderation.dto';
 
 @ApiTags('系统管理')
 @Controller('system')
@@ -33,15 +40,17 @@ export class SystemController {
   @Post('settings')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新设置' })
-  upsertSetting(@Body() dto: { key: string; value: any; category?: string; updatedBy?: string }) {
+  upsertSetting(@Body() dto: UpsertSettingDto) {
     return this.systemService.upsertSetting(dto);
   }
 
   @Delete('settings/:key')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除设置' })
   deleteSetting(@Param('key') key: string) {
@@ -57,14 +66,13 @@ export class SystemController {
   @ApiQuery({ name: 'userId', required: false })
   @ApiQuery({ name: 'resource', required: false })
   findAllAuditLogs(
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
+    @Query() pagination: PaginationDto,
     @Query('userId') userId?: string,
     @Query('resource') resource?: string,
   ) {
     return this.systemService.findAllAuditLogs(
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
       { userId, resource },
     );
   }
@@ -72,18 +80,10 @@ export class SystemController {
   @Post('audit-logs')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '记录审计日志' })
-  createAuditLog(@Body() dto: {
-    userId?: string;
-    action: string;
-    resource: string;
-    resourceId?: string;
-    oldValue?: any;
-    newValue?: any;
-    ipAddress?: string;
-    userAgent?: string;
-  }) {
+  createAuditLog(@Body() dto: CreateAuditLogDto) {
     return this.systemService.createAuditLog(dto);
   }
 
@@ -109,15 +109,17 @@ export class SystemController {
   @Post('email-templates')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新邮件模板' })
-  upsertEmailTemplate(@Body() dto: { key: string; subject: string; body: string; html?: string }) {
+  upsertEmailTemplate(@Body() dto: UpsertEmailTemplateDto) {
     return this.systemService.upsertEmailTemplate(dto);
   }
 
   @Delete('email-templates/:key')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除邮件模板' })
   deleteEmailTemplate(@Param('key') key: string) {
@@ -137,15 +139,17 @@ export class SystemController {
   @Post('sensitive-words')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '添加敏感词' })
-  createSensitiveWord(@Body() dto: { word: string; category?: string; severity?: number }) {
+  createSensitiveWord(@Body() dto: CreateSensitiveWordDto) {
     return this.systemService.createSensitiveWord(dto);
   }
 
   @Delete('sensitive-words/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除敏感词' })
   deleteSensitiveWord(@Param('id') id: string) {
@@ -155,9 +159,10 @@ export class SystemController {
   @Post('moderation-test')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('system:manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: '内容检测模拟' })
-  testModeration(@Body() dto: { content: string }) {
+  testModeration(@Body() dto: TestModerationDto) {
     return this.systemService.testModeration(dto.content);
   }
 }

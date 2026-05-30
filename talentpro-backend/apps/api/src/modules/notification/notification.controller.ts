@@ -9,42 +9,44 @@ import {
   MessageEvent,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { Observable, map } from 'rxjs';
+import { SkipThrottle } from '@nestjs/throttler';
+import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
+import { NotificationSseService } from './notification-sse.service';
 import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
 
 @ApiTags('通知中心')
 @Controller('notifications')
 @ApiBearerAuth()
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private notificationSseService: NotificationSseService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: '通知列表' })
   findAll(
     @CurrentUser('id') userId: string,
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
+    @Query() pagination: PaginationDto,
   ) {
     return this.notificationService.findByUser(
       userId,
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
     );
   }
 
   @Sse('stream')
+  @SkipThrottle({ default: true, auth: true, search: true })
   @Public()
   @UseGuards(SseAuthGuard)
   @ApiOperation({ summary: 'SSE 实时推送（token 优先通过 Authorization header 传递，降级通过 query parameter）' })
   stream(@CurrentUser('id') userId: string): Observable<MessageEvent> {
-    return this.notificationService.getStream(userId).pipe(
-      map((event) => ({
-        data: event.data,
-      }) as MessageEvent),
-    );
+    return this.notificationSseService.addStream(userId);
   }
 
   @Patch(':id/read')

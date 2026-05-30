@@ -10,7 +10,8 @@ export interface CacheOptions {
 }
 
 export interface CacheEvictOptions {
-  key: string;
+  key?: string;
+  keys?: string[];
 }
 
 export const Cacheable = (options: CacheOptions) => {
@@ -22,6 +23,7 @@ export const Cacheable = (options: CacheOptions) => {
 
 export const CacheEvict = (options: CacheEvictOptions) => {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    SetMetadata(CACHE_EVICT, options.key)(target, propertyKey, descriptor);
+    const keys = options.keys ?? (options.key ? [options.key] : []);
+    SetMetadata(CACHE_EVICT, keys)(target, propertyKey, descriptor);
   };
 };

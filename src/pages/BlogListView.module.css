@@ -1,0 +1,29 @@
+.blogPage { padding: 104px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.pageTitle { font-size: 32px; font-weight: 800; color: var(--gray-900); margin-bottom: 24px; }
+
+.blogCategories { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+.catBtn { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--gray-200); background: var(--card-bg); color: var(--gray-700); cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.catBtn:hover { border-color: var(--primary); color: var(--primary); }
+.catActive { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+.blogGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.blogCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.blogCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.blogCover { height: 180px; background-size: cover; background-position: center; }
+.blogBody { padding: 20px; }
+.blogMeta { display: flex; gap: 12px; font-size: 13px; color: var(--gray-500); margin-bottom: 10px; }
+.blogCategory { color: var(--primary); font-weight: 500; }
+.blogPostTitle { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; line-height: 1.4; }
+.blogExcerpt { font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 12px; }
+.blogTags { display: flex; gap: 6px; flex-wrap: wrap; }
+.blogTag { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--gray-100); color: var(--gray-600); }
+
+.blogEmpty { text-align: center; padding: 60px 0; color: var(--gray-500); }
+.blogLoading { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.skeletonCard { display: flex; flex-direction: column; }
+
+.errorBox { text-align: center; padding: 60px 0; color: var(--gray-500); }
+.retryBtn { margin-top: 12px; padding: 8px 20px; border-radius: var(--radius-md); border: none; background: var(--primary); color: var(--white); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+[data-theme="dark"] .pageTitle { color: var(--gray-50); }
+[data-theme="dark"] .blogPostTitle { color: var(--gray-50); }

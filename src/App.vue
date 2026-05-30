@@ -1,6 +1,9 @@
 <template>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <router-view />
+  <IconSprite />
+  <a href="#main-content" class="skip-link">{{ t('skipLink') }}</a>
+  <ErrorBoundary>
+    <router-view />
+  </ErrorBoundary>
   <FloatingBar @open-chat="chatOpen = true" @open-contact="contactOpen = true" />
 
   <DemoModal />
@@ -24,7 +27,8 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch, getCurrentInstance } from 'vue';
+import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';
@@ -33,7 +37,10 @@ import { createVideoModal } from '@/stores/videoModal.js';
 import { createAnalytics } from '@/stores/analytics.js';
 import { createAuth } from '@/stores/auth.js';
 import { useAbTest } from '@/composables/useAbTest.js';
+import { useRum } from '@/composables/useRum.js';
 import { defineAsyncComponent } from 'vue';
+import ErrorBoundary from '@/components/ErrorBoundary.vue';
+import IconSprite from '@/components/ui/Icon/IconSprite.vue';
 import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
 import DemoModal from '@/components/ui/DemoModal/DemoModal.vue';
 import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
@@ -45,9 +52,12 @@ const ContactModal = defineAsyncComponent(() => import('@/components/ui/ContactM
 const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/AuthModal.vue'));
 const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
+import { API_BASE_URL } from '@/api/baseUrl.js';
+import { setupRouterGuards } from '@/router/guards.js';
 
 /* 全局状态 */
 const i18n = createI18n();
+const { t } = i18n;
 const theme = createTheme();
 const modal = createModal();
 const search = createSearch();
@@ -64,34 +74,45 @@ provide('analytics', analytics);
 provide('auth', auth);
 provide('authModal', { open: () => { authOpen.value = true; } });
 
+const router = useRouter();
+
 const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
 const authOpen = ref(false);
 
+setupRouterGuards(router, auth, i18n, authOpen);
+
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
 
-/* A/B 测试 + 热力图 */
+/* A/B 测试 + 热力图 + RUM */
 const abTest = useAbTest();
 provide('abTest', abTest);
+useRum();
 
 /* 全局错误捕获 + 上报 */
 const reportError = (type, message, stack) => {
   try {
+    // 过滤 URL 中的敏感参数
+    const url = new URL(window.location.href);
+    const sensitiveParams = ['token', 'refreshToken', 'invite', 'reset', 'password'];
+    sensitiveParams.forEach((p) => url.searchParams.delete(p));
+
     const payload = {
       type,
       message: String(message).slice(0, 500),
       stack: String(stack).slice(0, 2000),
-      url: window.location.href,
+      url: url.toString(),
       ua: navigator.userAgent,
       time: new Date().toISOString(),
     };
+    const baseUrl = API_BASE_URL;
     // 优先使用 Beacon API（不阻塞卸载）
     if (navigator.sendBeacon) {
-      navigator.sendBeacon(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1'}/analytics/client-errors`, JSON.stringify(payload));
+      navigator.sendBeacon(`${baseUrl}/analytics/client-errors`, JSON.stringify(payload));
     } else {
-      fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1'}/analytics/client-errors`, {
+      fetch(`${baseUrl}/analytics/client-errors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -104,7 +125,12 @@ const reportError = (type, message, stack) => {
 };
 
 onErrorCaptured((err, instance, info) => {
-  console.error('[Vue Error]', err, info);
+  if (import.meta.env.DEV) {
+    const compName = instance?.$options?.name || instance?.__name || 'unknown';
+    console.error(`[Vue Error] Component: ${compName} | Info: ${info}`, err);
+    console.trace('Error trace');
+    throw err;
+  }
   reportError('vue', err?.message, err?.stack);
   return false;
 });
@@ -116,6 +142,11 @@ onMounted(() => {
   window.onunhandledrejection = (event) => {
     reportError('promise', event.reason?.message || event.reason, event.reason?.stack);
   };
+});
+
+onUnmounted(() => {
+  window.onerror = null;
+  window.onunhandledrejection = null;
 });
 
 /* 页面加载埋点 + 热力图 + 滚动深度（动态加载，降低主包体积） */

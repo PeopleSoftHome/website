@@ -65,7 +65,7 @@
   padding-top: 56.25%;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 40px 80px var(--black-alpha-60);
   background: var(--video-bg);
 }
 

@@ -52,8 +52,8 @@ const fetchNotifications = async () => {
     const result = res.data || res;
     notifications.value = result.data || [];
     unreadCount.value = result.meta?.unreadCount || 0;
-  } catch (e) {
-    console.error(e);
+  } catch {
+    // ignore notification fetch error
   }
 };
 
@@ -62,8 +62,8 @@ const markAllRead = async () => {
     await notificationApi.markAllAsRead();
     notifications.value.forEach((n) => (n.isRead = true));
     unreadCount.value = 0;
-  } catch (e) {
-    console.error(e);
+  } catch {
+    // ignore mark read error
   }
 };
 
@@ -73,17 +73,13 @@ const handleClick = async (n) => {
       await notificationApi.markAsRead(n.id);
       n.isRead = true;
       unreadCount.value = Math.max(0, unreadCount.value - 1);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // ignore mark read error
     }
   }
   open.value = false;
 };
 
-const formatTime = (d) => {
-  if (!d) return '';
-  return new Date(d).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-};
 
 let reconnectTimer = null;
 
@@ -104,8 +100,8 @@ const connectSSE = () => {
       es.close();
       reconnectTimer = setTimeout(connectSSE, 5000);
     };
-  } catch (e) {
-    console.error(e);
+  } catch {
+    // ignore SSE connect error
   }
 };
 

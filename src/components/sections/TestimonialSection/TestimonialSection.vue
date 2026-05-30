@@ -32,7 +32,7 @@
           :key="i"
           :class="[s.dot, i === currentIdx ? s.dotActive : '']"
           @click="goTo(i); startAutoPlay()"
-          :aria-label="`第 ${i + 1} 条`"
+          :aria-label="t('testimonials.dotLabel', { n: i + 1 })"
         />
         <button :class="s.navBtn" @click="goTo(currentIdx + 1); startAutoPlay()" :aria-label="t('testimonials.nextBtn')">
           <Icon name="chevron-right" :size="20" />
@@ -43,12 +43,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
-import { TESTIMONIALS } from '@/data/testimonials.js';
+import { ref, computed, onUnmounted, inject } from 'vue';
+
 import { useCarousel } from '@/composables/useCarousel.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
-import { transformTestimonials } from '@/api/transforms.js';
+import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
+import { apiClient } from '@/api/client.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -57,14 +56,31 @@ import s from './TestimonialSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 
-// API 数据（fallback 为静态数据）
-const apiItems = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getTestimonials();
-  return transformTestimonials(data);
-}, apiItems);
+const GRAD_PRESETS = [
+  'linear-gradient(135deg, #1B5FEB, #7C3AED)',
+  'linear-gradient(135deg, #059669, #1B5FEB)',
+  'linear-gradient(135deg, #D97706, #EF4444)',
+  'linear-gradient(135deg, #7C3AED, #EC4899)',
+  'linear-gradient(135deg, #0284C7, #1B5FEB)',
+];
 
-const displayItems = computed(() => (apiItems.value.length > 0 ? apiItems.value : TESTIMONIALS));
+const { displayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
+  transform: (active) => (active || []).map((item, i) => ({
+    id: item.name
+      ? item.name.toLowerCase().replace(/\s+/g, '-')
+      : `testimonial-${i}`,
+    industry: item.industry || '',
+    product: item.product || '',
+    text: item.text || '',
+    name: item.name || '',
+    title: item.title || '',
+    avatarGrad: GRAD_PRESETS[i % GRAD_PRESETS.length],
+    avatarChar: item.name ? item.name.charAt(0) : '?',
+  })),
+  fallbackKey: 'testimonials',
+});
+
+
 const itemCount = computed(() => displayItems.value.length);
 
 const {
@@ -72,7 +88,6 @@ const {
   goTo,
   trackRef,
   startAutoPlay,
-  stopAutoPlay,
   bindPauseEvents,
   getColCount,
   getOffset,

@@ -20,6 +20,13 @@ export class CmsService {
   updatePage(id: string, data: Parameters<CmsPageService['updatePage']>[1]) { return this.pageService.updatePage(id, data); }
   deletePage(id: string) { return this.pageService.deletePage(id); }
 
+  // ─── Section (delegate) ───
+  findSectionsByPage(pageId: string) { return this.pageService.findSectionsByPage(pageId); }
+  createSection(data: any) { return this.pageService.createSection(data); }
+  updateSection(id: string, data: any) { return this.pageService.updateSection(id, data); }
+  deleteSection(id: string) { return this.pageService.deleteSection(id); }
+  batchUpdateSections(sections: any[]) { return this.pageService.batchUpdateSections(sections); }
+
   // ─── Navigation (delegate) ───
   findNavigation(key: string) { return this.pageService.findNavigation(key); }
   upsertNavigation(data: Parameters<CmsPageService['upsertNavigation']>[0]) { return this.pageService.upsertNavigation(data); }

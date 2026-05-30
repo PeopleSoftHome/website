@@ -29,7 +29,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         bio: true,
         status: true,
         roleId: true,
-        role: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+            permissions: { select: { resource: true, action: true } },
+          },
+        },
         workspaceId: true,
         workspace: true,
         workspaceRole: true,

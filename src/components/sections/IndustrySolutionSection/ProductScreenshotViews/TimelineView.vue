@@ -1,6 +1,6 @@
 <template>
   <div :class="s.timeline">
-    <div v-for="(step, i) in data.steps" :key="i" :class="s.timelineStep">
+    <div v-for="(step, i) in (data.steps || [])" :key="i" :class="s.timelineStep">
       <div :class="s.timelineIcon">
         <Icon :name="step.icon" :size="16" />
       </div>

@@ -23,10 +23,9 @@
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
-            <a v-else-if="link.href?.startsWith('#')" :href="link.href ?? '#'" :class="s.item">
-              {{ t(`nav.${link.id === 'cases' ? 'cases' : 'resources'}`) }}
-            </a>
-            <router-link v-else :to="link.href" :class="s.item">{{ link.label }}</router-link>
+            <router-link v-else :to="link.href" :class="s.item">
+              {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily' : link.id}`) }}
+            </router-link>
           </template>
           <router-link to="/blog" :class="s.item">{{ t('nav.blog') }}</router-link>
           <router-link to="/forum" :class="s.item">{{ t('nav.forum') }}</router-link>
@@ -54,7 +53,7 @@
               :placeholder="t('search.placeholder')"
               autocomplete="off"
             />
-            <button :class="s.searchClose" @click="closeSearchBar" aria-label="关闭搜索">
+            <button :class="s.searchClose" @click="closeSearchBar" :aria-label="t('nav.searchClose')">
               <Icon name="close" :size="14" />
             </button>
           </div>

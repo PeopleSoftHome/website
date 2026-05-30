@@ -1,36 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PostStatus } from '@prisma/client';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { BlogCategoryRepository } from './blog-category.repository';
+import { BlogTagRepository } from './blog-tag.repository';
+import { SearchIndexEvent } from '@/events/search-index.event';
 
 @Injectable()
 export class BlogPostService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private categoryRepo: BlogCategoryRepository,
+    private tagRepo: BlogTagRepository,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   // ─── Categories ───
   async findAllCategories() {
-    return this.prisma.blogCategory.findMany({
+    return this.categoryRepo.findAll({
       orderBy: { sortOrder: 'asc' },
       include: { _count: { select: { posts: true } } },
+      pageSize: 100,
     });
   }
 
   async createCategory(data: { name: string; slug: string; description?: string }) {
-    return this.prisma.blogCategory.create({ data });
+    return this.categoryRepo.create(data);
   }
 
   async updateCategory(id: string, data: Partial<{ name: string; description?: string; sortOrder: number }>) {
-    return this.prisma.blogCategory.update({ where: { id }, data });
+    return this.categoryRepo.update(id, data);
   }
 
   async deleteCategory(id: string) {
-    await this.prisma.blogCategory.delete({ where: { id } });
-    return { message: '删除成功' };
+    return this.categoryRepo.delete(id);
   }
 
   // ─── Posts ───
   async findAllPosts(page = 1, pageSize = 20, categorySlug?: string, status?: PostStatus) {
-    const skip = (page - 1) * pageSize;
-    const where: any = {};
+    const skip = getSkip(page, pageSize);
+    const where: any = { status: 'PUBLISHED' };
     if (categorySlug) where.category = { slug: categorySlug };
     if (status) where.status = status;
     const [data, total] = await Promise.all([
@@ -43,12 +53,12 @@ export class BlogPostService {
       }),
       this.prisma.blogPost.count({ where }),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
   async findPostBySlug(slug: string) {
-    const post = await this.prisma.blogPost.findUnique({
-      where: { slug },
+    const post = await this.prisma.blogPost.findFirst({
+      where: { slug, status: 'PUBLISHED' },
       include: {
         category: true,
         author: { select: { id: true, name: true, avatar: true } },
@@ -78,7 +88,7 @@ export class BlogPostService {
     workspaceId?: string;
   }) {
     const { tagIds, ...rest } = data;
-    return this.prisma.blogPost.create({
+    const post = await this.prisma.blogPost.create({
       data: {
         ...rest,
         status: rest.status || PostStatus.DRAFT,
@@ -87,14 +97,20 @@ export class BlogPostService {
       },
       include: { category: true, tags: true },
     });
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('blog_post', post.id, 'create'));
+    return post;
   }
 
   async updatePost(id: string, data: Partial<{
     title: string; slug: string; excerpt: string; content: string;
     coverImage: string; categoryId: string; status: PostStatus; tagIds: string[];
-  }>) {
+  }>, workspaceId?: string) {
+    if (workspaceId) {
+      const existing = await this.prisma.blogPost.findFirst({ where: { id, workspaceId } });
+      if (!existing) throw new NotFoundException('文章不存在或无权访问');
+    }
     const { tagIds, ...rest } = data;
-    return this.prisma.blogPost.update({
+    const post = await this.prisma.blogPost.update({
       where: { id },
       data: {
         ...rest,
@@ -102,27 +118,34 @@ export class BlogPostService {
       },
       include: { category: true, tags: true },
     });
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('blog_post', id, 'update'));
+    return post;
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: string, workspaceId?: string) {
+    if (workspaceId) {
+      const existing = await this.prisma.blogPost.findFirst({ where: { id, workspaceId } });
+      if (!existing) throw new NotFoundException('文章不存在或无权访问');
+    }
     await this.prisma.blogPost.delete({ where: { id } });
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('blog_post', id, 'delete'));
     return { message: '删除成功' };
   }
 
   // ─── Tags ───
   async findAllTags() {
-    return this.prisma.tag.findMany({
+    return this.tagRepo.findAll({
       orderBy: { name: 'asc' },
       include: { _count: { select: { posts: true } } },
+      pageSize: 100,
     });
   }
 
   async createTag(data: { name: string; slug: string }) {
-    return this.prisma.tag.create({ data });
+    return this.tagRepo.create(data);
   }
 
   async deleteTag(id: string) {
-    await this.prisma.tag.delete({ where: { id } });
-    return { message: '删除成功' };
+    return this.tagRepo.delete(id);
   }
 }

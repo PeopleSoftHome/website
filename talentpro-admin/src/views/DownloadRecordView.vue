@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted } from 'vue';
 import client from '@/api/client.js';
 import { ElMessage } from 'element-plus';
@@ -50,18 +51,17 @@ const pageSize = ref(20);
 const loading = ref(false);
 const filterResourceId = ref('');
 
-const formatDate = (d) => d ? new Date(d).toLocaleString('zh-CN') : '-';
 
 const fetchRecords = async () => {
   loading.value = true;
   try {
-    const params = { page: page.value, pageSize: pageSize.value };
-    if (filterResourceId.value) params.resourceId = filterResourceId.value;
-    const res = await client.get('/downloads', { params });
-    records.value = res.data.data ?? [];
-    total.value = res.data.meta?.total ?? 0;
+    let url = `/downloads?page=${page.value}&pageSize=${pageSize.value}`;
+    if (filterResourceId.value) url += `&resourceId=${filterResourceId.value}`;
+    const res = await client.get(url);
+    records.value = res.data || [];
+    total.value = res.meta?.total || 0;
   } catch (e) {
-    ElMessage.error('加载下载记录失败');
+    ElMessage.error('加载失败');
   }
   loading.value = false;
 };

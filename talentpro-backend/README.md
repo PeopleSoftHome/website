@@ -24,6 +24,11 @@ npm run docker:up
 
 这将启动 PostgreSQL、Redis、Meilisearch、MinIO。
 
+停止基础设施：
+```bash
+npm run docker:down
+```
+
 ### 2. 安装依赖
 
 ```bash
@@ -41,8 +46,14 @@ cp .env.example .env
 
 ```bash
 npx prisma migrate dev --name init
-npx prisma db seed
+npm run db:seed
 ```
+
+> ⚠️ **注意**：种子脚本需要设置环境变量 `SEED_ADMIN_PASSWORD`（至少8位），例如：
+> ```bash
+> export SEED_ADMIN_PASSWORD=YourSecurePassword123!
+> npm run db:seed
+> ```
 
 ### 5. 启动开发服务器
 
@@ -85,7 +96,7 @@ talentpro-backend/
 
 | 邮箱 | 密码 | 角色 |
 |------|------|------|
-| admin@talentpro.com | admin123456 | SUPER_ADMIN |
+| admin@talentpro.com | `$SEED_ADMIN_PASSWORD` 环境变量值 | SUPER_ADMIN |
 
 ## API 模块概览
 

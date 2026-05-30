@@ -6,6 +6,7 @@
  */
 import { ref, readonly } from 'vue';
 import { apiClient } from '@/api/client.js';
+import { API_BASE_URL } from '@/api/baseUrl.js';
 
 function readConsent() {
   try {
@@ -13,6 +14,16 @@ function readConsent() {
     if (raw) return JSON.parse(raw).analytics === true;
   } catch { /* ignore */ }
   return false;
+}
+
+function getSessionId() {
+  if (typeof window === 'undefined') return 'server';
+  let sid = localStorage.getItem('tp-session-id');
+  if (!sid) {
+    sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('tp-session-id', sid);
+  }
+  return sid;
 }
 
 function flushQueue() {
@@ -43,7 +54,11 @@ export function useAnalytics() {
 
   const track = (event, props = {}) => {
     if (!enabled.value) return;
-    const payload = { event, ...props, ts: Date.now(), url: location.href };
+    const payload = {
+      event,
+      properties: { ...props, ts: Date.now(), url: location.href },
+      sessionId: getSessionId(),
+    };
     if (typeof window !== 'undefined') {
       window.tp_analytics?.push?.(payload);
       if (!window.tp_analytics._queue) window.tp_analytics._queue = [];
@@ -66,8 +81,8 @@ export function useAnalytics() {
       const queue = window.tp_analytics?._queue || [];
       if (queue.length === 0) return;
       navigator.sendBeacon?.(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1'}/analytics/events`,
-        JSON.stringify({ events: queue }),
+        `${API_BASE_URL}/analytics/events`,
+        JSON.stringify({ events: queue.map((e) => ({ ...e, sessionId: e.sessionId || getSessionId() })) }),
       );
     });
   }

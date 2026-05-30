@@ -9,7 +9,6 @@ export function useApiData(fetchFn, fallbackRef, options = {}) {
   const error = ref(null);
 
   const load = async () => {
-    if (options.immediate === false) return;
     loading.value = true;
     error.value = null;
     try {
@@ -21,7 +20,7 @@ export function useApiData(fetchFn, fallbackRef, options = {}) {
         fallbackRef.value = data.data ?? data;
       }
     } catch (e) {
-      error.value = e.message || '加载失败';
+      error.value = e.message || 'Loading failed';
       if (import.meta.env.DEV) {
         console.warn('[useApiData]', e.message);
       }
@@ -31,7 +30,9 @@ export function useApiData(fetchFn, fallbackRef, options = {}) {
   };
 
   onMounted(() => {
-    load();
+    if (options.immediate !== false) {
+      load();
+    }
   });
 
   return { loading, error, reload: load };

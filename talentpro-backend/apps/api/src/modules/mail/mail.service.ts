@@ -70,8 +70,9 @@ export class MailService {
         html,
       });
       this.logger.log(`Email sent to ${payload.to}: ${subject}`);
-    } catch (err: any) {
-      this.logger.error(`Failed to send email: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Failed to send email: ${message}`);
       throw err;
     }
   }

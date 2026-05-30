@@ -10,9 +10,16 @@ export class TokenCleanupService {
 
   @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async cleanupExpiredTokens() {
-    const result = await this.prisma.tokenBlacklist.deleteMany({
-      where: { expiresAt: { lt: new Date() } },
-    });
-    this.logger.log(`Cleaned up ${result.count} expired token blacklist entries`);
+    const [blResult, rtResult] = await Promise.all([
+      this.prisma.tokenBlacklist.deleteMany({
+        where: { expiresAt: { lt: new Date() } },
+      }),
+      this.prisma.refreshToken.deleteMany({
+        where: { expiresAt: { lt: new Date() } },
+      }),
+    ]);
+    this.logger.log(
+      `Cleaned up ${blResult.count} expired token blacklist entries, ${rtResult.count} expired refresh tokens`,
+    );
   }
 }

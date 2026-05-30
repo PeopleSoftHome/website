@@ -1,7 +1,8 @@
 import { apiClient } from './client.js';
+import { SEARCH_LIMIT } from '@/constants/pagination.js';
 
 export const searchApi = {
-  search(q, type, limit = 20) {
+  search(q, type, limit = SEARCH_LIMIT) {
     return apiClient.get('/search', { params: { q, type, limit } }).then((r) => r.data);
   },
 

@@ -11,14 +11,14 @@ async function dismissCookieBanner(page) {
 test.describe('Blog', () => {
   test('should display blog list page', async ({ page }) => {
     await page.goto('/blog');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle');
     await dismissCookieBanner(page);
     await expect(page.locator('h1')).toContainText('TalentPro Blog');
   });
 
   test('should show loading or empty state', async ({ page }) => {
     await page.goto('/blog');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle');
     await dismissCookieBanner(page);
     // Either posts, skeleton, or empty state should be present
     const hasContent = await page.locator('.blog-grid, .blog-loading, .blog-empty').count();

@@ -3,7 +3,9 @@ import * as Sentry from '@sentry/vue';
 export function initSentry(app) {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
   if (!dsn) {
-    console.log('[Sentry] DSN not configured, skipping initialization');
+    if (import.meta.env.DEV) {
+      console.log('[Sentry] DSN not configured, skipping initialization');
+    }
     return;
   }
 

@@ -38,9 +38,8 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue';
-import { RESOURCES } from '@/data/resources.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
+
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
 import { transformResources } from '@/api/transforms.js';
 import { apiClient } from '@/api/client.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
@@ -50,14 +49,9 @@ import s from './ResourceSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 
-// API 数据（fallback 为静态数据）
-const apiResources = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getResources();
-  return transformResources(data);
-}, apiResources);
+const { displayItems: displayResources } = useCmsDataByKey('resources', { transform: transformResources, fallbackKey: 'resources' });
 
-const displayResources = computed(() => (apiResources.value.length > 0 ? apiResources.value : RESOURCES));
+
 
 // 下载留资
 const gateOpen = ref(false);

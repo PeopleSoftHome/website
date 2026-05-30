@@ -21,7 +21,9 @@ export const colors = {
   gray100: '#F0F4F8',
   gray200: '#E2E8F0',
   gray300: '#CBD5E1',
+  gray350: '#D1D5DB',
   gray400: '#94A3B8',
+  gray500: '#6B7280',
   gray600: '#475569',
   gray700: '#334155',
   gray900: '#0F172A',
@@ -34,6 +36,8 @@ export const colors = {
   aiPurpleText:   '#A78BFA',
   success:        '#059669',
   error:          '#EF4444',
+  errorLight:     '#FCA5A5',
+  errorAlpha15:   'rgba(239,68,68,0.15)',
   warning:        '#D97706',
   warningBg:      '#FFF7ED',
   warningBorder:  '#FED7AA',
@@ -47,6 +51,42 @@ export const colors = {
 
   // 视频背景
   videoBg: '#000',
+
+  // Alpha tokens
+  primaryAlpha8:  'rgba(27,95,235,0.08)',
+  primaryAlpha10: 'rgba(27,95,235,0.10)',
+  primaryAlpha12: 'rgba(27,95,235,0.12)',
+  primaryAlpha18: 'rgba(27,95,235,0.18)',
+  primaryAlpha20: 'rgba(27,95,235,0.20)',
+  primaryAlpha30: 'rgba(27,95,235,0.30)',
+  primaryAlpha35: 'rgba(27,95,235,0.35)',
+
+  aiPurpleAlpha30: 'rgba(124,58,237,0.30)',
+
+  errorAlpha12: 'rgba(239,68,68,0.12)',
+
+  blackAlpha6:  'rgba(0,0,0,0.06)',
+  blackAlpha8:  'rgba(0,0,0,0.08)',
+  blackAlpha10: 'rgba(0,0,0,0.10)',
+  blackAlpha12: 'rgba(0,0,0,0.12)',
+  blackAlpha18: 'rgba(0,0,0,0.18)',
+  blackAlpha20: 'rgba(0,0,0,0.20)',
+  blackAlpha25: 'rgba(0,0,0,0.25)',
+  blackAlpha30: 'rgba(0,0,0,0.30)',
+  blackAlpha60: 'rgba(0,0,0,0.60)',
+  gray500Alpha15: 'rgba(107,114,128,0.15)',
+
+  whiteAlpha4:  'rgba(255,255,255,0.04)',
+  whiteAlpha6:  'rgba(255,255,255,0.06)',
+  whiteAlpha25: 'rgba(255,255,255,0.25)',
+  whiteAlpha35: 'rgba(255,255,255,0.35)',
+
+  // 基础色
+  white: '#ffffff',
+  black: '#000000',
+
+  // 语义化颜色
+  errorBg: '#FEF2F2',
 };
 
 export const gradients = {
@@ -54,6 +94,7 @@ export const gradients = {
   ai:   'linear-gradient(135deg, #1A0533 0%, #2D1B69 50%, #1B4FA8 100%)',
   cta:  'linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%)',
   text: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
+  primaryAi: 'linear-gradient(135deg, #1B5FEB, #7C3AED)',
 };
 
 export const radii = {

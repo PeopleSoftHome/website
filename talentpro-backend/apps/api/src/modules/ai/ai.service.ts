@@ -34,13 +34,14 @@ export class AiService {
     const subject = new Subject<any>();
 
     if (!this.openaiService.isConfigured()) {
+      let interval: NodeJS.Timeout | null = null;
       this.chat(message, history).then((response) => {
         const text = response.content || '';
         const chunks = text.split('');
         let index = 0;
-        const interval = setInterval(() => {
+        interval = setInterval(() => {
           if (index >= chunks.length) {
-            clearInterval(interval);
+            clearInterval(interval!);
             subject.next({ data: JSON.stringify({ done: true }) });
             subject.complete();
             return;
@@ -51,7 +52,10 @@ export class AiService {
           }
           subject.next({ data: JSON.stringify({ chunk }) });
         }, 30);
-      }).catch((err) => subject.error(err));
+      }).catch((err) => {
+        if (interval) clearInterval(interval);
+        subject.error(err);
+      });
       return subject.asObservable();
     }
 

@@ -4,6 +4,10 @@ import { ExperimentService } from './experiment.service';
 import { Public } from '@/common/decorators/public.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
+import { CreateExperimentDto } from './dto/create-experiment.dto';
+import { UpdateExperimentStatusDto } from './dto/update-experiment-status.dto';
+import { RecordExperimentEventDto } from './dto/record-experiment-event.dto';
 
 @ApiTags('A/B 测试')
 @Controller('experiments')
@@ -34,9 +38,10 @@ export class ExperimentController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('experiment:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建实验' })
-  create(@Body() dto: { key: string; name: string; description?: string; variantA: any; variantB: any; trafficSplit?: number }) {
+  create(@Body() dto: CreateExperimentDto) {
     return this.experimentService.create(dto);
   }
 
@@ -45,8 +50,8 @@ export class ExperimentController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新实验状态' })
-  updateStatus(@Param('id') id: string, @Body() dto: { status: string }) {
-    return this.experimentService.updateStatus(id, dto.status);
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateExperimentStatusDto) {
+    return this.experimentService.updateStatus(id, dto.status as any);
   }
 
   @Post(':id/events')
@@ -54,7 +59,7 @@ export class ExperimentController {
   @ApiOperation({ summary: '上报实验事件' })
   recordEvent(
     @Param('id') id: string,
-    @Body() dto: { variant: string; eventType: string; userId?: string; sessionId: string; properties?: any },
+    @Body() dto: RecordExperimentEventDto,
   ) {
     return this.experimentService.recordEvent({ experimentId: id, ...dto });
   }

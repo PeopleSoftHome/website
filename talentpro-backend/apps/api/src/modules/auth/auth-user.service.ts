@@ -7,7 +7,7 @@ export class AuthUserService {
   constructor(private prisma: PrismaService) {}
 
   async register(dto: { email: string; password: string; name: string; phone?: string; company?: string }) {
-    const existing = await this.prisma.user.findUnique({
+    const existing = await this.prisma.user.findFirst({
       where: { email: dto.email },
     });
     if (existing) {
@@ -19,44 +19,58 @@ export class AuthUserService {
       where: { name: 'USER' },
     });
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        name: dto.name,
-        phone: dto.phone,
-        roleId: defaultRole?.id || '',
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        status: true,
-        createdAt: true,
-      },
-    });
-
     const baseName = dto.company || dto.name || dto.email.split('@')[0];
     const slug = await this.generateUniqueSlug(baseName);
-    const workspace = await this.prisma.workspace.create({
-      data: {
-        name: baseName,
-        slug,
-        ownerId: user.id,
-      },
-    });
 
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        workspaceId: workspace.id,
-        workspaceRole: 'OWNER',
-      },
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+          name: dto.name,
+          phone: dto.phone,
+          roleId: defaultRole?.id || '',
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          status: true,
+          createdAt: true,
+        },
+      });
+
+      const workspace = await tx.workspace.create({
+        data: {
+          name: baseName,
+          slug,
+          ownerId: user.id,
+        },
+      });
+
+      const updatedUser = await tx.user.update({
+        where: { id: user.id },
+        data: {
+          workspaceId: workspace.id,
+          workspaceRole: 'OWNER',
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          status: true,
+          createdAt: true,
+          workspaceId: true,
+          workspaceRole: true,
+        },
+      });
+
+      return { user: updatedUser };
     });
 
     return {
       message: '注册成功',
-      user: { ...user, workspaceId: workspace.id, workspaceRole: 'OWNER' },
+      user: result.user,
     };
   }
 
@@ -75,7 +89,7 @@ export class AuthUserService {
   }
 
   async login(dto: { email: string; password: string }) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: { email: dto.email },
       include: { role: true, workspace: true },
     });
@@ -116,7 +130,7 @@ export class AuthUserService {
         phone: true,
         bio: true,
         status: true,
-        role: { select: { id: true, name: true } },
+        role: { select: { id: true, name: true, permissions: { select: { resource: true, action: true } } } },
         workspaceId: true,
         workspaceRole: true,
         workspace: { select: { id: true, name: true, slug: true } },

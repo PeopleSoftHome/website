@@ -25,15 +25,23 @@ export class CacheInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const cacheKey = this.reflector.get<string>(CACHE_KEY, context.getHandler());
     const cacheTtl = this.reflector.get<number>(CACHE_TTL, context.getHandler()) || 60;
-    const evictKey = this.reflector.get<string>(CACHE_EVICT, context.getHandler());
+    const evictKeys = this.reflector.get<string[]>(CACHE_EVICT, context.getHandler());
 
-    // 缓存清除逻辑（写操作后失效）
-    if (evictKey) {
+    // 缓存清除逻辑（写操作后失效）— 使用 SCAN 替代 KEYS 避免阻塞
+    if (evictKeys && evictKeys.length > 0) {
       return next.handle().pipe(
         tap(async () => {
-          const keys = await this.redis.keys(`${evictKey}:*`);
-          if (keys.length > 0) {
-            await this.redis.del(...keys);
+          for (const evictKey of evictKeys) {
+            const pattern = `${evictKey}:*`;
+            let cursor = '0';
+            do {
+              const result = await this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+              cursor = result[0];
+              const keys = result[1];
+              if (keys.length > 0) {
+                await this.redis.del(...keys);
+              }
+            } while (cursor !== '0');
           }
         }),
       );

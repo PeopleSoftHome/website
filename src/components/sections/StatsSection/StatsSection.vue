@@ -8,7 +8,7 @@
             :key="item.id"
             :target="item.target"
             :suffix="item.suffix"
-            :label="t(`stats.${item.id}`)"
+            :label="item.displayLabel || t(`stats.${item.id}`)"
             :is-last="i === displayStats.length - 1"
           />
         </div>
@@ -19,21 +19,26 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue';
-import { STATS_DATA } from '@/data/stats.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
-import { transformStats } from '@/api/transforms.js';
+
+import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
+import { apiClient } from '@/api/client.js';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';
 import s from './StatsSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 
-const apiStats = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getStats();
-  return transformStats(data);
-}, apiStats);
+const { displayItems: displayStats, isLoading: loading } = useCmsDataByKey('stats', {
+  transform: (active) => (active || []).map((item) => ({
+    id: item.label
+      ? item.label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      : `stat-${Math.random().toString(36).slice(2, 7)}`,
+    target: parseInt(String(item.value).replace(/\D/g, ''), 10) || 0,
+    suffix: item.suffix || '',
+    displayLabel: item.label || '',
+  })),
+  fallbackKey: 'stats',
+});
 
-const displayStats = computed(() => (apiStats.value.length > 0 ? apiStats.value : STATS_DATA));
+
 </script>

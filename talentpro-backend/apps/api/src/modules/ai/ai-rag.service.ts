@@ -15,16 +15,17 @@ export class AiRagService {
     const contexts: string[] = [];
     try {
       const productRes = await this.meili.index('products').search(query, { limit: 3 });
-      productRes.hits.forEach((h: any) => {
+      productRes.hits.forEach((h) => {
         contexts.push(`【产品】${h.name}：${h.tagline}${h.description ? ' — ' + h.description.slice(0, 200) : ''}`);
       });
 
       const blogRes = await this.meili.index('blog_posts').search(query, { limit: 2 });
-      blogRes.hits.forEach((h: any) => {
+      blogRes.hits.forEach((h) => {
         contexts.push(`【博客】${h.title}：${h.excerpt || h.content?.slice(0, 200) || ''}`);
       });
-    } catch (e: any) {
-      this.logger.warn(`Meilisearch retrieval failed: ${e.message}`);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      this.logger.warn(`Meilisearch retrieval failed: ${message}`);
     }
     return contexts;
   }

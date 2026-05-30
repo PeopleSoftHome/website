@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   resolve: {
@@ -10,6 +11,12 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    process.env.ANALYZE === 'true' && visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'dist/stats.html',
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
@@ -29,6 +36,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/api\//, /^\/.well-known/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -59,11 +68,16 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: process.env.SOURCE_MAP === 'true',
     chunkSizeWarningLimit: 500,
+    base: process.env.VITE_ASSET_BASE_URL || '/',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['vue', 'vue-router'],
-          http: ['axios'],
+        manualChunks(id) {
+          if (id.includes('node_modules/vue') || id.includes('node_modules/vue-router')) {
+            return 'vendor';
+          }
+          if (id.includes('node_modules/axios')) {
+            return 'http';
+          }
         },
       },
     },
@@ -73,6 +87,25 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.js'],
-    include: ['src/**/*.{test,spec}.{js,vue}'],
+    include: ['src/**/*.{test,spec}.{js,ts,vue}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      thresholds: {
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
+      },
+      exclude: [
+        'src/test/**',
+        'src/**/*.test.js',
+        'src/**/*.spec.js',
+        'src/data/**',
+        'src/modules/**',
+        'src/i18n/locales/**',
+        'src/**/*.d.ts',
+      ],
+    },
   },
 });

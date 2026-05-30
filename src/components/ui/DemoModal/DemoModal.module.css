@@ -139,7 +139,7 @@
 
 .inputError {
   border-color: var(--error) !important;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+  box-shadow: 0 0 0 3px var(--error-alpha-12) !important;
 }
 
 .errorMsg {

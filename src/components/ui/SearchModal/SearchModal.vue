@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { computed, watch, inject, ref } from 'vue';
+import { computed, watch, inject, onUnmounted } from 'vue';
 import { HOT_SEARCHES } from '@/data/searchIndex.js';
 import { useSearch } from '@/composables/useSearch.js';
 import Icon from '../Icon/Icon.vue';
@@ -134,6 +134,10 @@ watch(() => debouncedQuery.value, (q) => {
       analytics.track('search_query', { query: q });
     }, 300);
   }
+});
+
+onUnmounted(() => {
+  clearTimeout(searchQueryTimer);
 });
 
 const hasQuery = computed(() => query.value.trim().length > 0);

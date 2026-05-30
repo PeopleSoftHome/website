@@ -7,7 +7,7 @@
     </div>
     <div :class="s.name">{{ name }}</div>
     <p :class="s.tagline">{{ tagline }}</p>
-    <span :class="s.link">产品详情 <Icon name="arrow-right" :size="12" /></span>
+    <span :class="s.link">{{ linkText }} <Icon name="arrow-right" :size="12" /></span>
   </div>
 </template>
 
@@ -22,7 +22,7 @@ const props = defineProps({
   tagline:  { type: String, required: true },
   hot:      { type: Boolean, default: false },
   hotLabel: { type: String, default: 'HOT' },
-  linkText: { type: String, default: '产品详情' },
+  linkText: { type: String, default: '' },
   delay:    { type: Number, default: 0 },
 });
 

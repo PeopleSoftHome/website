@@ -1,19 +1,19 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
+import { API_BASE_URL } from './baseUrl.js';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 请求取消帮助函数
+// Request cancellation helper
 export const createRequestController = () => new AbortController();
 
-// 请求拦截器：添加 auth token
+// Request interceptor: attach auth token
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('tp_access_token');
@@ -25,14 +25,14 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// 响应拦截器：统一错误处理 + 数据解包 + 401 自动刷新重试
+// Response interceptor: unified error handling + data unwrap + 401 auto-refresh retry
 apiClient.interceptors.response.use(
   (response) => {
-    // 后端包装格式: { success: true, data: ..., meta: ... }
+    // Backend wrapper format: { success: true, data: ..., meta: ... }
     const body = response.data;
     if (body && typeof body === 'object' && 'success' in body) {
       if (!body.success) {
-        return Promise.reject(new Error(body.error?.message || '请求失败'));
+        return Promise.reject(new Error(body.error?.message || 'Request failed'));
       }
       return { ...response, data: body.data, meta: body.meta };
     }
@@ -42,12 +42,12 @@ apiClient.interceptors.response.use(
     const originalConfig = error.config;
     const status = error.response?.status;
 
-    // 401 自动刷新 token（仅一次重试）
+    // 401 auto-refresh token (single retry only)
     if (status === 401 && originalConfig && !originalConfig._retry) {
       originalConfig._retry = true;
       try {
         const rt = localStorage.getItem('tp_refresh_token');
-        if (!rt) throw new Error('无刷新令牌');
+        if (!rt) throw new Error('No refresh token');
         const refreshRes = await axios.post(
           `${API_BASE_URL}/auth/refresh`,
           { refreshToken: rt },
@@ -61,8 +61,8 @@ apiClient.interceptors.response.use(
           originalConfig.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalConfig);
         }
-      } catch (refreshErr) {
-        // 刷新失败，清除登录态并继续抛出原错误
+      } catch {
+        // Refresh failed, clear auth state and continue with original error
         localStorage.removeItem('tp_access_token');
         localStorage.removeItem('tp_refresh_token');
         localStorage.removeItem('tp_user');
@@ -72,9 +72,9 @@ apiClient.interceptors.response.use(
     const message =
       error.response?.data?.error?.message ||
       error.message ||
-      '网络请求失败';
+      'Network request failed';
     if (import.meta.env.DEV) {
-      console.error('[API Error]', message, error.config?.url);
+      console.error('[API Error]', message);
     }
     return Promise.reject(new Error(message));
   },

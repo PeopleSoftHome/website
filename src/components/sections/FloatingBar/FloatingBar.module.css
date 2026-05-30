@@ -76,7 +76,7 @@
   height: 56px;
   background: white;
   border-top: 1px solid var(--gray-200);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 16px var(--black-alpha-8);
   align-items: stretch;
 }
 

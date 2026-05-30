@@ -53,7 +53,9 @@ const fetchData = async () => {
       resources.value = res.data ?? [];
     }
   } catch (e) {
-    console.error(e);
+    if (import.meta.env.DEV) {
+      console.error(e);
+    }
   }
   loading.value = false;
 };

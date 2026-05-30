@@ -1,8 +1,8 @@
 # TalentPro HR Portal — 系统架构文档
 
-> **版本**：v1.0.0 | **负责角色**：架构师 Agent | **状态**：✅ 完成，待 PO 确认
-> **最后更新**：2026-03-15
-> **输入依据**：`TalentPro_demo_v1_2_0.html`（1918行）+ `TalentPro_PRD_v1_0_0.md`
+> **版本**：v3.0.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
+> **最后更新**：2026-05-28
+> **输入依据**：`AGENTS.md` + 实际代码库
 
 ---
 
@@ -28,7 +28,7 @@
 | 维度 | 决策 | 原因 |
 |------|------|------|
 | **框架** | Vue 3.5 | SFC + `<script setup>` 组合式 API，与 Element Plus 生态对齐 |
-| **构建工具** | Vite 5 | 冷启动 < 500ms，HMR 毫秒级，原生支持 Vue SFC |
+| **构建工具** | Vite 8.0.14 | 冷启动 < 500ms，HMR 毫秒级，原生支持 Vue SFC，Rolldown 引擎 |
 | **语言** | JavaScript | 营销门户无复杂类型需求；TypeScript 后续可渐进迁移 |
 | **样式方案** | CSS Modules + CSS 自定义属性 | 零运行时开销，原生支持 Design Token，与现有变量体系无缝迁移 |
 | **动效** | CSS Keyframes + IntersectionObserver（原生）| 无需引入动效库，视觉还原度最高 |
@@ -66,10 +66,29 @@
 │  │  ├── NavBar                    [SEC-01] 固定顶部导航       │  │
 │  │  ├── <router-view>                                         │  │
 │  │  │   ├── HomePage           [SEC-02~14] 15 个 Section     │  │
+│  │  │   ├── ProductListView    产品列表（Tab 筛选）            │  │
+│  │  │   ├── ProductDetailView  产品详情（功能/场景/证言/规格） │  │
+│  │  │   ├── SolutionListView   解决方案列表（行业卡片）        │  │
+│  │  │   ├── SolutionDetailView 方案详情（痛点/架构/路径/案例） │  │
+│  │  │   ├── CaseListView       客户案例列表（行业筛选）        │  │
+│  │  │   ├── CaseDetailView     案例详情（挑战/方案/成果/证言）│  │
+│  │  │   ├── ResourceListView   资源中心（8 类标签筛选）        │  │
+│  │  │   ├── ResourceDetailView 资源详情（下载 CTA）            │  │
+│  │  │   ├── NewsListView       新闻列表（Featured + 网格）    │  │
+│  │  │   ├── NewsDetailView     新闻详情（封面图 + 正文）       │  │
+│  │  │   ├── CareersView        招聘首页（双通道 + 福利）       │  │
+│  │  │   ├── CampusCareersView  校园招聘（三大项目）            │  │
+│  │  │   ├── SocialCareersView  社会招聘（文化/成长）           │  │
+│  │  │   ├── JobDetailView      职位详情（描述/要求/申请）      │  │
+│  │  │   ├── AboutView          了解我们（故事/价值观/数据）    │  │
+│  │  │   ├── TeamView           团队介绍（成员网格）            │  │
+│  │  │   ├── ContactView        联系我们（信息 + 表单）         │  │
+│  │  │   ├── PartnersView       合作伙伴（Logo 网格）           │  │
 │  │  │   ├── BlogListView       博客列表（分类+分页）           │  │
 │  │  │   ├── BlogDetailView     博客详情（Markdown）            │  │
 │  │  │   ├── ForumView          论坛话题列表                   │  │
-│  │  │   └── ForumTopicView     话题详情+回复                  │  │
+│  │  │   ├── ForumTopicView     话题详情+回复                  │  │
+│  │  │   └── ProfilePage        个人中心                       │  │
 │  │  ├── Footer                    [SEC-13]                   │  │
 │  │  └── DemoModal / AuthModal / SearchModal / ChatBot        │  │
 │  └──────────────────────────────────────────────────────────┘  │
@@ -169,7 +188,7 @@ App
 │   │
 │   ├── LogoWallSection                     sections/LogoWallSection/
 │   │   ├── SectionHeader
-│   │   ├── LogoFilterBar（6 个筛选按钮）   ← useState(activeFilter)
+│   │   ├── LogoFilterBar（6 个筛选按钮）   ← ref(activeFilter)
 │   │   └── LogoGrid
 │   │       └── LogoItem ×12
 │   │
@@ -236,7 +255,7 @@ talentpro/
 │   ├── main.js                     # createApp + router 挂载
 │   ├── App.vue                     # 根组件：5 层 Provider + router-view
 │   ├── router/
-│   │   └── index.js                # Vue Router：Home/Blog/BlogDetail/Forum/Topic
+│   │   └── index.js                # Vue Router：24 条路由（首页 + 二级页面 + 博客/论坛/认证）
 │   │
 │   ├── stores/
 │   │   ├── i18n.js                 # I18nProvider + useI18n
@@ -269,15 +288,18 @@ talentpro/
 │   │   └── useModal.js             # 弹窗状态机（含 ESC + body overflow）
 │   │
 │   ├── data/
-│   │   ├── navigation.js           # NAV_LINKS（下拉菜单数据）
+│   │   ├── navigation.js           # NAV_LINKS + FOOTER_LINKS（导航与页脚）
 │   │   ├── stats.js                # STATS_DATA（统计数字）
-│   │   ├── products.js             # PRODUCT_TABS（产品矩阵 4 Tab）
+│   │   ├── products.js             # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
 │   │   ├── aiFamily.js             # AI_CARDS（AI 专区卡片）
-│   │   ├── industries.js           # INDUSTRY_TABS（行业方案 5 Tab）
+│   │   ├── industries.js           # INDUSTRY_TABS（5 行业方案）+ INDUSTRY_MAP
+│   │   ├── cases.js                # CASES（8 客户案例）+ CASE_INDUSTRIES
 │   │   ├── testimonials.js         # TESTIMONIALS（客户证言 4 条）
 │   │   ├── logos.js                # LOGO_ITEMS + LOGO_FILTERS
 │   │   ├── whyUs.js                # WHY_US_TABS + STATS_BAR
-│   │   └── resources.js            # RESOURCES（资源中心）
+│   │   ├── resources.js            # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
+│   │   ├── security.js             # 安全认证数据
+│   │   └── searchIndex.js          # 50 条搜索索引
 │   │
 │   ├── components/
 │   │   ├── layout/
@@ -366,26 +388,29 @@ talentpro/
 
 ---
 
-## 5. Hooks 架构
+## 5. Composables 架构
 
-每个 Hook 遵循**单一职责原则**，封装一个具体交互场景的完整状态与副作用。
+每个 Composable 遵循**单一职责原则**，封装一个具体交互场景的完整状态与副作用。
 
 ### `useNavScroll` — 导航栏滚动状态
 
 ```js
+import { ref, onMounted, onUnmounted } from 'vue';
+
 // 返回：{ scrolled: boolean, showBackTop: boolean }
 // 解决：替代原生 scroll 监听，被 NavBar 和 FloatingBar 消费
 export function useNavScroll() {
-  const [scrolled, setScrolled] = useState(false);
-  const [showBackTop, setShowBackTop] = useState(false);
-  useEffect(() => {
-    const handler = () => {
-      setScrolled(window.scrollY > 60);
-      setShowBackTop(window.scrollY > 500);
-    };
-    window.addEventListener('scroll', handler, { passive: true });
-    return () => window.removeEventListener('scroll', handler);
-  }, []);
+  const scrolled = ref(false);
+  const showBackTop = ref(false);
+
+  const handler = () => {
+    scrolled.value = window.scrollY > 60;
+    showBackTop.value = window.scrollY > 500;
+  };
+
+  onMounted(() => window.addEventListener('scroll', handler, { passive: true }));
+  onUnmounted(() => window.removeEventListener('scroll', handler));
+
   return { scrolled, showBackTop };
 }
 ```
@@ -393,35 +418,45 @@ export function useNavScroll() {
 ### `useScrollReveal` — 滚动入场动画
 
 ```js
-// 用法：const { ref } = useScrollReveal()
-//       <div ref={ref} className={styles.reveal}>...</div>
+import { ref, onMounted, onUnmounted } from 'vue';
+
+// 用法：const elRef = useScrollReveal()
+//       <div ref="elRef" :class="styles.reveal">...</div>
 export function useScrollReveal(threshold = 0.1) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
+  const elRef = ref(null);
+  let obs = null;
+
+  onMounted(() => {
+    const el = elRef.value;
     if (!el) return;
-    const obs = new IntersectionObserver(
+    obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) el.classList.add('is-visible'); },
       { threshold }
     );
     obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref };
+  });
+
+  onUnmounted(() => { if (obs) obs.disconnect(); });
+
+  return elRef;
 }
 ```
 
 ### `useCountUp` — 数字递增动画
 
 ```js
-// 用法：const { ref } = useCountUp(6000, { suffix: '+' })
-//       <span ref={ref} />
+import { ref, onMounted, onUnmounted } from 'vue';
+
+// 用法：const elRef = useCountUp(6000, { suffix: '+' })
+//       <span ref="elRef" />
 export function useCountUp(target, { duration = 1600, suffix = '' } = {}) {
-  const ref = useRef(null);
-  useEffect(() => {
-    const el = ref.current;
+  const elRef = ref(null);
+  let obs = null;
+
+  onMounted(() => {
+    const el = elRef.value;
     if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
+    obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !el.dataset.done) {
         el.dataset.done = '1';
         const start = performance.now();
@@ -435,113 +470,103 @@ export function useCountUp(target, { duration = 1600, suffix = '' } = {}) {
       }
     }, { threshold: 0.5 });
     obs.observe(el);
-    return () => obs.disconnect();
-  }, [target, duration, suffix]);
-  return { ref };
+  });
+
+  onUnmounted(() => { if (obs) obs.disconnect(); });
+
+  return elRef;
 }
 ```
 
 ### `useCarousel` — 轮播状态管理（修复 BUG-02 / BUG-03）
 
 ```js
-// 关键设计：
-// - getColCount() 从 DOM 实时读取宽度，避免闭包陈旧值
-// - resize 防抖后 setCurrentIdx(prev => prev)，触发 effect 重计算 offset
-// - mouseenter/mouseleave 绑定由 bindPauseEvents(ref) 完成（BUG-03）
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+
 export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const trackRef = useRef(null);
-  const timerRef = useRef(null);
+  const currentIdx = ref(0);
+  const trackRef = ref(null);
+  let timer = null;
 
-  const getColCount = useCallback(() => {
-    const w = trackRef.current?.parentElement?.offsetWidth ?? 1200;
+  const getColCount = () => {
+    const w = trackRef.value?.parentElement?.offsetWidth ?? 1200;
     return w > 900 ? 3 : w > 600 ? 2 : 1;
-  }, []);
+  };
 
-  const goTo = useCallback((idx) => {
-    setCurrentIdx(prev => {
-      const max = Math.max(0, itemCount - getColCount());
-      return Math.max(0, Math.min(idx ?? prev, max));
-    });
-  }, [itemCount, getColCount]);
+  const goTo = (idx) => {
+    const max = Math.max(0, itemCount - getColCount());
+    currentIdx.value = Math.max(0, Math.min(idx ?? currentIdx.value, max));
+  };
 
-  const stopAutoPlay = useCallback(() => clearInterval(timerRef.current), []);
-  const startAutoPlay = useCallback(() => {
+  const stopAutoPlay = () => { if (timer) clearInterval(timer); };
+  const startAutoPlay = () => {
     stopAutoPlay();
-    timerRef.current = setInterval(() => {
-      setCurrentIdx(prev => {
-        const max = Math.max(0, itemCount - getColCount());
-        return prev >= max ? 0 : prev + 1;
-      });
+    timer = setInterval(() => {
+      const max = Math.max(0, itemCount - getColCount());
+      currentIdx.value = currentIdx.value >= max ? 0 : currentIdx.value + 1;
     }, autoPlayInterval);
-  }, [autoPlayInterval, itemCount, getColCount, stopAutoPlay]);
+  };
 
   // Resize 防抖（BUG-02）
-  useEffect(() => {
+  onMounted(() => {
     let t;
-    const handler = () => { clearTimeout(t); t = setTimeout(() => goTo(currentIdx), 200); };
+    const handler = () => { clearTimeout(t); t = setTimeout(() => goTo(currentIdx.value), 200); };
     window.addEventListener('resize', handler);
     return () => { window.removeEventListener('resize', handler); clearTimeout(t); };
-  }, [currentIdx, goTo]);
+  });
 
-  useEffect(() => { startAutoPlay(); return stopAutoPlay; }, [startAutoPlay, stopAutoPlay]);
+  onMounted(() => { startAutoPlay(); });
+  onUnmounted(() => { stopAutoPlay(); });
 
-  // 悬停暂停绑定（BUG-03）—— 调用方：carouselWrapRef.current 传入
-  const bindPauseEvents = useCallback((el) => {
-    if (!el) return;
-    el.addEventListener('mouseenter', stopAutoPlay);
-    el.addEventListener('mouseleave', startAutoPlay);
-    return () => {
-      el.removeEventListener('mouseenter', stopAutoPlay);
-      el.removeEventListener('mouseleave', startAutoPlay);
-    };
-  }, [stopAutoPlay, startAutoPlay]);
-
-  return { currentIdx, goTo, trackRef, startAutoPlay, bindPauseEvents, getColCount };
+  return { currentIdx, goTo, trackRef, startAutoPlay, stopAutoPlay, getColCount };
 }
 ```
 
 ### `useTabs` — 通用 Tab 切换
 
 ```js
+import { ref } from 'vue';
+
 // 产品矩阵 / 行业方案 / 为什么选我们 三处共用
 export function useTabs(initialIndex = 0) {
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
-  return { activeIndex, selectTab: setActiveIndex };
+  const activeIndex = ref(initialIndex);
+  const selectTab = (idx) => { activeIndex.value = idx; };
+  return { activeIndex, selectTab };
 }
 ```
 
 ### `useModal` — 弹窗状态机
 
 ```js
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+
 // 状态：关闭 → Step0 → Step1 → Step2 → 成功 → 自动关闭
 export function useModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState(0);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const isOpen = ref(false);
+  const step = ref(0);
+  const isSuccess = ref(false);
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-    setTimeout(() => { setStep(0); setIsSuccess(false); }, 350);
-  }, []);
+  const closeModal = () => {
+    isOpen.value = false;
+    setTimeout(() => { step.value = 0; isSuccess.value = false; }, 350);
+  };
 
-  const openModal = useCallback(() => setIsOpen(true), []);
-  const nextStep = useCallback(() => setStep(s => Math.min(s + 1, 2)), []);
-  const submitForm = useCallback(() => {
-    setIsSuccess(true);
+  const openModal = () => { isOpen.value = true; };
+  const nextStep = () => { step.value = Math.min(step.value + 1, 2); };
+  const submitForm = () => {
+    isSuccess.value = true;
     setTimeout(closeModal, 2500);
-  }, [closeModal]);
+  };
 
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape' && isOpen) closeModal(); };
+  watch(isOpen, (val) => {
+    document.body.style.overflow = val ? 'hidden' : '';
+  });
+
+  onMounted(() => {
+    const onKey = (e) => { if (e.key === 'Escape' && isOpen.value) closeModal(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, closeModal]);
-
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  });
 
   return { isOpen, step, isSuccess, openModal, closeModal, nextStep, submitForm };
 }
@@ -575,15 +600,17 @@ export const PRODUCT_TABS = [
 
 | 数据文件 | 导出 | 消费组件 |
 |---------|------|---------|
-| `navigation.js` | `NAV_LINKS` | NavBar, MobileMenu |
+| `navigation.js` | `NAV_LINKS`, `FOOTER_LINKS` | NavBar, MobileMenu, Footer |
 | `stats.js` | `STATS_DATA` | StatsSection |
-| `products.js` | `PRODUCT_TABS` | ProductMatrixSection |
+| `products.js` | `PRODUCT_TABS`, `PRODUCT_MAP` | ProductMatrixSection, ProductListView, ProductDetailView |
 | `aiFamily.js` | `AI_CARDS` | AiFamilySection |
-| `industries.js` | `INDUSTRY_TABS` | IndustrySolutionSection |
+| `industries.js` | `INDUSTRY_TABS`, `INDUSTRY_MAP` | IndustrySolutionSection, SolutionListView, SolutionDetailView |
+| `cases.js` | `CASES`, `CASE_INDUSTRIES` | CaseListView, CaseDetailView |
 | `testimonials.js` | `TESTIMONIALS` | TestimonialSection |
 | `logos.js` | `LOGO_ITEMS`, `LOGO_FILTERS` | LogoWallSection |
 | `whyUs.js` | `WHY_US_TABS`, `STATS_BAR` | WhyUsSection |
-| `resources.js` | `RESOURCES` | ResourceSection |
+| `resources.js` | `RESOURCES`, `RESOURCE_TYPES` | ResourceSection, ResourceListView, ResourceDetailView |
+| `searchIndex.js` | `SEARCH_INDEX` | SearchModal |
 
 ---
 
@@ -639,18 +666,21 @@ styles/global.css（:root { --primary: #1B5FEB; ... }）
 
 ### 8.2 Props 规范
 
-```jsx
-// Section 组件：无 Props（数据从 data/ 直接 import）
-function HeroSection() { ... }
+```vue
+<!-- Section 组件：无 Props（数据从 data/ 直接 import） -->
+<script setup>
+function HeroSection() { /* ... */ }
+</script>
 
-// 子组件：明确 PropTypes
-function ProductCard({ name, icon, desc, link = '#' }) { ... }
-ProductCard.propTypes = {
-  name: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired,
-  desc: PropTypes.string.isRequired,
-  link: PropTypes.string,
-};
+<!-- 子组件：明确 Props -->
+<script setup>
+const props = defineProps({
+  name: { type: String, required: true },
+  icon: { type: String, required: true },
+  desc: { type: String, required: true },
+  link: { type: String, default: '#' },
+});
+</script>
 ```
 
 ### 8.3 单文件行数限制
@@ -669,17 +699,22 @@ ProductCard.propTypes = {
 
 ### 9.1 导航滚动变色
 
-```jsx
-// NavBar.vue：通过 useNavScroll 返回 scrolled，
-// 用 cx(styles.nav, { [styles.scrolled]: scrolled }) 动态切换 class
+```vue
+<!-- NavBar.vue：通过 useNavScroll 返回 scrolled，
+     用 :class="{ [styles.scrolled]: scrolled }" 动态切换 class -->
 ```
 
 ### 9.2 弹窗全局触发（任意组件调用）
 
-```jsx
-// 任意组件：通过 ModalContext 获取 openModal，无需 prop drilling
-const { openModal } = useContext(ModalContext);
-<Button onClick={openModal}>预约演示</Button>
+```vue
+<!-- 任意组件：通过 useModal 获取 openModal，无需 prop drilling -->
+<script setup>
+import { useModal } from '@/composables/useModal';
+const { openModal } = useModal();
+</script>
+<template>
+  <Button @click="openModal">预约演示</Button>
+</template>
 ```
 
 ### 9.3 轮播 Resize 修复（BUG-02 根本性解决）
@@ -698,15 +733,19 @@ Vue 版本通过 `useCarousel` Composable 的 resize 监听，在宽度变化后
 
 ```js
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [vue()],
   build: {
     outDir: 'dist',
     rollupOptions: {
       output: {
-        manualChunks: { vendor: ['react', 'react-dom'] }
+        manualChunks(id) {
+          if (id.includes('node_modules/vue/')) return 'vue';
+          if (id.includes('node_modules/vue-router/')) return 'vue-router';
+          if (id.includes('node_modules/axios/')) return 'axios';
+        }
       }
     }
   },
@@ -726,10 +765,10 @@ export default defineConfig({
 
 ---
 
-> 📌 **PO 确认项**：
-> 1. 技术栈：Vue 3.5 + Vite 5 + CSS Modules + Vue Router（无 TypeScript，无 UI 库）
+> 📌 **确认项**：
+> 1. 技术栈：Vue 3.5 + Vite 8.0.14 + CSS Modules + Vue Router（无 TypeScript，无 UI 库）
 > 2. 数据策略：营销门户纯静态 JS 常量；博客/论坛接入后端 NestJS API
-> 3. 部署平台：Vercel 静态站 / 其他
+> 3. 部署平台：Vercel 静态站 / Nginx / OSS+CDN
 
 ---
 
@@ -752,20 +791,98 @@ export default defineConfig({
 
 ```
 talentpro-backend/apps/api/src/modules/
-├── auth/          # 注册/登录/JWT/刷新/权限守卫
+├── auth/          # 注册/登录/JWT/刷新/黑名单
+├── user/          # 用户管理 + PII 加密
+├── role/          # 角色与权限管理
+├── workspace/     # 多租户 Workspace 管理
 ├── blog/          # 文章/分类/标签 CRUD
 ├── forum/         # 话题/回复/置顶/锁定
-├── lead/          # 演示预约线索
+├── lead/          # 演示预约线索 + 状态流转
 ├── analytics/     # 页面浏览/事件/转化漏斗
-└── user/          # 用户管理
+├── cms/           # 首页板块动态配置
+├── search/        # Meilisearch 搜索索引管理
+├── media/         # 文件上传/MinIO 存储
+├── notification/  # SSE 实时通知
+├── mail/          # 邮件发送
+├── ai/            # AI 服务集成
+├── experiment/    # A/B 测试实验管理
+├── export/        # 数据导出
+├── download/      # 资源下载追踪
+├── case/          # 客户案例
+├── news/          # 新闻管理
+├── careers/       # 招聘职位管理
+├── about/         # 关于我们内容
+├── system/        # 系统配置/IP 黑白名单
+└── health/        # 健康检查端点
 ```
 
-### 11.3 认证流程
+### 11.3 认证与权限流程
 
-1. **注册**：`POST /auth/register` → bcrypt 哈希 → 默认 `USER` 角色
+1. **注册**：`POST /auth/register` → bcrypt 哈希 → reCAPTCHA 校验 → 默认 `USER` 角色
 2. **登录**：`POST /auth/login` → 验证密码 → 签发 accessToken（15m）+ refreshToken（7d）
 3. **刷新**：`POST /auth/refresh` → 验证 refreshToken → 删除旧令牌 → 签发新令牌对
-4. **权限**：`@Roles('ADMIN', 'SUPER_ADMIN')` + `RolesGuard` → JWT 解码 → 角色校验
+4. **登出**：`POST /auth/logout` → Access Token 写入 TokenBlacklist → 即时失效
+5. **权限**：`@Roles('ADMIN', 'SUPER_ADMIN')` + `RolesGuard` → JWT 解码 → 角色校验
+6. **细粒度权限**：`@Permissions('cms:write', 'user:read')` + `PermissionGuard` → 权限点校验
+7. **IP 过滤**：`IpFilterGuard` → 请求 IP 匹配黑白名单 → 拦截/放行
+
+### 11.4 权限体系
+
+```
+请求 → JwtAuthGuard（认证）→ ThrottlerGuard（限流）→ PermissionGuard（权限）→ IpFilterGuard（IP）→ 控制器
+```
+
+| Guard | 职责 | 顺序 |
+|-------|------|------|
+| JwtAuthGuard | 解析 JWT，注入 req.user | 1 |
+| ThrottlerGuard | 按端点限流（默认 500/min，auth 10/min，search 30/min） | 2 |
+| PermissionGuard | 校验 `@Permissions()` 声明 | 3 |
+| IpFilterGuard | 校验 IP 黑白名单 | 4 |
+
+### 11.5 多租户（Workspace）
+
+- **WorkspaceInterceptor**：从 `req.user.workspaceId` 提取租户 ID，注入 AsyncLocalStorage
+- **Prisma 扩展**：`softDeleteExtension` → `encryptionExtension` → `workspaceExtension`
+- **数据隔离**：所有查询自动附加 `workspaceId` 过滤条件
+
+### 11.6 缓存体系
+
+- **Redis 客户端**：ioredis，通过 `REDIS_CLIENT` Token 注入
+- **@Cacheable 装饰器**：`@Cacheable({ key, ttl })` 标记需要缓存的 GET 端点
+- **CacheInterceptor**：全局拦截，自动读取/写入 Redis，支持 `CACHE_EVICT` 清除
+- **CacheInterceptor 已全局注册**，CMS 公开 GET 接口自动受益
+
+### 11.7 队列（BullMQ）
+
+- **NotificationProcessor**：通知推送（attempts: 3 + exponential backoff）
+- **SearchIndexProcessor**：Meilisearch 索引同步
+- **LeadNurtureProcessor**：线索 nurture 自动化邮件
+- 所有 Processor 配置 `@OnWorkerEvent('failed')` 记录死信
+
+### 11.8 搜索（Meilisearch）
+
+- **MeilisearchModule**：全局模块，封装 Meilisearch 客户端
+- **SearchIndexListener**：内容变更时自动触发索引更新（EventEmitter）
+- 支持博客文章、论坛话题、资源、客户案例的全文检索
+
+### 11.9 PII 字段级加密
+
+- **加密算法**：AES-256-GCM
+- **密钥来源**：`PII_ENCRYPTION_KEY` 环境变量 → `JWT_SECRET` fallback（记录警告日志）
+- **自动字段**：User.phone / User.email / DemoBooking.phone / DemoBooking.email
+- **实现方式**：Prisma 扩展（`encryptionExtension`），读写自动加解密，业务代码无感知
+
+### 11.10 SSE 实时通知
+
+- **Redis Pub/Sub**：全局仅 1 个 `psubscribe('sse:notifications:*')` 连接
+- **频道命名**：`sse:notifications:{userId}`
+- **多实例支持**：Redis Pub/Sub 确保集群环境下消息广播
+
+### 11.11 Sentry 错误监控
+
+- **Sentry.init()**：`main.ts` bootstrap 时初始化（dsn 来自 `SENTRY_DSN`）
+- **SentryInterceptor**：全局拦截器，catchError 中上报异常
+- **上下文信息**：userId、url、method、body（脱敏，去掉 password）
 
 ---
 
@@ -776,7 +893,7 @@ talentpro-backend/apps/api/src/modules/
 | 维度 | 技术 | 版本 |
 |------|------|------|
 | 框架 | Vue | 3.5 |
-| 构建 | Vite | 5.4 |
+| 构建 | Vite | 8 |
 | UI 库 | Element Plus | 2.8 |
 | 状态 | Pinia | 2.2 |
 | 路由 | Vue Router | 4.4 |
@@ -790,20 +907,27 @@ talentpro-admin/
 │   ├── main.js              # createApp + Pinia + Router + ElementPlus
 │   ├── App.vue
 │   ├── router/
-│   │   └── index.js         # 路由守卫（JWT 校验）
+│   │   └── index.js         # 路由守卫（JWT 校验 + 权限拦截）
 │   ├── stores/
-│   │   └── auth.js          # token + user + login/logout
+│   │   ├── auth.js          # token + user + login/logout
+│   │   └── permission.js    # 权限点缓存
 │   ├── api/
-│   │   └── client.js        # Axios + Bearer 拦截器
+│   │   └── client.js        # Axios + Bearer 拦截器 + 401 处理
 │   └── views/
 │       ├── LoginView.vue
-│       ├── LayoutView.vue   # 侧边栏 + 顶部栏
-│       ├── DashboardView.vue
-│       ├── BlogManagerView.vue
-│       ├── ForumManagerView.vue
-│       ├── AnalyticsView.vue
-│       ├── UsersView.vue
-│       └── LeadsView.vue
+│       ├── LayoutView.vue       # 侧边栏 + 顶部栏 + 标签页
+│       ├── DashboardView.vue    # 数据仪表盘（图表库）
+│       ├── BlogManagerView.vue  # 博客文章管理（富文本编辑器）
+│       ├── ForumManagerView.vue # 论坛话题/回复管理
+│       ├── AnalyticsView.vue    # 数据分析/埋点报表
+│       ├── UsersView.vue        # 用户列表/角色分配
+│       ├── LeadsView.vue        # 线索管理/跟进记录
+│       ├── CmsManagerView.vue   # CMS 内容板块配置
+│       ├── WorkspaceView.vue    # Workspace 租户管理
+│       ├── SystemConfigView.vue # 系统参数/IP 黑白名单
+│       ├── RoleManagerView.vue  # 角色与权限管理
+│       ├── ExperimentView.vue   # A/B 实验管理
+│       └── NotificationView.vue # 通知发送/历史
 ```
 
 ### 12.3 权限模型
@@ -813,4 +937,4 @@ talentpro-admin/
 - API 请求：Axios 拦截器自动附加 `Authorization: Bearer ${token}`
 - 401 响应：自动 logout + 跳转登录页
 
-*架构师 Agent 产出 | 2026-03-15 | v2.6.0 更新 2026-05-26*
+*架构师 Agent 产出 | 2026-03-15 | v3.0.0 更新 2026-05-28*

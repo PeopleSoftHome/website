@@ -39,27 +39,34 @@
 
 <script setup>
 import { computed, inject, ref } from 'vue';
-import { LOGO_ITEMS, LOGO_FILTERS } from '@/data/logos.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
-import { transformLogos } from '@/api/transforms.js';
+import { LOGO_FILTERS } from '@/data/logos.js';
+import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
+import { apiClient } from '@/api/client.js';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const activeFilter = ref('all');
 
-const apiLogos = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getLogos();
-  return transformLogos(data);
-}, apiLogos);
+const { displayItems: displayLogos, isLoading: loading } = useCmsDataByKey('logos', {
+  transform: (active) => (active || []).map((item) => ({
+    id: item.name
+      ? item.name.toLowerCase().replace(/\s+/g, '-')
+      : `logo-${Math.random().toString(36).slice(2, 7)}`,
+    name: item.name,
+    initial: item.name ? item.name.charAt(0) : '?',
+    brandColor: '#1B5FEB',
+    industry: item.industry || 'all',
+  })),
+  fallbackKey: 'logos',
+});
 
-const displayLogos = computed(() => (apiLogos.value.length > 0 ? apiLogos.value : LOGO_ITEMS));
+
 const displayFilters = computed(() => {
-  // 根据实际数据动态生成过滤器
   const industries = new Set(['all']);
-  displayLogos.value.forEach((l) => { if (l.industry) industries.add(l.industry); });
+  (displayLogos.value || []).forEach((l) => {
+    if (l.industry) industries.add(l.industry);
+  });
   return Array.from(industries).map((id) => {
     const existing = LOGO_FILTERS.find((f) => f.id === id);
     return existing || { id, label: id };

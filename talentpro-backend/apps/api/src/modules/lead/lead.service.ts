@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { DemoBookingScale, LeadSource } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { LeadStatus } from '@prisma/client';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class LeadService {
@@ -24,7 +26,7 @@ export class LeadService {
   }
 
   async findAll(page = 1, pageSize = 20, status?: LeadStatus, workspaceId?: string) {
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const where: any = {};
     if (status) where.status = status;
     if (workspaceId) where.workspaceId = workspaceId;
@@ -38,12 +40,14 @@ export class LeadService {
       }),
       this.prisma.demoBooking.count({ where }),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
-  async findOne(id: string) {
-    const booking = await this.prisma.demoBooking.findUnique({
-      where: { id },
+  async findOne(id: string, workspaceId?: string) {
+    const where: any = { id };
+    if (workspaceId) where.workspaceId = workspaceId;
+    const booking = await this.prisma.demoBooking.findFirst({
+      where,
       include: { followUps: { orderBy: { createdAt: 'desc' } } },
     });
     if (!booking) throw new NotFoundException('预约记录不存在');
@@ -69,8 +73,8 @@ export class LeadService {
         phone: data.phone,
         email: data.email,
         products: data.products || [],
-        scale: data.scale,
-        source: data.source || 'website',
+        scale: data.scale as DemoBookingScale,
+        source: (data.source || 'website') as LeadSource,
         ipAddress: data.ipAddress,
         userAgent: data.userAgent,
         workspaceId: data.workspaceId,
@@ -105,8 +109,10 @@ export class LeadService {
     LOST: [],
   };
 
-  async updateStatus(id: string, status: LeadStatus, assignedTo?: string, notes?: string) {
-    const booking = await this.prisma.demoBooking.findUnique({ where: { id } });
+  async updateStatus(id: string, status: LeadStatus, assignedTo?: string, notes?: string, workspaceId?: string) {
+    const where: any = { id };
+    if (workspaceId) where.workspaceId = workspaceId;
+    const booking = await this.prisma.demoBooking.findFirst({ where });
     if (!booking) throw new NotFoundException('预约记录不存在');
 
     const allowed = this.statusTransitions[booking.status];
@@ -120,7 +126,11 @@ export class LeadService {
     });
   }
 
-  async addFollowUp(id: string, data: { type: string; content: string; createdBy: string }) {
+  async addFollowUp(id: string, data: { type: string; content: string; createdBy: string }, workspaceId?: string) {
+    if (workspaceId) {
+      const booking = await this.prisma.demoBooking.findFirst({ where: { id, workspaceId } });
+      if (!booking) throw new NotFoundException('预约记录不存在');
+    }
     return this.prisma.followUp.create({
       data: { bookingId: id, type: data.type, content: data.content, createdBy: data.createdBy },
     });

@@ -29,6 +29,22 @@ export class AnalyticsService {
     });
   }
 
+  async trackEvents(events: {
+    event: string;
+    properties?: Record<string, any>;
+    userId?: string;
+    sessionId: string;
+  }[]) {
+    const result = await this.prisma.$transaction(
+      events.map((e) =>
+        this.prisma.eventTrack.create({
+          data: { ...e, properties: e.properties || {} },
+        }),
+      ),
+    );
+    return { count: result.length };
+  }
+
   // ─── UserActivity ───
   async logUserActivity(data: {
     userId: string;
@@ -46,6 +62,11 @@ export class AnalyticsService {
     since.setDate(since.getDate() - days);
     since.setHours(0, 0, 0, 0);
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
     const [
       totalPageViews,
       totalEvents,
@@ -54,6 +75,11 @@ export class AnalyticsService {
       topEvents,
       dailyPageViews,
       dailyEvents,
+      todayLeads,
+      monthLeads,
+      totalUsers,
+      pendingLeads,
+      leadTrend,
     ] = await Promise.all([
       this.prisma.pageView.count({ where: { createdAt: { gte: since } } }),
       this.prisma.eventTrack.count({ where: { createdAt: { gte: since } } }),
@@ -96,6 +122,21 @@ export class AnalyticsService {
           count: r._count.id,
         })),
       ),
+      // 业务指标
+      this.prisma.demoBooking.count({ where: { createdAt: { gte: today } } }),
+      this.prisma.demoBooking.count({ where: { createdAt: { gte: monthStart } } }),
+      this.prisma.user.count({ where: { deletedAt: null } }),
+      this.prisma.demoBooking.count({ where: { status: 'NEW' } }),
+      this.prisma.demoBooking.groupBy({
+        by: ['createdAt'],
+        where: { createdAt: { gte: new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000) } },
+        _count: { id: true },
+      }).then((rows) =>
+        rows.map((r) => ({
+          date: r.createdAt.toISOString().split('T')[0],
+          count: r._count.id,
+        })),
+      ),
     ]);
 
     return {
@@ -105,7 +146,39 @@ export class AnalyticsService {
       topEvents,
       dailyPageViews,
       dailyEvents,
+      todayLeads,
+      monthLeads,
+      totalUsers,
+      pendingLeads,
+      leadTrend,
     };
+  }
+
+  async trackWebVital(data: {
+    event: string;
+    properties: {
+      name: string;
+      value: number;
+      rating: string;
+      delta?: number;
+      id: string;
+      navigationType?: string;
+      url: string;
+      pathname: string;
+    };
+    sessionId: string;
+    ts?: number;
+  }) {
+    return this.prisma.eventTrack.create({
+      data: {
+        event: `web_vital_${data.properties.name}`,
+        properties: {
+          ...data.properties,
+          ts: data.ts,
+        },
+        sessionId: data.sessionId,
+      },
+    });
   }
 
   async getConversionFunnel() {

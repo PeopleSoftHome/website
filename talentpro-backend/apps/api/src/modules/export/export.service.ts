@@ -1,117 +1,208 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { LeadStatus } from '@prisma/client';
+import { Response } from 'express';
+
+const MAX_EXPORT_ROWS = 50000; // 单次导出最大记录数，防止 OOM
+const BATCH_SIZE = 1000; // 游标分页批次大小
 
 @Injectable()
 export class ExportService {
   constructor(private prisma: PrismaService) {}
 
-  async exportLeads(filters: { status?: LeadStatus; workspaceId?: string }) {
+  async exportLeads(
+    filters: { status?: LeadStatus; workspaceId?: string },
+    res: Response,
+  ) {
     const where: any = {};
     if (filters.status) where.status = filters.status;
     if (filters.workspaceId) where.workspaceId = filters.workspaceId;
 
-    const leads = await this.prisma.demoBooking.findMany({
-      where,
-      include: { followUps: true },
-      orderBy: { createdAt: 'desc' },
+    const total = await this.prisma.demoBooking.count({ where });
+    if (total > MAX_EXPORT_ROWS) {
+      throw new BadRequestException(`导出记录数超过上限 ${MAX_EXPORT_ROWS}，请缩小筛选范围`);
+    }
+
+    const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
+      stream: res as any,
     });
+    const worksheet = workbook.addWorksheet('线索列表');
+    worksheet.addRow([
+      'ID', '姓名', '公司', '手机', '邮箱', '意向产品',
+      '企业规模', '状态', '来源', '跟进次数', '创建时间',
+    ]);
 
-    const rows = leads.map((l) => ({
-      'ID': l.id,
-      '姓名': l.name,
-      '公司': l.company,
-      '手机': l.phone,
-      '邮箱': l.email || '',
-      '意向产品': (l.products || []).join(', '),
-      '企业规模': l.scale,
-      '状态': l.status,
-      '来源': l.source,
-      '跟进次数': l.followUps.length,
-      '创建时间': l.createdAt.toISOString(),
-    }));
+    let cursor: { id: string } | undefined;
+    let count = 0;
+    do {
+      const batch = await this.prisma.demoBooking.findMany({
+        where,
+        include: { followUps: true },
+        orderBy: { createdAt: 'desc' },
+        take: BATCH_SIZE,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor.id } : undefined,
+      });
 
-    return this.toBuffer(rows, '线索列表');
+      for (const l of batch) {
+        worksheet.addRow([
+          l.id, l.name, l.company, l.phone, l.email || '',
+          (l.products || []).join(', '), l.scale, l.status,
+          l.source, l.followUps.length, l.createdAt.toISOString(),
+        ]);
+      }
+
+      count += batch.length;
+      cursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
+    } while (cursor);
+
+    await worksheet.commit();
+    await workbook.commit();
   }
 
-  async exportUsers(filters: { workspaceId?: string }) {
+  async exportUsers(
+    filters: { workspaceId?: string },
+    res: Response,
+  ) {
     const where: any = {};
     if (filters.workspaceId) where.workspaceId = filters.workspaceId;
 
-    const users = await this.prisma.user.findMany({
-      where,
-      select: {
-        id: true, name: true, email: true, phone: true,
-        status: true, workspaceRole: true, createdAt: true,
-        role: { select: { name: true } },
-        workspace: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
+    const total = await this.prisma.user.count({ where });
+    if (total > MAX_EXPORT_ROWS) {
+      throw new BadRequestException(`导出记录数超过上限 ${MAX_EXPORT_ROWS}，请缩小筛选范围`);
+    }
+
+    const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
+      stream: res as any,
     });
+    const worksheet = workbook.addWorksheet('用户列表');
+    worksheet.addRow([
+      'ID', '姓名', '邮箱', '手机', '角色',
+      '工作空间', 'Workspace角色', '状态', '注册时间',
+    ]);
 
-    const rows = users.map((u) => ({
-      'ID': u.id,
-      '姓名': u.name || '',
-      '邮箱': u.email,
-      '手机': u.phone || '',
-      '角色': u.role?.name || '',
-      '工作空间': u.workspace?.name || '',
-      'Workspace角色': u.workspaceRole || '',
-      '状态': u.status,
-      '注册时间': u.createdAt.toISOString(),
-    }));
+    let cursor: { id: string } | undefined;
+    do {
+      const batch = await this.prisma.user.findMany({
+        where,
+        select: {
+          id: true, name: true, email: true, phone: true,
+          status: true, workspaceRole: true, createdAt: true,
+          role: { select: { name: true } },
+          workspace: { select: { name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: BATCH_SIZE,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor.id } : undefined,
+      });
 
-    return this.toBuffer(rows, '用户列表');
+      for (const u of batch) {
+        worksheet.addRow([
+          u.id, u.name || '', u.email, u.phone || '',
+          u.role?.name || '', u.workspace?.name || '',
+          u.workspaceRole || '', u.status, u.createdAt.toISOString(),
+        ]);
+      }
+
+      cursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
+    } while (cursor);
+
+    await worksheet.commit();
+    await workbook.commit();
   }
 
-  async exportAnalytics(days = 30) {
+  async exportAnalytics(
+    days = 30,
+    workspaceId: string | undefined,
+    res: Response,
+  ) {
     const from = new Date();
     from.setDate(from.getDate() - days);
 
-    const [pageViews, events, leads] = await Promise.all([
-      this.prisma.pageView.findMany({ where: { createdAt: { gte: from } }, orderBy: { createdAt: 'desc' } }),
-      this.prisma.eventTrack.findMany({ where: { createdAt: { gte: from } }, orderBy: { createdAt: 'desc' } }),
-      this.prisma.demoBooking.findMany({ where: { createdAt: { gte: from } }, orderBy: { createdAt: 'desc' } }),
-    ]);
+    let userIdsInWorkspace: string[] | undefined;
+    if (workspaceId) {
+      const users = await this.prisma.user.findMany({
+        where: { workspaceId },
+        select: { id: true },
+      });
+      userIdsInWorkspace = users.map((u) => u.id);
+    }
 
-    const wb = XLSX.utils.book_new();
+    const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
+      stream: res as any,
+    });
 
-    const pvRows = pageViews.map((p) => ({
-      '路径': p.path,
-      'Referrer': p.referrer || '',
-      'UserAgent': p.userAgent || '',
-      'IP': p.ipAddress || '',
-      '时间': p.createdAt.toISOString(),
-    }));
-    const pvWs = XLSX.utils.json_to_sheet(pvRows);
-    XLSX.utils.book_append_sheet(wb, pvWs, '页面访问');
+    // 页面访问
+    const pvWs = workbook.addWorksheet('页面访问');
+    pvWs.addRow(['路径', 'Referrer', 'UserAgent', 'IP', '时间']);
 
-    const evRows = events.map((e) => ({
-      '事件': e.event,
-      '属性': JSON.stringify(e.properties || {}),
-      '时间': e.createdAt.toISOString(),
-    }));
-    const evWs = XLSX.utils.json_to_sheet(evRows);
-    XLSX.utils.book_append_sheet(wb, evWs, '事件追踪');
+    let pvCursor: { id: string } | undefined;
+    do {
+      const batch = await this.prisma.pageView.findMany({
+        where: {
+          createdAt: { gte: from },
+          ...(userIdsInWorkspace ? { userId: { in: userIdsInWorkspace } } : {}),
+        },
+        orderBy: { createdAt: 'desc' },
+        take: BATCH_SIZE,
+        skip: pvCursor ? 1 : 0,
+        cursor: pvCursor ? { id: pvCursor.id } : undefined,
+      });
+      for (const p of batch) {
+        pvWs.addRow([p.path, p.referrer || '', p.userAgent || '', p.ipAddress || '', p.createdAt.toISOString()]);
+      }
+      pvCursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
+    } while (pvCursor);
+    await pvWs.commit();
 
-    const leadRows = leads.map((l) => ({
-      '姓名': l.name,
-      '公司': l.company,
-      '手机': l.phone,
-      '状态': l.status,
-      '时间': l.createdAt.toISOString(),
-    }));
-    const leadWs = XLSX.utils.json_to_sheet(leadRows);
-    XLSX.utils.book_append_sheet(wb, leadWs, '线索');
+    // 事件追踪
+    const evWs = workbook.addWorksheet('事件追踪');
+    evWs.addRow(['事件', '属性', '时间']);
 
-    return XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
-  }
+    let evCursor: { id: string } | undefined;
+    do {
+      const batch = await this.prisma.eventTrack.findMany({
+        where: {
+          createdAt: { gte: from },
+          ...(userIdsInWorkspace ? { userId: { in: userIdsInWorkspace } } : {}),
+        },
+        orderBy: { createdAt: 'desc' },
+        take: BATCH_SIZE,
+        skip: evCursor ? 1 : 0,
+        cursor: evCursor ? { id: evCursor.id } : undefined,
+      });
+      for (const e of batch) {
+        evWs.addRow([e.event, JSON.stringify(e.properties || {}), e.createdAt.toISOString()]);
+      }
+      evCursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
+    } while (evCursor);
+    await evWs.commit();
 
-  private toBuffer(rows: any[], sheetName: string) {
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    return XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+    // 线索
+    const leadWs = workbook.addWorksheet('线索');
+    leadWs.addRow(['姓名', '公司', '手机', '状态', '时间']);
+
+    let leadCursor: { id: string } | undefined;
+    do {
+      const batch = await this.prisma.demoBooking.findMany({
+        where: {
+          createdAt: { gte: from },
+          ...(workspaceId ? { workspaceId } : {}),
+        },
+        orderBy: { createdAt: 'desc' },
+        take: BATCH_SIZE,
+        skip: leadCursor ? 1 : 0,
+        cursor: leadCursor ? { id: leadCursor.id } : undefined,
+      });
+      for (const l of batch) {
+        leadWs.addRow([l.name, l.company, l.phone, l.status, l.createdAt.toISOString()]);
+      }
+      leadCursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
+    } while (leadCursor);
+    await leadWs.commit();
+
+    await workbook.commit();
   }
 }

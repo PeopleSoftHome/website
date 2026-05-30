@@ -3,9 +3,9 @@
     <h2 style="margin-bottom:20px">博客管理</h2>
     <el-card shadow="hover">
       <div style="margin-bottom:16px">
-        <el-button type="primary" @click="openDialog()">+ 新建文章</el-button>
+        <el-button type="primary" @click="openDialog()" v-permission="'blog:create'">+ 新建文章</el-button>
       </div>
-      <el-table :data="posts" v-loading="loading" size="default">
+      <el-table :data="list.items" v-loading="list.loading" size="default">
         <el-table-column prop="title" label="标题" />
         <el-table-column prop="category.name" label="分类" width="120" />
         <el-table-column prop="status" label="状态" width="100">
@@ -18,18 +18,18 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="openDialog(row)">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+            <el-button link type="primary" @click="openDialog(row)" v-permission="'blog:update'">编辑</el-button>
+            <el-button link type="danger" @click="handleDelete(row)" v-permission="'blog:delete'">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         style="margin-top:16px;justify-content:flex-end"
         layout="prev, pager, next"
-        :total="total"
-        :page-size="20"
-        v-model:current-page="page"
-        @current-change="fetchPosts"
+        :total="list.total"
+        :page-size="list.pageSize"
+        v-model:current-page="list.page"
+        @current-change="list.fetch"
       />
     </el-card>
 
@@ -51,7 +51,7 @@
           <el-input v-model="form.excerpt" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="内容">
-          <el-input v-model="form.content" type="textarea" :rows="6" />
+          <RichEditor v-model="form.content" />
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="form.status" style="width:100%">
@@ -69,35 +69,34 @@
 </template>
 
 <script setup>
+import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted } from 'vue';
+
+onMounted(() => {
+  fetchCategories();
+});
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
+import RichEditor from '@/components/RichEditor.vue';
+import { useList } from '@/composables/useList.js';
 
-const posts = ref([]);
+const list = useList({
+  fetchFn: (p) => client.get(`/blogs/posts?page=${p.page}&pageSize=${p.pageSize}`),
+});
+
 const categories = ref([]);
-const total = ref(0);
-const page = ref(1);
-const loading = ref(false);
 const dialogVisible = ref(false);
 const isEdit = ref(false);
 const saving = ref(false);
 const form = ref({ title: '', slug: '', categoryId: '', excerpt: '', content: '', status: 'DRAFT' });
 
-const fetchPosts = async () => {
-  loading.value = true;
-  try {
-    const res = await client.get(`/blogs/posts?page=${page.value}&limit=20`);
-    posts.value = res.data?.items || [];
-    total.value = res.data?.total || 0;
-  } catch (e) { console.error(e); }
-  loading.value = false;
-};
-
 const fetchCategories = async () => {
   try {
     const res = await client.get('/blogs/categories');
     categories.value = res.data || [];
-  } catch (e) { console.error(e); }
+  } catch (e) {
+    if (import.meta.env.DEV) console.error(e);
+  }
 };
 
 const openDialog = (row = null) => {
@@ -121,7 +120,7 @@ const handleSave = async () => {
       ElMessage.success('创建成功');
     }
     dialogVisible.value = false;
-    fetchPosts();
+    list.fetch();
   } catch (e) {
     ElMessage.error(e.response?.data?.message || '保存失败');
   }
@@ -133,16 +132,11 @@ const handleDelete = async (row) => {
     await ElMessageBox.confirm('确认删除该文章？', '提示', { type: 'warning' });
     await client.delete(`/blogs/posts/${row.id}`);
     ElMessage.success('删除成功');
-    fetchPosts();
+    list.fetch();
   } catch (e) {
     if (e !== 'cancel') ElMessage.error('删除失败');
   }
 };
 
-const formatDate = (d) => d ? new Date(d).toLocaleString('zh-CN') : '-';
 
-onMounted(() => {
-  fetchCategories();
-  fetchPosts();
-});
 </script>

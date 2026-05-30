@@ -55,11 +55,16 @@ v2.4.0          ████████████████  ✅ 2026-05-15
                                    
 v2.5.0          ████████████████  ✅ 2026-05-26  性能与分发
                 Sprint 15-16       动态 SEO + 埋点分析 + 代码分割
-                                   + PWA 支持 + 字体子集化
+                                   + PWA 支持 + 字体子集化（部分）
 
 v2.6.0          ████████████████  ✅ 2026-05-26  内容生态迭代
                 Sprint 17-18       Vue 3 迁移 + 后端 API + 博客/论坛
                                    + Admin 后台 + 用户认证
+
+v3.0.0          ████████████████  ✅ 2026-05-27  安全与架构升级
+                Sprint 19-20       CMS 动态化 + Workspace 隔离 + JWT 黑名单
+                                   + PII 加密 + Redis 缓存 + SSE 流式输出
+                                   + 审计日志 + CI/CD 流水线 + 依赖安全修复
 ```
 
 ---
@@ -729,17 +734,31 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | ROI-01 | 🆕 新增 | 🟡 P1 | ROI 计算器 Section（SEC-16）| v2.4.0 | S13 | ✅ |
 | ROI-02 | 🆕 新增 | 🟡 P1 | useRoiCalculator Hook + 5 维计算模型 | v2.4.0 | S13 | ✅ |
 | REC-01 | 🆕 新增 | 🟢 P2 | DemoModal 智能产品推荐 | v2.4.0 | S13 | ✅ |
-| FORM-01 | 🆕 新增 | 🟡 P1 | 弹窗表单增强（格式化/滚动/摘要）| v2.4.0 | S14 | ⏳ |
-| COOK-01 | 🆕 新增 | 🟡 P1 | Cookie 同意横幅 + 偏好中心 | v2.4.0 | S14 | ⏳ |
-| AB-01   | 🆕 新增 | 🟢 P2 | A/B 测试框架（useABTest Hook）| v2.4.0 | S14 | ⏳ |
+| FORM-01 | 🆕 新增 | 🟡 P1 | 弹窗表单增强（格式化/滚动/摘要）| v2.4.0 | S14 | ✅ |
+| COOK-01 | 🆕 新增 | 🟡 P1 | Cookie 同意横幅 + 偏好中心 | v2.4.0 | S14 | ✅ |
+| AB-01   | 🆕 新增 | 🟢 P2 | A/B 测试框架（useABTest Hook + 后端实验管理）| v2.4.0 | S14 | ✅ |
 | **v2.5.0** | | | | | | |
-| SEO-01 | 🆕 新增 | 🟡 P1 | react-helmet-async 动态 meta | v2.5.0 | S15 | ⏳ |
-| SEO-02 | 🆕 新增 | 🟡 P1 | Vite SSG 预渲染 | v2.5.0 | S15 | ⏳ |
+| SEO-01 | 🆕 新增 | 🟡 P1 | 动态 title / meta（Blog/Forum 详情页手动更新）| v2.5.0 | S15 | ✅ |
+| SEO-02 | 🆕 新增 | 🟡 P1 | 构建时语义化 HTML 预渲染（prerender.js）| v2.5.0 | S15 | ✅ |
 | SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ⏳ |
-| ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 | v2.5.0 | S15 | ⏳ |
-| PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 lazy() 代码分割 | v2.5.0 | S16 | ⏳ |
+| ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 + 热力图/滚动深度 | v2.5.0 | S15 | ✅ |
+| PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 defineAsyncComponent 代码分割 | v2.5.0 | S16 | ✅ |
 | PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ⏳ |
-| PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker | v2.5.0 | S16 | ⏳ |
+| PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker + Manifest | v2.5.0 | S16 | ✅ |
+| **v3.0.0** | | | | | | |
+| CMS-01 | 🆕 新增 | 🔴 P0 | CMS 动态化（首页板块配置）| v3.0.0 | S19 | ✅ |
+| WS-01 | 🆕 新增 | 🔴 P0 | 多租户 Workspace 模型 | v3.0.0 | S19 | ✅ |
+| AUTH-01 | 🆕 新增 | 🔴 P0 | 权限控制（RolesGuard + PermissionGuard）| v3.0.0 | S19 | ✅ |
+| AUTH-02 | 🆕 新增 | 🔴 P0 | JWT 黑名单 + Token 轮转 | v3.0.0 | S19 | ✅ |
+| ADMIN-01 | 🆕 新增 | 🟡 P1 | Admin CMS 管理页 | v3.0.0 | S19 | ✅ |
+| ADMIN-02 | 🆕 新增 | 🟡 P1 | Admin 富文本编辑器 | v3.0.0 | S19 | ✅ |
+| ADMIN-03 | 🆕 新增 | 🟡 P1 | Admin 图表库（Dashboard）| v3.0.0 | S19 | ✅ |
+| SEC-01 | 🆕 新增 | 🔴 P0 | PII 字段级加密（AES-256-GCM）| v3.0.0 | S20 | ✅ |
+| SEC-02 | 🆕 新增 | 🟡 P1 | IP 黑白名单 | v3.0.0 | S20 | ✅ |
+| SEC-03 | 🆕 新增 | 🟡 P1 | 系统管理页面 | v3.0.0 | S20 | ✅ |
+| SSE-01 | 🆕 新增 | 🟡 P1 | 通知系统 SSE + Redis Pub/Sub | v3.0.0 | S20 | ✅ |
+| SENTRY-01 | 🆕 新增 | 🟢 P2 | Sentry 错误监控集成 | v3.0.0 | S20 | ✅ |
+| DOC-01 | 🆕 新增 | 🟢 P2 | 项目文档同步更新 | v3.0.0 | S20 | ✅ |
 
 ---
 
@@ -752,8 +771,9 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | M3 v2.1.0 视觉 | 2026-03-15 | SVG图标 + 资源中心 + 页脚 + Hero | ✅ |
 | M4 v2.2.0 媒体 | 2026-03-15 | Logo图形化 + 安全认证 + 视频弹窗 | ✅ |
 | M5 v2.3.0 体验 | 2026-03-15 | 多语言（EN/繁中）+ 暗色模式 + 全局搜索 | ✅ |
-| M6 v2.4.0 转化 | 2026-05-15 | ROI计算器 + 智能推荐 + 表单增强 + Cookie | 📋 |
-| M7 v2.5.0 分发 | 2026-06-10 | SEO/SSG + 埋点 + 性能优化 + PWA | 📋 |
+| M6 v2.4.0 转化 | 2026-05-15 | ROI计算器 + 智能推荐 + 表单增强 + Cookie | ✅ |
+| M7 v2.5.0 分发 | 2026-06-10 | SEO/SSG + 埋点 + 性能优化 + PWA | ✅ |
+| M8 v3.0.0 安全架构 | 2026-05-27 | CMS动态化 + Workspace隔离 + PII加密 + JWT黑名单 + CI/CD | ✅ |
 
 ---
 
@@ -781,16 +801,16 @@ ROI 计算器需要与销售团队对齐计算参数（行业基准数据、Tale
 
 | 风险 | 概率 | 影响 | 缓解措施 |
 |------|------|------|---------|
-| i18n 接入遗漏文本（硬编码中文残留）| 中 | 高 | T11-02 文本提取阶段使用正则全量扫描 `.jsx` 文件中的中文字符 |
+| i18n 接入遗漏文本（硬编码中文残留）| 中 | 高 | T11-02 文本提取阶段使用正则全量扫描 `.vue` 文件中的中文字符 |
 | 暗色模式颜色对比度不达标（WCAG AA）| 高 | 中 | 使用 `contrast-ratio` 工具逐一验证 Token，至少 4.5:1 |
 | 搜索在低配设备上卡顿 | 低 | 低 | 防抖 150ms；索引 ≤100 条时无需 Web Worker |
-| Vite SSG 与 React Context 不兼容 | 中 | 高 | 提前验证 POC；降级方案：只预渲染 Landing Shell，Content 客户端水合 |
+| Vite SSG 与 Vue provide/inject 不兼容 | 中 | 高 | 提前验证 POC；降级方案：只预渲染 Landing Shell，Content 客户端水合 |
 | 字体子集化导致特殊字符缺失 | 中 | 低 | 保留 Unicode 7500 以上区间；特殊字符 fallback 到系统字体 |
 | A/B 测试数据污染（用户清除 localStorage）| 中 | 低 | 低风险，营销门户不需要高精度 A/B |
 
 ---
 
-*产品经理 Agent 产出 | v2.3.0 ~ v2.5.0 全量规划 | 2026-03-15*
+*产品经理 Agent 产出 | v2.3.0 ~ v3.0.0 全量规划 | 2026-05-28*
 ---
 
 ## 七、v2.3.1 Hotfix — Bug 追踪看板（Sprint 13）
@@ -807,7 +827,7 @@ ROI 计算器需要与销售团队对齐计算参数（行业基准数据、Tale
 | BUG-106 ✅ | 🐛 | 🔴 P0 | 产品矩阵 Tab 内容空白 | 裸 .reveal 无全局观察者 | S13 | ✅ |
 | BUG-107 ✅ | 🐛 | 🔴 P0 | AI Family 区域空白 | 同上 + AiCard linkText 默认值错误 | S13 | ✅ |
 | BUG-108 ✅ | 🐛 | 🟡 P1 | 客户口碑需轮播+hover 悬停 | reveal 影响 + 轮播验证 | S13 | ✅ |
-| BUG-109 ✅ | 🐛 | 🔴 P0 | Logo 筛选错位；WhyUs Tab 内容空 | hidden 占位 + 裸 reveal | S13 | ⏳ |
-| BUG-110 ✅ | 🐛 | 🔴 P0 | 资源中心区域空白 | 裸 .reveal 无全局观察者 | S13 | ⏳ |
-| BUG-111 ✅ | 🐛 | 🟡 P1 | 在线咨询无功能 | FloatingBar 无 onClick | S13 | ⏳ |
+| BUG-109 ✅ | 🐛 | 🔴 P0 | Logo 筛选错位；WhyUs Tab 内容空 | hidden 占位 + 裸 reveal | S13 | ✅ |
+| BUG-110 ✅ | 🐛 | 🔴 P0 | 资源中心区域空白 | 裸 .reveal 无全局观察者 | S13 | ✅ |
+| BUG-111 ✅ | 🐛 | 🟡 P1 | 在线咨询无功能 | FloatingBar 无 onClick | S13 | ✅ |
 

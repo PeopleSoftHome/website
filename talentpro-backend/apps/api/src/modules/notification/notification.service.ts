@@ -1,19 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationType } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { Observable, Subject } from 'rxjs';
-
-interface NotificationEvent {
-  data: unknown;
-}
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class NotificationService {
-  private userStreams = new Map<string, Subject<NotificationEvent>>();
-
   constructor(private prisma: PrismaService) {}
 
   async findByUser(userId: string, page = 1, pageSize = 20) {
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const [data, total, unreadCount] = await Promise.all([
       this.prisma.notification.findMany({
         where: { userId },
@@ -54,28 +49,13 @@ export class NotificationService {
     const notif = await this.prisma.notification.create({
       data: {
         userId: data.userId,
-        type: data.type,
+        type: data.type as NotificationType,
         title: data.title,
         content: data.content,
         workspaceId: data.workspaceId,
         data: (data.data || {}) as any,
       },
     });
-    this.pushToUser(data.userId, notif);
     return notif;
-  }
-
-  getStream(userId: string): Observable<NotificationEvent> {
-    if (!this.userStreams.has(userId)) {
-      this.userStreams.set(userId, new Subject<NotificationEvent>());
-    }
-    return this.userStreams.get(userId)!.asObservable();
-  }
-
-  private pushToUser(userId: string, data: unknown) {
-    const stream = this.userStreams.get(userId);
-    if (stream) {
-      stream.next({ data });
-    }
   }
 }

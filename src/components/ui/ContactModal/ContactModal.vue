@@ -1,7 +1,7 @@
 <template>
   <BaseModal
     :is-open="isOpen"
-    :aria-label="t('contact.ariaLabel')"
+    :aria-label="t('contactModal.ariaLabel')"
     :overlay-class-name="s.overlay"
     @close="emit('close')"
   >
@@ -14,23 +14,23 @@
           <Icon name="message-circle" :size="28" color="var(--primary)" />
         </div>
         <div>
-          <div :class="s.title">{{ t('contact.title') }}</div>
-          <div :class="s.subtitle">{{ t('contact.subtitle') }}</div>
+          <div :class="s.title">{{ t('contactModal.title') }}</div>
+          <div :class="s.subtitle">{{ t('contactModal.subtitle') }}</div>
         </div>
       </div>
       <div :class="s.divider" />
       <div :class="s.contactItem">
         <span :class="s.contactIcon"><Icon name="phone" :size="20" /></span>
         <div>
-          <div :class="s.contactLabel">{{ t('contact.phoneLabel') }}</div>
+          <div :class="s.contactLabel">{{ t('contactModal.phoneLabel') }}</div>
           <a :class="s.contactValue" href="tel:4008888888">400-888-8888</a>
         </div>
       </div>
       <div :class="s.contactItem">
         <span :class="s.contactIcon"><Icon name="clock" :size="20" /></span>
         <div>
-          <div :class="s.contactLabel">{{ t('contact.timeLabel') }}</div>
-          <div :class="s.contactValue">{{ t('contact.timeValue') }}</div>
+          <div :class="s.contactLabel">{{ t('contactModal.timeLabel') }}</div>
+          <div :class="s.contactValue">{{ t('contactModal.timeValue') }}</div>
         </div>
       </div>
       <div :class="s.qrWrap">
@@ -46,7 +46,7 @@
             <circle cx="52" cy="52" r="10" fill="var(--primary-light)" stroke="var(--primary)" stroke-width="1"/>
             <text x="52" y="56" text-anchor="middle" font-size="10" font-weight="700" fill="var(--primary)">微</text>
           </svg>
-          <div :class="s.qrLabel">{{ t('contact.qrWechat') }}</div>
+          <div :class="s.qrLabel">{{ t('contactModal.qrWechat') }}</div>
         </div>
         <div :class="s.qrBox">
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
@@ -60,10 +60,10 @@
             <circle cx="52" cy="52" r="10" fill="#F3E8FF" stroke="var(--ai-purple)" stroke-width="1"/>
             <text x="52" y="56" text-anchor="middle" font-size="10" font-weight="700" fill="var(--ai-purple)">公</text>
           </svg>
-          <div :class="s.qrLabel">{{ t('contact.qrOfficial') }}</div>
+          <div :class="s.qrLabel">{{ t('contactModal.qrOfficial') }}</div>
         </div>
       </div>
-      <button :class="s.cta" @click="emit('close')">{{ t('contact.cta') }}</button>
+      <button :class="s.cta" @click="emit('close')">{{ t('contactModal.cta') }}</button>
     </div>
   </BaseModal>
 </template>

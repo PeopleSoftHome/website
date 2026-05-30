@@ -1,55 +1,62 @@
-import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, Req, Logger } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { TrackPageViewDto } from './dto/track-page-view.dto';
+import { TrackEventDto } from './dto/track-event.dto';
+import { TrackEventsBatchDto } from './dto/track-events-batch.dto';
+import { TrackWebVitalDto } from './dto/track-web-vital.dto';
+import { ReportClientErrorDto } from './dto/report-client-error.dto';
+import { LogUserActivityDto } from './dto/log-user-activity.dto';
 
 @ApiTags('数据分析')
 @Controller('analytics')
 export class AnalyticsController {
-  constructor(private analyticsService: AnalyticsService) {}
+  private readonly logger: Logger;
+
+  constructor(private analyticsService: AnalyticsService) {
+    this.logger = new Logger(AnalyticsController.name);
+  }
 
   @Post('page-views')
   @Public()
   @ApiOperation({ summary: '记录页面访问' })
-  trackPageView(@Body() dto: {
-    path: string;
-    referrer?: string;
-    userAgent?: string;
-    ipAddress?: string;
-    userId?: string;
-    sessionId: string;
-  }) {
-    return this.analyticsService.trackPageView(dto);
+  trackPageView(
+    @Body() dto: TrackPageViewDto,
+    @Req() req: Request,
+  ) {
+    return this.analyticsService.trackPageView({
+      ...dto,
+      ipAddress: (req as any).ip || req.headers['x-forwarded-for'] || req.socket?.remoteAddress,
+      userAgent: req.headers['user-agent'],
+    });
   }
 
   @Post('events')
   @Public()
-  @ApiOperation({ summary: '记录事件' })
-  trackEvent(@Body() dto: {
-    event: string;
-    properties?: Record<string, any>;
-    userId?: string;
-    sessionId: string;
-  }) {
-    return this.analyticsService.trackEvent(dto);
+  @ApiOperation({ summary: '记录事件（支持批量）' })
+  trackEvent(@Body() dto: TrackEventsBatchDto) {
+    return this.analyticsService.trackEvents(dto.events);
   }
 
   @Post('client-errors')
   @Public()
   @ApiOperation({ summary: '接收前端错误上报' })
-  reportClientError(@Body() dto: {
-    type: string;
-    message: string;
-    stack?: string;
-    url?: string;
-    ua?: string;
-    time?: string;
-  }) {
+  reportClientError(@Body() dto: ReportClientErrorDto) {
     // 仅记录日志，不入库存储敏感信息
-    console.error('[Client Error]', dto.type, dto.message, dto.url);
+    this.logger.error(`[Client Error] ${dto.type}: ${dto.message} (${dto.url})`);
     return { received: true };
+  }
+
+  @Post('web-vitals')
+  @Public()
+  @ApiOperation({ summary: '接收 Web Vitals 性能指标' })
+  trackWebVital(@Body() dto: TrackWebVitalDto) {
+    return this.analyticsService.trackWebVital(dto);
   }
 
   @Post('activities')
@@ -57,10 +64,7 @@ export class AnalyticsController {
   @ApiOperation({ summary: '记录用户行为' })
   logUserActivity(
     @CurrentUser('id') userId: string,
-    @Body() dto: {
-      action: string;
-      metadata?: Record<string, any>;
-    },
+    @Body() dto: LogUserActivityDto,
   ) {
     return this.analyticsService.logUserActivity({ userId, ...dto });
   }
@@ -72,7 +76,7 @@ export class AnalyticsController {
   @ApiOperation({ summary: '仪表盘统计' })
   @ApiQuery({ name: 'days', required: false })
   getDashboardStats(@Query('days') days?: string) {
-    return this.analyticsService.getDashboardStats(days ? parseInt(days, 10) : 30);
+    return this.analyticsService.getDashboardStats(days ? Number(days) || 30 : 30);
   }
 
   @Get('funnel')

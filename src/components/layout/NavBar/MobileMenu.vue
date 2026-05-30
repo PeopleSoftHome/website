@@ -3,7 +3,7 @@
     <div :class="s.panel" @click.stop>
       <div :class="s.panelHead">
         <span :class="s.panelTitle">Menu</span>
-        <button :class="s.panelClose" @click="emit('close')" aria-label="Close menu">
+        <button :class="s.panelClose" @click="emit('close')" :aria-label="t('nav.menuClose')">
           <Icon name="close" :size="20" />
         </button>
       </div>

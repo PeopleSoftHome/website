@@ -16,8 +16,8 @@
             </div>
           </div>
           <div :class="s.socialRow">
-            <a href="#" :class="s.socialIcon" aria-label="知乎"><ZhihuIcon /></a>
-            <a href="#" :class="s.socialIcon" aria-label="微博"><WeiboIcon /></a>
+            <a href="#" :class="s.socialIcon" :aria-label="t('footer.zhihuAria')"><ZhihuIcon /></a>
+            <a href="#" :class="s.socialIcon" :aria-label="t('footer.weiboAria')"><WeiboIcon /></a>
           </div>
           <div :class="s.hotSection">
             <div :class="s.hotTitle">{{ t('footer.hotTitle') }}</div>

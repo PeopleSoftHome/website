@@ -13,7 +13,7 @@
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--white-alpha-6) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -58,7 +58,7 @@
 
 .btnWhite:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px var(--black-alpha-20);
 }
 
 /* 白色描边次按钮 */

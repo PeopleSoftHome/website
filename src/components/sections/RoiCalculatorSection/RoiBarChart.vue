@@ -39,7 +39,7 @@ const beforePct = computed(() => (props.before / max.value) * 100);
 const afterPct  = computed(() => (props.after  / max.value) * 100);
 
 function formatNum(v) {
-  if (v >= 10000) return (v / 10000).toFixed(1) + '万';
+  if (v >= 10000) return (v / 10000).toFixed(1) + t('units.tenThousand');
   return v.toLocaleString();
 }
 </script>

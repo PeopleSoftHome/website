@@ -1,4 +1,5 @@
 import { apiClient } from './client.js';
+import { API_BASE_URL } from './baseUrl.js';
 
 /**
  * 基于 fetch + ReadableStream 的 EventSource 兼容封装
@@ -81,8 +82,7 @@ export const notificationApi = {
    * 优先使用 FetchEventSource（header 传 token），降级到标准 EventSource（query param）
    */
   createEventSource(token) {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
-    const url = `${baseUrl}/notifications/stream`;
+    const url = `${API_BASE_URL}/notifications/stream`;
 
     if (typeof ReadableStream !== 'undefined' && typeof AbortController !== 'undefined') {
       return new FetchEventSource(url, token);

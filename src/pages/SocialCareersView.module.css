@@ -1,0 +1,31 @@
+.page { padding: 80px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.hero { text-align: center; margin-bottom: 48px; }
+.title { font-size: 36px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; line-height: 1.2; }
+.subtitle { font-size: 18px; color: var(--gray-500); max-width: 640px; margin: 0 auto; }
+.highlights { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 64px; }
+.highlightCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 32px; text-align: center; transition: transform 0.25s, box-shadow 0.25s; }
+.highlightCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.highlightIcon { font-size: 36px; margin-bottom: 12px; }
+.highlightTitle { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.highlightDesc { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+.jobs { margin-bottom: 40px; }
+.jobsTitle { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.loading { text-align: center; padding: 40px 0; color: var(--gray-500); }
+.error { text-align: center; padding: 40px 0; color: var(--accent); }
+.list { display: flex; flex-direction: column; gap: 12px; }
+.job { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px 24px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+.job:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.jobHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.jobTitle { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.jobType { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 3px 10px; border-radius: 999px; }
+.jobMeta { display: flex; gap: 14px; font-size: 13px; color: var(--gray-500); flex-wrap: wrap; }
+
+@media (max-width: 767px) {
+  .title { font-size: 28px; }
+  .highlights { grid-template-columns: 1fr; }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .jobsTitle { color: var(--gray-50); }
+[data-theme="dark"] .highlightTitle { color: var(--gray-50); }
+[data-theme="dark"] .jobTitle { color: var(--gray-50); }

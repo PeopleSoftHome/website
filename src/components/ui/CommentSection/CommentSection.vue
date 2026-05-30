@@ -58,8 +58,8 @@ const fetchComments = async () => {
     const res = await commentApi.getComments(props.entityType, props.entityId);
     const data = res.data || res;
     comments.value = data.data || data || [];
-  } catch (e) {
-    console.error(e);
+  } catch {
+    // ignore
   }
   loading.value = false;
 };

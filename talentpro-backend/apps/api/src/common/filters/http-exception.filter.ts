@@ -42,8 +42,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     // 记录 500 级错误日志（含请求路径和堆栈）
     if (status >= 500) {
+      const safeMessage = Array.isArray(message)
+        ? message.join(', ')
+        : String(message);
+      // 脱敏：移除可能包含的敏感信息
+      const sanitized = safeMessage
+        .replace(/password[=:]\s*\S+/gi, 'password=[REDACTED]')
+        .replace(/token[=:]\s*\S+/gi, 'token=[REDACTED]')
+        .replace(/secret[=:]\s*\S+/gi, 'secret=[REDACTED]');
       this.logger.error(
-        `[${request.method}] ${request.url} => ${status} | ${Array.isArray(message) ? message.join(', ') : message}`,
+        `[${request.method}] ${request.url} => ${status} | ${sanitized}`,
         exception instanceof Error ? exception.stack : undefined,
       );
     }

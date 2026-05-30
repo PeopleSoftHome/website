@@ -56,11 +56,6 @@ const { t } = inject('i18n', { t: (k) => k });
 
 const replying = ref(false);
 
-const formatTime = (d) => {
-  if (!d) return '';
-  return new Date(d).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-};
-
 const renderMentions = (text) => {
   if (!text) return '';
   return text

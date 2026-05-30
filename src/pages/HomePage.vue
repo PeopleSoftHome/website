@@ -1,72 +1,87 @@
 <template>
-  <NavBar />
   <main id="main-content">
-    <HeroSection />
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="260" /></template>
-    <BrandScrollSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="360" /></template>
-    <StatsSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="720" /></template>
-    <ProductMatrixSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="680" /></template>
-    <AiFamilySection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="640" /></template>
-    <IndustrySolutionSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="520" /></template>
-    <TestimonialSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="580" /></template>
-    <LogoWallSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="760" /></template>
-    <WhyUsSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="620" /></template>
-    <ResourceSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="720" /></template>
-    <RoiCalculatorSection />
-  </Suspense>
-  <Suspense>
-    <template #fallback><SectionSkeleton :height="440" /></template>
-    <CtaBannerSection />
-  </Suspense>
+    <template v-for="section in sections" :key="section.key">
+      <Suspense>
+        <template #fallback>
+          <SectionSkeleton :height="sectionSkeletonHeight(section.key)" />
+        </template>
+        <component
+          :is="section.component"
+          v-if="section.component"
+          v-bind="section.config"
+        />
+      </Suspense>
+    </template>
   </main>
-  <Footer />
 </template>
 
 <script setup>
-import { defineAsyncComponent } from 'vue';
-import HeroSection from '@/components/sections/HeroSection/HeroSection.vue';
-import NavBar from '@/components/layout/NavBar/NavBar.vue';
-import Footer from '@/components/layout/Footer/Footer.vue';
+import { shallowRef, onMounted, onUnmounted, inject } from 'vue';
+import { cmsApi } from '@/api/cms.js';
+import { sectionRegistry } from '@/plugins/sectionRegistry.js';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 
-const BrandScrollSection      = defineAsyncComponent(() => import('@/components/sections/BrandScrollSection/BrandScrollSection.vue'));
-const StatsSection            = defineAsyncComponent(() => import('@/components/sections/StatsSection/StatsSection.vue'));
-const ProductMatrixSection    = defineAsyncComponent(() => import('@/components/sections/ProductMatrixSection/ProductMatrixSection.vue'));
-const AiFamilySection         = defineAsyncComponent(() => import('@/components/sections/AiFamilySection/AiFamilySection.vue'));
-const IndustrySolutionSection = defineAsyncComponent(() => import('@/components/sections/IndustrySolutionSection/IndustrySolutionSection.vue'));
-const TestimonialSection      = defineAsyncComponent(() => import('@/components/sections/TestimonialSection/TestimonialSection.vue'));
-const LogoWallSection         = defineAsyncComponent(() => import('@/components/sections/LogoWallSection/LogoWallSection.vue'));
-const WhyUsSection            = defineAsyncComponent(() => import('@/components/sections/WhyUsSection/WhyUsSection.vue'));
-const ResourceSection         = defineAsyncComponent(() => import('@/components/sections/ResourceSection/ResourceSection.vue'));
-const RoiCalculatorSection    = defineAsyncComponent(() => import('@/components/sections/RoiCalculatorSection/RoiCalculatorSection.vue'));
-const CtaBannerSection        = defineAsyncComponent(() => import('@/components/sections/CtaBannerSection/CtaBannerSection.vue'));
-</script>
+const sections = shallowRef([]);
 
+// Section 骨架屏默认高度映射
+const SKELETON_HEIGHTS = {
+  hero: 600,
+  brands: 260,
+  stats: 360,
+  products: 720,
+  'ai-family': 680,
+  industries: 640,
+  testimonials: 520,
+  logos: 580,
+  'why-us': 760,
+  resources: 620,
+  'roi-calculator': 720,
+  'cta-banner': 440,
+};
+
+const sectionSkeletonHeight = (key) => {
+  return SKELETON_HEIGHTS[key] || 400;
+};
+
+const { t } = inject('i18n', { t: (k) => k });
+
+const loadHomePage = async () => {
+  try {
+    const page = await cmsApi.getPage('home');
+    sections.value = sectionRegistry.resolve(page);
+  } catch (e) {
+    // CMS 无配置或 API 失败时，fallback 到默认 Section 列表
+    if (import.meta.env.DEV) {
+      console.warn('[HomePage] CMS page config load failed, using default sections:', e.message);
+    }
+    sections.value = sectionRegistry.resolve(null);
+  }
+};
+
+onMounted(() => {
+  loadHomePage();
+  injectJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: t('hero.jsonLdName') || 'TalentPro — 用 AI 重新定义人才管理',
+    description: t('hero.jsonLdDesc') || t('hero.subtitle'),
+    url: 'https://talentpro.cn/',
+    publisher: {
+      '@type': 'Organization',
+      name: 'TalentPro',
+      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+      sameAs: [
+        'https://www.linkedin.com/company/talentpro',
+        'https://twitter.com/talentpro',
+      ],
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: 'https://talentpro.cn/search?q={search_term_string}' },
+      'query-input': 'required name=search_term_string',
+    },
+  });
+});
+onUnmounted(removeJsonLd);
+</script>

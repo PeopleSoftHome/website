@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiConsumes } from '@nestjs/swagger';
 import { MediaService } from './media.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { CreateMediaDto } from './dto/create-media.dto';
+import { UpdateMediaDto } from './dto/update-media.dto';
 
 @ApiTags('媒体库')
 @Controller('medias')
@@ -18,13 +22,12 @@ export class MediaController {
   @ApiOperation({ summary: '媒体文件列表' })
   @ApiQuery({ name: 'mimeType', required: false, description: 'image/video/document' })
   findAll(
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
+    @Query() pagination: PaginationDto,
     @Query('mimeType') mimeType?: string,
   ) {
     return this.mediaService.findAll(
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
       mimeType,
     );
   }
@@ -41,8 +44,28 @@ export class MediaController {
   @Get(':id')
   @Public()
   @ApiOperation({ summary: '媒体详情' })
-  findOne(@Param('id') id: string) {
-    return this.mediaService.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user?: any) {
+    return this.mediaService.findOne(id, user?.workspaceId);
+  }
+
+  @Post('upload')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '上传文件' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => {
+      const allowed = /image\/(jpeg|png|gif|webp)|video\/mp4|application\/pdf/.test(file.mimetype);
+      cb(allowed ? null : new Error('不支持的文件类型'), allowed);
+    },
+  }))
+  upload(
+    @CurrentUser('id') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.mediaService.upload(file, userId);
   }
 
   @Post()
@@ -52,16 +75,7 @@ export class MediaController {
   @ApiOperation({ summary: '创建媒体记录（上传后调用）' })
   create(
     @CurrentUser('id') userId: string,
-    @Body() dto: {
-      filename: string;
-      originalName: string;
-      url: string;
-      mimeType: string;
-      size: number;
-      width?: number;
-      height?: number;
-      alt?: string;
-    },
+    @Body() dto: CreateMediaDto,
   ) {
     return this.mediaService.create({ ...dto, createdBy: userId });
   }
@@ -71,8 +85,8 @@ export class MediaController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新媒体信息' })
-  update(@Param('id') id: string, @Body() dto: { alt?: string; originalName?: string }) {
-    return this.mediaService.update(id, dto);
+  update(@Param('id') id: string, @CurrentUser() user: any, @Body() dto: UpdateMediaDto) {
+    return this.mediaService.update(id, dto, user.workspaceId);
   }
 
   @Delete(':id')
@@ -80,7 +94,7 @@ export class MediaController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除媒体' })
-  delete(@Param('id') id: string) {
-    return this.mediaService.delete(id);
+  delete(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.mediaService.delete(id, user.workspaceId);
   }
 }

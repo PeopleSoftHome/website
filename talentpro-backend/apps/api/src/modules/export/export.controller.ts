@@ -26,11 +26,10 @@ export class ExportController {
     @Query('format') format = 'xlsx',
   ) {
     const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
-    const buffer = await this.exportService.exportLeads({ status, workspaceId });
     const ext = format === 'csv' ? 'csv' : 'xlsx';
-    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=leads-${Date.now()}.${ext}`);
-    res.send(buffer);
+    await this.exportService.exportLeads({ status, workspaceId }, res);
   }
 
   @Get('users')
@@ -41,11 +40,10 @@ export class ExportController {
     @Query('format') format = 'xlsx',
   ) {
     const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
-    const buffer = await this.exportService.exportUsers({ workspaceId });
     const ext = format === 'csv' ? 'csv' : 'xlsx';
-    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=users-${Date.now()}.${ext}`);
-    res.send(buffer);
+    await this.exportService.exportUsers({ workspaceId }, res);
   }
 
   @Get('analytics')
@@ -53,11 +51,12 @@ export class ExportController {
   @ApiQuery({ name: 'days', required: false })
   async exportAnalytics(
     @Res() res: Response,
+    @CurrentUser() user: any,
     @Query('days') days?: string,
   ) {
-    const buffer = await this.exportService.exportAnalytics(days ? parseInt(days, 10) : 30);
-    res.setHeader('Content-Type', 'application/octet-stream');
+    const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=analytics-${Date.now()}.xlsx`);
-    res.send(buffer);
+    await this.exportService.exportAnalytics(days ? Number(days) || 30 : 30, workspaceId, res);
   }
 }

@@ -15,9 +15,17 @@ export class SearchIndexProcessor extends WorkerHost {
     const { entityType, entityId, action, payload } = job.data;
 
     switch (action) {
-      case 'create':
-        await this.indexService.indexDocument(entityType, payload);
+      case 'create': {
+        if (payload) {
+          await this.indexService.indexDocument(entityType, payload);
+        } else {
+          const doc = await this.indexService.fetchDocumentForIndex(entityType, entityId);
+          if (doc) {
+            await this.indexService.indexDocument(entityType, doc);
+          }
+        }
         break;
+      }
       case 'update':
         await this.indexService.updateDocument(entityType, entityId, payload);
         break;

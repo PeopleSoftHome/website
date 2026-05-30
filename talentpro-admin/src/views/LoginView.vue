@@ -30,7 +30,7 @@ const auth = useAuthStore();
 const formRef = ref(null);
 const loading = ref(false);
 
-const form = reactive({ email: 'admin@talentpro.com', password: 'admin123456' });
+const form = reactive({ email: '', password: '' });
 const rules = {
   email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],

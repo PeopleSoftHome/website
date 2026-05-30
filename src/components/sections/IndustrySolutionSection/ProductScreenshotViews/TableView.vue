@@ -5,7 +5,7 @@
         <tr><th>员工</th><th>班次</th><th>打卡</th><th>状态</th></tr>
       </thead>
       <tbody>
-        <tr v-for="row in data.rows" :key="row.name">
+        <tr v-for="row in (data.rows || [])" :key="row.name">
           <td>{{ row.name }}</td>
           <td>{{ row.shift }}</td>
           <td>{{ row.time }}</td>

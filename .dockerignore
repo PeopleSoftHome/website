@@ -1,0 +1,47 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+dist
+build
+coverage
+.nyc_output
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Tests
+test
+*.spec.js
+*.test.js
+
+# Docker
+docker/
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Playwright
+test-results/
+playwright-report/

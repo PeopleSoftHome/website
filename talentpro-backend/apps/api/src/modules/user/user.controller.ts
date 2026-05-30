@@ -5,7 +5,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
-import { Public } from '@/common/decorators/public.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
 
 @ApiTags('用户管理')
 @Controller('users')
@@ -15,12 +16,11 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('search')
-  @Public()
-  @ApiOperation({ summary: '搜索用户（公开，用于 @提及）' })
+  @ApiOperation({ summary: '搜索用户（用于 @提及）' })
   @ApiQuery({ name: 'q', required: true, type: String })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   search(@Query('q') q: string, @Query('limit') limit?: string) {
-    return this.userService.search(q, limit ? parseInt(limit, 10) : 10);
+    return this.userService.search(q, limit ? Number(limit) || 10 : 10);
   }
 
   @Get()
@@ -28,10 +28,10 @@ export class UserController {
   @ApiOperation({ summary: '用户列表' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'pageSize', required: false, type: Number })
-  findAll(@Query('page') page?: string, @Query('pageSize') pageSize?: string) {
+  findAll(@Query() pagination: PaginationDto) {
     return this.userService.findAll(
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
     );
   }
 
@@ -44,6 +44,7 @@ export class UserController {
 
   @Post()
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('user:create')
   @ApiOperation({ summary: '创建用户' })
   create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
@@ -51,6 +52,7 @@ export class UserController {
 
   @Patch(':id')
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('user:update')
   @ApiOperation({ summary: '更新用户' })
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.userService.update(id, dto);
@@ -58,6 +60,7 @@ export class UserController {
 
   @Delete(':id')
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('user:delete')
   @ApiOperation({ summary: '删除用户' })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);

@@ -6,7 +6,7 @@
     </div>
     <div :class="s.grid9">
       <div
-        v-for="(cell, i) in data.cells"
+        v-for="(cell, i) in (data.cells || [])"
         :key="i"
         :class="s.grid9Cell"
         :style="{ background: cell.bg }"

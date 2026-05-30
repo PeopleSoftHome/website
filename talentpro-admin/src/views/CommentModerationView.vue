@@ -108,6 +108,7 @@
 </template>
 
 <script setup>
+import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted, watch } from 'vue';
 import client from '@/api/client.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -120,17 +121,17 @@ const pageSize = ref(20);
 const loading = ref(false);
 const selectedIds = ref([]);
 
-const formatDate = (d) => d ? new Date(d).toLocaleString('zh-CN') : '-';
 
 const fetchComments = async () => {
   loading.value = true;
   try {
-    const res = await client.get(`/blogs/admin/comments?status=${activeTab.value}&page=${page.value}&pageSize=${pageSize.value}`);
-    comments.value = res.data.data ?? [];
-    total.value = res.data.meta?.total ?? 0;
+    const res = await client.get(
+      `/blogs/admin/comments?status=${activeTab.value}&page=${page.value}&pageSize=${pageSize.value}`,
+    );
+    comments.value = res.data || [];
+    total.value = res.meta?.total || 0;
   } catch (e) {
-    console.error(e);
-    ElMessage.error('加载评论列表失败');
+    ElMessage.error('加载失败');
   }
   loading.value = false;
 };

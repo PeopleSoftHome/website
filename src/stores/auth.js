@@ -52,7 +52,13 @@ export function createAuth() {
     return u;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      const rt = localStorage.getItem('tp_refresh_token');
+      await apiClient.post('/auth/logout', { refreshToken: rt });
+    } catch {
+      // 后端logout失败仍继续清理本地状态
+    }
     setToken('');
     setUser(null);
     localStorage.removeItem('tp_refresh_token');
@@ -60,7 +66,7 @@ export function createAuth() {
 
   const refreshToken = async () => {
     const rt = localStorage.getItem('tp_refresh_token');
-    if (!rt) throw new Error('无刷新令牌');
+    if (!rt) throw new Error('No refresh token');
     const res = await apiClient.post('/auth/refresh', { refreshToken: rt });
     const data = res.data || res;
     if (data.accessToken) {

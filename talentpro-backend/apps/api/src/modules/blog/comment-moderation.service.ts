@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CommentStatus } from '@prisma/client';
 import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class CommentModerationService {
@@ -30,7 +31,7 @@ export class CommentModerationService {
   async findCommentsForAdmin(filters: { status?: CommentStatus; entityType?: string; page?: number; pageSize?: number }) {
     const page = filters.page || 1;
     const pageSize = filters.pageSize || 20;
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const where: any = {};
     if (filters.status) where.status = filters.status;
     if (filters.entityType) where.entityType = filters.entityType;
@@ -48,7 +49,7 @@ export class CommentModerationService {
       }),
       this.prisma.comment.count({ where }),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
   async batchModerateComments(ids: string[], status: CommentStatus) {

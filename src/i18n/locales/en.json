@@ -1,176 +1,245 @@
 {
   "pageTitle": "TalentPro — Next-Gen Integrated Talent Management Platform",
   "pageDesc": "TalentPro provides integrated HR SaaS, talent assessment, and AI Agent solutions for mid-to-large enterprises.",
-
+  "skipLink": "Skip to main content",
   "nav": {
-    "aiFamily":       "AI Family",
-    "products":       "Products",
-    "solutions":      "Solutions",
-    "cases":          "Case Studies",
-    "resources":      "Resources",
-    "blog":           "Blog",
-    "forum":          "Community",
-    "login":          "Login",
-    "demo":           "Book a Demo",
-    "phone":          "Pre-sales: 400-888-8888",
-    "menuOpen":       "Open menu",
-    "menuClose":      "Close menu",
-    "langLabel":      "Language",
-    "themeLight":     "Switch to light mode",
-    "themeDark":      "Switch to dark mode",
-    "profile":        "Profile",
-    "logout":         "Logout",
+    "aiFamily": "AI Family",
+    "products": "Products",
+    "solutions": "Solutions",
+    "cases": "Case Studies",
+    "resources": "Resources",
+    "blog": "Blog",
+    "forum": "Community",
+    "login": "Login",
+    "demo": "Book a Demo",
+    "phone": "Pre-sales: 400-888-8888",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "langLabel": "Language",
+    "themeLight": "Switch to light mode",
+    "themeDark": "Switch to dark mode",
+    "profile": "Profile",
+    "logout": "Logout",
+    "searchClose": "Close search",
     "aiItems": {
-      "recruit":      "AI Recruiter",
-      "recruitDesc":  "Smarter, faster hiring",
-      "interview":    "AI Interviewer",
-      "interviewDesc":"Beyond skills — assess potential",
-      "learning":     "AI Learning Coach",
+      "recruit": "AI Recruiter",
+      "recruitDesc": "Smarter, faster hiring",
+      "interview": "AI Interviewer",
+      "interviewDesc": "Beyond skills — assess potential",
+      "learning": "AI Learning Coach",
       "learningDesc": "Personalized employee growth",
-      "coach":        "AI Leadership Coach",
-      "coachDesc":    "Personal coach for every manager"
+      "coach": "AI Leadership Coach",
+      "coachDesc": "Personal coach for every manager"
     },
     "productItems": {
-      "recruit":      "Recruitment Management",
-      "recruitDesc":  "End-to-end digital recruiting",
-      "performance":  "Performance Management",
-      "performDesc":  "Align goals, drive results",
-      "org":          "HR & Organization",
-      "orgDesc":      "Enterprise org management",
-      "payroll":      "Payroll Management",
-      "payrollDesc":  "Precise payroll, automated"
+      "recruit": "Recruitment Management",
+      "recruitDesc": "End-to-end digital recruiting",
+      "performance": "Performance Management",
+      "performDesc": "Align goals, drive results",
+      "org": "HR & Organization",
+      "orgDesc": "Enterprise org management",
+      "payroll": "Payroll Management",
+      "payrollDesc": "Precise payroll, automated"
     },
     "solutionItems": {
-      "mfg":          "Manufacturing",
-      "mfgDesc":      "Streamline complex operations",
-      "retail":       "Retail & Chain",
-      "retailDesc":   "Multi-store workforce efficiency",
-      "internet":     "Internet & Tech",
+      "mfg": "Manufacturing",
+      "mfgDesc": "Streamline complex operations",
+      "retail": "Retail & Chain",
+      "retailDesc": "Multi-store workforce efficiency",
+      "internet": "Internet & Tech",
       "internetDesc": "Agile HR for fast-growing teams",
-      "gov":          "State-owned Enterprise",
-      "govDesc":      "Talent-driven enterprise strategy"
+      "gov": "State-owned Enterprise",
+      "govDesc": "Talent-driven enterprise strategy"
     },
     "banners": {
-      "aiTitle":   "2026 AI+HR Best Practice Playbook",
-      "aiDesc":    "How Mengniu, BOE & more are winning with AI HR",
+      "aiTitle": "2026 AI+HR Best Practice Playbook",
+      "aiDesc": "How Mengniu, BOE & more are winning with AI HR",
       "prodTitle": "2026 HR Digitalization Maturity Report",
-      "prodDesc":  "Authoritative research, free download",
-      "solTitle":  "Manufacturing HR Digital Transformation Guide",
-      "solDesc":   "Covering scheduling, attendance & blue-collar hiring"
+      "prodDesc": "Authoritative research, free download",
+      "solTitle": "Manufacturing HR Digital Transformation Guide",
+      "solDesc": "Covering scheduling, attendance & blue-collar hiring"
     },
     "mobile": {
-      "phone":    "Pre-sales",
+      "phone": "Pre-sales",
       "phoneNum": "400-888-8888",
-      "cta":      "Book a Demo "
+      "cta": "Book a Demo "
     }
   },
-
   "hero": {
-    "badge":     " #1 HR SaaS Market Share for 5 Consecutive Years — IDC",
-    "title1":    "Redefine Talent",
-    "titleAI":   " Management ",
-    "title2":    "with",
-    "titleLine2":"AI",
-    "subtitle":  "TalentPro provides enterprise organizations with an integrated HR SaaS platform, talent assessment, and full-scenario AI Agents — empowering companies to digitally manage the entire employee lifecycle and enhance organizational effectiveness.",
-    "cta1":      "Book a Demo ",
-    "cta2":      "▶ Watch Product Tour",
-    "trust1":    "8,000+ Enterprise Clients",
-    "trust2":    "20M+ Active Users",
-    "trust3":    "99.9% SLA Uptime",
-    "trust4":    "20 Years of Expertise",
+    "badge": " #1 HR SaaS Market Share for 5 Consecutive Years — IDC",
+    "title1": "Redefine Talent",
+    "titleAI": " Management ",
+    "title2": "with",
+    "titleLine2": "AI",
+    "subtitle": "TalentPro provides enterprise organizations with an integrated HR SaaS platform, talent assessment, and full-scenario AI Agents — empowering companies to digitally manage the entire employee lifecycle and enhance organizational effectiveness.",
+    "cta1": "Book a Demo ",
+    "cta2": "▶ Watch Product Tour",
+    "trust1": "8,000+ Enterprise Clients",
+    "trust2": "20M+ Active Users",
+    "trust3": "99.9% SLA Uptime",
+    "trust4": "20 Years of Expertise",
     "dashTitle": "Talent Dashboard",
-    "dashDate":  "Mar 2026",
-    "dash1":     "New Hires This Month",
-    "dash2":     "Open Positions",
-    "dash3":     "Performance Rate",
-    "chartTitle":"Hiring Funnel · Q1",
-    "chart1":    "Applied",
-    "chart2":    "Screened",
-    "chart3":    "Interview",
-    "chart4":    "Offer",
-    "chart5":    "Hired",
-    "aiRec":     "AI Insight",
-    "aiRecText": " 12 high-potential candidates identified"
+    "dashDate": "Mar 2026",
+    "dash1": "New Hires This Month",
+    "dash2": "Open Positions",
+    "dash3": "Performance Rate",
+    "chartTitle": "Hiring Funnel · Q1",
+    "chart1": "Applied",
+    "chart2": "Screened",
+    "chart3": "Interview",
+    "chart4": "Offer",
+    "chart5": "Hired",
+    "aiRec": "AI Insight",
+    "aiRecText": " 12 high-potential candidates identified",
+    "jsonLdName": "TalentPro — Redefine Talent Management with AI",
+    "jsonLdDesc": "TalentPro provides enterprise organizations with an integrated HR SaaS platform, talent assessment, and full-scenario AI Agents — empowering companies to digitally manage the entire employee lifecycle and enhance organizational effectiveness."
   },
-
   "marquee": {
     "label": "Trusted by 8,000+ enterprises across all industries"
   },
-
   "stats": {
     "clients": "Enterprise Clients",
-    "users":   "Active Users",
-    "sla":     "SLA Uptime",
-    "years":   "Years of Expertise",
-    "scenes":  "AI-Powered Scenarios",
+    "users": "Active Users",
+    "sla": "SLA Uptime",
+    "years": "Years of Expertise",
+    "scenes": "AI-Powered Scenarios",
     "fortune": "Fortune 500 Clients"
   },
-
   "products": {
-    "sectionTag":   "️ Full Product Suite",
+    "sectionTag": "️ Full Product Suite",
     "sectionTitle": "Integrated HR SaaS — Accelerate Digital Transformation",
-    "sectionSub":   "Full talent lifecycle: Attract · Develop · Engage · Retain",
-    "linkText":     "Learn More",
+    "sectionSub": "Full talent lifecycle: Attract · Develop · Engage · Retain",
+    "linkText": "Learn More",
     "tabs": {
-      "hrSaas":     "Integrated HR SaaS",
-      "aiFamily":   "AI Family",
+      "hrSaas": "Integrated HR SaaS",
+      "aiFamily": "AI Family",
       "assessment": "Talent Assessment",
-      "paas":       "PaaS Platform"
+      "paas": "PaaS Platform"
     },
     "items": {
-      "recruit":     { "name": "Recruitment Management", "desc": "End-to-end digital hiring, covering campus and social recruiting" },
-      "performance": { "name": "Performance Management", "desc": "Align goals and drive results — supports OKR, KPI and more" },
-      "org":         { "name": "HR & Organization",      "desc": "Group-level org management for multi-entity, multi-region operations" },
-      "attendance":  { "name": "Time & Attendance",      "desc": "Smart scheduling, auto attendance — handles complex scenarios" },
-      "payroll":     { "name": "Payroll Management",     "desc": "Accurate payroll, tax compliance, multiple compensation structures" },
-      "learning":    { "name": "Learning Management",    "desc": "AI-powered L&D, personalized learning paths" },
-      "talent":      { "name": "Talent Review & Dev.",   "desc": "Identify high-potentials, digital succession planning" },
-      "analytics":   { "name": "HR Analytics",           "desc": "400+ benchmarks, BI insights, data-driven decisions" },
-      "aiRecruit":   { "name": "AI Recruiter",           "desc": "Smart resume screening, JD generation — hire faster and smarter" },
-      "aiInterview": { "name": "AI Interviewer",         "desc": "Assess capability and potential — 24/7 automated interviews" },
-      "aiCoach":     { "name": "AI Leadership Coach",    "desc": "Personal AI coach for every manager" },
-      "aiCourse":    { "name": "AI Course Builder",      "desc": "Turn knowledge into quality training content with AI" },
-      "assessRecruit":{ "name": "Recruitment Assessment","desc": "Scientifically evaluate candidates to improve hiring accuracy" },
-      "assess360":   { "name": "360° Assessment",       "desc": "Multi-source feedback system for comprehensive talent insights" },
-      "assessExam":  { "name": "Online Exam System",     "desc": "Secure, flexible exams with anti-cheating capabilities" },
-      "assessModel": { "name": "Competency Modeling",    "desc": "Build scientifically grounded job competency frameworks" },
-      "paasLowcode": { "name": "Low-Code Platform",      "desc": "Build custom HR apps without writing code" },
-      "paasApi":     { "name": "Open API",               "desc": "Standard APIs for seamless system integration" },
-      "paasEco":     { "name": "Ecosystem Marketplace",  "desc": "200+ partners connecting industry-wide capabilities" },
-      "paasSec":     { "name": "Security & Compliance",  "desc": "9-layer protection, Level-3 security certification" }
+      "recruit": {
+        "name": "Recruitment Management",
+        "desc": "End-to-end digital hiring, covering campus and social recruiting"
+      },
+      "performance": {
+        "name": "Performance Management",
+        "desc": "Align goals and drive results — supports OKR, KPI and more"
+      },
+      "org": {
+        "name": "HR & Organization",
+        "desc": "Group-level org management for multi-entity, multi-region operations"
+      },
+      "attendance": {
+        "name": "Time & Attendance",
+        "desc": "Smart scheduling, auto attendance — handles complex scenarios"
+      },
+      "payroll": {
+        "name": "Payroll Management",
+        "desc": "Accurate payroll, tax compliance, multiple compensation structures"
+      },
+      "learning": {
+        "name": "Learning Management",
+        "desc": "AI-powered L&D, personalized learning paths"
+      },
+      "talent": {
+        "name": "Talent Review & Dev.",
+        "desc": "Identify high-potentials, digital succession planning"
+      },
+      "analytics": {
+        "name": "HR Analytics",
+        "desc": "400+ benchmarks, BI insights, data-driven decisions"
+      },
+      "aiRecruit": {
+        "name": "AI Recruiter",
+        "desc": "Smart resume screening, JD generation — hire faster and smarter"
+      },
+      "aiInterview": {
+        "name": "AI Interviewer",
+        "desc": "Assess capability and potential — 24/7 automated interviews"
+      },
+      "aiCoach": {
+        "name": "AI Leadership Coach",
+        "desc": "Personal AI coach for every manager"
+      },
+      "aiCourse": {
+        "name": "AI Course Builder",
+        "desc": "Turn knowledge into quality training content with AI"
+      },
+      "assessRecruit": {
+        "name": "Recruitment Assessment",
+        "desc": "Scientifically evaluate candidates to improve hiring accuracy"
+      },
+      "assess360": {
+        "name": "360° Assessment",
+        "desc": "Multi-source feedback system for comprehensive talent insights"
+      },
+      "assessExam": {
+        "name": "Online Exam System",
+        "desc": "Secure, flexible exams with anti-cheating capabilities"
+      },
+      "assessModel": {
+        "name": "Competency Modeling",
+        "desc": "Build scientifically grounded job competency frameworks"
+      },
+      "paasLowcode": {
+        "name": "Low-Code Platform",
+        "desc": "Build custom HR apps without writing code"
+      },
+      "paasApi": {
+        "name": "Open API",
+        "desc": "Standard APIs for seamless system integration"
+      },
+      "paasEco": {
+        "name": "Ecosystem Marketplace",
+        "desc": "200+ partners connecting industry-wide capabilities"
+      },
+      "paasSec": {
+        "name": "Security & Compliance",
+        "desc": "9-layer protection, Level-3 security certification"
+      }
     }
   },
-
   "aiFamily": {
-    "sectionTag":   " AI Family",
+    "sectionTag": " AI Family",
     "sectionTitle": "AI Assistants That Truly Understand Talent",
-    "sectionSub":   "10 AI Agents, 50+ HR scenarios — making every HR professional more effective",
-    "linkText":     "Learn More",
-    "hotBadge":     "HOT",
+    "sectionSub": "10 AI Agents, 50+ HR scenarios — making every HR professional more effective",
+    "linkText": "Learn More",
+    "hotBadge": "HOT",
     "cards": {
-      "aiRecruit":   { "name": "AI Recruiter",        "tagline": "Automate resume screening, JD writing, and interview scheduling" },
-      "aiInterview": { "name": "AI Interviewer",      "tagline": "Assess potential, not just skills — interviews run 24/7" },
-      "aiCoach":     { "name": "AI Leadership Coach", "tagline": "Personal AI executive coach for every manager" },
-      "aiLearning":  { "name": "AI Learning Coach",   "tagline": "Personalized growth companion — instant knowledge on demand" }
+      "aiRecruit": {
+        "name": "AI Recruiter",
+        "tagline": "Automate resume screening, JD writing, and interview scheduling"
+      },
+      "aiInterview": {
+        "name": "AI Interviewer",
+        "tagline": "Assess potential, not just skills — interviews run 24/7"
+      },
+      "aiCoach": {
+        "name": "AI Leadership Coach",
+        "tagline": "Personal AI executive coach for every manager"
+      },
+      "aiLearning": {
+        "name": "AI Learning Coach",
+        "tagline": "Personalized growth companion — instant knowledge on demand"
+      }
     },
     "banner": {
       "label": " 2025 AI Trailblazer Showcase",
       "title": "Mengniu, BOE and more — sharing AI+HR success stories",
-      "sub":   "Covering recruiting, L&D and performance across all scenarios",
-      "cta":   "Get the Playbook "
+      "sub": "Covering recruiting, L&D and performance across all scenarios",
+      "cta": "Get the Playbook "
     }
   },
-
   "industry": {
-    "sectionTag":   " Industry Solutions",
+    "sectionTag": " Industry Solutions",
     "sectionTitle": "Purpose-Built Solutions for Your Industry",
-    "sectionSub":   "Industry-specific configurations to drive business success",
-    "getCta":       "Get the Industry Solution",
+    "sectionSub": "Industry-specific configurations to drive business success",
+    "getCta": "Get the Industry Solution",
     "tabs": {
-      "mfg":     "Manufacturing",
-      "retail":  "Retail & Chain",
-      "internet":"Internet & Tech",
-      "gov":     "State-owned Enterprise",
+      "mfg": "Manufacturing",
+      "retail": "Retail & Chain",
+      "internet": "Internet & Tech",
+      "gov": "State-owned Enterprise",
       "finance": "Finance"
     },
     "badges": {
@@ -180,21 +249,21 @@
     },
     "mfg": {
       "f1title": "Smart Scheduling & Attendance",
-      "f1desc":  "Auto-match shifts on clock-in, handle complex scheduling scenarios, 5,000+ attendance rules processed automatically.",
+      "f1desc": "Auto-match shifts on clock-in, handle complex scheduling scenarios, 5,000+ attendance rules processed automatically.",
       "f2title": "Trial Worker Management",
-      "f2desc":  "Digital trial period management — scan-in onboarding, automated evaluations, and compliant hiring for blue-collar workers.",
+      "f2desc": "Digital trial period management — scan-in onboarding, automated evaluations, and compliant hiring for blue-collar workers.",
       "f3title": "Qualification Compliance Tracking",
-      "f3desc":  "Continuously track job certifications, send renewal reminders, and digitize compliance training agreements.",
+      "f3desc": "Continuously track job certifications, send renewal reminders, and digitize compliance training agreements.",
       "ssTitle": " Manufacturing · Shop Floor Attendance Board",
-      "tip":     " Zhang San's welding certification expires in 30 days — schedule retraining"
+      "tip": " Zhang San's welding certification expires in 30 days — schedule retraining"
     },
     "retail": {
       "f1title": "Store Manager Recruitment Hub",
-      "f1desc":  "Streamline resume review, interviews, and offer management — keep stores running at full capacity.",
+      "f1desc": "Streamline resume review, interviews, and offer management — keep stores running at full capacity.",
       "f2title": "Store-Level Talent Development",
-      "f2desc":  "Track employee learning progress in real time; AI Coach delivers personalized development plans.",
+      "f2desc": "Track employee learning progress in real time; AI Coach delivers personalized development plans.",
       "f3title": "Multi-Store HR Management",
-      "f3desc":  "Centrally manage hundreds of stores — fast onboarding/offboarding, flexible scheduling, on-time payroll.",
+      "f3desc": "Centrally manage hundreds of stores — fast onboarding/offboarding, flexible scheduling, on-time payroll.",
       "ssTitle": " Retail · Store Management Dashboard",
       "m1label": "Candidates to Interview",
       "m2label": "New Hires This Month",
@@ -203,485 +272,872 @@
     },
     "internet": {
       "f1title": "HRBP Workbench",
-      "f1desc":  "A department-level command center for HRBPs — stay agile and responsive to fast-changing business needs.",
+      "f1desc": "A department-level command center for HRBPs — stay agile and responsive to fast-changing business needs.",
       "f2title": "Company-Wide Recruiting Collaboration",
-      "f2desc":  "Empower hiring managers to submit reqs, track progress, and manage approvals — all in one place.",
+      "f2desc": "Empower hiring managers to submit reqs, track progress, and manage approvals — all in one place.",
       "f3title": "Tech Talent Development",
-      "f3desc":  "Structured talent pipelines and personalized learning plans to build high-performance engineering teams.",
+      "f3desc": "Structured talent pipelines and personalized learning plans to build high-performance engineering teams.",
       "ssTitle": " Internet & Tech · HRBP Workbench",
       "taskHeader": "Pending Actions",
-      "t1text":  "GM Zhang's performance score needs review",
-      "t1status":"Pending",
-      "t2text":  "3 probation completions in R&D pending approval",
-      "t2status":"In Review",
-      "t3text":  "P9 background check report ready",
-      "t3status":"To Review",
-      "t4text":  "Q2 OKR alignment meeting needs confirmation",
-      "t4status":"Pending"
+      "t1text": "GM Zhang's performance score needs review",
+      "t1status": "Pending",
+      "t2text": "3 probation completions in R&D pending approval",
+      "t2status": "In Review",
+      "t3text": "P9 background check report ready",
+      "t3status": "To Review",
+      "t4text": "Q2 OKR alignment meeting needs confirmation",
+      "t4status": "Pending"
     },
     "gov": {
       "f1title": "Digital Campus Recruiting",
-      "f1desc":  "Attract diverse talent with digital tools that support hybrid online/offline campus hiring.",
+      "f1desc": "Attract diverse talent with digital tools that support hybrid online/offline campus hiring.",
       "f2title": "Young Executive Pipeline",
-      "f2desc":  "Identify, select, develop, and review emerging leaders through a comprehensive talent pipeline program.",
+      "f2desc": "Identify, select, develop, and review emerging leaders through a comprehensive talent pipeline program.",
       "f3title": "Cadre Appointment & Competition",
-      "f3desc":  "Open competition, market-based selection, and dynamic role-matching to activate organizational vitality.",
+      "f3desc": "Open competition, market-based selection, and dynamic role-matching to activate organizational vitality.",
       "ssTitle": "️ SOE · Cadre Competition Workflow",
-      "s1label": "Post Published",   "s1desc": "Open position announcement",
-      "s2label": "Applications",     "s2desc": "Online eligibility screening",
-      "s3label": "Written Exam",     "s3desc": "Standardized online assessment",
-      "s4label": "Interview",        "s4desc": "Expert panel scoring",
-      "s5label": "Announcement",     "s5desc": "Results published transparently"
+      "s1label": "Post Published",
+      "s1desc": "Open position announcement",
+      "s2label": "Applications",
+      "s2desc": "Online eligibility screening",
+      "s3label": "Written Exam",
+      "s3desc": "Standardized online assessment",
+      "s4label": "Interview",
+      "s4desc": "Expert panel scoring",
+      "s5label": "Announcement",
+      "s5desc": "Results published transparently"
     },
     "finance": {
       "f1title": "Innovative Campus Hiring",
-      "f1desc":  "Define talent standards, systematize the campus hiring process, and leverage assessment tools to improve quality.",
+      "f1desc": "Define talent standards, systematize the campus hiring process, and leverage assessment tools to improve quality.",
       "f2title": "Talent Reserve Program",
-      "f2desc":  "Tiered talent reviews, in-pipeline coaching, and systematic succession management.",
+      "f2desc": "Tiered talent reviews, in-pipeline coaching, and systematic succession management.",
       "f3title": "Sales Force Expansion",
-      "f3desc":  "Segment field teams by tier, match talent to target segments, and build high-productivity sales units.",
+      "f3desc": "Segment field teams by tier, match talent to target segments, and build high-productivity sales units.",
       "ssTitle": " Finance · 9-Box Talent Review",
-      "g9axis":  "Performance "
+      "g9axis": "Performance "
     }
   },
-
   "testimonials": {
-    "sectionTag":   " Client Testimonials",
+    "sectionTag": " Client Testimonials",
     "sectionTitle": "Recognized by 8,000+ partners worldwide",
-    "prevBtn":      "Previous",
-    "nextBtn":      "Next",
-    "dotLabel":     "Testimonial {n}",
+    "prevBtn": "Previous",
+    "nextBtn": "Next",
+    "dotLabel": "Testimonial {n}",
     "items": {
       "wang": {
         "industry": "Internet & Tech",
-        "product":  "AI Interviewer",
-        "text":     "TalentPro's AI Interviewer completely transformed our campus recruiting. Candidates can complete interviews anytime, and our HR efficiency improved by 300%. The AI evaluates across dimensions that perfectly align with our culture, giving us a real edge in competitive hiring seasons.",
-        "name":     "Wang Zhiyuan",
-        "title":    "Head of Recruiting · Leading Internet Company"
+        "product": "AI Interviewer",
+        "text": "TalentPro's AI Interviewer completely transformed our campus recruiting. Candidates can complete interviews anytime, and our HR efficiency improved by 300%. The AI evaluates across dimensions that perfectly align with our culture, giving us a real edge in competitive hiring seasons.",
+        "name": "Wang Zhiyuan",
+        "title": "Head of Recruiting · Leading Internet Company"
       },
       "li": {
         "industry": "Manufacturing",
-        "product":  "Attendance Management",
-        "text":     "With nearly 3,000 workers and highly complex attendance rules, TalentPro automatically handles nearly 200 rule variations. Shift scheduling is now done on mobile, and our monthly payroll processing time dropped from 5 days to half a day. Employee complaints fell by 80%.",
-        "name":     "Li Xiuhua",
-        "title":    "HR Director · Automotive Parts Group"
+        "product": "Attendance Management",
+        "text": "With nearly 3,000 workers and highly complex attendance rules, TalentPro automatically handles nearly 200 rule variations. Shift scheduling is now done on mobile, and our monthly payroll processing time dropped from 5 days to half a day. Employee complaints fell by 80%.",
+        "name": "Li Xiuhua",
+        "title": "HR Director · Automotive Parts Group"
       },
       "chen": {
         "industry": "New Energy",
-        "product":  "AI Leadership Coach",
-        "text":     "As a rapidly growing company, we needed young executives to develop fast. TalentPro's AI Leadership Coach delivers personalized growth plans for every manager. Combined with 360° assessments, leadership development has become measurable and real.",
-        "name":     "Chen Jianguo",
-        "title":    "Group CHRO · New Energy Conglomerate"
+        "product": "AI Leadership Coach",
+        "text": "As a rapidly growing company, we needed young executives to develop fast. TalentPro's AI Leadership Coach delivers personalized growth plans for every manager. Combined with 360° assessments, leadership development has become measurable and real.",
+        "name": "Chen Jianguo",
+        "title": "Group CHRO · New Energy Conglomerate"
       },
       "zhang": {
         "industry": "Retail Chain",
-        "product":  "Recruitment System",
-        "text":     "During peak season expansion, we need to hire large numbers of frontline workers fast. TalentPro's bulk hiring and AI screening increased our recruiting efficiency by 5x — letting the business move at the speed of talent.",
-        "name":     "Zhang Mingyue",
-        "title":    "Talent Acquisition Director · Restaurant Chain Brand"
+        "product": "Recruitment System",
+        "text": "During peak season expansion, we need to hire large numbers of frontline workers fast. TalentPro's bulk hiring and AI screening increased our recruiting efficiency by 5x — letting the business move at the speed of talent.",
+        "name": "Zhang Mingyue",
+        "title": "Talent Acquisition Director · Restaurant Chain Brand"
       }
     }
   },
-
   "logoWall": {
-    "title":   "70% of Fortune 500 Companies Choose TalentPro",
+    "title": "70% of Fortune 500 Companies Choose TalentPro",
     "filterAll": "All",
     "industries": {
-      "mfg":     "Advanced Manufacturing",
-      "retail":  "Consumer & Retail",
-      "internet":"Internet & Tech",
-      "energy":  "New Energy",
+      "mfg": "Advanced Manufacturing",
+      "retail": "Consumer & Retail",
+      "internet": "Internet & Tech",
+      "energy": "New Energy",
       "finance": "Finance"
     },
     "filterLabel": "Filter by industry"
   },
-
   "whyUs": {
     "sectionTitle": "Why Do 70% of Fortune 500 Companies Keep Choosing TalentPro?",
-    "sectionSub":   "Relentlessly focused on HR SaaS innovation and customer success",
+    "sectionSub": "Relentlessly focused on HR SaaS innovation and customer success",
     "tabs": {
       "product": "Product Innovation",
-      "brand":   "Brand Trust",
+      "brand": "Brand Trust",
       "success": "Customer Success"
     },
     "metrics": {
       "product": [
-        { "num": "2000+", "label": "Product Features", "desc": "Integrated HR SaaS iterated annually to meet evolving business needs" },
-        { "num": "200+",  "label": "Ecosystem Partners","desc": "Connecting industry-wide partners in an open HR ecosystem" },
-        { "num": "10",    "label": "AI Agents",         "desc": "Intelligent assistants covering the full HR workflow" },
-        { "num": "18",    "label": "Role Workbenches",  "desc": "Personalized workspaces for every role in the organization" }
+        {
+          "num": "2000+",
+          "label": "Product Features",
+          "desc": "Integrated HR SaaS iterated annually to meet evolving business needs"
+        },
+        {
+          "num": "200+",
+          "label": "Ecosystem Partners",
+          "desc": "Connecting industry-wide partners in an open HR ecosystem"
+        },
+        {
+          "num": "10",
+          "label": "AI Agents",
+          "desc": "Intelligent assistants covering the full HR workflow"
+        },
+        {
+          "num": "18",
+          "label": "Role Workbenches",
+          "desc": "Personalized workspaces for every role in the organization"
+        }
       ],
       "brand": [
-        { "num": "20+",   "label": "Years of Expertise",   "desc": "Two decades of talent management technology depth" },
-        { "num": "24",    "label": "Regional Offices",     "desc": "First-party implementation with localized, rapid-response service" },
-        { "num": "#1 IDC","label": "9 Consecutive Years",  "desc": "China's #1 HR SaaS market share for nine consecutive years" },
-        { "num": "106%",  "label": "Net Dollar Retention", "desc": "Industry-leading renewal rates reflect sustained client trust" }
+        {
+          "num": "20+",
+          "label": "Years of Expertise",
+          "desc": "Two decades of talent management technology depth"
+        },
+        {
+          "num": "24",
+          "label": "Regional Offices",
+          "desc": "First-party implementation with localized, rapid-response service"
+        },
+        {
+          "num": "#1 IDC",
+          "label": "9 Consecutive Years",
+          "desc": "China's #1 HR SaaS market share for nine consecutive years"
+        },
+        {
+          "num": "106%",
+          "label": "Net Dollar Retention",
+          "desc": "Industry-leading renewal rates reflect sustained client trust"
+        }
       ],
       "success": [
-        { "num": "5S",    "label": "Implementation Framework","desc": "Industry-leading service model ensures stable, on-time go-live" },
-        { "num": "1100+", "label": "BCA Certified",           "desc": "Growing a certified HRIS talent community" },
-        { "num": "24/7",  "label": "Always-On Support",       "desc": "1-hour response SLA to ensure business continuity" },
-        { "num": "30K+",  "label": "Shared Resources",        "desc": "HR community with real-world templates and best practices" }
+        {
+          "num": "5S",
+          "label": "Implementation Framework",
+          "desc": "Industry-leading service model ensures stable, on-time go-live"
+        },
+        {
+          "num": "1100+",
+          "label": "BCA Certified",
+          "desc": "Growing a certified HRIS talent community"
+        },
+        {
+          "num": "24/7",
+          "label": "Always-On Support",
+          "desc": "1-hour response SLA to ensure business continuity"
+        },
+        {
+          "num": "30K+",
+          "label": "Shared Resources",
+          "desc": "HR community with real-world templates and best practices"
+        }
       ]
     },
     "statsBar": [
-      { "label": "Enterprise Clients" },
-      { "label": "Daily Data Records" },
-      { "label": "Annual Assessments" },
-      { "label": "Annual Interviews" },
-      { "label": "Annual Clock-ins" },
-      { "label": "Annual Learners" }
+      {
+        "label": "Enterprise Clients"
+      },
+      {
+        "label": "Daily Data Records"
+      },
+      {
+        "label": "Annual Assessments"
+      },
+      {
+        "label": "Annual Interviews"
+      },
+      {
+        "label": "Annual Clock-ins"
+      },
+      {
+        "label": "Annual Learners"
+      }
     ],
     "security": {
       "title": "Data Security & Compliance Certifications",
       "certs": [
-        { "label": "Level-3 Security",  "desc": "China's highest information security standard" },
-        { "label": "ISO 27001",         "desc": "International information security management" },
-        { "label": "SOC 2",             "desc": "Type II audit passed" },
-        { "label": "Bank-grade Encryption","desc": "AES-256 end-to-end data encryption" },
-        { "label": "Domestic Crypto",   "desc": "SM2/SM3/SM4 algorithm compliance" },
-        { "label": "9-Layer Defense",   "desc": "Multi-dimensional security protection" }
+        {
+          "label": "Level-3 Security",
+          "desc": "China's highest information security standard"
+        },
+        {
+          "label": "ISO 27001",
+          "desc": "International information security management"
+        },
+        {
+          "label": "SOC 2",
+          "desc": "Type II audit passed"
+        },
+        {
+          "label": "Bank-grade Encryption",
+          "desc": "AES-256 end-to-end data encryption"
+        },
+        {
+          "label": "Domestic Crypto",
+          "desc": "SM2/SM3/SM4 algorithm compliance"
+        },
+        {
+          "label": "9-Layer Defense",
+          "desc": "Multi-dimensional security protection"
+        }
       ]
     }
   },
-
   "resources": {
-    "sectionTag":   " Resource Hub",
+    "sectionTag": " Resource Hub",
     "sectionTitle": "Industry Insights to Inspire New Thinking",
     "types": {
-      "report":  "Whitepaper",
-      "case":    "Case Study",
+      "report": "Whitepaper",
+      "case": "Case Study",
       "article": "Article",
-      "guide":   "Report",
-      "video":   "Webinar"
+      "guide": "Report",
+      "video": "Webinar"
     },
     "items": {
-      "whitepaper":   { "title": "2026 HR Digitalization Maturity Model Report", "desc": "Introducing the HRDIMM framework, built on insights from 567 organizations — with three-stage transformation roadmaps for every maturity level.", "cta": "Download Free ", "date": "2026-01-15" },
-      "aiCases":      { "title": "2026 AI Interviewer Success Stories Collection", "desc": "11 leading companies including Chaiyueyue, Haier, and Cinda Bio share real-world results across campus, social, and blue-collar hiring.", "cta": "Download Free ", "date": "2026-03-01" },
-      "aiTalent":     { "title": "How to Rebuild Talent Reviews with AI",          "desc": "From traditional 9-box grids to AI-driven digital reviews — make talent assessment more scientific and succession planning more strategic.", "cta": "Read More ", "date": "2026-02-20" },
-      "campusGuide":  { "title": "2026 AI-Powered Campus Recruiting Playbook",     "desc": "End-to-end AI recruiting guide from JD writing to AI interviews, with 50+ case studies across manufacturing, tech, and finance.", "cta": "Download Free ", "date": "2026-02-10" },
-      "digitalGuide": { "title": "The Complete HR Digitalization Roadmap",          "desc": "A step-by-step guide from policy design to system deployment, covering 8 functional modules and 12 key decision points.", "cta": "Download Free ", "date": "2026-01-20" },
-      "liveVideo":    { "title": "Attract, Develop, Engage & Retain: From Strategy to Execution", "desc": "TalentPro's Chief Expert presents a complete framework for managing the talent lifecycle with digital tools.", "cta": "Watch Now ", "date": "2026-03-05" }
+      "whitepaper": {
+        "title": "2026 HR Digitalization Maturity Model Report",
+        "desc": "Introducing the HRDIMM framework, built on insights from 567 organizations — with three-stage transformation roadmaps for every maturity level.",
+        "cta": "Download Free ",
+        "date": "2026-01-15"
+      },
+      "aiCases": {
+        "title": "2026 AI Interviewer Success Stories Collection",
+        "desc": "11 leading companies including Chaiyueyue, Haier, and Cinda Bio share real-world results across campus, social, and blue-collar hiring.",
+        "cta": "Download Free ",
+        "date": "2026-03-01"
+      },
+      "aiTalent": {
+        "title": "How to Rebuild Talent Reviews with AI",
+        "desc": "From traditional 9-box grids to AI-driven digital reviews — make talent assessment more scientific and succession planning more strategic.",
+        "cta": "Read More ",
+        "date": "2026-02-20"
+      },
+      "campusGuide": {
+        "title": "2026 AI-Powered Campus Recruiting Playbook",
+        "desc": "End-to-end AI recruiting guide from JD writing to AI interviews, with 50+ case studies across manufacturing, tech, and finance.",
+        "cta": "Download Free ",
+        "date": "2026-02-10"
+      },
+      "digitalGuide": {
+        "title": "The Complete HR Digitalization Roadmap",
+        "desc": "A step-by-step guide from policy design to system deployment, covering 8 functional modules and 12 key decision points.",
+        "cta": "Download Free ",
+        "date": "2026-01-20"
+      },
+      "liveVideo": {
+        "title": "Attract, Develop, Engage & Retain: From Strategy to Execution",
+        "desc": "TalentPro's Chief Expert presents a complete framework for managing the talent lifecycle with digital tools.",
+        "cta": "Watch Now ",
+        "date": "2026-03-05"
+      }
     }
   },
-
   "roi": {
-    "sectionTag":   " ROI Calculator",
+    "sectionTag": " ROI Calculator",
     "sectionTitle": "Calculate how much TalentPro can save your organization",
-    "sectionSub":   "Based on real data from 8,000+ enterprises, estimate annual ROI with 5 parameters",
-    "empCount":     "Total Employees",
-    "monthHire":    "Monthly Hires",
-    "hireCycle":    "Avg. Hiring Cycle (days)",
-    "hrTeam":       "HR Team Size",
-    "hrSalary":     "Avg. HR Monthly Salary",
+    "sectionSub": "Based on real data from 8,000+ enterprises, estimate annual ROI with 5 parameters",
+    "empCount": "Total Employees",
+    "monthHire": "Monthly Hires",
+    "hireCycle": "Avg. Hiring Cycle (days)",
+    "hrTeam": "HR Team Size",
+    "hrSalary": "Avg. HR Monthly Salary",
     "totalSavings": "Annual Savings",
-    "roiRate":      "Estimated ROI",
-    "payback":      "Payback Period",
-    "chartTitle":   "Before vs After TalentPro",
-    "chartBefore":  "Before (Year)",
-    "chartAfter":   "After (Year)",
-    "saveHr":       "HR Time Savings",
-    "saveRecruit":  "Recruitment Cost Reduction",
+    "roiRate": "Estimated ROI",
+    "payback": "Payback Period",
+    "chartTitle": "Before vs After TalentPro",
+    "chartBefore": "Before (Year)",
+    "chartAfter": "After (Year)",
+    "saveHr": "HR Time Savings",
+    "saveRecruit": "Recruitment Cost Reduction",
     "saveTurnover": "Turnover Cost Reduction",
-    "cta":          "Get a tailored quote for your scale →"
+    "months": "months",
+    "cta": "Get a tailored quote for your scale →"
   },
-
   "cta": {
-    "title":  "Experience TalentPro — Stay Ahead of the Talent Curve",
-    "sub":    "A dedicated advisor will respond within 1 business day with a tailored solution",
-    "btn1":   "Book a Product Demo ",
-    "btn2":   "Chat with Us"
+    "title": "Experience TalentPro — Stay Ahead of the Talent Curve",
+    "sub": "A dedicated advisor will respond within 1 business day with a tailored solution",
+    "btn1": "Book a Product Demo ",
+    "btn2": "Chat with Us"
   },
-
   "footer": {
-    "desc":       "A next-generation integrated talent management platform — empowering mid-to-large enterprises with full-lifecycle HR SaaS.",
-    "preSale":    "Pre-sales: 400-888-8888",
-    "afterSale":  "Support: 400-888-8889",
-    "qr1":        "Official Account",
-    "qr2":        "Video Channel",
-    "hotTitle":   "Popular Topics",
-    "hotTags":    ["AI Recruiting", "Talent Review", "Campus Hiring", "Performance", "SOE", "Global Expansion"],
+    "desc": "A next-generation integrated talent management platform — empowering mid-to-large enterprises with full-lifecycle HR SaaS.",
+    "preSale": "Pre-sales: 400-888-8888",
+    "afterSale": "Support: 400-888-8889",
+    "qr1": "Official Account",
+    "qr2": "Video Channel",
+    "hotTitle": "Popular Topics",
+    "hotTags": [
+      "AI Recruiting",
+      "Talent Review",
+      "Campus Hiring",
+      "Performance",
+      "SOE",
+      "Global Expansion"
+    ],
     "cols": {
-      "products":  "Products",
+      "products": "Products",
       "resources": "Resources",
-      "about":     "About Us"
+      "about": "About Us"
     },
-    "productLinks":  ["Integrated HR SaaS", "AI Family", "Talent Assessment", "PaaS Platform", "HR Analytics"],
-    "resourceLinks": ["Research Reports", "Articles", "Case Studies", "Webinars", "Community"],
-    "aboutLinks":    ["About TalentPro", "News", "Security", "Contact Us", "Careers"],
-    "copyright":  "© 2026 TalentPro Technology Co., Ltd. All rights reserved.",
-    "icp":        "ICP License: XXXXXXXX",
-    "privacy":    "Privacy Policy",
-    "terms":      "Terms of Service",
-    "sitemap":    "Sitemap"
+    "productLinks": [
+      "Integrated HR SaaS",
+      "AI Family",
+      "Talent Assessment",
+      "PaaS Platform",
+      "HR Analytics"
+    ],
+    "resourceLinks": [
+      "Research Reports",
+      "Articles",
+      "Case Studies",
+      "Webinars",
+      "Community"
+    ],
+    "aboutLinks": [
+      "About TalentPro",
+      "News",
+      "Security",
+      "Contact Us",
+      "Careers"
+    ],
+    "copyright": "© 2026 TalentPro Technology Co., Ltd. All rights reserved.",
+    "icp": "ICP License: XXXXXXXX",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "sitemap": "Sitemap",
+    "zhihuAria": "Zhihu",
+    "weiboAria": "Weibo"
   },
-
   "modal": {
-    "step1Title":  "Book a Product Demo",
-    "step1Sub":    "A dedicated advisor will contact you within 1 business day",
-    "step2Title":  "Which products interest you?",
-    "step2Sub":    "Select all that apply — we'll customize your demo",
-    "step3Title":  "Your company size",
-    "step3Sub":    "Helps us match you with the right solution",
-    "labelName":   "Full Name",
-    "labelCompany":"Company Name",
-    "labelPhone":  "Phone Number",
-    "labelCode":   "Verification Code",
-    "phName":      "Enter your full name",
-    "phCompany":   "Enter your company name",
-    "phPhone":     "Enter your phone number",
-    "phCode":      "Enter 6-digit code",
-    "sendCode":    "Send Code",
-    "resend":      "Resend in {n}s",
-    "required":    "*",
-    "errName":     "Please enter at least 2 characters",
-    "errPhone":    "Please enter a valid phone number",
-    "errCode":     "Please enter the 6-digit code",
-    "next":        "Next ",
-    "submit":      "Submit Request ",
-    "close":       "Close",
-    "successTitle":"Request Submitted!",
-    "successSub":  "Our advisor will reach out within 1 business day.\nThank you for your interest in TalentPro.",
-    "products": ["Recruiting", "Assessment", "Attendance", "Payroll", "HR & Org", "Performance", "AI Family", "Other"],
-    "scales":   ["< 200", "200–499", "500–999", "1,000–4,999", "5,000+"],
-    "stepText":  "Step {current} of {total}",
+    "step1Title": "Book a Product Demo",
+    "step1Sub": "A dedicated advisor will contact you within 1 business day",
+    "step2Title": "Which products interest you?",
+    "step2Sub": "Select all that apply — we'll customize your demo",
+    "step3Title": "Your company size",
+    "step3Sub": "Helps us match you with the right solution",
+    "labelName": "Full Name",
+    "labelCompany": "Company Name",
+    "labelPhone": "Phone Number",
+    "labelCode": "Verification Code",
+    "phName": "Enter your full name",
+    "phCompany": "Enter your company name",
+    "phPhone": "Enter your phone number",
+    "phCode": "Enter 6-digit code",
+    "sendCode": "Send Code",
+    "resend": "Resend in {n}s",
+    "required": "*",
+    "errName": "Please enter at least 2 characters",
+    "errPhone": "Please enter a valid phone number",
+    "errCode": "Please enter the 6-digit code",
+    "next": "Next ",
+    "submit": "Submit Request ",
+    "close": "Close",
+    "successTitle": "Request Submitted!",
+    "successSub": "Our advisor will reach out within 1 business day.\nThank you for your interest in TalentPro.",
+    "products": [
+      "Recruiting",
+      "Assessment",
+      "Attendance",
+      "Payroll",
+      "HR & Org",
+      "Performance",
+      "AI Family",
+      "Other"
+    ],
+    "scales": [
+      "< 200",
+      "200–499",
+      "500–999",
+      "1,000–4,999",
+      "5,000+"
+    ],
+    "stepText": "Step {current} of {total}",
     "autoFillPhone": "Auto-fill Phone",
     "tosPrefix": "I agree to the",
-    "tosLink":   "Terms of Service",
+    "tosLink": "Terms of Service",
     "tosSuffix": "and Privacy Policy",
-    "errTos":    "Please agree to the terms",
-    "summaryName":     "Name",
-    "summaryCompany":  "Company",
+    "errTos": "Please agree to the terms",
+    "summaryName": "Name",
+    "summaryCompany": "Company",
     "summaryProducts": "Products",
-    "summaryScale":    "Scale",
-    "recommendTitle":  "You may also need"
+    "summaryScale": "Scale",
+    "recommendTitle": "You may also need"
   },
-
   "floatingBar": {
-    "demo":    "Book a Demo",
-    "chat":    "Live Chat",
-    "phone":   "400-888-8888",
+    "demo": "Book a Demo",
+    "chat": "Live Chat",
+    "phone": "400-888-8888",
     "backTop": "Back to Top",
     "callTel": "Call Us"
   },
-
   "cookie": {
-    "banner":      "We use cookies to improve your experience, including essential site features, analytics, and personalized marketing.",
-    "learnMore":   "Learn more",
-    "acceptAll":   "Accept all",
-    "reject":      "Reject",
-    "rejectAll":   "Reject all",
-    "savePrefs":   "Save preferences",
-    "prefTitle":   "Cookie Preferences",
-    "prefDesc":    "Choose which types of cookies you allow. Essential cookies are always enabled to ensure the site works properly.",
-    "necessary":   "Necessary cookies",
+    "banner": "We use cookies to improve your experience, including essential site features, analytics, and personalized marketing.",
+    "learnMore": "Learn more",
+    "acceptAll": "Accept all",
+    "reject": "Reject",
+    "rejectAll": "Reject all",
+    "savePrefs": "Save preferences",
+    "prefTitle": "Cookie Preferences",
+    "prefDesc": "Choose which types of cookies you allow. Essential cookies are always enabled to ensure the site works properly.",
+    "necessary": "Necessary cookies",
     "necessaryDesc": "Required for core site features such as session management and security. Cannot be disabled.",
-    "analytics":   "Analytics cookies",
+    "analytics": "Analytics cookies",
     "analyticsDesc": "Help us understand how users interact with the site so we can improve the experience.",
-    "marketing":   "Marketing cookies",
+    "marketing": "Marketing cookies",
     "marketingDesc": "Used to show more relevant marketing content and retargeting ads.",
-    "alwaysOn":    "Always on"
+    "alwaysOn": "Always on"
   },
-
   "video": {
     "title": "TalentPro Product Demo",
     "close": "Close video"
   },
-
   "blog": {
     "title": "TalentPro Blog",
+    "pageTitle": "TalentPro Blog",
     "back": "Back to Blog",
-    "noPosts": "No posts yet"
+    "noPosts": "No posts yet",
+    "jsonLdName": "TalentPro Blog",
+    "jsonLdDesc": "Cutting-edge insights on HR digital transformation."
   },
-
   "forum": {
     "title": "TalentPro Community",
+    "pageTitle": "TalentPro Community",
     "back": "Back to Community",
     "noTopics": "No topics yet",
-    "replies": "Replies"
+    "replies": "Replies",
+    "pinned": "Pinned",
+    "locked": "Locked"
   },
-
   "search": {
     "placeholder": "Search products, solutions, resources...",
-    "shortcut":    "⌘K",
-    "hot":         " Popular Searches",
-    "noResult":    "No results for \"{query}\"",
+    "shortcut": "⌘K",
+    "hot": " Popular Searches",
+    "noResult": "No results for \"{query}\"",
     "noResultSub": "Try different keywords",
-    "navUp":       "↑↓ Navigate",
-    "navEnter":    "Enter to go",
-    "navEsc":      "Esc to close",
-    "label":       "Search"
+    "navUp": "↑↓ Navigate",
+    "navEnter": "Enter to go",
+    "navEsc": "Esc to close",
+    "label": "Search"
   },
-
-  "contact": {
-    "ariaLabel":     "Live Chat",
-    "title":         "Live Chat",
-    "subtitle":      "Real-time advisor response",
-    "phoneLabel":    "Sales Hotline",
-    "timeLabel":     "Service Hours",
-    "timeValue":     "Mon–Fri 9:00–18:00 (CST)",
-    "qrWechat":      "Scan to add WeCom",
-    "qrOfficial":    "Follow Official Account",
-    "cta":           "Book a Demo "
+  "contactModal": {
+    "ariaLabel": "Live Chat",
+    "title": "Live Chat",
+    "subtitle": "Real-time advisor response",
+    "phoneLabel": "Sales Hotline",
+    "timeLabel": "Service Hours",
+    "timeValue": "Mon–Fri 9:00–18:00 (CST)",
+    "qrWechat": "Scan to add WeCom",
+    "qrOfficial": "Follow Official Account",
+    "cta": "Book a Demo "
   },
-
   "chatBot": {
-    "botName":       "TalentPro Assistant",
-    "statusOnline":  "Online · AI Assistant",
+    "botName": "TalentPro Assistant",
+    "statusOnline": "Online · AI Assistant",
     "statusHandoff": "Connecting to agent...",
-    "placeholder":   "Type a message, press Enter to send...",
-    "closeAria":     "Close Chat",
-    "handoffBtn":    "Transfer to Agent",
-    "handoffMsg":    "Agent queue: estimated wait ~3 min",
-    "handoffCall":   "Call Now",
-    "sendAria":      "Send",
-    "welcome1":      "Hello! I'm the TalentPro AI Assistant \nWelcome to our all-in-one HR SaaS solution.",
-    "welcome2":      "What would you like to know about?",
-    "welcomeQuickReplies": ["Product Features", "Industry Solutions", "Book a Demo", "Pricing"],
-    "quickRepliesDefault": ["Product Features", "Industry Solutions", "Book a Demo", "Pricing", "Talk to Agent"],
-    "fallback1":     "Thank you for reaching out! I'd recommend:\n\n Call **400-888-8888** for professional advice\n Or book a demo with a dedicated advisor",
-    "fallback2":     "Great question! Our product advisor can provide accurate details.\n\nShall I help you book a dedicated advisor?",
-    "fallback3":     "This is beyond my knowledge. Let me connect you to a **human agent** for a professional answer.",
+    "placeholder": "Type a message, press Enter to send...",
+    "closeAria": "Close Chat",
+    "handoffBtn": "Transfer to Agent",
+    "handoffMsg": "Agent queue: estimated wait ~3 min",
+    "handoffCall": "Call Now",
+    "sendAria": "Send",
+    "welcome1": "Hello! I'm the TalentPro AI Assistant \nWelcome to our all-in-one HR SaaS solution.",
+    "welcome2": "What would you like to know about?",
+    "welcomeQuickReplies": [
+      "Product Features",
+      "Industry Solutions",
+      "Book a Demo",
+      "Pricing"
+    ],
+    "quickRepliesDefault": [
+      "Product Features",
+      "Industry Solutions",
+      "Book a Demo",
+      "Pricing",
+      "Talk to Agent"
+    ],
+    "fallback1": "Thank you for reaching out! I'd recommend:\n\n Call **400-888-8888** for professional advice\n Or book a demo with a dedicated advisor",
+    "fallback2": "Great question! Our product advisor can provide accurate details.\n\nShall I help you book a dedicated advisor?",
+    "fallback3": "This is beyond my knowledge. Let me connect you to a **human agent** for a professional answer.",
     "faq": {
       "product": {
         "reply": "TalentPro offers a **full-suite HR SaaS** covering:\n\n• ‍ Recruitment — end-to-end digital hiring\n•  Performance — OKR/KPI alignment\n• ⏰ Attendance — smart scheduling & auto time-tracking\n•  Payroll — accurate & compliant payroll\n•  AI Family — 10 AI-powered assistants\n\nWhich module interests you most?",
-        "quickReplies": ["AI Recruiter", "AI Interviewer", "Attendance", "Payroll", "View All Products"]
+        "quickReplies": [
+          "AI Recruiter",
+          "AI Interviewer",
+          "Attendance",
+          "Payroll",
+          "View All Products"
+        ]
       },
       "ai": {
         "reply": "Our **AI Family** includes 10 AI assistants:\n\n **AI Recruiter** — resume screening, JD generation\n **AI Interviewer** — 24/7 automated interviews\n **AI Leadership Coach** — personalized manager growth\n **AI Learning Assistant** — tailored employee development\n\nCovers 50+ HR scenarios with ~300% average efficiency gain.\nWant details on any AI product?",
-        "quickReplies": ["AI Recruiter Details", "AI Interviewer Details", "Book a Demo"]
+        "quickReplies": [
+          "AI Recruiter Details",
+          "AI Interviewer Details",
+          "Book a Demo"
+        ]
       },
       "recruit": {
         "reply": "**TalentPro Recruitment** covers:\n\n Campus & social hiring\n AI resume screening (80% less manual work)\n One-click JD generation\n Real-time candidate tracking\n Automated interview scheduling\n\nTrusted by **8,000+ enterprises** including Mengniu and Haier. 5× recruitment efficiency.",
-        "quickReplies": ["View Cases", "Book a Demo", "Pricing"]
+        "quickReplies": [
+          "View Cases",
+          "Book a Demo",
+          "Pricing"
+        ]
       },
       "attendance": {
         "reply": "**Attendance Management** for complex scenarios:\n\n 5,000+ attendance rules auto-processed\n Mobile instant scheduling\n Flexible, rotating & comprehensive shifts\n Payroll calc time: 5 days  half a day\n\nIdeal for manufacturing & retail chain.",
-        "quickReplies": ["Manufacturing Solution", "Retail Solution", "Book a Demo"]
+        "quickReplies": [
+          "Manufacturing Solution",
+          "Retail Solution",
+          "Book a Demo"
+        ]
       },
       "payroll": {
         "reply": "**Payroll Management** highlights:\n\n Automated payroll (<0.01% error)\n Compliant tax processing (regional policies)\n Auto-sync with attendance & performance\n Multi-dimensional payroll analytics\n\nSupports **multi-entity & multi-payroll structures**.",
-        "quickReplies": ["Group Solution", "Book a Demo", "Pricing"]
+        "quickReplies": [
+          "Group Solution",
+          "Book a Demo",
+          "Pricing"
+        ]
       },
       "performance": {
         "reply": "**Performance Management** supports:\n\n OKR, KPI, 360° reviews\n Cascading goal alignment\n Performance-linked compensation & promotion\n AI-powered development suggestions\n\nClients see **35% average performance improvement**.",
-        "quickReplies": ["Book a Demo", "View Cases"]
+        "quickReplies": [
+          "Book a Demo",
+          "View Cases"
+        ]
       },
       "manufacturing": {
         "reply": " **Manufacturing Solution** focuses on:\n\n• Complex shift auto-scheduling\n• Blue-collar trial-worker onboarding\n• Certificate expiry alerts\n• Shop-floor attendance dashboard\n\nServing **BYD, Midea** and other leaders.\n\nNeed detailed info?",
-        "quickReplies": ["View Manufacturing Cases", "Book Specialist Demo"]
+        "quickReplies": [
+          "View Manufacturing Cases",
+          "Book Specialist Demo"
+        ]
       },
       "retail": {
         "reply": " **Retail Chain Solution** highlights:\n\n• Store-manager hiring workbench\n• Multi-store unified HR control\n• Peak-season bulk hiring + AI screening\n• Flexible shift management\n\nServing **Chow Tai Fook, CP Group** and more.",
-        "quickReplies": ["View Retail Cases", "Book Specialist Demo"]
+        "quickReplies": [
+          "View Retail Cases",
+          "Book Specialist Demo"
+        ]
       },
       "internet": {
         "reply": " **Internet/Tech Solution** focuses on:\n\n• HRBP smart workbench\n• Collaborative hiring (managers involved)\n• OKR goal management\n• Rapid tech talent pipeline building\n\nServing **Baidu, Meituan, JD.com**.",
-        "quickReplies": ["View Tech Cases", "Book Specialist Demo"]
+        "quickReplies": [
+          "View Tech Cases",
+          "Book Specialist Demo"
+        ]
       },
       "gov": {
         "reply": "️ **SOE/Government Solution** focuses on:\n\n• Digital campus recruitment\n• Young cadre pipeline development\n• Online cadre competition process\n• Talent review & succession\n\nServing **China Merchants Bank, Ping An** and large SOEs.",
-        "quickReplies": ["View SOE Cases", "Book Specialist Demo"]
+        "quickReplies": [
+          "View SOE Cases",
+          "Book Specialist Demo"
+        ]
       },
       "demo": {
         "reply": "**Booking a demo** is easy:\n\n Phone: **400-888-8888**\n Online: click the button below\n⏱️ Dedicated advisor within **1 business day**\n\nCustomized for your industry and needs.",
-        "quickReplies": ["Book Demo Now", "Learn More"],
+        "quickReplies": [
+          "Book Demo Now",
+          "Learn More"
+        ],
         "action": "openModal"
       },
       "price": {
         "reply": "**TalentPro uses subscription pricing** based on:\n\n• Employee count\n• Selected modules\n• Contract term\n\nFlexible customized quotes.\n\n Typically **~USD 25k–50k/year** for 500 employees (full suite). Contact us for an exact quote.",
-        "quickReplies": ["Request a Quote", "Talk to Agent"]
+        "quickReplies": [
+          "Request a Quote",
+          "Talk to Agent"
+        ]
       },
       "security": {
         "reply": "TalentPro holds **multiple security certifications**:\n\n Class-3 Cybersecurity (highest national standard)\n ISO 27001 international security management\n SOC 2 Type II audit passed\n AES-256 bank-grade encryption\n️ SM2/SM3/SM4 national cryptography\n\n**99.9% SLA availability**, 24/7 security monitoring.",
-        "quickReplies": ["Learn More Security", "Book a Demo"]
+        "quickReplies": [
+          "Learn More Security",
+          "Book a Demo"
+        ]
       },
       "human": {
         "reply": "Connecting you to a **human agent**.\n\n⏱️ Current queue: **~3 minutes**\n\nYou can also reach us immediately:\n **400-888-8888** (Mon–Fri 9:00–18:00 CST)\n\nI can keep answering questions while you wait~",
-        "quickReplies": ["Continue Chatting", "I Can Wait"],
+        "quickReplies": [
+          "Continue Chatting",
+          "I Can Wait"
+        ],
         "isHandoff": true
       }
     }
   },
-
   "auth": {
-    "loginTitle":         "Welcome Back",
-    "loginSubtitle":      "Sign in to your TalentPro account",
-    "registerTitle":      "Create Account",
-    "registerSubtitle":   "Join us and start your smart HR journey",
-    "email":              "Email",
-    "emailPlaceholder":   "Enter your email",
-    "emailRequired":      "Email is required",
-    "emailInvalid":       "Invalid email format",
-    "password":           "Password",
-    "passwordPlaceholder":"Enter your password",
-    "passwordRequired":   "Password is required",
-    "passwordMin":        "Password must be at least 8 characters",
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to your TalentPro account",
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Join us and start your smart HR journey",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least 8 characters",
     "passwordComplexity": "Password must contain uppercase, lowercase, number and special character",
-    "confirmPassword":    "Confirm Password",
+    "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Re-enter your password",
-    "confirmRequired":    "Please confirm your password",
-    "passwordMismatch":   "Passwords do not match",
-    "name":               "Name",
-    "namePlaceholder":    "Enter your name",
-    "nameMin":            "Name must be at least 2 characters",
-    "loginBtn":           "Sign In",
-    "registerBtn":        "Sign Up",
-    "submitting":         "Submitting...",
-    "noAccount":          "Don't have an account?",
-    "hasAccount":         "Already have an account?",
-    "toRegister":         "Sign Up",
-    "toLogin":            "Sign In",
-    "genericError":       "Operation failed, please try again later"
+    "confirmRequired": "Please confirm your password",
+    "passwordMismatch": "Passwords do not match",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "nameMin": "Name must be at least 2 characters",
+    "loginBtn": "Sign In",
+    "registerBtn": "Sign Up",
+    "submitting": "Submitting...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "toRegister": "Sign Up",
+    "toLogin": "Sign In",
+    "genericError": "Operation failed, please try again later"
   },
   "comment": {
-    "title":              "Comments",
-    "placeholder":        "Write a comment... Use @ to mention users",
-    "replyPlaceholder":     "Write a reply...",
-    "submit":             "Post Comment",
-    "submitting":         "Submitting...",
-    "reply":              "Reply",
-    "cancel":             "Cancel",
-    "noComments":         "No comments yet. Be the first!",
-    "loginToComment":     "Log in to post a comment",
-    "anonymous":          "Anonymous",
-    "loading":            "Loading...",
-    "noUser":             "No users found",
-    "submitError":        "Failed to post comment"
+    "title": "Comments",
+    "placeholder": "Write a comment... Use @ to mention users",
+    "replyPlaceholder": "Write a reply...",
+    "submit": "Post Comment",
+    "submitting": "Submitting...",
+    "reply": "Reply",
+    "cancel": "Cancel",
+    "noComments": "No comments yet. Be the first!",
+    "loginToComment": "Log in to post a comment",
+    "anonymous": "Anonymous",
+    "loading": "Loading...",
+    "noUser": "No users found",
+    "submitError": "Failed to post comment"
   },
   "profile": {
-    "title":              "Profile",
-    "edit":               "Edit Profile",
-    "save":               "Save",
-    "name":               "Name",
-    "bio":                "Bio",
-    "avatar":             "Avatar URL",
-    "joined":             "Joined",
-    "loading":            "Loading...",
-    "saveError":          "Failed to save"
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "save": "Save",
+    "name": "Name",
+    "bio": "Bio",
+    "avatar": "Avatar URL",
+    "joined": "Joined",
+    "loading": "Loading...",
+    "saveError": "Failed to save",
+    "jsonLdName": "TalentPro Profile",
+    "jsonLdDesc": "Manage your TalentPro account and profile"
   },
   "pagination": {
-    "prev":               "Prev",
-    "next":               "Next"
+    "prev": "Prev",
+    "next": "Next"
   },
   "notification": {
-    "title":              "Notifications",
-    "readAll":            "Mark all as read",
-    "empty":              "No notifications"
+    "title": "Notifications",
+    "readAll": "Mark all as read",
+    "empty": "No notifications"
   },
   "editor": {
-    "preview":            "Preview",
-    "edit":               "Edit"
+    "preview": "Preview",
+    "edit": "Edit"
   },
   "downloadGate": {
-    "title":              "Download {title}",
-    "subtitle":           "Please fill in your info and we'll send the material to your email",
-    "name":               "Your Name",
-    "email":              "Work Email",
-    "company":            "Company (optional)",
-    "submit":             "Confirm & Download",
-    "submitting":         "Submitting...",
-    "required":           "Please fill in name and email",
-    "error":              "Submission failed, please try again"
+    "title": "Download {title}",
+    "subtitle": "Please fill in your info and we'll send the material to your email",
+    "name": "Your Name",
+    "email": "Work Email",
+    "company": "Company (optional)",
+    "submit": "Confirm & Download",
+    "submitting": "Submitting...",
+    "required": "Please fill in name and email",
+    "error": "Submission failed, please try again"
+  },
+  "productPage": {
+    "title": "Products",
+    "subtitle": "All-in-One HR SaaS, Accelerating Digital Transformation",
+    "detail": "Product Details",
+    "tag": "Product",
+    "all": "All",
+    "learnMore": "Learn More",
+    "features": "Key Features",
+    "scenarios": "Use Cases",
+    "specs": "Technical Specs",
+    "related": "Related Products",
+    "docCta": "View Docs",
+    "demoCta": "Book a Demo",
+    "ctaTitle": "Not sure which product is right for you?",
+    "ctaDesc": "Our consultants will tailor a solution for your needs",
+    "notFound": "Product not found"
+  },
+  "solutions": {
+    "title": "Solutions",
+    "subtitle": "Industry-tailored solutions for your business",
+    "detail": "Solution Details",
+    "suffix": " Solutions",
+    "industryDesc": "The {name} industry faces unique HR challenges. TalentPro provides tailored solutions to help enterprises achieve digital transformation in talent management.",
+    "keyFeatures": "Key Capabilities",
+    "features": " features",
+    "painPoints": "Industry Pain Points",
+    "architecture": "Solution Architecture",
+    "roadmap": "Implementation Roadmap",
+    "caseStudy": "Customer Story",
+    "roi": "ROI",
+    "learnMore": "Learn More",
+    "demoCta": "Book a Consultation",
+    "ctaTitle": "Need an industry-specific solution?",
+    "ctaDesc": "Our industry experts will provide one-on-one consultation",
+    "notFound": "Solution not found"
+  },
+  "cases": {
+    "title": "Case Studies",
+    "subtitle": "Trusted by 8,000+ enterprises, witness the power of digital transformation",
+    "detail": "Case Details",
+    "all": "All",
+    "featured": "Featured",
+    "readMore": "Read More",
+    "challenge": "Challenge",
+    "solution": "Solution",
+    "results": "Results",
+    "usedProducts": "Products Used",
+    "notFound": "Case not found",
+    "jsonLdName": "TalentPro Customer Cases"
+  },
+  "resourcePage": {
+    "title": "Resources",
+    "subtitle": "Industry insights, case studies, and methodologies to power HR digitalization",
+    "detail": "Resource Details",
+    "all": "All",
+    "readTime": "read",
+    "downloads": "downloads",
+    "download": "Download Now",
+    "featured": "Featured Resources",
+    "related": "Related Resources",
+    "demoCta": "Book a Product Demo",
+    "notFound": "Resource not found"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Latest news and industry updates from TalentPro",
+    "detail": "News Details",
+    "featured": "Featured",
+    "notFound": "News not found"
+  },
+  "careers": {
+    "title": "Careers",
+    "subtitle": "Join us to redefine talent management with technology",
+    "detail": "Job Details",
+    "all": "All",
+    "campus": "Campus Recruitment",
+    "social": "Social Recruitment",
+    "apply": "Apply Now",
+    "description": "Job Description",
+    "requirements": "Requirements",
+    "benefits": "Benefits",
+    "notFound": "Job not found",
+    "viewJobs": "View All Jobs",
+    "campusSubtitle": "Start your career journey and grow with TalentPro",
+    "socialSubtitle": "Seek your next challenge, work with top talents",
+    "gradProgram": "Graduate Program",
+    "gradProgramDesc": "An 18-month rotation program to gain deep understanding of the full HR SaaS business chain and grow into a key contributor.",
+    "internship": "Internship Program",
+    "internshipDesc": "Real project experience for university students with one-on-one mentorship.",
+    "research": "Research Collaboration",
+    "researchDesc": "Partner with universities and research institutions to explore AI+HR frontier topics and publish top-tier papers.",
+    "culture": "Open Culture",
+    "cultureDesc": "Flat management, encouraging innovation and experimentation. Everyone has a voice.",
+    "growth": "Growth System",
+    "growthDesc": "Comprehensive career ladder and training system, dual tracks for technical and management development.",
+    "benefitsDesc": "Competitive compensation, flexible work, annual health check, supplementary medical insurance, and more.",
+    "noDescription": "No detailed job description available. Please contact HR for more information.",
+    "noRequirements": "No detailed requirements available. Please contact HR for more information.",
+    "applyPrompt": "Application submitted. We will contact you soon!",
+    "jsonLdName": "TalentPro Careers",
+    "jsonLdDesc": "Join us to redefine talent management with technology"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Connecting people and organizations with technology for more efficient talent management",
+    "story": "Our Story",
+    "storyBody": "Founded in 2018, TalentPro was created by a team of experts with over 20 years of experience in HR technology. We believe that excellent talent management is the cornerstone of business success. Through AI and digital technology, we help medium and large enterprises redefine talent management across the full employee lifecycle.",
+    "values": "Core Values",
+    "val1Title": "Customer First",
+    "val1Desc": "Always oriented toward customer success, deeply understanding business pain points, and providing truly valuable solutions.",
+    "val2Title": "Innovation Driven",
+    "val2Desc": "Continuous investment in AI and cutting-edge technology R&D, leading the transformation of the HR SaaS industry.",
+    "val3Title": "Open Collaboration",
+    "val3Desc": "Building an open platform with ecosystem partners to create greater value for customers.",
+    "val4Title": "Pursuit of Excellence",
+    "val4Desc": "An endless pursuit of product quality and user experience. Details make the difference.",
+    "founded": "Founded",
+    "employees": "Employees",
+    "customers": "Customers",
+    "countries": "Countries",
+    "learnMore": "Learn More",
+    "jsonLdName": "TalentPro About Us",
+    "jsonLdDesc": "Connecting people and organizations through technology for more efficient talent management"
+  },
+  "team": {
+    "title": "Our Team",
+    "subtitle": "Top industry talents building the future of HR technology",
+    "jsonLdName": "TalentPro Our Team",
+    "jsonLdDesc": "Top industry talents building the future of HR technology"
+  },
+  "partners": {
+    "title": "Partners",
+    "subtitle": "Partnering with global leaders to build the HR ecosystem",
+    "jsonLdName": "TalentPro Partners",
+    "jsonLdDesc": "Partnering with global leaders to build the HR ecosystem"
+  },
+  "contactPage": {
+    "title": "Contact Us",
+    "subtitle": "We look forward to hearing from you",
+    "formTitle": "Send a Message",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "sent": "Message sent! We will get back to you soon.",
+    "emailTitle": "Email",
+    "phoneTitle": "Phone",
+    "addressTitle": "Address",
+    "addressValue": "Zhongguancun Software Park, Haidian District, Beijing",
+    "jsonLdName": "TalentPro Contact Us",
+    "jsonLdDesc": "We look forward to hearing from you"
+  },
+  "common": {
+    "loadError": "Failed to load, please try again",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "other": "Other"
+  },
+  "errors": {
+    "requestFailed": "Request failed",
+    "networkError": "Network request failed",
+    "noRefreshToken": "No refresh token",
+    "loadFailed": "Loading failed"
+  },
+  "units": {
+    "people": "people",
+    "days": "days",
+    "yuan": "CNY",
+    "tenThousand": "10K"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "desc": "Sorry, the page you are looking for has been removed or is temporarily unavailable.",
+    "backHome": "Back to Home"
+  },
+  "careersType": {
+    "campus": "Campus",
+    "social": "Social"
   }
 }

@@ -21,7 +21,7 @@ export class SearchController {
   ) {
     const results = await this.searchService.search(q, {
       type,
-      limit: limit ? parseInt(limit, 10) : 20,
+      limit: limit ? Number(limit) || 20 : 20,
     });
     return { data: results, meta: { query: q, count: results.length } };
   }

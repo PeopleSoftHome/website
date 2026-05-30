@@ -7,7 +7,15 @@ const SOFT_DELETE_MODELS = [
   'Comment',
   'User',
   'Resource',
+  'CaseStudy',
+  'Job',
+  'News',
 ];
+
+function injectSoftDelete(model: string, args: any) {
+  if (!SOFT_DELETE_MODELS.includes(model) || !args || args.showDeleted) return args;
+  return { ...args, where: { ...args.where, deletedAt: null } };
+}
 
 export const softDeleteExtension = Prisma.defineExtension({
   model: {
@@ -28,28 +36,31 @@ export const softDeleteExtension = Prisma.defineExtension({
   query: {
     $allModels: {
       async findMany({ model, operation, args, query }: any) {
-        if (SOFT_DELETE_MODELS.includes(model) && args && !args.showDeleted) {
-          args.where = { ...args.where, deletedAt: null };
-        }
-        return query(args);
+        return query(injectSoftDelete(model, args));
       },
       async findUnique({ model, operation, args, query }: any) {
-        if (SOFT_DELETE_MODELS.includes(model) && args && !args.showDeleted) {
-          args.where = { ...args.where, deletedAt: null };
-        }
-        return query(args);
+        return query(injectSoftDelete(model, args));
       },
       async findFirst({ model, operation, args, query }: any) {
-        if (SOFT_DELETE_MODELS.includes(model) && args && !args.showDeleted) {
-          args.where = { ...args.where, deletedAt: null };
-        }
-        return query(args);
+        return query(injectSoftDelete(model, args));
       },
       async count({ model, operation, args, query }: any) {
-        if (SOFT_DELETE_MODELS.includes(model) && args && !args.showDeleted) {
-          args.where = { ...args.where, deletedAt: null };
-        }
-        return query(args);
+        return query(injectSoftDelete(model, args));
+      },
+      async update({ model, operation, args, query }: any) {
+        return query(injectSoftDelete(model, args));
+      },
+      async updateMany({ model, operation, args, query }: any) {
+        return query(injectSoftDelete(model, args));
+      },
+      async delete({ model, operation, args, query }: any) {
+        return query(injectSoftDelete(model, args));
+      },
+      async deleteMany({ model, operation, args, query }: any) {
+        return query(injectSoftDelete(model, args));
+      },
+      async aggregate({ model, operation, args, query }: any) {
+        return query(injectSoftDelete(model, args));
       },
     },
   },

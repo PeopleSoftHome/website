@@ -42,27 +42,13 @@
       <el-col :span="12">
         <el-card shadow="hover">
           <template #header><span>每日页面浏览量</span></template>
-          <div v-if="dailyPageViews.length" style="display:flex;align-items:flex-end;gap:4px;justify-content:space-around;height:240px;padding:0 8px">
-            <div v-for="(item, i) in dailyPageViews" :key="i" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0">
-              <div style="font-size:11px;color:#666;white-space:nowrap">{{ item.count }}</div>
-              <div :style="{width:'70%',height:(maxPV ? (item.count / maxPV * 200) : 0) + 'px',background:'linear-gradient(180deg,#1B5FEB,#4B82F5)',borderRadius:'3px 3px 0 0',minHeight:'2px'}" />
-              <div style="font-size:11px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center">{{ formatShortDate(item.date) }}</div>
-            </div>
-          </div>
-          <el-empty v-else description="暂无数据" />
+          <v-chart :option="pageViewChartOption" style="height:260px" autoresize />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover">
           <template #header><span>每日事件数</span></template>
-          <div v-if="dailyEvents.length" style="display:flex;align-items:flex-end;gap:4px;justify-content:space-around;height:240px;padding:0 8px">
-            <div v-for="(item, i) in dailyEvents" :key="i" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0">
-              <div style="font-size:11px;color:#666;white-space:nowrap">{{ item.count }}</div>
-              <div :style="{width:'70%',height:(maxEV ? (item.count / maxEV * 200) : 0) + 'px',background:'linear-gradient(180deg,#10B981,#34D399)',borderRadius:'3px 3px 0 0',minHeight:'2px'}" />
-              <div style="font-size:11px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center">{{ formatShortDate(item.date) }}</div>
-            </div>
-          </div>
-          <el-empty v-else description="暂无数据" />
+          <v-chart :option="eventChartOption" style="height:260px" autoresize />
         </el-card>
       </el-col>
     </el-row>
@@ -90,6 +76,16 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 事件分布饼图 -->
+    <el-row :gutter="16" style="margin-top:16px">
+      <el-col :span="12">
+        <el-card shadow="hover">
+          <template #header><span>事件类型分布</span></template>
+          <v-chart :option="eventPieOption" style="height:300px" autoresize />
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -112,16 +108,68 @@ const overviewCards = computed(() => [
   { label: '独立会话', value: overview.value.uniqueSessions, icon: 'User', color: '#F59E0B' },
 ]);
 
-const maxPV = computed(() => Math.max(...dailyPageViews.value.map((d) => d.count), 1));
-const maxEV = computed(() => Math.max(...dailyEvents.value.map((d) => d.count), 1));
-
-const funnelColors = ['#1B5FEB', '#4B82F5', '#10B981', '#F59E0B'];
-
 const formatShortDate = (d) => {
   if (!d) return '-';
   const date = new Date(d);
   return `${date.getMonth() + 1}/${date.getDate()}`;
 };
+
+const pageViewChartOption = computed(() => ({
+  tooltip: { trigger: 'axis' },
+  xAxis: {
+    type: 'category',
+    data: dailyPageViews.value.map((d) => formatShortDate(d.date)),
+  },
+  yAxis: { type: 'value' },
+  series: [
+    {
+      data: dailyPageViews.value.map((d) => d.count),
+      type: 'bar',
+      itemStyle: { color: '#1B5FEB', borderRadius: [4, 4, 0, 0] },
+    },
+  ],
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+}));
+
+const eventChartOption = computed(() => ({
+  tooltip: { trigger: 'axis' },
+  xAxis: {
+    type: 'category',
+    data: dailyEvents.value.map((d) => formatShortDate(d.date)),
+  },
+  yAxis: { type: 'value' },
+  series: [
+    {
+      data: dailyEvents.value.map((d) => d.count),
+      type: 'bar',
+      itemStyle: { color: '#10B981', borderRadius: [4, 4, 0, 0] },
+    },
+  ],
+  grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+}));
+
+const eventPieOption = computed(() => ({
+  tooltip: { trigger: 'item' },
+  legend: { top: '5%', left: 'center' },
+  series: [
+    {
+      name: '事件类型',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+      label: { show: false, position: 'center' },
+      emphasis: { label: { show: true, fontSize: 18, fontWeight: 'bold' } },
+      labelLine: { show: false },
+      data: topEvents.value.map((item) => ({
+        name: item.event,
+        value: item._count?.event || 0,
+      })),
+    },
+  ],
+}));
+
+const funnelColors = ['#1B5FEB', '#4B82F5', '#10B981', '#F59E0B'];
 
 const fetchData = async () => {
   loading.value = true;

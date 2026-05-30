@@ -11,7 +11,7 @@ async function dismissCookieBanner(page) {
 test.describe('Auth', () => {
   test('should open login modal', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle');
     await dismissCookieBanner(page);
     await page.locator('text=Login').first().click();
     await expect(page.locator('text=Welcome Back')).toBeVisible();
@@ -19,7 +19,7 @@ test.describe('Auth', () => {
 
   test('should switch to register mode', async ({ page }) => {
     await page.goto('/');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('networkidle');
     await dismissCookieBanner(page);
     await page.locator('text=Login').first().click();
     await page.locator('text=Sign Up').first().click();

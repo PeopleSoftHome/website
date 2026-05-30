@@ -36,17 +36,8 @@ function detectLocale() {
   return 'zh';
 }
 
-function syncDocumentMeta(locale, dict) {
+function syncDocumentMeta(locale) {
   if (typeof document === 'undefined') return;
-
-  const title = dict.pageTitle;
-  if (title) document.title = title;
-
-  const desc = dict.pageDesc;
-  if (desc) {
-    let meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', desc);
-  }
 
   document.documentElement.lang = HREFLANG_MAP[locale] || locale;
 
@@ -97,7 +88,7 @@ export function createI18n() {
   // 语言切换时同步更新 document title / description / hreflang
   watch(locale, (loc) => {
     const dict = LOCALES[loc]?.json ?? LOCALES['zh'].json;
-    syncDocumentMeta(loc, dict);
+    syncDocumentMeta(loc);
   }, { immediate: true });
 
   return { locale, setLocale, t, LOCALES };

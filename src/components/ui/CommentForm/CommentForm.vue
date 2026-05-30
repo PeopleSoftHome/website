@@ -52,8 +52,7 @@ const submit = async () => {
     emit('submit', newComment);
     content.value = '';
   } catch (e) {
-    console.error(e);
-    alert(e.response?.data?.message || t('comment.submitError'));
+    import('@/utils/toast.js').then(({ showToast }) => showToast(e.response?.data?.message || t('comment.submitError'), 'error'));
   }
   submitting.value = false;
 };

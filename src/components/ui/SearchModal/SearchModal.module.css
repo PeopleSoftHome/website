@@ -143,7 +143,7 @@
 .hotTag:hover {
   border-color: var(--primary);
   color: var(--primary);
-  background: rgba(27, 95, 235, 0.04);
+  background: var(--primary-alpha-8);
 }
 
 /* ── 结果分组 ── */
@@ -226,8 +226,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.resultTitle :deep(mark) {
-  background: rgba(27, 95, 235, 0.12);
+.resultTitle mark {
+  background: var(--primary-alpha-12);
   color: var(--primary);
   border-radius: 2px;
   padding: 0 2px;
@@ -240,8 +240,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.resultDesc :deep(mark) {
-  background: rgba(27, 95, 235, 0.08);
+.resultDesc mark {
+  background: var(--primary-alpha-8);
   color: var(--primary);
 }
 

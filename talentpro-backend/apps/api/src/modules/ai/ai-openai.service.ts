@@ -113,8 +113,9 @@ export class AiOpenAiService {
 
       subject.next({ data: JSON.stringify({ done: true }) });
       subject.complete();
-    } catch (err: any) {
-      this.logger.error(`Stream error: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Stream error: ${message}`);
       subject.error(err);
     }
   }

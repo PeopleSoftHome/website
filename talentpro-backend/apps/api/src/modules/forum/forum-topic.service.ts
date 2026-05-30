@@ -1,57 +1,62 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { ForumCategoryRepository } from './forum-category.repository';
+import { ForumTopicRepository } from './forum-topic.repository';
+import { SearchIndexEvent } from '@/events/search-index.event';
 
 @Injectable()
 export class ForumTopicService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private categoryRepo: ForumCategoryRepository,
+    private topicRepo: ForumTopicRepository,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
+  // ─── Categories ───
   async findAllCategories() {
-    return this.prisma.forumCategory.findMany({
+    return this.categoryRepo.findAll({
       orderBy: { sortOrder: 'asc' },
       include: { _count: { select: { topics: true } } },
+      pageSize: 100,
     });
   }
 
   async createCategory(data: { name: string; description?: string; sortOrder?: number }) {
-    return this.prisma.forumCategory.create({ data });
+    return this.categoryRepo.create(data);
   }
 
   async updateCategory(id: string, data: Partial<{ name: string; description?: string; sortOrder: number }>) {
-    return this.prisma.forumCategory.update({ where: { id }, data });
+    return this.categoryRepo.update(id, data);
   }
 
   async deleteCategory(id: string) {
-    await this.prisma.forumCategory.delete({ where: { id } });
-    return { message: '删除成功' };
+    return this.categoryRepo.delete(id);
   }
 
+  // ─── Topics ───
   async findAllTopics(page = 1, pageSize = 20, categoryId?: string) {
-    const skip = (page - 1) * pageSize;
     const where: any = {};
     if (categoryId) where.categoryId = categoryId;
-    const [data, total] = await Promise.all([
-      this.prisma.forumTopic.findMany({
-        skip,
-        take: pageSize,
-        where,
-        include: {
-          category: true,
-          author: { select: { id: true, name: true, avatar: true } },
-          _count: { select: { posts: true } },
-        },
-        orderBy: [
-          { isPinned: 'desc' },
-          { updatedAt: 'desc' },
-        ],
-      }),
-      this.prisma.forumTopic.count({ where }),
-    ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return this.topicRepo.findAll({
+      page,
+      pageSize,
+      where,
+      orderBy: [{ isPinned: 'desc' }, { updatedAt: 'desc' }],
+      include: {
+        category: true,
+        author: { select: { id: true, name: true, avatar: true } },
+        _count: { select: { posts: true } },
+      },
+    });
   }
 
-  async findTopicById(id: string) {
-    const topic = await this.prisma.forumTopic.findUnique({
-      where: { id },
+  async findTopicById(id: string, workspaceId?: string) {
+    const where: any = { id };
+    if (workspaceId) where.workspaceId = workspaceId;
+    const topic = await this.prisma.forumTopic.findFirst({
+      where,
       include: {
         category: true,
         author: { select: { id: true, name: true, avatar: true } },
@@ -67,8 +72,8 @@ export class ForumTopicService {
   }
 
   async createTopic(data: { categoryId: string; authorId: string; title: string; content: string; workspaceId?: string }) {
-    return this.prisma.forumTopic.create({
-      data: {
+    const topic = await this.topicRepo.create(
+      {
         categoryId: data.categoryId,
         authorId: data.authorId,
         title: data.title,
@@ -76,27 +81,40 @@ export class ForumTopicService {
         workspaceId: data.workspaceId,
         replyCount: 0,
       },
-      include: {
+      {
         category: true,
         author: { select: { id: true, name: true, avatar: true } },
       },
-    });
+    );
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('forum_topic', topic.id, 'create'));
+    return topic;
   }
 
-  async updateTopic(id: string, data: Partial<{ title: string; content: string; categoryId: string }>) {
-    return this.prisma.forumTopic.update({ where: { id }, data });
+  async updateTopic(id: string, data: Partial<{ title: string; content: string; categoryId: string }>, workspaceId?: string) {
+    if (workspaceId) {
+      const existing = await this.prisma.forumTopic.findFirst({ where: { id, workspaceId } });
+      if (!existing) throw new NotFoundException('话题不存在或无权访问');
+    }
+    const topic = await this.topicRepo.update(id, data);
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('forum_topic', id, 'update'));
+    return topic;
   }
 
-  async deleteTopic(id: string) {
-    await this.prisma.forumTopic.delete({ where: { id } });
+  async deleteTopic(id: string, workspaceId?: string) {
+    if (workspaceId) {
+      const existing = await this.prisma.forumTopic.findFirst({ where: { id, workspaceId } });
+      if (!existing) throw new NotFoundException('话题不存在或无权访问');
+    }
+    await this.topicRepo.delete(id);
+    this.eventEmitter.emit('search.index', new SearchIndexEvent('forum_topic', id, 'delete'));
     return { message: '删除成功' };
   }
 
   async togglePin(id: string, isPinned: boolean) {
-    return this.prisma.forumTopic.update({ where: { id }, data: { isPinned } });
+    return this.topicRepo.update(id, { isPinned });
   }
 
   async toggleLock(id: string, isLocked: boolean) {
-    return this.prisma.forumTopic.update({ where: { id }, data: { isLocked } });
+    return this.topicRepo.update(id, { isLocked });
   }
 }

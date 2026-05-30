@@ -74,5 +74,5 @@
 .white:hover {
   background: var(--primary-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px var(--white-alpha-25);
 }

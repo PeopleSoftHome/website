@@ -1,7 +1,7 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v2.6.0 | **技术栈**：Vue 3.5 + Vite 5 + CSS Modules + Vue Router + NestJS 11 + Prisma 6
+> **当前版本**：v3.0.0 | **技术栈**：Vue 3.5 + Vite 8 + CSS Modules + Vue Router + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -23,8 +23,8 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 | 类别 | 技术 | 版本 | 说明 |
 |------|------|------|------|
 | 框架 | Vue | 3.5.0 | SFC + `<script setup>`，组合式 API |
-| 构建工具 | Vite | 5.4.2 | 开发端口 3000 |
-| 插件 | @vitejs/plugin-vue | 5.1.0 | 含 Fast Refresh |
+| 构建工具 | Vite | 8.0.14 | 开发端口 3000，Rolldown 引擎 |
+| 插件 | @vitejs/plugin-vue | 6.0.7 | 含 Fast Refresh |
 | 路由 | Vue Router | 5.0.7 | 博客/论坛多页面路由 |
 | 样式 | CSS Modules | 原生 | 零运行时开销 |
 | 语言 | JavaScript | ES Module | 无 TypeScript（后续可渐进迁移） |
@@ -52,8 +52,10 @@ npm run preview
 ### 2.3 构建配置（`vite.config.js`）
 
 - `outDir: 'dist'`
-- `manualChunks: { vendor: ['vue', 'vue-router'] }` — Vue 单独拆包
-- 无额外插件、无路径别名（import 使用相对路径）
+- `manualChunks` 使用函数形式（Rolldown 兼容）— Vue / vue-router / axios 单独拆包
+- 配置了 `@` 路径别名（`resolve.alias: { '@': '/src' }`）
+- 集成 `VitePWA` 插件（PWA manifest、Service Worker、workbox 缓存策略）
+- `manualChunks` 使用函数形式（Rolldown 兼容）— Vue / vue-router / axios 单独拆包
 
 ---
 
@@ -69,13 +71,32 @@ talentpro-v2/
     ├── main.js                   # createApp + router 挂载
     ├── App.vue                   # 根组件：5 层 Provider + router-view + 全局观察器
     ├── router/
-    │   └── index.js              # Vue Router：Home / Blog / BlogDetail / Forum / Topic
+    │   └── index.js              # Vue Router：24 条路由（首页 + 二级页面 + 博客/论坛/认证）
     ├── pages/
     │   ├── HomePage.vue          # 组装全部 15 个 Section
+    │   ├── ProductListView.vue   # /products 产品列表
+    │   ├── ProductDetailView.vue # /products/:slug 产品详情
+    │   ├── SolutionListView.vue  # /solutions 解决方案列表
+    │   ├── SolutionDetailView.vue# /solutions/:slug 方案详情
+    │   ├── CaseListView.vue      # /cases 客户案例列表
+    │   ├── CaseDetailView.vue    # /cases/:slug 案例详情
+    │   ├── ResourceListView.vue  # /resources 资源中心列表
+    │   ├── ResourceDetailView.vue# /resources/:slug 资源详情
+    │   ├── NewsListView.vue      # /news 新闻列表
+    │   ├── NewsDetailView.vue    # /news/:slug 新闻详情
+    │   ├── CareersView.vue       # /careers 招聘首页
+    │   ├── CampusCareersView.vue # /careers/campus 校园招聘
+    │   ├── SocialCareersView.vue # /careers/social 社会招聘
+    │   ├── JobDetailView.vue     # /careers/:id 职位详情
+    │   ├── AboutView.vue         # /about 了解我们
+    │   ├── TeamView.vue          # /about/team 团队介绍
+    │   ├── ContactView.vue       # /about/contact 联系我们
+    │   ├── PartnersView.vue      # /about/partners 合作伙伴
     │   ├── BlogListView.vue      # 博客列表
     │   ├── BlogDetailView.vue    # 博客详情
     │   ├── ForumView.vue         # 论坛话题列表
-    │   └── ForumTopicView.vue    # 话题详情
+    │   ├── ForumTopicView.vue    # 话题详情
+    │   └── ProfilePage.vue       # 个人中心
     │
     ├── components/
     │   ├── layout/               # 全局布局
@@ -112,38 +133,54 @@ talentpro-v2/
     ├── api/                      # 后端 API 封装
     │   ├── client.js             # Axios 实例（含 token 拦截器）
     │   ├── blog.js               # 博客 API
-    │   └── forum.js              # 论坛 API
+    │   ├── forum.js              # 论坛 API
+    │   ├── case.js               # 客户案例 API
+    │   ├── news.js               # 新闻 API
+    │   ├── careers.js            # 招聘 API
+    │   └── about.js              # 关于我们 API
     │
-    ├── composables/              # 自定义 Composables（9 个）
+    ├── composables/              # 自定义 Composables（22 个）
     │   ├── useModal.js           # 弹窗状态机（含 ESC + body overflow）
     │   ├── useVideoModal.js
-    │   ├── useTheme.jsx          # 主题切换（localStorage + prefers-color-scheme）
-    │   ├── useSearch.jsx         # 搜索算法 + 防抖 + 键盘导航
+    │   ├── useTheme.js           # 主题切换（localStorage + prefers-color-scheme）
+    │   ├── useSearch.js          # 搜索算法 + 防抖 + 键盘导航
     │   ├── useCarousel.js        # 轮播（resize 修复 + 悬停暂停）
     │   ├── useCountUp.js         # 数字递增动画（IntersectionObserver 驱动）
     │   ├── useNavScroll.js       # 导航滚动状态
     │   ├── useScrollReveal.js    # 单元素滚动入场
-    │   └── useTabs.js            # Tab 切换
+    │   ├── useTabs.js            # Tab 切换
+    │   ├── useApiData.js         # API 数据加载（loading/error/retry）
+    │   ├── useCmsData.js         # CMS 配置驱动数据加载（含 fallback）
+    │   ├── useAnalytics.js       # 埋点队列 + 热力图 + 滚动深度
+    │   ├── useChatBot.js         # ChatBot 状态 + SSE 流式消息
+    │   ├── useCookieConsent.js   # Cookie 同意横幅
+    │   ├── useFocusTrap.js       # 焦点陷阱（弹窗无障碍）
+    │   ├── useLazyImage.js       # 图片懒加载
+    │   ├── useRoiCalculator.js   # ROI 计算器逻辑
+    │   ├── useScrollDepth.js     # 滚动深度追踪
+    │   ├── useScrollLock.js      # body scroll lock
+    │   ├── useAbTest.js          # A/B 测试分流
+    │   └── useHeatmap.js         # 点击热力图追踪
     │
-    ├── data/                     # 静态业务数据（11 个纯 JS 文件）
-    │   ├── navigation.js         # NAV_LINKS
-    │   ├── products.js           # PRODUCT_TABS（4 Tab × 20 产品）
+    ├── data/                     # 静态业务数据（12 个纯 JS 文件）
+    │   ├── navigation.js         # NAV_LINKS + FOOTER_LINKS
+    │   ├── products.js           # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
     │   ├── aiFamily.js           # AI_CARDS
-    │   ├── industries.js         # INDUSTRY_TABS（5 Tab）
+    │   ├── industries.js         # INDUSTRY_TABS（5 行业）+ INDUSTRY_MAP
+    │   ├── cases.js              # CASES（8 客户案例）+ CASE_INDUSTRIES
     │   ├── testimonials.js       # TESTIMONIALS
     │   ├── logos.js              # LOGO_ITEMS + LOGO_FILTERS
     │   ├── whyUs.js              # WHY_US_TABS + STATS_BAR
-    │   ├── resources.js          # RESOURCES
+    │   ├── resources.js          # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
     │   ├── stats.js              # STATS_DATA
     │   ├── security.js           # 安全认证数据
     │   └── searchIndex.js        # 50 条搜索索引
     │
     ├── i18n/                     # 多语言系统（v2.3.0）
-    │   ├── index.jsx             # I18nProvider + useI18n composable
     │   ├── interpolate.js        # {var} 插值
     │   ├── keyMap.js             # ID → i18n key 映射
     │   └── locales/
-    │       ├── zh-CN.json        # 355 keys
+    │       ├── zh-CN.json        # ~772 keys
     │       ├── en.json
     │       └── zh-TW.json
     │
@@ -211,15 +248,20 @@ talentpro-v2/
 | SearchModal（搜索）| 2500 | Cmd+K / NavBar 搜索图标 |
 | VideoModal（视频演示）| 3000 | Hero「观看产品演示」按钮 |
 
-### 4.5 Provider 层级（由外到内）
+### 4.5 Provider 层级（扁平 provide）
+
+`App.vue` 使用 8 个独立的 `provide()` 注入全局状态，无嵌套 Context 组件：
 
 ```
-I18nProvider       → 多语言（zh / en / zh-TW）
-  ThemeProvider    → 亮色 / 暗色主题
-    SearchProvider → 全局搜索（Cmd+K）
-      ModalContext → DemoModal（z-index 2000）
-        VideoModalContext → VideoModal（z-index 3000）
-          AuthProvider   → 用户认证（login/register/logout）
+i18n         → 多语言（zh / en / zh-TW）
+theme        → 亮色 / 暗色主题
+search       → 全局搜索（Cmd+K）
+modal        → DemoModal（z-index 2000）
+videoModal   → VideoModal（z-index 3000）
+analytics    → 埋点队列
+auth         → 用户认证（login/register/logout）
+authModal    → 登录/注册弹窗
+abTest       → A/B 测试分流
 ```
 
 ---
@@ -269,9 +311,9 @@ I18nProvider       → 多语言（zh / en / zh-TW）
 
 | 类型 | 工具 | 命令 | 说明 |
 |------|------|------|------|
-| 前端单元测试 | Vitest | `npm run test` | 27+ 个测试文件，覆盖 composables / utils |
+| 前端单元测试 | Vitest | `npm run test` | 28 个测试文件 / 117 测试，覆盖 composables / utils / pages |
 | 前端 E2E | Playwright | `npx playwright test` | 4 个 spec 文件，覆盖首页 / 博客 / 论坛 / 认证 |
-| 后端单元测试 | Jest | `cd talentpro-backend && npm run test` | 配置就绪，核心模块持续补充中 |
+| 后端单元测试 | Jest | `cd talentpro-backend && npm run test` | 7 个套件 / 47 测试，覆盖 auth / user / blog / forum / lead / mail |
 | 后端 E2E | Jest | `cd talentpro-backend && npm run test:e2e` | 配置就绪，核心流程持续补充中 |
 
 ### 6.2 手动验证清单（每次变更后必须执行）
@@ -291,7 +333,14 @@ I18nProvider       → 多语言（zh / en / zh-TW）
 12. 多语言：切换语言后所有文本正常，无遗漏 key
 13. **博客/论坛**：路由跳转正常，列表加载、详情渲染、分页/筛选正常
 14. **用户认证**：登录/注册弹窗、表单验证、登录后头像下拉、退出登录正常
-15. **后端 API**：Swagger 文档正常，`/health` 端点返回 200
+15. **产品列表/详情**：Tab 筛选正常，详情页功能/场景/证言/规格全部渲染
+16. **解决方案列表/详情**：行业卡片指标正常，详情页痛点/架构/路径/案例/ROI 渲染
+17. **客户案例列表/详情**：行业筛选正常，Featured 案例突出，详情页挑战/方案/成果/证言渲染
+18. **资源中心列表/详情**：8 类标签筛选正常，Featured 精选区渲染，详情页下载 CTA 正常
+19. **新闻列表/详情**：Featured 新闻渲染正常，详情页正文段落化
+20. **加入我们**：校园/社会招聘入口正常，职位列表筛选正常，职位详情申请按钮正常
+21. **了解我们**：团队/合作伙伴/联系我们入口正常，表单提交正常
+22. **后端 API**：Swagger 文档正常，`/health` 端点返回 200
 
 **响应式**：
 - Mobile (375px)：Hamburger 菜单、底部浮动栏横排、Hero 无 Dashboard 图
@@ -368,7 +417,7 @@ npm run build
 
 3. **暗色模式下硬编码色值**：新增组件时，严禁在 JSX inline style 或 CSS Module 中写死 `#fff` / `#000` 等色值，必须使用 `var(--gray-900)` / `var(--page-bg)` 等语义化变量。
 
-4. **i18n key 遗漏**：新增用户可见文本时，必须同步更新 `src/i18n/locales/zh-CN.json`、`en.json`、`zh-TW.json` 三个文件。
+4. **i18n key 遗漏**：新增用户可见文本时，必须同步更新 `src/i18n/locales/zh-CN.json`、`en.json`、`zh-TW.json` 三个文件。已提取的 key 包括 `careers.benefits.*`、`blog.jsonLdName` / `blog.jsonLdDesc` 等。
 
 5. **z-index 冲突**：新增弹窗/浮层前，必须查阅上面的 z-index 表，确保不覆盖已有层级。
 
@@ -400,6 +449,7 @@ npm run build
 ### 缓存
 - CMS 公开 GET 接口必须使用 `@Cacheable({ key, ttl })`
 - CacheInterceptor 已全局注册，无需额外导入
+- **`@CacheEvict` 支持 `keys: string[]` 数组**（推荐）：当需要同时清除多个缓存 key 时，使用 `@CacheEvict({ keys: ['cms:sections', 'cms:page'] })`，避免多个装饰器叠加导致 `SetMetadata` 覆盖
 
 ### 事件驱动
 - BullMQ Processor 必须配置 `attempts: 3` + `exponential backoff`
@@ -407,6 +457,46 @@ npm run build
 
 ### SEO
 - Blog/Forum 详情页加载后必须动态更新 `document.title` + `meta description`
+- JSON-LD 结构化数据中的用户可见文本必须使用 i18n key，禁止硬编码中文
+
+### PII 字段级加密
+- User.phone / DemoBooking.phone / email 等敏感字段通过 Prisma 扩展自动 AES-256-GCM 加解密
+- 密钥来源优先级：`PII_ENCRYPTION_KEY` 环境变量 → `JWT_SECRET`（fallback，记录警告日志）
+- 加密扩展在 `softDeleteExtension` 之后、workspace 扩展之前应用
+
+### SSE Redis Pub/Sub
+- Notification 实时推送使用 Redis Pub/Sub 支持多实例集群
+- 全局仅 1 个 Redis psubscribe 连接（`psubscribe('sse:notifications:*')`）
+- Channel 命名规范：`sse:notifications:{userId}`
+
+### Icon 组件
+- `Icon.vue` 从 554 行 monolithic 组件重构为 25 行入口 + `IconSprite.vue` SVG Sprite
+- 所有图标通过 `<use :href="#icon-{name}" />` 引用，现有用法 `<Icon name="xxx" />` 零改动
+- `App.vue` 全局挂载 `<IconSprite />` 一次注入全部 78 个图标定义
+
+### 响应拦截器
+- `TransformInterceptor` 使用内部 `Symbol('transformed')` 标记已包装响应，避免 `'success' in data` 误判含 `success` 字段的业务数据
+
+### 分页辅助
+- 所有 Service 分页查询统一使用 `getSkip(page, pageSize)` 和 `buildPaginatedResponse(data, page, pageSize, total)`，禁止内联重复 `const skip = (page - 1) * pageSize`
+
+### Admin 权限体系
+- 路由守卫 (`router.beforeEach`) 同时检查 `to.meta.roles` 和 `to.meta.permissions`，权限不足时重定向到 `/dashboard`
+- `menu.config.js` 支持 `permissions` + `permissionMode` ('all' | 'any') 字段，`hasMenuPermission(item, userRole, auth)` 同时校验 roles 和 permissions
+- `auth.store.js` 的 `permissions` computed 从 `user.role.permissions` 解析，自动将 `{ resource, action }` 对象数组转换为 `resource:action` 字符串数组
+- **菜单显示由 `visibleMenu` + `hasMenuPermission` 控制，禁止在菜单项上直接使用 `v-permission` 指令**（`v-permission` 接收权限字符串，而 `roles` 是角色数组，会导致非 SUPER_ADMIN 用户菜单被错误隐藏）
+- `v-permission` 指令仅用于按钮/操作级别的细粒度控制
+
+### Admin CmsTable
+- 表单字段支持 `<slot :name="'form-field-' + field.prop" :field="field" :form="form">` 自定义插槽，调用方可注入 select / date-picker / relation-picker 等控件
+- 内置默认渲染（input / textarea / switch / number / image-upload）与 slot 并存，向下兼容原有 `formFields` 配置
+- 支持 `apiParams` prop 传递额外查询参数，支持 `defineExpose({ setParams, params, fetch, refresh })` 供父组件控制筛选
+
+### BaseCrudRepository
+- 单一模型 CRUD 通过 `extends BaseCrudRepository` + `super(prisma, 'modelName')` 实现，已迁移模块：News、Media、ForumCategory、ForumTopic、Job、CaseStudy、BlogCategory、BlogTag
+- `findAll` / `findOne` / `findBySlug` / `create` / `update` / `upsert` / `delete` 均支持可选的 `include` / `select` 参数
+- Service 层组合 Repository 并保留业务逻辑（如 viewCount++、workspace 权限检查、聚合查询）
+- CMS 内容类型使用 `CmsContentRepository.forModel(modelName)` 工厂模式，避免为每个模型创建独立 Repository 类，已应用于：productTab、product、industry、testimonial、stat、clientLogo、whyUsTab、aiCard、resource、resourceCategory、page、section
 
 ### CI/CD
 - 代码提交触发 GitHub Actions：前端构建 + Vitest + 后端 Nest build + E2E
@@ -414,4 +504,4 @@ npm run build
 
 ---
 
-*TalentPro HR Portal · Vue 3.5 + Vite 5 + NestJS 11 · AGENTS.md v3.0.0*
+*TalentPro HR Portal · Vue 3.5 + Vite 8 + NestJS 11 · AGENTS.md v3.0.0*

@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { SensitiveWordCategory } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
+import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class SystemService {
@@ -44,7 +46,7 @@ export class SystemService {
 
   // ─── AuditLogs ───
   async findAllAuditLogs(page = 1, pageSize = 20, filters?: { userId?: string; resource?: string }) {
-    const skip = (page - 1) * pageSize;
+    const skip = getSkip(page, pageSize);
     const where: any = {};
     if (filters?.userId) where.userId = filters.userId;
     if (filters?.resource) where.resource = filters.resource;
@@ -58,7 +60,7 @@ export class SystemService {
       }),
       this.prisma.auditLog.count({ where }),
     ]);
-    return { data, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } };
+    return buildPaginatedResponse(data, page, pageSize, total);
   }
 
   async createAuditLog(data: {
@@ -111,7 +113,7 @@ export class SystemService {
 
   async createSensitiveWord(data: { word: string; category?: string; severity?: number }) {
     return this.prisma.sensitiveWord.create({
-      data: { word: data.word, category: data.category || 'spam', severity: data.severity || 2 },
+      data: { word: data.word, category: (data.category || 'spam') as SensitiveWordCategory, severity: data.severity || 2 },
     });
   }
 

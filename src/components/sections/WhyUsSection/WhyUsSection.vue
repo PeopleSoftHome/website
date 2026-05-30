@@ -48,8 +48,7 @@
 <script setup>
 import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs.js';
-import { useApiData } from '@/composables/useApiData.js';
-import { cmsApi } from '@/api/cms.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
 import { transformWhyUsTabs } from '@/api/transforms.js';
 import { STATS_BAR } from '@/data/whyUs.js';
 import { SECURITY_CERTS } from '@/data/security.js';
@@ -62,11 +61,7 @@ import s from './WhyUsSection.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const { activeIndex, selectTab } = useTabs(0);
 
-const apiTabs = ref([]);
-useApiData(async () => {
-  const data = await cmsApi.getWhyUs();
-  return transformWhyUsTabs(data);
-}, apiTabs);
+const { displayItems: apiTabs } = useCmsDataByKey('why-us', { transform: transformWhyUsTabs, fallbackKey: 'why-us' });
 
 const staticTabs = [
   { id: 'product', label: t('whyUs.tabs.product') },
@@ -74,7 +69,7 @@ const staticTabs = [
   { id: 'success', label: t('whyUs.tabs.success') },
 ];
 
-const tabs = computed(() => (apiTabs.value.length > 0 ? apiTabs.value.map((t) => ({ id: t.id, label: t.label })) : staticTabs));
+const tabs = computed(() => ((apiTabs.value || []).length > 0 ? apiTabs.value.map((t) => ({ id: t.id, label: t.label })) : staticTabs));
 const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'product');
 
 const currentMetrics = computed(() => {

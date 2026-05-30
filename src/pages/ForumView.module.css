@@ -1,0 +1,32 @@
+.forumPage { padding: 104px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.pageTitle { font-size: 32px; font-weight: 800; color: var(--gray-900); margin-bottom: 24px; }
+
+.forumCategories { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+.catBtn { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--gray-200); background: var(--card-bg); color: var(--gray-700); cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.catBtn:hover { border-color: var(--primary); color: var(--primary); }
+.catActive { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+.topicList { display: flex; flex-direction: column; gap: 12px; }
+.topicItem { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; }
+.topicItem:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); }
+.topicLeft { display: flex; align-items: center; gap: 12px; }
+.topicInfo { display: flex; flex-direction: column; gap: 4px; }
+.topicTitle { font-size: 16px; font-weight: 600; color: var(--gray-900); margin: 0; }
+.topicMeta { font-size: 13px; color: var(--gray-500); display: flex; gap: 12px; }
+.topicStats { display: flex; gap: 16px; font-size: 13px; color: var(--gray-500); }
+.topicStats span { display: flex; align-items: center; gap: 4px; }
+
+.forumEmpty { text-align: center; padding: 60px 0; color: var(--gray-500); }
+.forumLoading { display: flex; flex-direction: column; gap: 12px; }
+.skeletonRow { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; margin-right: 6px; vertical-align: middle; }
+.tagDanger { background: var(--error-bg); color: var(--error); }
+.tagInfo { background: var(--gray-100); color: var(--gray-500); }
+[data-theme="dark"] .tagDanger { background: var(--error-alpha-15); color: var(--error-light); }
+[data-theme="dark"] .tagInfo { background: var(--gray-500-alpha-15); color: var(--gray-350); }
+
+.errorBox { text-align: center; padding: 60px 0; color: var(--gray-500); }
+.retryBtn { margin-top: 12px; padding: 8px 20px; border-radius: var(--radius-md); border: none; background: var(--primary); color: var(--white); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+[data-theme="dark"] .pageTitle { color: var(--gray-50); }
+[data-theme="dark"] .topicTitle { color: var(--gray-50); }

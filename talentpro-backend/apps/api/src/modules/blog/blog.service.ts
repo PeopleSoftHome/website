@@ -28,8 +28,8 @@ export class BlogService {
   }
   findPostBySlug(slug: string) { return this.postService.findPostBySlug(slug); }
   createPost(data: Parameters<BlogPostService['createPost']>[0]) { return this.postService.createPost(data); }
-  updatePost(id: string, data: Parameters<BlogPostService['updatePost']>[1]) { return this.postService.updatePost(id, data); }
-  deletePost(id: string) { return this.postService.deletePost(id); }
+  updatePost(id: string, data: Parameters<BlogPostService['updatePost']>[1], workspaceId?: string) { return this.postService.updatePost(id, data, workspaceId); }
+  deletePost(id: string, workspaceId?: string) { return this.postService.deletePost(id, workspaceId); }
 
   // ─── Tags (delegate to PostService) ───
   findAllTags() { return this.postService.findAllTags(); }

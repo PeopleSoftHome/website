@@ -7,7 +7,7 @@
       </el-button>
     </div>
     <el-card shadow="hover">
-      <el-table :data="leads" v-loading="loading" size="default" @row-click="openDetail">
+      <el-table :data="list.items" v-loading="list.loading" size="default" @row-click="openDetail">
         <el-table-column prop="name" label="姓名" width="100" />
         <el-table-column prop="company" label="公司" />
         <el-table-column prop="phone" label="手机" width="130" />
@@ -33,10 +33,10 @@
       <el-pagination
         style="margin-top:16px;justify-content:flex-end"
         layout="prev, pager, next"
-        :total="total"
-        :page-size="20"
-        v-model:current-page="page"
-        @current-change="fetchLeads"
+        :total="list.total"
+        :page-size="list.pageSize"
+        v-model:current-page="list.page"
+        @current-change="list.fetch"
       />
     </el-card>
 
@@ -116,22 +116,38 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
-import client from '@/api/client.js';
+import { formatDate } from '@/utils/formatDate.js';
+import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
+import client from '@/api/client.js';
+import { useList } from '@/composables/useList.js';
+import { downloadFile } from '@/utils/downloadFile.js';
 
-const leads = ref([]);
-const total = ref(0);
-const page = ref(1);
-const loading = ref(false);
+const list = useList({
+  fetchFn: (p) => client.get(`/demo-bookings?page=${p.page}&pageSize=${p.pageSize}`),
+});
+
 const drawerVisible = ref(false);
 const detailLoading = ref(false);
 const selectedLead = ref(null);
 const followUps = ref([]);
 const addingFollowUp = ref(false);
-
 const exporting = ref(false);
 const newFollowUp = reactive({ type: 'call', content: '' });
+
+const openDetail = async (row) => {
+  selectedLead.value = row;
+  drawerVisible.value = true;
+  detailLoading.value = true;
+  try {
+    const res = await client.get(`/demo-bookings/${row.id}`);
+    selectedLead.value = res.data || res;
+    followUps.value = selectedLead.value.followUps || [];
+  } catch (e) {
+    ElMessage.error('加载详情失败');
+  }
+  detailLoading.value = false;
+};
 
 const statusType = (s) => {
   const map = {
@@ -146,34 +162,12 @@ const statusType = (s) => {
   return map[s] || 'info';
 };
 
-const formatDate = (d) => d ? new Date(d).toLocaleString('zh-CN') : '-';
-
-const fetchLeads = async () => {
-  loading.value = true;
-  try {
-    const res = await client.get(`/demo-bookings?page=${page.value}&pageSize=20`);
-    leads.value = res.data.data ?? [];
-    total.value = res.data.meta?.total ?? 0;
-  } catch (e) {
-    console.error(e);
-    ElMessage.error('加载线索列表失败');
-  }
-  loading.value = false;
-};
-
-const openDetail = async (row) => {
-  selectedLead.value = row;
-  drawerVisible.value = true;
-  detailLoading.value = true;
-  followUps.value = row.followUps || [];
-  detailLoading.value = false;
-};
 
 const updateStatus = async (status) => {
   try {
     await client.patch(`/demo-bookings/${selectedLead.value.id}`, { status });
     ElMessage.success('状态已更新');
-    fetchLeads();
+    list.fetch();
   } catch (e) {
     ElMessage.error('状态更新失败');
   }
@@ -205,19 +199,14 @@ const exportLeads = async () => {
   try {
     const res = await client.get('/admin/export/leads?format=xlsx', { responseType: 'blob' });
     const blob = new Blob([res.data], { type: 'application/octet-stream' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `leads-${Date.now()}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(blob, `leads-${Date.now()}.xlsx`);
     ElMessage.success('导出成功');
   } catch (e) {
-    console.error(e);
+    if (import.meta.env.DEV) {
+      console.error(e);
+    }
     ElMessage.error('导出失败');
   }
   exporting.value = false;
 };
-
-onMounted(fetchLeads);
 </script>

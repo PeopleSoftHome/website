@@ -2,22 +2,39 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } f
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CmsService } from './cms.service';
+import { CmsGenericService } from './cms-generic.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { CreatePageDto } from './dto/create-page.dto';
+import { CreateProductTabDto } from './dto/create-product-tab.dto';
+import { CreateIndustryDto } from './dto/create-industry.dto';
+import { UpsertStatDto } from './dto/upsert-stat.dto';
+import { CreateLogoDto } from './dto/create-logo.dto';
+import { UpsertWhyUsTabDto } from './dto/upsert-why-us-tab.dto';
+import { UpsertAiCardDto } from './dto/upsert-ai-card.dto';
+import { CreateResourceDto } from './dto/create-resource.dto';
+import { CreateSectionDto } from './dto/create-section.dto';
+import { UpdateSectionDto } from './dto/update-section.dto';
+import { BatchUpdateSectionsDto } from './dto/batch-update-sections.dto';
 
 @ApiTags('CMS内容管理')
 @Controller('cms')
 export class CmsController {
-  constructor(private cmsService: CmsService) {}
+  constructor(
+    private cmsService: CmsService,
+    private cmsGenericService: CmsGenericService,
+  ) {}
 
   // Pages
   @Get('pages')
   @Public()
   @Cacheable({ key: 'cms:pages', ttl: 300 })
   @ApiOperation({ summary: '页面列表' })
-  findAllPages(@Query('page') page?: string, @Query('pageSize') pageSize?: string) {
-    return this.cmsService.findAllPages(page ? parseInt(page, 10) : 1, pageSize ? parseInt(pageSize, 10) : 20);
+  findAllPages(@Query() pagination: PaginationDto) {
+    return this.cmsService.findAllPages(pagination.page, pagination.pageSize);
   }
 
   @Get('pages/:slug')
@@ -31,10 +48,11 @@ export class CmsController {
   @Post('pages')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:pages' })
   @ApiOperation({ summary: '创建页面' })
-  createPage(@Body() dto: { slug: string; title: string; metaTitle?: string; metaDesc?: string }) {
+  createPage(@Body() dto: CreatePageDto) {
     return this.cmsService.createPage(dto);
   }
 
@@ -50,10 +68,11 @@ export class CmsController {
   @Post('product-tabs')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:products' })
   @ApiOperation({ summary: '创建产品标签' })
-  createProductTab(@Body() dto: { label: string; slug: string; icon?: string; iconColor?: string; iconBg?: string }) {
+  createProductTab(@Body() dto: CreateProductTabDto) {
     return this.cmsService.createProductTab(dto);
   }
 
@@ -69,10 +88,11 @@ export class CmsController {
   @Post('industries')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:industries' })
   @ApiOperation({ summary: '创建行业方案' })
-  createIndustry(@Body() dto: { slug: string; label: string; icon?: string; features?: any[]; screenshot?: any }) {
+  createIndustry(@Body() dto: CreateIndustryDto) {
     return this.cmsService.createIndustry(dto);
   }
 
@@ -97,10 +117,11 @@ export class CmsController {
   @Post('stats')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:stats' })
   @ApiOperation({ summary: '创建/更新统计项' })
-  upsertStat(@Body() dto: { key: string; label: string; value: string; suffix?: string; prefix?: string; sortOrder?: number }) {
+  upsertStat(@Body() dto: UpsertStatDto) {
     return this.cmsService.upsertStat(dto);
   }
 
@@ -116,10 +137,11 @@ export class CmsController {
   @Post('logos')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:logos' })
   @ApiOperation({ summary: '创建Logo' })
-  createLogo(@Body() dto: { name: string; logo: string; industry?: string; sortOrder?: number }) {
+  createLogo(@Body() dto: CreateLogoDto) {
     return this.cmsService.upsertLogo(dto);
   }
 
@@ -135,10 +157,11 @@ export class CmsController {
   @Post('why-us')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:why-us' })
   @ApiOperation({ summary: '创建/更新WhyUs Tab' })
-  upsertWhyUsTab(@Body() dto: { slug: string; label: string; icon?: string; metrics?: any[]; sortOrder?: number }) {
+  upsertWhyUsTab(@Body() dto: UpsertWhyUsTabDto) {
     return this.cmsService.upsertWhyUsTab(dto);
   }
 
@@ -154,10 +177,11 @@ export class CmsController {
   @Post('ai-cards')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:ai-cards' })
   @ApiOperation({ summary: '创建/更新AI卡片' })
-  upsertAiCard(@Body() dto: { slug: string; name: string; tagline: string; description?: string; icon?: string; features?: any[]; color?: string; sortOrder?: number }) {
+  upsertAiCard(@Body() dto: UpsertAiCardDto) {
     return this.cmsService.upsertAiCard(dto);
   }
 
@@ -166,17 +190,14 @@ export class CmsController {
   @Public()
   @Cacheable({ key: 'cms:resources', ttl: 300 })
   @ApiOperation({ summary: '资源中心' })
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'pageSize', required: false })
   @ApiQuery({ name: 'categorySlug', required: false })
   findAllResources(
-    @Query('page') page?: string,
-    @Query('pageSize') pageSize?: string,
+    @Query() pagination: PaginationDto,
     @Query('categorySlug') categorySlug?: string,
   ) {
     return this.cmsService.findAllResources(
-      page ? parseInt(page, 10) : 1,
-      pageSize ? parseInt(pageSize, 10) : 20,
+      pagination.page,
+      pagination.pageSize,
       categorySlug,
     );
   }
@@ -184,10 +205,11 @@ export class CmsController {
   @Post('resources')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
   @ApiBearerAuth()
   @CacheEvict({ key: 'cms:resources' })
   @ApiOperation({ summary: '创建资源' })
-  createResource(@Body() dto: { categoryId: string; slug: string; title: string; description?: string; type?: string; coverImage?: string; fileUrl?: string; requiresLeadInfo?: boolean }) {
+  createResource(@Body() dto: CreateResourceDto) {
     return this.cmsService.createResource(dto);
   }
 
@@ -207,5 +229,79 @@ export class CmsController {
   @ApiOperation({ summary: '多语言翻译' })
   findTranslations(@Query('locale') locale: string, @Query('context') context?: string) {
     return this.cmsService.findTranslations(locale, context);
+  }
+
+  // Sections
+  @Get('pages/:pageId/sections')
+  @Public()
+  @Cacheable({ key: 'cms:sections', ttl: 300 })
+  @ApiOperation({ summary: '查询页面所有 Section' })
+  findSectionsByPage(@Param('pageId') pageId: string) {
+    return this.cmsService.findSectionsByPage(pageId);
+  }
+
+  @Post('sections')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:sections', 'cms:page'] })
+  @ApiOperation({ summary: '创建 Section' })
+  createSection(@Body() dto: CreateSectionDto) {
+    return this.cmsService.createSection(dto);
+  }
+
+  @Patch('sections/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:sections', 'cms:page'] })
+  @ApiOperation({ summary: '更新 Section' })
+  updateSection(@Param('id') id: string, @Body() dto: UpdateSectionDto) {
+    return this.cmsService.updateSection(id, dto);
+  }
+
+  @Delete('sections/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:delete')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:sections', 'cms:page'] })
+  @ApiOperation({ summary: '删除 Section' })
+  deleteSection(@Param('id') id: string) {
+    return this.cmsService.deleteSection(id);
+  }
+
+  @Post('sections/batch')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:sections', 'cms:page'] })
+  @ApiOperation({ summary: '批量更新 Section 排序与启用状态' })
+  batchUpdateSections(@Body() dto: BatchUpdateSectionsDto) {
+    return this.cmsService.batchUpdateSections(dto.sections);
+  }
+
+  // ─── 通用内容类型 CRUD（新增内容类型免写独立端点）───
+
+  @Get('content/:type')
+  @Public()
+  @Cacheable({ key: 'cms:content', ttl: 300 })
+  @ApiOperation({ summary: '通用内容类型列表' })
+  findAllContent(
+    @Param('type') type: string,
+    @Query() pagination: PaginationDto,
+  ) {
+    return this.cmsGenericService.findAll(type, pagination.page, pagination.pageSize);
+  }
+
+  @Get('content/:type/:slug')
+  @Public()
+  @Cacheable({ key: 'cms:content', ttl: 300 })
+  @ApiOperation({ summary: '通用内容类型详情' })
+  findContentBySlug(@Param('type') type: string, @Param('slug') slug: string) {
+    return this.cmsGenericService.findBySlug(type, slug);
   }
 }

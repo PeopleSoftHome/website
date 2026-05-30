@@ -17,15 +17,9 @@
 
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="12">
-        <el-card shadow="hover" title="最近 7 天线索趋势">
+        <el-card shadow="hover">
           <template #header><span>最近 7 天线索趋势</span></template>
-          <div style="height:240px;display:flex;align-items:flex-end;gap:8px;justify-content:space-around;padding:0 20px">
-            <div v-for="(v, i) in leadTrend" :key="i" style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
-              <div style="font-size:12px;color:#666">{{ v }}</div>
-              <div :style="{width:'60%',height:(v*8)+'px',background:'linear-gradient(180deg,#1B5FEB,#4B82F5)',borderRadius:'4px 4px 0 0',minHeight:'4px'}" />
-              <div style="font-size:12px;color:#999">{{ ['一','二','三','四','五','六','日'][i] }}</div>
-            </div>
-          </div>
+          <v-chart :option="leadChartOption" style="height:240px" autoresize />
         </el-card>
       </el-col>
       <el-col :span="12">
@@ -46,7 +40,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { formatDate } from '@/utils/formatDate.js';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { formatDate } from '@/utils/formatDate.js';
 import client from '@/api/client.js';
 
 const statCards = ref([
@@ -60,13 +56,43 @@ const leadTrend = ref([3, 5, 2, 8, 6, 4, 7]);
 const recentLeads = ref([]);
 const loading = ref(false);
 
-const formatDate = (d) => {
-  if (!d) return '-';
-  const date = new Date(d);
-  return date.toLocaleString('zh-CN');
-};
+const leadChartOption = computed(() => {
+  const dates = leadTrend.value.map((d) => d.date?.slice(5) || '');
+  const counts = leadTrend.value.map((d) => d.count || 0);
+  return {
+    tooltip: { trigger: 'axis' },
+    xAxis: {
+      type: 'category',
+      data: dates.length ? dates : ['一', '二', '三', '四', '五', '六', '日'],
+    },
+    yAxis: { type: 'value' },
+    series: [
+      {
+        data: counts.length ? counts : [3, 5, 2, 8, 6, 4, 7],
+        type: 'line',
+        smooth: true,
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(27,95,235,0.3)' },
+              { offset: 1, color: 'rgba(27,95,235,0.05)' },
+            ],
+          },
+        },
+        itemStyle: { color: '#1B5FEB' },
+      },
+    ],
+    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+  };
+});
 
-onMounted(async () => {
+
+const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 分钟
+let refreshTimer = null;
+
+const loadDashboard = async () => {
   loading.value = true;
   try {
     const stats = await client.get('/analytics/dashboard');
@@ -78,9 +104,21 @@ onMounted(async () => {
   } catch { /* fallback to defaults */ }
 
   try {
-    const leads = await client.get('/leads?limit=5');
-    recentLeads.value = leads.data.items ?? [];
+    const leads = await client.get('/demo-bookings?pageSize=5');
+    recentLeads.value = Array.isArray(leads.data) ? leads.data : [];
   } catch { /* ignore */ }
   loading.value = false;
+};
+
+onMounted(() => {
+  loadDashboard();
+  refreshTimer = setInterval(loadDashboard, REFRESH_INTERVAL);
+});
+
+onUnmounted(() => {
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+    refreshTimer = null;
+  }
 });
 </script>

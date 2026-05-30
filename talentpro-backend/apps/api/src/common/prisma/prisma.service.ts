@@ -1,7 +1,8 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { workspaceStorage } from './workspace.storage';
 import { softDeleteExtension } from './soft-delete.extension';
+import { fieldEncryptionExtension } from './field-encryption.extension';
 
 const WORKSPACE_MODELS = [
   'BlogPost',
@@ -11,6 +12,11 @@ const WORKSPACE_MODELS = [
   'DemoBooking',
   'Notification',
   'UserActivity',
+  'Resource',
+  'CaseStudy',
+  'News',
+  'Job',
+  'DownloadRecord',
 ];
 
 function applyWorkspaceFilter(args: any, workspaceId: string | null | undefined) {
@@ -27,10 +33,20 @@ function shouldApplyWorkspaceFilter(model: string): boolean {
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PrismaService.name);
+
   constructor() {
     super();
+    const piiKey = process.env.PII_ENCRYPTION_KEY;
+    if (!piiKey) {
+      throw new Error(
+        'PII_ENCRYPTION_KEY is required. ' +
+        'Please set a secure encryption key (≥32 chars) in your environment variables.',
+      );
+    }
     const softDeleted = (this as any).$extends(softDeleteExtension);
-    const extended = softDeleted.$extends({
+    const encrypted = softDeleted.$extends(fieldEncryptionExtension(piiKey));
+    const extended = encrypted.$extends({
       query: {
         $allModels: {
           async findMany({ model, operation, args, query }: any) {
@@ -38,10 +54,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
           async findUnique({ model, operation, args, query }: any) {
-            // findUnique 要求 where 只含唯一字段，不注入 workspaceId
-            // 由 Service 层在查询后自行校验 workspace 隔离
+            // findUnique 无法直接注入 workspaceId（Prisma 要求 where 只含唯一字段）
+            // 但需保留 softDelete 的 deletedAt 过滤
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
-            return query(args);
+            const softDeletedArgs = {
+              ...args,
+              where: { ...args.where, deletedAt: null },
+            };
+            return query(softDeletedArgs);
           },
           async findFirst({ model, operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);

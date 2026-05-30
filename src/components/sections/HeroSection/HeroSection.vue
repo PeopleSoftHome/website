@@ -124,6 +124,8 @@ onMounted(() => {
   onUnmounted(() => {
     clearTimeout(timer);
     rafIds.forEach(id => cancelAnimationFrame(id));
+    rafIds.length = 0;
+    numRefs.length = 0;
   });
 });
 </script>

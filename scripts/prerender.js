@@ -4,7 +4,7 @@
  * 解决 CSR SPA 的 SEO 硬伤：
  *   1. 读取构建后的 dist/index.html
  *   2. 从 zh-CN.json 提取关键文本内容
- *   3. 生成语义化静态 HTML 注入 <div id="root">
+ *   3. 生成语义化静态 HTML 注入 <div id="app">
  *   4. 搜索引擎爬虫无需执行 JS 即可索引内容
  *
  * 用法：npm run build （已在 package.json build 脚本中串联）
@@ -145,8 +145,8 @@ function main() {
 `;
 
   html = html.replace(
-    '<div id="root"></div>',
-    `<div id="root">${prerenderHtml}</div>`
+    '<div id="app"></div>',
+    `<div id="app">${prerenderHtml}</div>`
   );
 
   fs.writeFileSync(htmlPath, html);

@@ -53,18 +53,29 @@ async function main() {
   });
 
   // ─── Default Admin User ───
-  const hashedPassword = await bcrypt.hash('admin123456', 12);
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@talentpro.com' },
-    update: {},
-    create: {
-      email: 'admin@talentpro.com',
-      password: hashedPassword,
-      name: '系统管理员',
-      status: UserStatus.ACTIVE,
-      roleId: superAdminRole.id,
-    },
-  });
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!adminPassword) {
+    console.error('❌ SEED_ADMIN_PASSWORD 环境变量未设置，种子执行中断');
+    console.error('   请设置: export SEED_ADMIN_PASSWORD=YourSecurePassword123!');
+    process.exit(1);
+  }
+  if (adminPassword.length < 8) {
+    console.error('❌ SEED_ADMIN_PASSWORD 必须至少8位');
+    process.exit(1);
+  }
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
+  let adminUser = await prisma.user.findFirst({ where: { email: 'admin@talentpro.com' } });
+  if (!adminUser) {
+    adminUser = await prisma.user.create({
+      data: {
+        email: 'admin@talentpro.com',
+        password: hashedPassword,
+        name: '系统管理员',
+        status: UserStatus.ACTIVE,
+        roleId: superAdminRole.id,
+      },
+    });
+  }
 
   // ─── Product Tabs & Products ───
   const hrSaasTab = await prisma.productTab.upsert({
@@ -139,7 +150,7 @@ async function main() {
       categoryId: reportCat.id, slug: 'hr-digital-2026',
       title: '《2026 HR 数智化成熟度模型白皮书》',
       description: '整合 567 家企业调研洞察',
-      type: 'report', status: PostStatus.PUBLISHED,
+      type: 'WHITEPAPER', status: PostStatus.PUBLISHED,
       publishedAt: new Date(),
     },
   });
@@ -197,7 +208,7 @@ async function main() {
 
   // ─── Blog Posts ───
   await prisma.blogPost.upsert({
-    where: { slug: 'ai-transforms-recruitment-2026' },
+    where: { id: '' }, // upsert with compound unique requires id fallback; seed uses create path
     update: {},
     create: {
       title: 'AI 如何重塑 2026 年的招聘格局',
@@ -238,7 +249,7 @@ async function main() {
   const settings = [
     { key: 'site.name', value: 'TalentPro', category: 'site' },
     { key: 'site.logo', value: '/assets/logo.svg', category: 'site' },
-    { key: 'site.icp', value: '京ICP备XXXXXXXX号', category: 'site' },
+    { key: 'site.icp', value: process.env.SEED_SITE_ICP || '京ICP备【请配置】号', category: 'site' },
     { key: 'contact.phone', value: '400-888-8888', category: 'contact' },
     { key: 'contact.email', value: 'contact@talentpro.com', category: 'contact' },
   ];
@@ -267,8 +278,8 @@ async function main() {
     data: {
       name: '张三', company: '示例科技有限公司',
       phone: '13800138000', email: 'zhangsan@example.com',
-      products: ['招聘管理', 'AI Family'], scale: '500-999人',
-      status: LeadStatus.NEW, source: 'website',
+      products: ['招聘管理', 'AI Family'], scale: 'SCALE_200_PLUS',
+      status: LeadStatus.NEW, source: 'WEBSITE',
     },
   });
 

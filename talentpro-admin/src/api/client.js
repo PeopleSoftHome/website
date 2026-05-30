@@ -52,8 +52,33 @@ client.interceptors.response.use(
     }
 
     const message = err.response?.data?.error?.message || err.message || '网络请求失败';
-    return Promise.reject(new Error(message));
+    const error = new Error(message);
+    error.response = err.response;
+    error.status = err.response?.status;
+    return Promise.reject(error);
   }
 );
+
+/**
+ * 统一分页响应解析
+ * 支持后端多种分页返回格式：
+ *   { data: Array, meta: { total } }      — CMS 通用
+ *   { data: { items: Array, total: N } }   — Blog / Forum
+ *   { data: Array }                        — 无分页（如 roles）
+ */
+export function normalizePaginationResponse(res) {
+  if (!res) return { items: [], total: 0 };
+  const data = res.data;
+  if (Array.isArray(data)) {
+    return { items: data, total: res.meta?.total ?? data.length };
+  }
+  if (data && typeof data === 'object') {
+    return {
+      items: data.items || data.data || [],
+      total: data.total ?? data.meta?.total ?? 0,
+    };
+  }
+  return { items: [], total: 0 };
+}
 
 export default client;

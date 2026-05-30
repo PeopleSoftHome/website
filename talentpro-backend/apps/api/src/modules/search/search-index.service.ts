@@ -100,8 +100,13 @@ export class SearchIndexService {
     }
 
     if (documents.length > 0) {
-      await this.meili.index(indexName).addDocuments(documents);
-      this.logger.log(`Batch indexed ${documents.length} ${entityType} documents`);
+      try {
+        await this.meili.index(indexName).addDocuments(documents);
+        this.logger.log(`Batch indexed ${documents.length} ${entityType} documents`);
+      } catch (e) {
+        this.logger.error(`Failed to index ${entityType} documents`, e);
+        throw new Error(`MeiliSearch indexing failed: ${e.message}`);
+      }
     }
   }
 
@@ -114,7 +119,7 @@ export class SearchIndexService {
     return map[entityType] || null;
   }
 
-  private async fetchDocumentForIndex(entityType: string, entityId: string): Promise<any | null> {
+  async fetchDocumentForIndex(entityType: string, entityId: string): Promise<any | null> {
     if (entityType === 'blog_post') {
       const post = await this.prisma.blogPost.findUnique({
         where: { id: entityId },
@@ -145,6 +150,21 @@ export class SearchIndexService {
         categoryName: topic.category?.name,
         authorName: topic.author?.name,
         createdAt: topic.createdAt,
+      };
+    }
+    if (entityType === 'product') {
+      const product = await this.prisma.product.findUnique({
+        where: { id: entityId },
+        include: { tab: true },
+      });
+      if (!product) return null;
+      return {
+        id: product.id,
+        name: product.name,
+        tagline: product.tagline,
+        description: product.description,
+        slug: product.slug,
+        tabName: product.tab?.label,
       };
     }
     return null;

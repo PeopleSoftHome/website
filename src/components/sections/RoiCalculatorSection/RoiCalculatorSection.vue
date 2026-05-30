@@ -31,8 +31,8 @@
               :aria-label="t(field.labelKey)"
             />
             <div :class="s.rangeLabels">
-              <span>{{ formatMinMax(field.min, field.unit) }}</span>
-              <span>{{ formatMinMax(field.max, field.unit) }}</span>
+              <span>{{ formatMinMax(field.min, field.unitKey) }}</span>
+              <span>{{ formatMinMax(field.max, field.unitKey) }}</span>
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@
             <div :class="s.resultCard">
               <p :class="s.resultLabel">{{ t('roi.payback') }}</p>
               <p :class="s.resultValue">
-                <AnimatedNumber :value="Math.round(calc.paybackMonths.value)" suffix="个月" />
+                <AnimatedNumber :value="Math.round(calc.paybackMonths.value)" :suffix="t('roi.months')" />
               </p>
             </div>
           </div>
@@ -134,26 +134,28 @@ watch([
 ], trackRoi, { flush: 'post' });
 
 const fields = [
-  { key: 'employeeCount',  labelKey: 'roi.empCount',  min: 100,  max: 50000, step: 100,  unit: '人' },
-  { key: 'monthlyHires',   labelKey: 'roi.monthHire', min: 5,    max: 500,   step: 5,    unit: '人' },
-  { key: 'hireCycleDays',  labelKey: 'roi.hireCycle', min: 7,    max: 90,    step: 1,    unit: '天' },
-  { key: 'hrTeamSize',     labelKey: 'roi.hrTeam',    min: 1,    max: 50,    step: 1,    unit: '人' },
-  { key: 'hrMonthlySalary',labelKey: 'roi.hrSalary',  min: 5000, max: 30000, step: 500,  unit: '元' },
+  { key: 'employeeCount',  labelKey: 'roi.empCount',  min: 100,  max: 50000, step: 100,  unitKey: 'units.people' },
+  { key: 'monthlyHires',   labelKey: 'roi.monthHire', min: 5,    max: 500,   step: 5,    unitKey: 'units.people' },
+  { key: 'hireCycleDays',  labelKey: 'roi.hireCycle', min: 7,    max: 90,    step: 1,    unitKey: 'units.days' },
+  { key: 'hrTeamSize',     labelKey: 'roi.hrTeam',    min: 1,    max: 50,    step: 1,    unitKey: 'units.people' },
+  { key: 'hrMonthlySalary',labelKey: 'roi.hrSalary',  min: 5000, max: 30000, step: 500,  unitKey: 'units.yuan' },
 ];
 
 function formatValue(field) {
   const v = calc[field.key].value;
-  if (field.unit === '元') return `¥${v.toLocaleString()}`;
-  return `${v.toLocaleString()}${field.unit}`;
+  const unit = t(field.unitKey);
+  if (field.unitKey === 'units.yuan') return `¥${v.toLocaleString()}`;
+  return `${v.toLocaleString()}${unit}`;
 }
 
-function formatMinMax(v, unit) {
-  if (unit === '元') return `¥${v.toLocaleString()}`;
+function formatMinMax(v, unitKey) {
+  const unit = t(unitKey);
+  if (unitKey === 'units.yuan') return `¥${v.toLocaleString()}`;
   return `${v.toLocaleString()}${unit}`;
 }
 
 function formatCurrency(v) {
-  if (v >= 10000) return `${(v / 10000).toFixed(1)}万`;
+  if (v >= 10000) return `${(v / 10000).toFixed(1)}${t('units.tenThousand')}`;
   return v.toLocaleString();
 }
 </script>

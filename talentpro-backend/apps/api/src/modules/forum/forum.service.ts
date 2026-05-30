@@ -21,16 +21,16 @@ export class ForumService {
 
   // ─── Topics (delegate) ───
   findAllTopics(page?: number, pageSize?: number, categoryId?: string) { return this.topicService.findAllTopics(page, pageSize, categoryId); }
-  findTopicById(id: string) { return this.topicService.findTopicById(id); }
+  findTopicById(id: string, workspaceId?: string) { return this.topicService.findTopicById(id, workspaceId); }
   createTopic(data: Parameters<ForumTopicService['createTopic']>[0]) { return this.topicService.createTopic(data); }
-  updateTopic(id: string, data: Parameters<ForumTopicService['updateTopic']>[1]) { return this.topicService.updateTopic(id, data); }
-  deleteTopic(id: string) { return this.topicService.deleteTopic(id); }
+  updateTopic(id: string, data: Parameters<ForumTopicService['updateTopic']>[1], workspaceId?: string) { return this.topicService.updateTopic(id, data, workspaceId); }
+  deleteTopic(id: string, workspaceId?: string) { return this.topicService.deleteTopic(id, workspaceId); }
   togglePin(id: string, isPinned: boolean) { return this.topicService.togglePin(id, isPinned); }
   toggleLock(id: string, isLocked: boolean) { return this.topicService.toggleLock(id, isLocked); }
 
   // ─── Posts (delegate) ───
   createPost(data: Parameters<ForumPostService['createPost']>[0]) { return this.postService.createPost(data); }
-  updatePost(id: string, data: Parameters<ForumPostService['updatePost']>[1]) { return this.postService.updatePost(id, data); }
-  deletePost(id: string) { return this.postService.deletePost(id); }
+  updatePost(id: string, data: Parameters<ForumPostService['updatePost']>[1], workspaceId?: string) { return this.postService.updatePost(id, data, workspaceId); }
+  deletePost(id: string, workspaceId?: string) { return this.postService.deletePost(id, workspaceId); }
   markAsSolution(postId: string) { return this.postService.markAsSolution(postId); }
 }

@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted } from 'vue';
+import { ref, watch, onUnmounted, inject } from 'vue';
 
 const props = defineProps({
   value:   { type: Number, required: true },
@@ -15,6 +15,7 @@ const props = defineProps({
 const el = ref(null);
 const display = ref('');
 let rafId = null;
+const { t } = inject('i18n', { t: (k) => k });
 
 function animate(from, to) {
   if (rafId) cancelAnimationFrame(rafId);
@@ -26,7 +27,7 @@ function animate(from, to) {
     const current = Math.round(from + (to - from) * eased);
 
     if (current >= 10000) {
-      display.value = props.prefix + (current / 10000).toFixed(1) + '万' + props.suffix;
+      display.value = props.prefix + (current / 10000).toFixed(1) + t('units.tenThousand') + props.suffix;
     } else {
       display.value = props.prefix + current.toLocaleString() + props.suffix;
     }

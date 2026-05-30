@@ -21,7 +21,7 @@
               <el-option label="中" :value="2" />
               <el-option label="高" :value="3" />
             </el-select>
-            <el-button type="primary" size="small" @click="addWord">添加</el-button>
+            <el-button type="primary" size="small" @click="addWord" v-permission="'sensitive-word:create'">添加</el-button>
           </div>
 
           <el-table :data="words" v-loading="loading" size="small">
@@ -95,7 +95,7 @@ const fetchWords = async () => {
     // 这里通过 system/settings 或自定义 endpoint 获取
     // 为简化，调用 admin 通用接口
     const res = await client.get('/system/sensitive-words');
-    words.value = res.data.data ?? [];
+    words.value = res.data ?? [];
   } catch (e) {
     // fallback: 如果后端无此接口，留空
     words.value = [];

@@ -1,23 +1,39 @@
-import { Module, Global } from '@nestjs/common';
-import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bullmq';
 
-@Global()
 @Module({
   imports: [
     BullModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
-        connection: {
-          url: config.get<string>('REDIS_URL') || 'redis://localhost:6379',
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const redisMode = configService.get<string>('REDIS_MODE') || 'single';
+        const redisUrl = configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+
+        if (redisMode === 'cluster') {
+          const clusterNodes = configService
+            .get<string>('REDIS_CLUSTER_NODES')
+            ?.split(',')
+            .map((node) => {
+              const [host, port] = node.trim().split(':');
+              return { host, port: parseInt(port, 10) || 6379 };
+            }) || [{ host: 'localhost', port: 6379 }];
+
+          return {
+            connection: {
+              host: clusterNodes[0].host,
+              port: clusterNodes[0].port,
+            } as any,
+          };
+        }
+
+        return {
+          connection: {
+            url: redisUrl,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
-    BullModule.registerQueue(
-      { name: 'notification', defaultJobOptions: { attempts: 3, backoff: { type: 'exponential', delay: 5000 } } },
-      { name: 'lead-nurture', defaultJobOptions: { attempts: 3, backoff: { type: 'exponential', delay: 5000 } } },
-      { name: 'search-index', defaultJobOptions: { attempts: 3, backoff: { type: 'exponential', delay: 3000 } } },
-    ),
   ],
   exports: [BullModule],
 })

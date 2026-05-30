@@ -3,6 +3,7 @@ import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { NotificationService } from '../modules/notification/notification.service';
+import { NotificationSseService } from '../modules/notification/notification-sse.service';
 
 @Processor('notification')
 export class NotificationProcessor extends WorkerHost {
@@ -11,6 +12,7 @@ export class NotificationProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notificationService: NotificationService,
+    private readonly notificationSseService: NotificationSseService,
   ) {
     super();
   }
@@ -43,7 +45,7 @@ export class NotificationProcessor extends WorkerHost {
         select: { authorId: true },
       });
       if (parent && parent.authorId !== data.authorId) {
-        await this.notificationService.create({
+        const notif = await this.notificationService.create({
           userId: parent.authorId,
           type: 'COMMENT_REPLY',
           title: '收到新回复',
@@ -54,6 +56,7 @@ export class NotificationProcessor extends WorkerHost {
             entityId: data.entityId,
           },
         });
+        await this.notificationSseService.broadcast(parent.authorId, notif);
       }
     }
 
@@ -63,7 +66,7 @@ export class NotificationProcessor extends WorkerHost {
         select: { id: true },
       });
       if (user && user.id !== data.authorId) {
-        await this.notificationService.create({
+        const notif = await this.notificationService.create({
           userId: user.id,
           type: 'MENTION',
           title: '有人提到了你',
@@ -74,6 +77,7 @@ export class NotificationProcessor extends WorkerHost {
             entityId: data.entityId,
           },
         });
+        await this.notificationSseService.broadcast(user.id, notif);
       }
     }
   }
