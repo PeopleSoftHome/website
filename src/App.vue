@@ -30,7 +30,6 @@
 
 <script setup>
 import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';

@@ -35,7 +35,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
 import { removeJsonLd } from '@/utils/jsonld.js';

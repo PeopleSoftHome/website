@@ -73,7 +73,6 @@
 <script setup>
 definePageMeta({ title: 'blog.pageTitle' });
 import { ref, onMounted, onUnmounted, inject } from 'vue';
-import { useRouter } from 'vue-router';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog.js';

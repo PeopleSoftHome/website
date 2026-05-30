@@ -118,7 +118,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { INDUSTRY_MAP } from '@/data/industries.js';
 import s from './SolutionDetailView.module.css';

@@ -49,7 +49,6 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
-import { useRoute } from 'vue-router';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
 import { renderMarkdown } from '@/utils/markdown.js';

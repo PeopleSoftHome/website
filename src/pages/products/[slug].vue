@@ -92,7 +92,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { PRODUCT_MAP } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

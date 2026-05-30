@@ -73,7 +73,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { caseApi } from '@/api/case.js';
 import { CASES } from '@/data/cases.js';

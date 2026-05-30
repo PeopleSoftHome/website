@@ -55,7 +55,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

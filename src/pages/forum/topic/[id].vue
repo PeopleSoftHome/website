@@ -68,7 +68,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
-import { useRoute } from 'vue-router';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
 import { escapeHtml, renderMarkdown } from '@/utils/markdown.js';

@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref, onErrorCaptured } from 'vue';
-import { useRouter } from 'vue-router';
+
 import s from './ErrorBoundary.module.css';
 
 const router = useRouter();

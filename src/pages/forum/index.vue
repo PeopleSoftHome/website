@@ -83,7 +83,6 @@ definePageMeta({ title: 'forum.pageTitle' });
 import { ref, onMounted, onUnmounted, inject } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import { useRouter } from 'vue-router';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';

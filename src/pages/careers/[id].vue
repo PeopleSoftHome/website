@@ -52,7 +52,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
-import { useRoute } from 'vue-router';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import s from './JobDetailView.module.css';

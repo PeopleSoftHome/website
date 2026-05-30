@@ -137,7 +137,7 @@
 <script setup>
 import { ref, computed, inject, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
-import { useRouter } from 'vue-router';
+
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { NAV_LINKS } from '@/data/navigation.js';
 import { LOCALES } from '@/stores/i18n.js';
