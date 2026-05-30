@@ -80,7 +80,7 @@
 
 <script setup>
 definePageMeta({ title: 'forum.pageTitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
@@ -91,17 +91,34 @@ import { formatDate } from '@/utils/date.js';
 import s from './ForumView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const router = useRouter();
 
-const topics = ref([]);
-const categories = ref([]);
-const total = ref(0);
 const page = ref(1);
 const pageSize = FORUM_PAGE_SIZE;
-
-const loading = ref(false);
-const error = ref(null);
 const activeCategory = ref(null);
+
+const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopics } = useAsyncData(
+  'forum-topics',
+  () => forumApi.getTopics({
+    page: page.value,
+    pageSize,
+    categoryId: activeCategory.value || undefined,
+  }),
+  { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
+);
+
+const topics = computed(() => topicsRes.value?.data || []);
+const total = computed(() => topicsRes.value?.meta?.total || 0);
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+});
+
+const { data: catRes } = useAsyncData(
+  'forum-categories',
+  () => forumApi.getCategories(),
+  { server: false, default: () => [] }
+);
+const categories = computed(() => catRes.value?.data || catRes.value || []);
 
 const setCategory = (id) => {
   activeCategory.value = activeCategory.value === id ? null : id;
@@ -109,41 +126,12 @@ const setCategory = (id) => {
   fetchTopics();
 };
 
-const fetchTopics = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await forumApi.getTopics({
-      page: page.value,
-      pageSize,
-      categoryId: activeCategory.value || undefined,
-    });
-    topics.value = res.data || [];
-    total.value = res.meta?.total || 0;
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-};
-
-const fetchCategories = async () => {
-  try {
-    const res = await forumApi.getCategories();
-    categories.value = res.data || res || [];
-  } catch (e) {
-    if (import.meta.env.DEV) console.error(e);
-  }
-};
-
 const goToTopic = (id) => {
-  router.push(`/forum/topic/${id}`);
+  navigateTo(`/forum/topic/${id}`);
 };
-
 
 onMounted(() => {
-    injectJsonLd({ '@context': 'https://schema.org', '@type': 'DiscussionForumPosting', name: t('forum.title') });
-  fetchCategories();
-  fetchTopics();
+  injectJsonLd({ '@context': 'https://schema.org', '@type': 'DiscussionForumPosting', name: t('forum.title') });
 });
 onUnmounted(removeJsonLd);
 </script>

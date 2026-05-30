@@ -72,7 +72,7 @@
 
 <script setup>
 definePageMeta({ title: 'blog.pageTitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { ref, onMounted, onUnmounted, inject, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog.js';
@@ -82,17 +82,31 @@ import s from './BlogListView.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination.js';
 
 const { t } = inject('i18n', { t: (k) => k });
-const router = useRouter();
 
-const posts = ref([]);
-const categories = ref([]);
-const total = ref(0);
 const page = ref(1);
+const activeCategory = ref(null);
 const pageSize = BLOG_PAGE_SIZE;
 
-const loading = ref(false);
-const error = ref(null);
-const activeCategory = ref(null);
+const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyncData(
+  'blog-posts',
+  () => blogApi.getPosts({
+    page: page.value,
+    pageSize,
+    category: activeCategory.value || undefined,
+    status: 'PUBLISHED',
+  }),
+  { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
+);
+
+const posts = computed(() => postsRes.value?.data || []);
+const total = computed(() => postsRes.value?.meta?.total || 0);
+
+const { data: catRes } = useAsyncData(
+  'blog-categories',
+  () => blogApi.getCategories(),
+  { server: false, default: () => [] }
+);
+const categories = computed(() => catRes.value?.data || catRes.value || []);
 
 const setCategory = (slug) => {
   activeCategory.value = activeCategory.value === slug ? null : slug;
@@ -100,35 +114,8 @@ const setCategory = (slug) => {
   fetchPosts();
 };
 
-const fetchPosts = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await blogApi.getPosts({
-      page: page.value,
-      pageSize,
-      category: activeCategory.value || undefined,
-      status: 'PUBLISHED',
-    });
-    posts.value = res.data || [];
-    total.value = res.meta?.total || 0;
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-};
-
-const fetchCategories = async () => {
-  try {
-    const res = await blogApi.getCategories();
-    categories.value = res.data || res || [];
-  } catch (e) {
-    if (import.meta.env.DEV) console.error(e);
-  }
-};
-
 const goToPost = (slug) => {
-  router.push(`/blog/${slug}`);
+  navigateTo(`/blog/${slug}`);
 };
 
 const truncate = (text, len) => {
@@ -137,8 +124,6 @@ const truncate = (text, len) => {
 };
 
 onMounted(() => {
-  fetchCategories();
-  fetchPosts();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'Blog',

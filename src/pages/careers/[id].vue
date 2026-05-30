@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
@@ -58,31 +58,30 @@ import s from './JobDetailView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
-const job = ref(null);
-const loading = ref(false);
-const error = ref(null);
+
+const { data: job, pending: loading, error: fetchError } = useAsyncData(
+  `career-${route.params.id}`,
+  async () => {
+    const res = await careersApi.getJob(route.params.id);
+    const data = res.data || null;
+    if (data) {
+      document.title = `${data.title} | ${t('careers.title')}`;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', `${data.title} | ${t('careers.title')}`);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
+
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+});
 
 const handleApply = () => {
   import('@/utils/toast.js').then(({ showToast }) => showToast(t('careers.applyPrompt') || '申请已提交，我们会尽快与您联系！', 'success'));
 };
 
-const fetchJob = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await careersApi.getJob(route.params.id);
-    job.value = res.data || null;
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-  if (job.value) {
-    document.title = `${job.value.title} | ${t('careers.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${job.value.title} | ${t('careers.title')}`);
-  }
-};
-
-onMounted(fetchJob);
 onUnmounted(removeJsonLd);
 </script>

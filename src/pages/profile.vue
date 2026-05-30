@@ -53,7 +53,7 @@
 
 <script setup>
 definePageMeta({ title: 'profile.title', requiresAuth: true });
-import { ref, inject, onMounted, onUnmounted } from 'vue';
+import { ref, inject, onMounted, onUnmounted, watch } from 'vue';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import Icon from '@/components/ui/Icon/Icon.vue';
 import { userApi } from '@/api/user.js';
@@ -64,29 +64,32 @@ import s from './ProfilePage.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const auth = inject('auth', { user: { value: null }, fetchProfile: async () => {} });
 
-const user = ref(null);
 const editing = ref(false);
 const saving = ref(false);
 const editForm = ref({ name: '', bio: '', avatar: '' });
 
-const loadUser = async () => {
-  try {
+const { data: user, error: asyncError } = useAsyncData(
+  'profile-user',
+  async () => {
     await auth.fetchProfile();
-    user.value = auth.user.value;
+    const u = auth.user.value;
     editForm.value = {
-      name: user.value?.name || '',
-      bio: user.value?.bio || '',
-      avatar: user.value?.avatar || '',
+      name: u?.name || '',
+      bio: u?.bio || '',
+      avatar: u?.avatar || '',
     };
-  } catch (e) {
-    if (e.response?.status === 401 || e.message?.includes('未授权')) {
-      // 未登录，提示并打开登录弹窗
-      auth.logout();
-      import('@/utils/toast.js').then(({ showToast }) => showToast(t('auth.noAccount'), 'warning'));
-      window.location.href = '/';
-    }
+    return u;
+  },
+  { server: false, default: () => null }
+);
+
+watch(asyncError, (err) => {
+  if (err && (err.response?.status === 401 || err.message?.includes('未授权'))) {
+    auth.logout();
+    import('@/utils/toast.js').then(({ showToast }) => showToast(t('auth.noAccount'), 'warning'));
+    window.location.href = '/';
   }
-};
+});
 
 const saveProfile = async () => {
   saving.value = true;
@@ -103,7 +106,6 @@ const saveProfile = async () => {
 };
 
 onMounted(() => {
-  loadUser();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebPage',

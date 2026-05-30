@@ -81,18 +81,34 @@
 
 <script setup>
 definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './CareersView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const jobs = ref([]);
-const departments = ref([]);
+
 const activeDept = ref('');
-const loading = ref(false);
-const error = ref(null);
+
+const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
+  'careers-jobs',
+  () => careersApi.getJobs({ department: activeDept.value || undefined }),
+  { server: false, watch: [activeDept], default: () => ({ data: [] }) }
+);
+
+const jobs = computed(() => {
+  if (fetchError.value) return [];
+  return jobsRes.value?.data || [];
+});
+const departments = computed(() => {
+  const depts = new Set((jobsRes.value?.data || []).map((j) => j.department).filter(Boolean));
+  return Array.from(depts);
+});
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+});
 
 const benefits = [
   { icon: '💰', nameKey: 'careers.benefits.salary', descKey: 'careers.benefits.salaryDesc' },
@@ -103,23 +119,7 @@ const benefits = [
   { icon: '🌍', nameKey: 'careers.benefits.team', descKey: 'careers.benefits.teamDesc' },
 ];
 
-const fetchJobs = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await careersApi.getJobs({ department: activeDept.value || undefined });
-    jobs.value = res.data || [];
-    const depts = new Set((res.data || []).map((j) => j.department).filter(Boolean));
-    departments.value = Array.from(depts);
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    jobs.value = [];
-  }
-  loading.value = false;
-};
-
 onMounted(() => {
-  fetchJobs();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebPage',

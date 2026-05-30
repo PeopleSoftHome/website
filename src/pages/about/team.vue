@@ -34,32 +34,29 @@
 
 <script setup>
 definePageMeta({ title: 'team.title', description: 'team.subtitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { onMounted, onUnmounted, inject, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './TeamView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const team = ref([]);
-const loading = ref(false);
-const error = ref(null);
 
-const fetchTeam = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
+const { data: team, pending: loading, error: asyncError } = useAsyncData(
+  'about-team',
+  async () => {
     const res = await aboutApi.getTeam();
-    team.value = res.data || [];
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    team.value = [];
-  }
-  loading.value = false;
-};
+    return res.data || [];
+  },
+  { server: false, default: () => [] }
+);
+
+const error = computed(() => {
+  if (!asyncError.value) return null;
+  return asyncError.value.response?.data?.message || asyncError.value.message || t('common.loadError');
+});
 
 onMounted(() => {
-  fetchTeam();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebPage',

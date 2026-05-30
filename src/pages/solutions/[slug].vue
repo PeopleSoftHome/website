@@ -116,7 +116,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { INDUSTRY_MAP } from '@/data/industries.js';
@@ -125,16 +125,21 @@ import s from './SolutionDetailView.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
-const industry = ref(null);
 
-onMounted(() => {
-  const slug = route.params.slug;
-  industry.value = INDUSTRY_MAP[slug] || null;
-  if (industry.value) {
-    document.title = `${industry.value.label} | ${t('solutions.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${industry.value.label} | ${t('solutions.title')}`);
-  }
-});
+const { data: industry } = useAsyncData(
+  `solution-${route.params.slug}`,
+  async () => {
+    const slug = route.params.slug;
+    const data = INDUSTRY_MAP[slug] || null;
+    if (data) {
+      document.title = `${data.label} | ${t('solutions.title')}`;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', `${data.label} | ${t('solutions.title')}`);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
+
 onUnmounted(removeJsonLd);
 </script>

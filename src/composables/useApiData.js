@@ -1,39 +1,38 @@
-import { ref, onMounted } from 'vue';
-
 /**
- * useApiData — 通用 API 数据获取 Composable
- * 自动在 onMounted 调用 API，失败时保持 fallback 数据不变
+ * useApiData — Nuxt useAsyncData 通用封装
+ * 兼容现有模板的 loading / error / data 接口
+ * @param {string} key — 缓存 key
+ * @param {Function} fetchFn — 返回 Promise 的获取函数
+ * @param {Object} options
+ * @param {boolean} [options.server=false] — SSR 开关（当前项目默认 false）
+ * @param {boolean} [options.immediate=true] — 是否立即执行
+ * @param {*} [options.defaultValue=null] — 默认值
+ * @param {Function} [options.transform] — 数据转换函数
  */
-export function useApiData(fetchFn, fallbackRef, options = {}) {
-  const loading = ref(false);
-  const error = ref(null);
+import { computed } from 'vue';
 
-  const load = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const data = await fetchFn();
-      if (data && Array.isArray(data)) {
-        fallbackRef.value = data;
-      } else if (data && typeof data === 'object') {
-        // 分页或包装结构
-        fallbackRef.value = data.data ?? data;
-      }
-    } catch (e) {
-      error.value = e.message || 'Loading failed';
-      if (import.meta.env.DEV) {
-        console.warn('[useApiData]', e.message);
-      }
-    } finally {
-      loading.value = false;
-    }
-  };
+export function useApiData(key, fetchFn, options = {}) {
+  const {
+    server = false,
+    immediate = true,
+    defaultValue = null,
+    transform = (d) => d,
+  } = options;
 
-  onMounted(() => {
-    if (options.immediate !== false) {
-      load();
-    }
+  const { data: rawData, pending, error: rawError, refresh, execute } = useAsyncData(
+    key,
+    async () => {
+      const res = await fetchFn();
+      return transform(res.data ?? res);
+    },
+    { server, immediate }
+  );
+
+  const data = computed(() => rawData.value ?? defaultValue);
+  const error = computed(() => {
+    if (!rawError.value) return null;
+    return rawError.value?.response?.data?.message || rawError.value.message || '加载失败';
   });
 
-  return { loading, error, reload: load };
+  return { data, loading: pending, error, refresh, execute };
 }

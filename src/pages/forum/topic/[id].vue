@@ -66,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { ref, onUnmounted, inject, watch } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
@@ -81,30 +81,28 @@ const authModal = inject('authModal', { open: () => {} });
 
 const openAuth = () => authModal.open();
 
-const topic = ref(null);
+const { data: topic, pending: loading } = useAsyncData(
+  `forum-topic-${route.params.id}`,
+  async () => {
+    const res = await forumApi.getTopic(route.params.id);
+    const data = res.data || res;
+    if (data) {
+      document.title = `${data.title} | ${t('forum.pageTitle')}`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', data.content?.slice(0, 160) || data.title);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
+
 const replies = ref([]);
-const loading = ref(false);
-const error = ref(null);
+watch(topic, (val) => {
+  replies.value = val?.posts || [];
+}, { immediate: true });
+
 const replyContent = ref('');
 const replySubmitting = ref(false);
-
-const fetchTopic = async () => {
-  loading.value = true;
-  try {
-    const res = await forumApi.getTopic(route.params.id);
-    topic.value = res.data || res;
-    replies.value = topic.value?.posts || [];
-    if (topic.value) {
-      document.title = `${topic.value.title} | ${t('forum.pageTitle')}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', topic.value.content?.slice(0, 160) || topic.value.title);
-    }
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-};
-
 
 const renderMentions = (text) => {
   if (!text) return '';
@@ -130,6 +128,5 @@ const submitReply = async () => {
   replySubmitting.value = false;
 };
 
-onMounted(fetchTopic);
 onUnmounted(removeJsonLd);
 </script>

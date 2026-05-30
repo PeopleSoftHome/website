@@ -17,13 +17,9 @@
 
 <script setup>
 definePageMeta({ title: 'pageTitle', description: 'pageDesc' });
-import { shallowRef, onMounted, onUnmounted, inject } from 'vue';
-import { cmsApi } from '@/api/cms.js';
-import { sectionRegistry } from '@/plugins/sectionRegistry.js';
+import { onMounted, onUnmounted, inject } from 'vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
-
-const sections = shallowRef([]);
 
 // Section 骨架屏默认高度映射
 const SKELETON_HEIGHTS = {
@@ -47,21 +43,9 @@ const sectionSkeletonHeight = (key) => {
 
 const { t } = inject('i18n', { t: (k) => k });
 
-const loadHomePage = async () => {
-  try {
-    const page = await cmsApi.getPage('home');
-    sections.value = sectionRegistry.resolve(page);
-  } catch (e) {
-    // CMS 无配置或 API 失败时，fallback 到默认 Section 列表
-    if (import.meta.env.DEV) {
-      console.warn('[HomePage] CMS page config load failed, using default sections:', e.message);
-    }
-    sections.value = sectionRegistry.resolve(null);
-  }
-};
+const { sections } = useCmsPageAsync('home');
 
 onMounted(() => {
-  loadHomePage();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebSite',

@@ -57,32 +57,30 @@
 
 <script setup>
 definePageMeta({ title: 'careers.socialSubtitle', description: 'careers.subtitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './SocialCareersView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const jobs = ref([]);
-const loading = ref(false);
-const error = ref(null);
 
-const fetchJobs = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await careersApi.getJobs({ type: t('careersType.social') });
-    jobs.value = res.data || [];
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    jobs.value = [];
-  }
-  loading.value = false;
-};
+const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
+  'careers-social-jobs',
+  () => careersApi.getJobs({ type: t('careersType.social') }),
+  { server: false, default: () => ({ data: [] }) }
+);
+
+const jobs = computed(() => {
+  if (fetchError.value) return [];
+  return jobsRes.value?.data || [];
+});
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+});
 
 onMounted(() => {
-  fetchJobs();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebPage',

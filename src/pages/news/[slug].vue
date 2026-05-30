@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
 import { removeJsonLd } from '@/utils/jsonld.js';
@@ -42,9 +42,26 @@ import s from './NewsDetailView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
-const item = ref(null);
-const loading = ref(false);
-const error = ref(null);
+
+const { data: item, pending: loading, error: fetchError } = useAsyncData(
+  `news-${route.params.slug}`,
+  async () => {
+    const res = await newsApi.getNewsItem(route.params.slug);
+    const data = res.data || null;
+    if (data) {
+      document.title = `${data.title} | ${t('news.title')}`;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', `${data.title} | ${t('news.title')}`);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
+
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+});
 
 const paragraphs = computed(() => {
   if (!item.value?.content) return [];
@@ -56,23 +73,5 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString();
 };
 
-const fetchNews = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await newsApi.getNewsItem(route.params.slug);
-    item.value = res.data || null;
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-  if (item.value) {
-    document.title = `${item.value.title} | ${t('news.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${item.value.title} | ${t('news.title')}`);
-  }
-};
-
-onMounted(fetchNews);
 onUnmounted(removeJsonLd);
 </script>

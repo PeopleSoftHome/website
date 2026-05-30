@@ -39,32 +39,29 @@
 
 <script setup>
 definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { onMounted, onUnmounted, inject, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './PartnersView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const partners = ref([]);
-const loading = ref(false);
-const error = ref(null);
 
-const fetchPartners = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
+const { data: partners, pending: loading, error: asyncError } = useAsyncData(
+  'about-partners',
+  async () => {
     const res = await aboutApi.getPartners();
-    partners.value = res.data || [];
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    partners.value = [];
-  }
-  loading.value = false;
-};
+    return res.data || [];
+  },
+  { server: false, default: () => [] }
+);
+
+const error = computed(() => {
+  if (!asyncError.value) return null;
+  return asyncError.value.response?.data?.message || asyncError.value.message || t('common.loadError');
+});
 
 onMounted(() => {
-  fetchPartners();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebPage',

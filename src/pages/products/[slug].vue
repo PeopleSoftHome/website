@@ -91,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { PRODUCT_MAP } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
@@ -101,7 +101,20 @@ const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
 
-const product = ref(null);
+const { data: product } = useAsyncData(
+  `product-${route.params.slug}`,
+  async () => {
+    const slug = route.params.slug;
+    const data = PRODUCT_MAP[slug] || null;
+    if (data) {
+      document.title = `${data.name} | ${t('productPage.title')}`;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', `${data.name} | ${t('productPage.title')}`);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
 
 const relatedProducts = computed(() => {
   if (!product.value?.related) return [];
@@ -109,14 +122,11 @@ const relatedProducts = computed(() => {
 });
 
 onMounted(() => {
-    injectJsonLd({ '@context': 'https://schema.org', '@type': 'Product', name: product.value?.name || 'TalentPro 产品' });
-  const slug = route.params.slug;
-  product.value = PRODUCT_MAP[slug] || null;
-  if (product.value) {
-    document.title = `${product.value.name} | ${t('productPage.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${product.value.name} | ${t('productPage.title')}`);
-  }
+  watch(product, (val) => {
+    if (val) {
+      injectJsonLd({ '@context': 'https://schema.org', '@type': 'Product', name: val.name || 'TalentPro 产品' });
+    }
+  }, { immediate: true });
 });
 onUnmounted(removeJsonLd);
 </script>

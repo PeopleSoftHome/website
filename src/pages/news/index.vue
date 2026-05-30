@@ -60,7 +60,7 @@
 
 <script setup>
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, inject } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -68,9 +68,21 @@ import { newsApi } from '@/api/news.js';
 import s from './NewsListView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const news = ref([]);
-const loading = ref(false);
-const error = ref(null);
+
+const { data: newsRes, pending: loading, error: fetchError } = useAsyncData(
+  'news-list',
+  () => newsApi.getNews({ page: 1, pageSize: NEWS_PAGE_SIZE }),
+  { server: false, default: () => ({ data: [] }) }
+);
+
+const news = computed(() => {
+  if (fetchError.value) return [];
+  return newsRes.value?.data || [];
+});
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+});
 
 const featuredNews = computed(() => news.value.find((n) => n.featured) || news.value[0] || null);
 const normalNews = computed(() => {
@@ -83,21 +95,7 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString();
 };
 
-const fetchNews = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await newsApi.getNews({ page: 1, pageSize: NEWS_PAGE_SIZE });
-    news.value = res.data || [];
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    news.value = [];
-  }
-  loading.value = false;
-};
-
 onMounted(() => {
-  fetchNews();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',

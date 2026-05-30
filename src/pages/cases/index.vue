@@ -86,35 +86,38 @@ import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './CaseListView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
-const cases = ref([]);
-const industries = ref(CASE_INDUSTRIES);
-const activeIndustry = ref('');
-const loading = ref(false);
-const error = ref(null);
 
+const activeIndustry = ref('');
+
+const { data: casesRes, pending: loading, error: fetchError } = useAsyncData(
+  'cases-list',
+  () => {
+    const params = activeIndustry.value !== '' ? { industry: activeIndustry.value } : {};
+    return caseApi.getCases(params);
+  },
+  { server: false, watch: [activeIndustry], default: () => ({ data: [] }) }
+);
+
+const cases = computed(() => {
+  if (fetchError.value) {
+    if (activeIndustry.value !== '') {
+      return CASES.filter((c) => c.industry === activeIndustry.value);
+    }
+    return CASES;
+  }
+  return casesRes.value?.data || [];
+});
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+});
+
+const industries = ref(CASE_INDUSTRIES);
 const featuredCase = computed(() => {
   return cases.value.find((c) => c.featured) || null;
 });
 
-const fetchCases = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const params = activeIndustry.value !== '' ? { industry: activeIndustry.value } : {};
-    const res = await caseApi.getCases(params);
-    cases.value = res.data || [];
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    cases.value = CASES;
-    if (activeIndustry.value !== '') {
-      cases.value = CASES.filter((c) => c.industry === activeIndustry.value);
-    }
-  }
-  loading.value = false;
-};
-
 onMounted(() => {
-  fetchCases();
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'ItemList',

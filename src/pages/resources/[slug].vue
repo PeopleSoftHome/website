@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
@@ -63,7 +63,21 @@ import s from './ResourceDetailView.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
-const resource = ref(null);
+
+const { data: resource } = useAsyncData(
+  `resource-${route.params.slug}`,
+  async () => {
+    const slug = route.params.slug;
+    const data = RESOURCES.find((r) => r.slug === slug) || null;
+    if (data) {
+      document.title = `${data.title} | ${t('resourcePage.title')}`;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', `${data.title} | ${t('resourcePage.title')}`);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
 
 const relatedResources = computed(() => {
   if (!resource.value) return [];
@@ -81,14 +95,11 @@ const typeStyle = (type) => {
 };
 
 onMounted(() => {
-    injectJsonLd({ '@context': 'https://schema.org', '@type': 'DigitalDocument', name: resource.value?.title || 'TalentPro 资源' });
-  const slug = route.params.slug;
-  resource.value = RESOURCES.find((r) => r.slug === slug);
-  if (resource.value) {
-    document.title = `${resource.value.title} | ${t('resourcePage.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${resource.value.title} | ${t('resourcePage.title')}`);
-  }
+  watch(resource, (val) => {
+    if (val) {
+      injectJsonLd({ '@context': 'https://schema.org', '@type': 'DigitalDocument', name: val.title || 'TalentPro 资源' });
+    }
+  }, { immediate: true });
 });
 onUnmounted(removeJsonLd);
 </script>

@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
 import { renderMarkdown } from '@/utils/markdown.js';
@@ -59,29 +59,37 @@ import s from './BlogDetailView.module.css';
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
 
-const post = ref(null);
-const loading = ref(false);
-const error = ref(null);
-
-const fetchPost = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
+const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(
+  `blog-${route.params.slug}`,
+  async () => {
     const res = await blogApi.getPost(route.params.slug);
-    post.value = res.data || res;
-    // 动态 SEO
-    if (post.value) {
-      document.title = `${post.value.title} | ${t('blog.pageTitle')}`;
+    const data = res.data || res;
+    if (data) {
+      document.title = `${data.title} | ${t('blog.pageTitle')}`;
       const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', post.value.excerpt?.slice(0, 160) || post.value.title);
+      if (metaDesc) metaDesc.setAttribute('content', data.excerpt?.slice(0, 160) || data.title);
+    }
+    return data;
+  },
+  { server: false, default: () => null }
+);
+
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+});
+
+onMounted(() => {
+  watch(post, (val) => {
+    if (val) {
       injectJsonLd({
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
-        headline: post.value.title,
-        description: post.value.excerpt?.slice(0, 160) || post.value.title,
+        headline: val.title,
+        description: val.excerpt?.slice(0, 160) || val.title,
         author: { '@type': 'Organization', name: 'TalentPro' },
-        datePublished: post.value.createdAt,
-        dateModified: post.value.updatedAt || post.value.createdAt,
+        datePublished: val.createdAt,
+        dateModified: val.updatedAt || val.createdAt,
         publisher: {
           '@type': 'Organization',
           name: 'TalentPro',
@@ -89,14 +97,7 @@ const fetchPost = async () => {
         },
       });
     }
-  } catch (e) {
-    if (import.meta.env.DEV) console.error(e);
-    error.value = e.response?.data?.message || t('common.loadError');
-  }
-  loading.value = false;
-};
-
-
-onMounted(fetchPost);
+  }, { immediate: true });
+});
 onUnmounted(removeJsonLd);
 </script>

@@ -31,6 +31,13 @@ export default [
         useLazyAsyncData: 'readonly',
         defineNuxtConfig: 'readonly',
         defineNuxtPlugin: 'readonly',
+        useAsyncData: 'readonly',
+        useLazyAsyncData: 'readonly',
+        useFetch: 'readonly',
+        useLazyFetch: 'readonly',
+        useApiData: 'readonly',
+        useApiList: 'readonly',
+        useCmsPageAsync: 'readonly',
       },
     },
     rules: {

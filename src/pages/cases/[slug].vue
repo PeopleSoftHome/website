@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { caseApi } from '@/api/case.js';
@@ -81,32 +81,40 @@ import s from './CaseDetailView.module.css';
 
 const { t } = inject('i18n', { t: (k) => k });
 const route = useRoute();
-const caseStudy = ref(null);
-const loading = ref(false);
-const error = ref(null);
+
+const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
+  `case-${route.params.slug}`,
+  async () => {
+    try {
+      const res = await caseApi.getCase(route.params.slug);
+      const data = res.data || null;
+      if (data) {
+        document.title = `${data.clientName} | ${t('cases.title')}`;
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', `${data.clientName} | ${t('cases.title')}`);
+      }
+      return data;
+    } catch {
+      const fallback = CASES.find((c) => c.slug === route.params.slug) || null;
+      if (fallback) {
+        document.title = `${fallback.clientName} | ${t('cases.title')}`;
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', `${fallback.clientName} | ${t('cases.title')}`);
+      }
+      return fallback;
+    }
+  },
+  { server: false, default: () => null }
+);
+
+const error = computed(() => {
+  if (!fetchError.value) return null;
+  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+});
 
 const productName = (slug) => {
   return PRODUCT_MAP[slug]?.name || slug;
 };
 
-const fetchCase = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const res = await caseApi.getCase(route.params.slug);
-    caseStudy.value = res.data || null;
-  } catch (e) {
-    error.value = e.response?.data?.message || t('common.loadError');
-    caseStudy.value = CASES.find((c) => c.slug === route.params.slug) || null;
-  }
-  loading.value = false;
-  if (caseStudy.value) {
-    document.title = `${caseStudy.value.clientName} | ${t('cases.title')}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', `${caseStudy.value.clientName} | ${t('cases.title')}`);
-  }
-};
-
-onMounted(fetchCase);
 onUnmounted(removeJsonLd);
 </script>
