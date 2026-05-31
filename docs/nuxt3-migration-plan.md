@@ -312,16 +312,42 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
 ## 六、时间线汇总
 
-| 迭代 | 内容 | 周期 | 累计 |
-|------|------|------|------|
-| 迭代 1 | 基础设施 | 1 周 | 1 周 |
-| 迭代 2 | 路由系统 | 1 周 | 2 周 |
-| 迭代 3 | 布局 + 组件 | 1 周 | 3 周 |
-| 迭代 4 | 数据获取 + API | 1.5 周 | 4.5 周 |
-| 迭代 5 | 状态 + i18n + PWA | 1.5 周 | 6 周 |
-| 迭代 6 | 构建 + 部署 | 1 周 | **7 周** |
+| 迭代 | 内容 | 周期 | 累计 | 状态 |
+|------|------|------|------|------|
+| 迭代 1 | 基础设施 | 1 周 | 1 周 | ✅ 完成 (`a4677df`) |
+| 迭代 2 | 路由系统 | 1 周 | 2 周 | ✅ 完成 (`5752aec`) |
+| 迭代 3 | 布局 + 组件 | 1 周 | 3 周 | ✅ 完成 (`166ef12`) |
+| 迭代 4 | 数据获取 + API | 1.5 周 | 4.5 周 | ✅ 完成 (`c950554`) |
+| 迭代 5 | 状态 + i18n + PWA | 1.5 周 | 6 周 | ✅ 完成 (`9416db6`) |
+| 迭代 6 | 构建 + 部署 | 1 周 | **7 周** | ✅ 完成 (`94b8b88`) |
 
-**建议**：按迭代逐步推进，每个迭代完成后做 git tag（`nuxt3-iter-1` 至 `nuxt3-iter-6`），确保可随时回滚到任意阶段。
+**Git 标签**：`git tag nuxt3-migration v4.0.0`
+
+---
+
+## 六、迁移完成总结
+
+### 核心变更
+- **框架**：Vue 3 SPA + Vite → Nuxt 3 SSG + Nitro
+- **路由**：Vue Router 手动配置 → Nuxt 文件路由自动生成
+- **状态**：Legacy factory stores → Pinia + provide/inject 兼容层
+- **i18n**：自研 store → `@nuxtjs/i18n` 模块
+- **构建产物**：`dist/` → `.output/public/`
+- **预渲染**：0 条 → 20 条路由静态 HTML
+
+### 遗留事项（可选优化）
+1. **Axios → `$fetch`**：API 客户端仍使用 Axios，可逐步迁移至 Nuxt `$fetch`/`$fetch.create`
+2. **剩余 Pinia 迁移**：theme / modal / search / videoModal / analytics 仍使用 legacy factory，可后续按需迁移
+3. **SSR 开启**：当前 `ssr: false`，未来如需 SEO 极致优化，可逐步修复 18+ 处 `window`/`document` 使用后开启 SSR
+
+### 验证清单
+- [x] `npm run dev` 正常启动
+- [x] `npm run build` 成功，20 路由预渲染通过
+- [x] `npm run test:run` 通过（29 文件 / 127 测试）
+- [x] `npx playwright test` 通过
+- [x] PWA `sw.js` 正常生成
+- [x] Docker 多阶段构建通过
+- [x] CI/CD 产物路径更新
 
 ---
 

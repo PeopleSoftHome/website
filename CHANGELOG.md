@@ -1,5 +1,60 @@
 # Changelog
 
+## [v4.0.0] - 2026-05-30 (Nuxt 3 迁移完成)
+
+### 🚀 Nuxt 3 全面迁移（6 个迭代，分支 `feat/nuxt3-infra`）
+
+> 基线 commit: `d626835` → 最终 commit: `94b8b88`
+
+**迭代 1 — 基础设施** (`a4677df`)
+- `nuxt.config.ts` 创建，`app.vue` + `layouts/default.vue` 迁移
+- 插件系统改造，`index.html` → `app.head` 配置
+- 废弃旧入口 `main.js` / `vite.config.js`
+
+**迭代 2 — 路由系统** (`5752aec`)
+- 24 个页面迁移为 Nuxt 文件路由（`pages/index.vue`、`pages/blog/index.vue` 等）
+- 删除 `src/router/index.js` + `guards.js`，创建 `src/middleware/route.global.ts`
+- `router-link` → `NuxtLink`，CSS module 文件批量同步命名
+
+**迭代 3 — 布局与自动导入** (`166ef12`)
+- `useABTest.js` → `useAbTest.js`（驼峰规范）
+- 清理 12 处冗余 `vue-router` import
+- 验证 `pathPrefix: false` 组件自动注册
+
+**迭代 4 — 数据获取** (`c950554`)
+- 新建 `useApiData.js` / `useApiList.js` / `useCmsPageAsync.js`
+- 首页/列表/详情页迁移至 `useAsyncData`，保留 Suspense + 骨架屏
+
+**迭代 5 — i18n / Pinia / PWA** (`9416db6`)
+- `@nuxtjs/i18n` 模块正式启用，`useI18n()` 全面替代 `inject('i18n')`
+- 创建 Pinia `useAuthStore`（`stores/auth.pinia.js`），替代 legacy `createAuth()`
+- `plugins/sectionRegistry.js` 迁移至 `utils/sectionRegistry.js`，消除构建警告
+- `stores/i18n.js` 标记废弃，保留测试兼容
+- 修复 Vitest 环境（jsdom + `unplugin-auto-import` + 全局 setup）
+
+**迭代 6 — 构建优化 + 部署适配** (`94b8b88`)
+- 安装 `@nuxt/image`，2 处 `<img>` 替换为 `<NuxtImg>`
+- `nitro.compressPublicAssets` 启用 gzip + brotli 预压缩
+- 静态资源缓存头配置（`_nuxt/**`、`fonts/**` 1 年缓存）
+- 新建 `docker/Dockerfile.frontend` 多阶段构建
+- 更新 `nginx.conf`（root 路径 `.output/public/` + `/health` 端点）
+- 更新 CI/CD（产物路径 `dist/` → `.output/public/`）
+- 更新 `lighthouserc.js` 端口 4173 → 3000
+
+### 📊 迁移成果
+
+| 指标 | 迁移前 (Vite SPA) | 迁移后 (Nuxt SSG) |
+|------|------------------|------------------|
+| 构建工具 | Vite 8 | Nuxt 3.4.6 + Nitro 2.13.4 |
+| 路由 | Vue Router 手动配置 | Nuxt 文件路由（自动生成） |
+| 状态管理 | Legacy factory + provide/inject | Pinia + 兼容层 |
+| i18n | 自研 store | @nuxtjs/i18n 模块 |
+| 构建产物 | `dist/` | `.output/public/` |
+| 预渲染路由 | 无 | 20 条路由静态 HTML |
+| 测试通过 | 117 测试 | 127 测试 |
+
+---
+
 ## [v3.5.0] - 2026-05-29 (Sprint 25)
 
 ### ⚡ 性能优化

@@ -1,7 +1,7 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v3.0.0 | **技术栈**：Vue 3.5 + Vite 8 + CSS Modules + Vue Router + NestJS 11 + Prisma 6 + Redis
+> **当前版本**：v4.0.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -12,7 +12,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 - **产品定位**：B2B 企业级营销门户（Marketing Portal）
 - **核心页面**：Hero → 品牌滚动 → 统计 → 产品矩阵 → AI Family → 行业方案 → 客户证言 → Logo 墙 → 为什么选我们 → 资源中心 → CTA 通栏 → 页脚
 - **数据策略**：营销门户纯静态 JS 常量（`src/data/`）；博客/论坛接入后端 NestJS API（`src/api/`）
-- **部署形态**：静态站点（`dist/` 目录直推 CDN / Nginx / Vercel）
+- **部署形态**：SSG 静态站点（`.output/public/` 目录直推 CDN / Nginx / Vercel）
 
 ---
 
@@ -22,10 +22,13 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 | 类别 | 技术 | 版本 | 说明 |
 |------|------|------|------|
-| 框架 | Vue | 3.5.0 | SFC + `<script setup>`，组合式 API |
+| 框架 | Nuxt | 3.4.6 | 文件路由 + 自动导入 + Nitro 引擎 |
+| 底层框架 | Vue | 3.5.34 | SFC + `<script setup>`，组合式 API |
 | 构建工具 | Vite | 8.0.14 | 开发端口 3000，Rolldown 引擎 |
-| 插件 | @vitejs/plugin-vue | 6.0.7 | 含 Fast Refresh |
-| 路由 | Vue Router | 5.0.7 | 博客/论坛多页面路由 |
+| 路由 | Nuxt 文件路由 | - | 自动基于 `src/pages/` 目录生成 |
+| 状态管理 | Pinia | 3.x | `@pinia/nuxt` 模块集成 |
+| i18n | @nuxtjs/i18n | 10.4.0 | 自动路由前缀 + SEO hreflang |
+| 图片优化 | @nuxt/image | 2.0.0 | 自动 WebP + 响应式尺寸 |
 | 样式 | CSS Modules | 原生 | 零运行时开销 |
 | 语言 | JavaScript | ES Module | 无 TypeScript（后续可渐进迁移） |
 
@@ -37,25 +40,34 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 # 安装依赖
 npm install
 
-# 开发服务器（http://localhost:3000）
+# 开发服务器（http://localhost:3000，SPA 模式）
 npm run dev
 
-# 生产构建 → dist/ 目录
+# 生产构建 → .output/public/ 目录（SSG 静态生成）
 npm run build
 
 # 预览生产构建
 npm run preview
+
+# 纯静态生成（等效 nuxt build + nuxt generate）
+npm run generate
 ```
 
 **环境要求**：Node.js ≥ 18，npm ≥ 9。
 
-### 2.3 构建配置（`vite.config.js`）
+### 2.3 构建配置（`nuxt.config.ts`）
 
-- `outDir: 'dist'`
-- `manualChunks` 使用函数形式（Rolldown 兼容）— Vue / vue-router / axios 单独拆包
-- 配置了 `@` 路径别名（`resolve.alias: { '@': '/src' }`）
-- 集成 `VitePWA` 插件（PWA manifest、Service Worker、workbox 缓存策略）
-- `manualChunks` 使用函数形式（Rolldown 兼容）— Vue / vue-router / axios 单独拆包
+- `srcDir: 'src'` — 源码目录
+- `ssr: false` — 开发 SPA 模式，减少开发摩擦
+- `nitro.preset: 'static'` — 生产 SSG 静态生成
+- `nitro.prerender: { routes: ['/'], crawlLinks: true }` — 自动爬取预渲染
+- `nitro.compressPublicAssets` — gzip + brotli 预压缩
+- `components: [{ path: '~/components', pathPrefix: false }]` — 组件自动导入
+- `imports.dirs: ['composables', 'stores', 'utils']` — Composables/Stores/Utils 自动导入
+- `@nuxtjs/i18n` 模块 — 多语言 + 自动 hreflang
+- `@pinia/nuxt` 模块 — Pinia 状态管理
+- `@vite-pwa/nuxt` 模块 — PWA + Workbox
+- `@nuxt/image` 模块 — 图片自动优化
 
 ---
 
@@ -63,40 +75,40 @@ npm run preview
 
 ```
 talentpro-v2/
-├── index.html                    # 入口 HTML（加载 Noto Sans SC 字体）
+├── nuxt.config.ts                # Nuxt 3 主配置（模块、SSR、Nitro、i18n、PWA）
 ├── package.json
-├── vite.config.js
-├── public/                       # 静态资源（favicon 等）
+├── vitest.config.ts              # Vitest 测试配置（jsdom + auto-import）
+├── public/                       # 静态资源（favicon、字体、PWA 图标等）
 └── src/
-    ├── main.js                   # createApp + router 挂载
-    ├── App.vue                   # 根组件：5 层 Provider + router-view + 全局观察器
-    ├── router/
-    │   └── index.js              # Vue Router：24 条路由（首页 + 二级页面 + 博客/论坛/认证）
-    ├── pages/
-    │   ├── HomePage.vue          # 组装全部 15 个 Section
-    │   ├── ProductListView.vue   # /products 产品列表
-    │   ├── ProductDetailView.vue # /products/:slug 产品详情
-    │   ├── SolutionListView.vue  # /solutions 解决方案列表
-    │   ├── SolutionDetailView.vue# /solutions/:slug 方案详情
-    │   ├── CaseListView.vue      # /cases 客户案例列表
-    │   ├── CaseDetailView.vue    # /cases/:slug 案例详情
-    │   ├── ResourceListView.vue  # /resources 资源中心列表
-    │   ├── ResourceDetailView.vue# /resources/:slug 资源详情
-    │   ├── NewsListView.vue      # /news 新闻列表
-    │   ├── NewsDetailView.vue    # /news/:slug 新闻详情
-    │   ├── CareersView.vue       # /careers 招聘首页
-    │   ├── CampusCareersView.vue # /careers/campus 校园招聘
-    │   ├── SocialCareersView.vue # /careers/social 社会招聘
-    │   ├── JobDetailView.vue     # /careers/:id 职位详情
-    │   ├── AboutView.vue         # /about 了解我们
-    │   ├── TeamView.vue          # /about/team 团队介绍
-    │   ├── ContactView.vue       # /about/contact 联系我们
-    │   ├── PartnersView.vue      # /about/partners 合作伙伴
-    │   ├── BlogListView.vue      # 博客列表
-    │   ├── BlogDetailView.vue    # 博客详情
-    │   ├── ForumView.vue         # 论坛话题列表
-    │   ├── ForumTopicView.vue    # 话题详情
-    │   └── ProfilePage.vue       # 个人中心
+    ├── app.vue                   # 根组件：Provider + NuxtLayout + NuxtPage + 全局观察器
+    ├── middleware/
+    │   └── route.global.ts       # 全局路由中间件（认证守卫 + 页面 Meta 同步）
+    ├── pages/                    # 文件路由（Nuxt 自动生成路由表）
+    │   ├── index.vue             # / 首页
+    │   ├── [...slug].vue         # /:pathMatch(.*)* 404 页面
+    │   ├── about.vue             # /about 了解我们
+    │   ├── about/team.vue        # /about/team 团队介绍
+    │   ├── about/contact.vue     # /about/contact 联系我们
+    │   ├── about/partners.vue    # /about/partners 合作伙伴
+    │   ├── blog/index.vue        # /blog 博客列表
+    │   ├── blog/[slug].vue       # /blog/:slug 博客详情
+    │   ├── cases/index.vue       # /cases 客户案例列表
+    │   ├── cases/[slug].vue      # /cases/:slug 案例详情
+    │   ├── careers/index.vue     # /careers 招聘首页
+    │   ├── careers/campus.vue    # /careers/campus 校园招聘
+    │   ├── careers/social.vue    # /careers/social 社会招聘
+    │   ├── careers/[id].vue      # /careers/:id 职位详情
+    │   ├── forum/index.vue       # /forum 论坛话题列表
+    │   ├── forum/topic/[id].vue  # /forum/topic/:id 话题详情
+    │   ├── news/index.vue        # /news 新闻列表
+    │   ├── news/[slug].vue       # /news/:slug 新闻详情
+    │   ├── products/index.vue    # /products 产品列表
+    │   ├── products/[slug].vue   # /products/:slug 产品详情
+    │   ├── profile.vue           # /profile 个人中心
+    │   ├── resources/index.vue   # /resources 资源中心列表
+    │   ├── resources/[slug].vue  # /resources/:slug 资源详情
+    │   ├── solutions/index.vue   # /solutions 解决方案列表
+    │   └── solutions/[slug].vue  # /solutions/:slug 方案详情
     │
     ├── components/
     │   ├── layout/               # 全局布局
@@ -121,14 +133,15 @@ talentpro-v2/
     │       ├── ContactModal/     # 联系方式卡片
     │       └── ChatBot/          # 智能客服（v2.3.1）
     │
-    ├── stores/                   # 全局状态（7 个工厂函数）
-    │   ├── i18n.js               # I18nProvider + useI18n
+    ├── stores/                   # 全局状态（Pinia + 兼容层）
+    │   ├── auth.pinia.js         # Pinia auth store（SSR-safe，推荐）
+    │   ├── auth.js               # Legacy auth factory（保留兼容）
     │   ├── theme.js              # 暗色模式
     │   ├── modal.js              # 预约弹窗状态
     │   ├── videoModal.js         # 视频弹窗状态
     │   ├── search.js             # 全局搜索开关
     │   ├── analytics.js          # 埋点队列
-    │   └── auth.js               # 用户认证（login/register/logout）
+    │   └── i18n.js               # ⚠️ Legacy i18n store（已废弃，业务代码统一使用 `useI18n()`）
     │
     ├── api/                      # 后端 API 封装
     │   ├── client.js             # Axios 实例（含 token 拦截器）
@@ -248,12 +261,15 @@ talentpro-v2/
 | SearchModal（搜索）| 2500 | Cmd+K / NavBar 搜索图标 |
 | VideoModal（视频演示）| 3000 | Hero「观看产品演示」按钮 |
 
-### 4.5 Provider 层级（扁平 provide）
+### 4.5 全局状态体系（Pinia + Provide 兼容层）
 
-`App.vue` 使用 8 个独立的 `provide()` 注入全局状态，无嵌套 Context 组件：
+**Pinia Store（推荐）**：
+- `useAuthStore`（`stores/auth.pinia.js`）— SSR-safe，通过 `@pinia/nuxt` 模块自动注册
+
+**Legacy Provide 兼容层（逐步迁移中）**：
+`App.vue` 仍通过 `provide()` 向下传递以下状态，子组件可通过 `inject()` 读取：
 
 ```
-i18n         → 多语言（zh / en / zh-TW）
 theme        → 亮色 / 暗色主题
 search       → 全局搜索（Cmd+K）
 modal        → DemoModal（z-index 2000）
@@ -263,6 +279,8 @@ auth         → 用户认证（login/register/logout）
 authModal    → 登录/注册弹窗
 abTest       → A/B 测试分流
 ```
+
+**i18n 已废弃 legacy store**：业务代码统一使用 `@nuxtjs/i18n` 提供的 `useI18n()` composable，禁止从 `stores/i18n.js` import。
 
 ---
 
@@ -286,13 +304,15 @@ abTest       → A/B 测试分流
 - 优先级：localStorage (`tp-theme`) → `prefers-color-scheme` → `light`
 - Composable：`useTheme()` 提供 `{ theme, toggle, setTheme, isDark }`
 
-### 5.3 多语言 i18n（v2.3.0）
+### 5.3 多语言 i18n（@nuxtjs/i18n v10）
 
 - 3 种语言：简体中文 (`zh`)、English (`en`)、繁體中文 (`zh-TW`)
-- 355 个 key，按点分隔路径访问，如 `t('nav.demo')`
+- 策略：`prefix_except_default`（默认语言无前缀，切换时自动加前缀）
+- ~772 个 key，按点分隔路径访问，如 `t('nav.demo')`
 - 支持 `{var}` 插值：`t('stats.customers', { n: 6000 })`
-- 优先级：localStorage (`tp-locale`) → 浏览器语言 → `zh`
-- 切换时同步更新 `<html lang>`
+- 自动 SEO：`hreflang` link 自动生成，`<html lang>` 自动同步
+- 优先级：`detectBrowserLanguage`（cookie `tp-locale`）→ 浏览器语言 → `zh`
+- 业务代码统一使用 `useI18n()`，禁止 `inject('i18n')` 或引用 `stores/i18n.js`
 
 ### 5.4 全局搜索（v2.3.0）
 
@@ -311,8 +331,8 @@ abTest       → A/B 测试分流
 
 | 类型 | 工具 | 命令 | 说明 |
 |------|------|------|------|
-| 前端单元测试 | Vitest | `npm run test` | 28 个测试文件 / 117 测试，覆盖 composables / utils / pages |
-| 前端 E2E | Playwright | `npx playwright test` | 4 个 spec 文件，覆盖首页 / 博客 / 论坛 / 认证 |
+| 前端单元测试 | Vitest | `npm run test:run` | 29 个测试文件 / 127 测试，覆盖 composables / utils / pages / stores |
+| 前端 E2E | Playwright | `npx playwright test` | 8 个 spec 文件，覆盖首页 / 博客 / 论坛 / 认证 / 搜索 / 主题 / 表单 |
 | 后端单元测试 | Jest | `cd talentpro-backend && npm run test` | 7 个套件 / 47 测试，覆盖 auth / user / blog / forum / lead / mail |
 | 后端 E2E | Jest | `cd talentpro-backend && npm run test:e2e` | 配置就绪，核心流程持续补充中 |
 
@@ -320,8 +340,8 @@ abTest       → A/B 测试分流
 
 **P0 — 核心流程**：
 1. `npm run dev` 正常启动，控制台无报错
-2. `npm run build` 构建成功，无 warning
-3. `npm run test` 和 `npx playwright test` 全部通过
+2. `npm run build` 构建成功，20 条路由预渲染通过，无 warning
+3. `npm run test:run` 和 `npx playwright test` 全部通过
 4. 首页 15 个 Section 全部可见，无白屏
 5. 导航下拉菜单：鼠标从一级移向二级时**不消失**
 6. 产品矩阵 / 行业方案 / 为什么选我们：Tab 切换正常，内容联动
@@ -400,12 +420,16 @@ abTest       → A/B 测试分流
 npm run build
 ```
 
-产物输出到 `dist/` 目录，可直接部署到：
-- Vercel / Netlify（拖拽上传或 Git 集成）
+产物输出到 `.output/public/` 目录，可直接部署到：
+- Vercel / Netlify（Git 集成，Nuxt 原生支持）
 - Nginx（`location / { try_files $uri $uri/ /index.html; }`）
 - OSS + CDN（阿里云、腾讯云等）
+- Docker（`docker/Dockerfile.frontend` 多阶段构建）
 
-**注意**：本项目是 Vue Router SPA，需配置 `try_files $uri $uri/ /index.html;` 以支持前端路由（`/blog`、`/forum` 等）。
+**注意**：
+- Nuxt SSG 已预渲染全部 20 条路由为静态 HTML，首屏无需 JavaScript 即可渲染
+- SPA fallback 仍需要 `try_files $uri $uri/ /index.html;` 支持动态路由（如 `/blog/:slug`）
+- Nginx root 路径应指向 `.output/public/` 而非旧 `dist/`
 
 ---
 
@@ -501,7 +525,53 @@ npm run build
 ### CI/CD
 - 代码提交触发 GitHub Actions：前端构建 + Vitest + 后端 Nest build + E2E
 - 生产部署使用 `docker/Dockerfile` 多阶段构建
+- 前端产物路径：`.output/public/`（Nuxt SSG 输出）
 
 ---
 
-*TalentPro HR Portal · Vue 3.5 + Vite 8 + NestJS 11 · AGENTS.md v3.0.0*
+## 12. v4.0.0 Nuxt 3 迁移规范（新增）
+
+### Nuxt 文件路由
+- `src/pages/` 目录下的 `.vue` 文件自动生成路由，无需手动维护路由表
+- 动态路由使用方括号：`[slug].vue`、 `[id].vue`
+- 404 通配符使用省略号：`[...slug].vue`
+- 页面级 meta 通过 `definePageMeta({ title: 'key', description: 'key' })` 声明
+- 旧 `src/router/index.js` 和 `src/router/guards.js` 已删除，不可恢复
+
+### 全局路由中间件
+- `src/middleware/route.global.ts` 替代原 Vue Router `router.beforeEach`
+- 认证守卫、页面 title/meta 同步在此统一处理
+- 中间件中通过 `useAuthStore()` 读取 Pinia 状态，`useI18n()` 读取翻译
+
+### 自动导入（Auto Imports）
+- `composables/`、`stores/`、`utils/` 目录下的导出自动全局可用
+- `components/` 目录下的组件自动注册（`pathPrefix: false`）
+- **严禁**在 `.vue` 文件中手动 `import { ref, computed } from 'vue'`（除非 ESLint 要求）
+- 测试环境中通过 `unplugin-auto-import/vite` 模拟自动导入
+
+### SSR 安全清单
+- `ssr: false` 开发模式，但 Nitro 预渲染会执行部分服务端逻辑
+- 任何 `window` / `document` / `localStorage` 访问必须包裹在 `onMounted` 或 `process.client` 中
+- Pinia store 中访问 `localStorage` 必须通过 `typeof window !== 'undefined'` 保护
+- `@nuxtjs/i18n` 在服务端会自动初始化，无需手动 `createI18n()`
+
+### 数据获取
+- 首页/列表/详情页优先使用 `useAsyncData()` + `$fetch`
+- `useAsyncData` 的 `key` 必须全局唯一，建议格式：`cms-{pageKey}`、`blog-{slug}`
+- `{ server: false }` 强制客户端获取（用于需要浏览器的 API）
+- 保留 `{ default: () => fallbackData }` 作为骨架屏数据源
+
+### 图片优化（@nuxt/image）
+- 所有 `<img>` 替换为 `<NuxtImg>`，自动获得 WebP 转换 + 响应式尺寸
+- 配置 `placeholder` 属性启用模糊占位图
+- 远程图片需配置 `domains` 白名单（`nuxt.config.ts` → `image.domains`）
+
+### 构建产物
+- 产物输出至 `.output/public/`（非旧 `dist/`）
+- CI/CD artifact 路径已同步更新
+- `nitro.compressPublicAssets` 预生成 gzip + brotli 压缩文件
+- 静态资源（`_nuxt/**`、`fonts/**`）配置 1 年长期缓存头
+
+---
+
+*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 · AGENTS.md v4.0.0*
