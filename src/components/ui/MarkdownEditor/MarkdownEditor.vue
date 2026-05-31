@@ -59,7 +59,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const mode = ref('edit');
 const textareaRef = ref(null);

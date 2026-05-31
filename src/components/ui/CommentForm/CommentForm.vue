@@ -29,7 +29,7 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel']);
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const auth = inject('auth', { user: { value: null } });
 
 const content = ref('');

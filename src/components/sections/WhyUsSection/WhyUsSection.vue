@@ -58,7 +58,7 @@ import MetricCard from './MetricCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './WhyUsSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const { activeIndex, selectTab } = useTabs(0);
 
 const { displayItems: apiTabs } = useCmsDataByKey('why-us', { transform: transformWhyUsTabs, fallbackKey: 'why-us' });

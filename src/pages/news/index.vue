@@ -65,9 +65,9 @@ import { NEWS_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
-import s from './NewsListView.module.css';
+import s from './index.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { data: newsRes, pending: loading, error: fetchError } = useAsyncData(
   'news-list',

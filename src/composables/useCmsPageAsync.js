@@ -4,7 +4,7 @@
  * @param {string} pageKey — CMS 页面标识，如 'home'
  */
 import { cmsApi } from '@/api/cms.js';
-import { sectionRegistry } from '@/plugins/sectionRegistry.js';
+import { sectionRegistry } from '@/utils/sectionRegistry.js';
 
 export function useCmsPageAsync(pageKey) {
   const { data: sections, pending, error, refresh } = useAsyncData(

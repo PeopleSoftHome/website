@@ -54,9 +54,9 @@ import { blogApi } from '@/api/blog.js';
 import { renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './BlogDetailView.module.css';
+import s from './[slug].vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const route = useRoute();
 
 const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(

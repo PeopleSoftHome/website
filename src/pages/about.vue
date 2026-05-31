@@ -64,9 +64,9 @@ definePageMeta({ title: 'about.title', description: 'about.subtitle' });
 import { inject, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './AboutView.module.css';
+import s from './about.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const values = [
   { icon: '🎯', title: t('about.val1Title'), desc: t('about.val1Desc') },

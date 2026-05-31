@@ -41,7 +41,7 @@ import ModalStep3 from './ModalStep3.vue';
 import ModalSuccess from './ModalSuccess.vue';
 import s from './DemoModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', {});
 
 const stepText = computed(() =>

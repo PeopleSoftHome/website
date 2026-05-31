@@ -15,6 +15,13 @@ vi.mock('@/api/client.js', () => ({
 
 describe('createAuth', () => {
   beforeEach(() => {
+    const store = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn((key) => store.get(key) ?? null),
+      setItem: vi.fn((key, val) => store.set(key, val)),
+      removeItem: vi.fn((key) => store.delete(key)),
+      clear: vi.fn(() => store.clear()),
+    });
     localStorage.clear();
     mockPost.mockReset();
     mockGet.mockReset();

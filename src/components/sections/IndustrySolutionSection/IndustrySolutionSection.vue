@@ -52,7 +52,7 @@ import ProductScreenshot from './ProductScreenshot.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './IndustrySolutionSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 const analytics = inject('analytics', { track: () => {} });
 const { activeIndex, selectTab } = useTabs(0);

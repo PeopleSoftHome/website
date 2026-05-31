@@ -54,9 +54,9 @@ import { computed, onUnmounted, inject } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
-import s from './JobDetailView.module.css';
+import s from './[id].vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const route = useRoute();
 
 const { data: job, pending: loading, error: fetchError } = useAsyncData(

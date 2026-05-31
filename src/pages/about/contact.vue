@@ -51,9 +51,9 @@ definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle'
 import { ref, inject, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './ContactView.module.css';
+import s from './contact.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const contacts = [
   { icon: '📧', title: t('contactPage.emailTitle'), value: 'hello@talentpro.com' },

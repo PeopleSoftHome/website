@@ -31,7 +31,7 @@ import s from './VideoModal.module.css';
 
 const VIDEO_URL = 'https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const videoStore = inject('videoModal', { isOpen: ref(false), closeVideo: () => {} });
 
 const iframeRef = ref(null);

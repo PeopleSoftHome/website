@@ -72,9 +72,9 @@ import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
 import { escapeHtml, renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
-import s from './ForumTopicView.module.css';
+import s from './[id].vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const route = useRoute();
 const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
 const authModal = inject('authModal', { open: () => {} });

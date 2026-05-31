@@ -36,7 +36,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const current = computed({
   get: () => props.modelValue,

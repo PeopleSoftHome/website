@@ -59,9 +59,9 @@ import Icon from '@/components/ui/Icon/Icon.vue';
 import { userApi } from '@/api/user.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './ProfilePage.module.css';
+import s from './profile.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const auth = inject('auth', { user: { value: null }, fetchProfile: async () => {} });
 
 const editing = ref(false);

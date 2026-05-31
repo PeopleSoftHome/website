@@ -45,7 +45,7 @@ import { apiClient } from '@/api/client.js';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const activeFilter = ref('all');
 
 const { displayItems: displayLogos, isLoading: loading } = useCmsDataByKey('logos', {

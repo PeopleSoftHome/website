@@ -78,7 +78,7 @@
 import { inject, onMounted, onUnmounted } from 'vue';
 import s from './HeroSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 const videoStore = inject('videoModal', { openVideo: () => {} });
 

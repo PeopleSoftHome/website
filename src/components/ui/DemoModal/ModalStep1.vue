@@ -87,7 +87,7 @@ import s from './DemoModal.module.css';
 
 const PHONE_REG = /^1[3-9]\d{9}$/;
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { formData: { value: {} } });
 const emit = defineEmits(['next']);
 
@@ -202,11 +202,11 @@ const handleNext = () => {
 const Field = {
   props: ['label', 'required', 'error'],
   setup(props, { slots }) {
-    const i18n = inject('i18n', { t: (k) => k });
+    const { t: _t } = useI18n();
     return () => h('div', { class: s.formGroup }, [
       h('label', { class: s.label }, [
         props.label,
-        props.required && h('span', { class: s.required }, i18n.t('modal.required')),
+        props.required && h('span', { class: s.required }, _t('modal.required')),
       ]),
       slots.default?.(),
       props.error && h('span', { class: s.errorMsg }, props.error),

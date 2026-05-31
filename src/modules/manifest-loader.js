@@ -1,4 +1,4 @@
-import { registerSection } from '@/plugins/sectionRegistry.js';
+import { registerSection } from '@/utils/sectionRegistry.js';
 import { registerCmsFetcher, registerFallbackModule } from '@/composables/useCmsData.js';
 
 export function applyManifests(manifests, router) {

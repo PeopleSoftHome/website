@@ -61,9 +61,9 @@ import { computed, onMounted, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './SocialCareersView.module.css';
+import s from './social.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   'careers-social-jobs',

@@ -47,7 +47,7 @@ import ResourceCard from './ResourceCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './ResourceSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { displayItems: displayResources } = useCmsDataByKey('resources', { transform: transformResources, fallbackKey: 'resources' });
 

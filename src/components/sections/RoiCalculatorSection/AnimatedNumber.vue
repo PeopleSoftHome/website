@@ -15,7 +15,7 @@ const props = defineProps({
 const el = ref(null);
 const display = ref('');
 let rafId = null;
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 function animate(from, to) {
   if (rafId) cancelAnimationFrame(rafId);

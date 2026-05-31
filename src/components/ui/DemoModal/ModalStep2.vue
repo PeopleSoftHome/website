@@ -36,7 +36,7 @@
 import { ref, inject, watch, computed } from 'vue';
 import s from './DemoModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { formData: { value: {} } });
 const PRODUCTS = t('modal.products') || [];
 const selected = ref(new Set(PRODUCTS.slice(0, 1)));

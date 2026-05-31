@@ -910,7 +910,7 @@
   },
   "comment": {
     "title": "评论",
-    "placeholder": "写下你的评论... 使用 @ 提及用户",
+    "placeholder": "写下你的评论... 使用 {'@'} 提及用户",
     "replyPlaceholder": "写下你的回复...",
     "submit": "发表评论",
     "submitting": "提交中...",

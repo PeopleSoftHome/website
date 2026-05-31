@@ -38,9 +38,9 @@ import { onMounted, onUnmounted, inject, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './TeamView.module.css';
+import s from './team.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { data: team, pending: loading, error: asyncError } = useAsyncData(
   'about-team',

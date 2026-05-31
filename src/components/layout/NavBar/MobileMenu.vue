@@ -96,7 +96,7 @@ import Icon from '../../ui/Icon/Icon.vue';
 import Button from '../../ui/Button/Button.vue';
 import s from './MobileMenu.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
 const authModal = inject('authModal', { open: () => {} });

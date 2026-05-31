@@ -45,7 +45,7 @@ const emit = defineEmits(['openChat', 'openContact']);
 
 const { showBackTop } = useNavScroll();
 const modalStore = inject('modal', { openModal: () => {} });
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 </script>

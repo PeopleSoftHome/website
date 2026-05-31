@@ -140,7 +140,11 @@ const NotificationBell = defineAsyncComponent(() => import('@/components/ui/Noti
 
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { NAV_LINKS } from '@/data/navigation.js';
-import { LOCALES } from '@/stores/i18n.js';
+const LOCALES = {
+  'zh': { label: '简体中文' },
+  'en': { label: 'English' },
+  'zh-TW': { label: '繁體中文' },
+};
 import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
 import MobileMenu from './MobileMenu.vue';
@@ -149,14 +153,12 @@ import s from './NavBar.module.css';
 
 const { scrolled } = useNavScroll();
 
-const i18nStore   = inject('i18n', { t: (k) => k, locale: 'zh', setLocale: () => {} });
+const { t, locale, setLocale } = useI18n();
 const themeStore  = inject('theme', { theme: ref('light'), toggle: () => {} });
 const searchStore = inject('search', { openSearch: () => {} });
 const modalStore  = inject('modal', { openModal: () => {} });
 const auth        = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
 const authModal   = inject('authModal', { open: () => {} });
-
-const { t, locale, setLocale } = i18nStore;
 
 const mobileOpen = ref(false);
 const langMenuOpen = ref(false);

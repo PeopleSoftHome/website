@@ -52,9 +52,9 @@ import { inject, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { INDUSTRY_TABS } from '@/data/industries.js';
 import { removeJsonLd } from '@/utils/jsonld.js';
-import s from './SolutionListView.module.css';
+import s from './index.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 const industries = INDUSTRY_TABS;
 onUnmounted(removeJsonLd);

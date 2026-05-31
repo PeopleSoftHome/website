@@ -104,7 +104,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const auth = inject('auth', {});
 
 const mode = ref(props.defaultMode);

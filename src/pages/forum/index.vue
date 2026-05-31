@@ -88,9 +88,9 @@ import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum.js';
 import { formatDate } from '@/utils/date.js';
-import s from './ForumView.module.css';
+import s from './index.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const page = ref(1);
 const pageSize = FORUM_PAGE_SIZE;

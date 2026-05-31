@@ -78,9 +78,9 @@ import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './ResourceListView.module.css';
+import s from './index.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const activeType = ref('');
 const types = [{ value: '', label: t('resourcePage.all') || '全部' }, ...RESOURCE_TYPES];
 

@@ -41,7 +41,7 @@ const sectionSkeletonHeight = (key) => {
   return SKELETON_HEIGHTS[key] || 400;
 };
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { sections } = useCmsPageAsync('home');
 

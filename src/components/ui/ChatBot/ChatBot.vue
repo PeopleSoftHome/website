@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
 import { useChatBot } from '@/composables/useChatBot.js';
 import Icon from '../Icon/Icon.vue';
@@ -68,7 +68,7 @@ import s from './ChatBot.module.css';
 const props = defineProps({ isOpen: { type: Boolean, default: false } });
 const emit = defineEmits(['close', 'openDemo']);
 
-const { t, locale } = inject('i18n', { t: (k) => k, locale: ref('zh') });
+const { t, locale } = useI18n();
 
 const windowRef = ref(null);
 const bottomRef = ref(null);

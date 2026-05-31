@@ -910,7 +910,7 @@
   },
   "comment": {
     "title": "Comments",
-    "placeholder": "Write a comment... Use @ to mention users",
+    "placeholder": "Write a comment... Use {'@'} to mention users",
     "replyPlaceholder": "Write a reply...",
     "submit": "Post Comment",
     "submitting": "Submitting...",

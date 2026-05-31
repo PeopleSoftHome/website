@@ -1,6 +1,10 @@
 /**
- * i18n Store — 多语言状态管理
- * 提供 locale、setLocale、t() 翻译函数
+ * i18n Store — 多语言状态管理（LEGACY，已废弃）
+ * 
+ * ⚠️ 本文件仅保留用于向后兼容测试。
+ * 业务代码请统一使用 Nuxt I18n 提供的 `useI18n()` composable。
+ * 
+ * @deprecated 使用 @nuxtjs/i18n 模块替代
  */
 import { ref, watch } from 'vue';
 import { interpolate } from '@/i18n/interpolate.js';

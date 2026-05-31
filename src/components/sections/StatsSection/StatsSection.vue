@@ -26,7 +26,7 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';
 import s from './StatsSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const { displayItems: displayStats, isLoading: loading } = useCmsDataByKey('stats', {
   transform: (active) => (active || []).map((item) => ({

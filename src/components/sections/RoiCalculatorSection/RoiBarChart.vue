@@ -32,7 +32,7 @@ const props = defineProps({
   after:  { type: Number, required: true },
 });
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const max = computed(() => Math.max(props.before, props.after, 1));
 const beforePct = computed(() => (props.before / max.value) * 100);

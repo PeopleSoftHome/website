@@ -61,9 +61,9 @@ import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { PRODUCT_TABS } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './ProductListView.module.css';
+import s from './index.vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 
 const tabs = [{ id: 'all', name: t('productPage.all') || '全部' }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];

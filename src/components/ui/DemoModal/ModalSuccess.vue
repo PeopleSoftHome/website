@@ -38,7 +38,7 @@ import { computed, inject } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import s from './DemoModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { formData: { value: {} } });
 
 const lines = computed(() => t('modal.successSub').split('\n'));

@@ -4,29 +4,28 @@
  */
 
 export default defineNuxtRouteMiddleware((to) => {
-  // 从 App.vue 注入的全局状态中获取 store 实例
-  const authStore = useState('auth').value;
-  const i18nStore = useState('i18n').value;
+  const authStore = useAuthStore();
+  const { t } = useI18n();
 
   /* ── 认证守卫 ── */
-  if (to.meta.requiresAuth && !authStore?.isLoggedIn?.value) {
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     const authOpen = useState('authOpen', () => false);
     authOpen.value = true;
     return navigateTo('/');
   }
 
   /* ── 页面标题 + meta description 同步 ── */
-  if (i18nStore && typeof document !== 'undefined') {
+  if (typeof document !== 'undefined') {
     const titleKey = to.meta.title;
     if (titleKey) {
-      const translated = i18nStore.t(titleKey);
+      const translated = t(titleKey);
       document.title = translated.startsWith('TalentPro')
         ? translated
         : `TalentPro — ${translated}`;
     }
     const descKey = to.meta.description;
     if (descKey) {
-      const translated = i18nStore.t(descKey);
+      const translated = t(descKey);
       const meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute('content', translated);
     }

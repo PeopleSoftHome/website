@@ -45,7 +45,7 @@ import ProductCard from './ProductCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './ProductMatrixSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const analytics = inject('analytics', { track: () => {} });
 const { activeIndex, selectTab } = useTabs(0);
 

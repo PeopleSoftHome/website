@@ -38,6 +38,7 @@ export default [
         useApiData: 'readonly',
         useApiList: 'readonly',
         useCmsPageAsync: 'readonly',
+        useI18n: 'readonly',
       },
     },
     rules: {

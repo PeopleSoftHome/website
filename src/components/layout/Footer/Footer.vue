@@ -56,5 +56,5 @@ import ZhihuIcon from '@/components/icons/ZhihuIcon.vue';
 import WeiboIcon from '@/components/icons/WeiboIcon.vue';
 import s from './Footer.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 </script>

@@ -16,7 +16,7 @@ export function useChatBot({ emit, locale }) {
   const timers = ref([]);
   const abortController = ref(null);
 
-  const { t } = inject('i18n', { t: (k) => k });
+  const { t } = useI18n();
 
   const faqRules = computed(() => FAQ_RULES_META.map(meta => ({
     ...meta,

@@ -54,7 +54,7 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import TestimonialCard from './TestimonialCard.vue';
 import s from './TestimonialSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const GRAD_PRESETS = [
   'linear-gradient(135deg, #1B5FEB, #7C3AED)',

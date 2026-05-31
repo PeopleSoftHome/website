@@ -38,7 +38,7 @@ import { notificationApi } from '@/api/notification.js';
 import Icon from '../Icon/Icon.vue';
 import s from './NotificationBell.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const auth = inject('auth', { user: { value: null }, token: { value: '' } });
 
 const open = ref(false);

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { h } from 'vue';
-import ForumView from './ForumView.vue';
+import ForumView from './forum/index.vue';
 import { forumApi } from '@/api/forum.js';
 
 vi.mock('@/api/forum.js', () => ({

@@ -106,7 +106,7 @@ import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './SearchModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const searchStore = inject('search', { isOpen: { value: false }, closeSearch: () => {} });
 const analytics = inject('analytics', { track: () => {} });
 

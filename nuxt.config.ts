@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   // ── 模块 ──
   modules: [
     '@pinia/nuxt',
-    // '@nuxtjs/i18n', // TODO: 迭代 5 中完整迁移 i18n
+    '@nuxtjs/i18n',
     '@vite-pwa/nuxt',
   ],
 
@@ -61,20 +61,24 @@ export default defineNuxtConfig({
 
   // ── i18n ──
   i18n: {
+    restructureDir: '.',
     locales: [
       { code: 'zh', name: '简体中文', file: 'zh-CN.json', iso: 'zh-CN' },
       { code: 'en', name: 'English', file: 'en.json', iso: 'en' },
       { code: 'zh-TW', name: '繁體中文', file: 'zh-TW.json', iso: 'zh-TW' },
     ],
     defaultLocale: 'zh',
-    langDir: 'i18n/locales',
+    langDir: 'src/i18n/locales',
     strategy: 'prefix_except_default',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'tp-locale',
       redirectOn: 'root',
     },
-    vueI18n: './i18n.config.ts',
+    vueI18n: 'i18n.config.ts',
+    compilation: {
+      strictMessage: false,
+    },
   },
 
   // ── PWA ──
@@ -124,11 +128,6 @@ export default defineNuxtConfig({
 
   // ── Vite 配置迁移 ──
   vite: {
-    resolve: {
-      alias: {
-        '@': '/src',
-      },
-    },
     build: {
       sourcemap: process.env.SOURCE_MAP === 'true',
       chunkSizeWarningLimit: 500,

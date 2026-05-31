@@ -30,13 +30,12 @@
 
 <script setup>
 import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
-import { createI18n } from '@/stores/i18n.js';
 import { createTheme } from '@/stores/theme.js';
 import { createModal } from '@/stores/modal.js';
 import { createSearch } from '@/stores/search.js';
 import { createVideoModal } from '@/stores/videoModal.js';
 import { createAnalytics } from '@/stores/analytics.js';
-import { createAuth } from '@/stores/auth.js';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { useAbTest } from '@/composables/useAbTest.js';
 import { useRum } from '@/composables/useRum.js';
 import { defineAsyncComponent } from 'vue';
@@ -56,16 +55,17 @@ import { useCookieConsent } from '@/composables/useCookieConsent.js';
 import { API_BASE_URL } from '@/api/baseUrl';
 
 /* 全局状态 */
-const i18n = createI18n();
-const { t } = i18n;
+const { t, locale } = useI18n();
 const theme = createTheme();
 const modal = createModal();
 const search = createSearch();
 const videoModal = createVideoModal();
 const analytics = createAnalytics();
-const auth = createAuth();
 
-provide('i18n', i18n);
+/* Pinia auth store（SSR 安全，替代 legacy createAuth） */
+const auth = useAuthStore();
+if (typeof window !== 'undefined') auth.initFromStorage();
+
 provide('theme', theme);
 provide('search', search);
 provide('modal', modal);
@@ -73,10 +73,6 @@ provide('videoModal', videoModal);
 provide('analytics', analytics);
 provide('auth', auth);
 provide('authModal', { open: () => { authOpen.value = true; } });
-
-/* 将核心 store 注入 useState，供全局中间件共享同一实例 */
-useState('auth', () => auth);
-useState('i18n', () => i18n);
 
 const modalStore = modal;
 const contactOpen = ref(false);
@@ -88,19 +84,19 @@ const route = useRoute();
 const syncPageMeta = () => {
   const titleKey = route.meta?.title;
   if (titleKey) {
-    const translated = i18n.t(titleKey);
+    const translated = t(titleKey);
     document.title = translated.startsWith('TalentPro')
       ? translated
       : `TalentPro — ${translated}`;
   }
   const descKey = route.meta?.description;
   if (descKey) {
-    const translated = i18n.t(descKey);
+    const translated = t(descKey);
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', translated);
   }
 };
-watch(() => i18n.locale.value, syncPageMeta);
+watch(locale, syncPageMeta);
 
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
@@ -187,7 +183,7 @@ onMounted(() => {
 });
 
 /* 语言/主题切换埋点 */
-watch(() => i18n.locale.value, (loc, prev) => {
+watch(locale, (loc, prev) => {
   if (prev !== undefined) analytics.track('lang_switch', { from: prev, to: loc });
 });
 watch(() => theme.theme.value, (th, prev) => {

@@ -58,9 +58,9 @@ import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './ResourceDetailView.module.css';
+import s from './[slug].vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
 

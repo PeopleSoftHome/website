@@ -21,5 +21,5 @@ defineProps({
   items: { type: Array, default: () => [] },
 });
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 </script>

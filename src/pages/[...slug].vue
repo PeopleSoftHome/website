@@ -13,9 +13,9 @@
 
 <script setup>
 definePageMeta({ title: 'notFound.title' });
-import { inject } from 'vue';
 
-const t = inject('i18n');
+
+const { t } = useI18n();
 </script>
 
 <style module>

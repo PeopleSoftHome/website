@@ -77,9 +77,9 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { caseApi } from '@/api/case.js';
 import { CASES } from '@/data/cases.js';
 import { PRODUCT_MAP } from '@/data/products.js';
-import s from './CaseDetailView.module.css';
+import s from './[slug].vue.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const route = useRoute();
 
 const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(

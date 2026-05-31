@@ -52,7 +52,7 @@ defineProps({
 });
 
 const emit = defineEmits(['reply']);
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const replying = ref(false);
 

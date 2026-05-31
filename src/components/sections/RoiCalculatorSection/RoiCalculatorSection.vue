@@ -105,7 +105,7 @@ import AnimatedNumber from './AnimatedNumber.vue';
 import RoiBarChart from './RoiBarChart.vue';
 import s from './RoiCalculatorSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 const analytics = inject('analytics', { track: () => {} });
 

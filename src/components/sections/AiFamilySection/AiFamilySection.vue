@@ -48,7 +48,7 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AiCard from './AiCard.vue';
 import s from './AiFamilySection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 
 const { displayItems: displayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });

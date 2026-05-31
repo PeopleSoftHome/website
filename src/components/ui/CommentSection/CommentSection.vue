@@ -42,7 +42,7 @@ const props = defineProps({
   entityId: { type: String, required: true },
 });
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
 const authModal = inject('authModal', { open: () => {} });
 
