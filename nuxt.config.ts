@@ -20,11 +20,7 @@ export default defineNuxtConfig({
   },
 
   // ── 模块 ──
-  modules: [
-    '@pinia/nuxt',
-    '@nuxtjs/i18n',
-    '@vite-pwa/nuxt',
-  ],
+  modules: ['@pinia/nuxt', '@nuxtjs/i18n', '@vite-pwa/nuxt', '@nuxt/image'],
 
   // ── CSS ──
   css: [
@@ -56,6 +52,30 @@ export default defineNuxtConfig({
     prerender: {
       routes: ['/'],
       crawlLinks: true,
+    },
+    compressPublicAssets: {
+      brotli: true,
+      gzip: true,
+    },
+    routeRules: {
+      '/_nuxt/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+      '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+      '/icon-*.png': { headers: { 'cache-control': 'public, max-age=86400' } },
+      '/sw.js': { headers: { 'cache-control': 'public, max-age=0, must-revalidate' } },
+      '/manifest.webmanifest': { headers: { 'cache-control': 'public, max-age=0, must-revalidate' } },
+    },
+  },
+
+  // ── 图片优化 ──
+  image: {
+    quality: 80,
+    format: ['webp', 'jpg', 'png'],
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
     },
   },
 

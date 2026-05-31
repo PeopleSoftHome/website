@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
+    "@nuxt/image": "^2.0.0",
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^6.0.7",
