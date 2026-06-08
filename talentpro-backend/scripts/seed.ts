@@ -1,4 +1,4 @@
-import { PrismaClient, LeadStatus, UserStatus, PostStatus, CommentStatus } from '@prisma/client';
+import { PrismaClient, LeadStatus, UserStatus, PostStatus, CommentStatus, AppStatus, PricingModel } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -282,6 +282,159 @@ async function main() {
       status: LeadStatus.NEW, source: 'WEBSITE',
     },
   });
+
+  // ─── Marketplace Categories ───
+  const categories = [
+    { slug: 'recruitment', name: '招聘与人才获取', icon: 'users', sortOrder: 0 },
+    { slug: 'compensation', name: '薪酬与福利', icon: 'dollar-sign', sortOrder: 1 },
+    { slug: 'performance', name: '绩效与目标', icon: 'target', sortOrder: 2 },
+    { slug: 'learning', name: '学习与发展', icon: 'book-open', sortOrder: 3 },
+    { slug: 'experience', name: '员工体验', icon: 'heart', sortOrder: 4 },
+    { slug: 'compliance', name: '合规与安全', icon: 'shield', sortOrder: 5 },
+    { slug: 'ai', name: 'AI 与自动化', icon: 'bot', sortOrder: 6 },
+    { slug: 'analytics', name: '数据与分析', icon: 'bar-chart-2', sortOrder: 7 },
+  ];
+  for (const c of categories) {
+    await prisma.appCategory.upsert({
+      where: { slug: c.slug },
+      update: {},
+      create: c,
+    });
+  }
+
+  // ─── Marketplace Vendors ───
+  const vendors = [
+    { slug: 'talentai-lab', name: 'TalentAI Lab', description: '专注 AI 人才技术', contactEmail: 'contact@talentai.lab', verified: true },
+    { slug: 'paytech', name: 'PayTech 科技', description: '薪酬科技服务商', contactEmail: 'contact@paytech.cn', verified: true },
+    { slug: 'goalforge', name: 'GoalForge', description: '目标管理工具专家', contactEmail: 'contact@goalforge.io', verified: true },
+    { slug: 'educloud', name: 'EduCloud', description: '企业学习平台', contactEmail: 'contact@educloud.com', verified: true },
+    { slug: 'peoplesense', name: 'PeopleSense', description: '员工体验洞察', contactEmail: 'contact@peoplesense.co', verified: true },
+    { slug: 'legaltech-hr', name: 'LegalTech HR', description: 'HR 合规科技', contactEmail: 'contact@legaltech.hr', verified: true },
+    { slug: 'datavibe', name: 'DataVibe', description: 'HR 数据分析', contactEmail: 'contact@datavibe.ai', verified: true },
+    { slug: 'campushire', name: 'CampusHire', description: '校园招聘专家', contactEmail: 'contact@campushire.edu', verified: true },
+    { slug: 'flexbenefit', name: 'FlexBenefit', description: '弹性福利平台', contactEmail: 'contact@flexbenefit.com', verified: true },
+    { slug: 'talentgraph', name: 'TalentGraph', description: '人才图谱技术', contactEmail: 'contact@talentgraph.io', verified: true },
+    { slug: 'firstday', name: 'FirstDay', description: '入职体验科技', contactEmail: 'contact@firstday.app', verified: true },
+  ];
+  for (const v of vendors) {
+    await prisma.appVendor.upsert({
+      where: { slug: v.slug },
+      update: {},
+      create: v,
+    });
+  }
+
+  // ─── Marketplace Apps ───
+  const catMap: Record<string, string> = {};
+  const vendMap: Record<string, string> = {};
+  for (const c of await prisma.appCategory.findMany()) catMap[c.slug] = c.id;
+  for (const v of await prisma.appVendor.findMany()) vendMap[v.slug] = v.id;
+
+  const apps = [
+    {
+      slug: 'smart-resume-screen', name: '智能简历筛选 Pro', tagline: 'AI 驱动的简历解析与智能匹配',
+      categoryId: catMap['recruitment'], vendorId: vendMap['talentai-lab'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.8, ratingCount: 342, installCount: 12580,
+      description: '基于深度学习的简历解析引擎，支持 50+ 格式自动识别。',
+      pricingTiers: [{ name: '基础版', priceMonthly: 299, desc: '每月 500 份简历解析' }],
+    },
+    {
+      slug: 'payroll-auto-calc', name: '薪酬自动核算助手', tagline: '一键算薪，合规无忧',
+      categoryId: catMap['compensation'], vendorId: vendMap['paytech'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.6, ratingCount: 215, installCount: 8920,
+      description: '自动关联考勤、绩效、社保数据，支持全国 300+ 城市个税政策。',
+      pricingTiers: [{ name: '标准版', priceMonthly: 599, desc: '最多 200 人' }],
+    },
+    {
+      slug: 'okr-copilot', name: 'OKR 协同助手', tagline: '目标对齐，执行落地',
+      categoryId: catMap['performance'], vendorId: vendMap['goalforge'],
+      pricingModel: PricingModel.FREE, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.7, ratingCount: 428, installCount: 23100,
+      description: '从目标制定到执行复盘的全流程 OKR 管理工具。',
+      pricingTiers: [{ name: '免费版', priceMonthly: 0, desc: '最多 10 人' }],
+    },
+    {
+      slug: 'lms-microlearning', name: '微课学习平台', tagline: '碎片化学习，体系化成长',
+      categoryId: catMap['learning'], vendorId: vendMap['educloud'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: false, ratingAvg: 4.5, ratingCount: 189, installCount: 7650,
+      description: '支持微课、直播、考试、证书全链路学习管理。',
+      pricingTiers: [{ name: '成长版', priceMonthly: 499, desc: '最多 100 人' }],
+    },
+    {
+      slug: 'employee-pulse', name: '员工心声洞察', tagline: '实时感知员工情绪，主动干预留存',
+      categoryId: catMap['experience'], vendorId: vendMap['peoplesense'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.9, ratingCount: 156, installCount: 5420,
+      description: '通过匿名问卷、情绪分析、离职预警等多维数据洞察员工满意度。',
+      pricingTiers: [{ name: '调研版', priceMonthly: 399, desc: '每月 1 次调研' }],
+    },
+    {
+      slug: 'compliance-guard', name: '合规卫士', tagline: '自动追踪法规变化，降低用工风险',
+      categoryId: catMap['compliance'], vendorId: vendMap['legaltech-hr'],
+      pricingModel: PricingModel.ONE_TIME, status: AppStatus.PUBLISHED,
+      featured: false, ratingAvg: 4.4, ratingCount: 98, installCount: 3890,
+      description: '实时追踪全国劳动法规、个税政策、社保基数变化。',
+      pricingTiers: [{ name: '标准版', priceMonthly: 699, desc: '基础法规追踪' }],
+    },
+    {
+      slug: 'ai-interview-bot', name: 'AI 面试机器人', tagline: '7×24 自动面试，精准评估潜力',
+      categoryId: catMap['ai'], vendorId: vendMap['talentai-lab'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.9, ratingCount: 512, installCount: 18760,
+      description: '基于大语言模型的智能面试官，支持多种面试模式。',
+      pricingTiers: [{ name: '试用版', priceMonthly: 0, desc: '每月 50 次面试' }],
+    },
+    {
+      slug: 'hr-analytics-pro', name: 'HR 数据洞察 Pro', tagline: '400+ 指标，一键生成高管报表',
+      categoryId: catMap['analytics'], vendorId: vendMap['datavibe'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.7, ratingCount: 267, installCount: 9340,
+      description: '预置 400+ HR 行业指标与高管驾驶舱模板。',
+      pricingTiers: [{ name: '分析版', priceMonthly: 799, desc: '标准报表' }],
+    },
+    {
+      slug: 'campus-recruit-suite', name: '校园招聘套件', tagline: '从宣讲到 Offer，校招全流程数字化',
+      categoryId: catMap['recruitment'], vendorId: vendMap['campushire'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: false, ratingAvg: 4.5, ratingCount: 178, installCount: 6540,
+      description: '覆盖校招宣讲、简历收集、AI 初筛、在线测评全链路。',
+      pricingTiers: [{ name: '校招季', priceMonthly: 1299, desc: '单季度使用' }],
+    },
+    {
+      slug: 'benefits-marketplace', name: '弹性福利商城', tagline: '员工自选福利，企业成本可控',
+      categoryId: catMap['compensation'], vendorId: vendMap['flexbenefit'],
+      pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
+      featured: false, ratingAvg: 4.3, ratingCount: 134, installCount: 4780,
+      description: '集成保险、体检、健身、餐饮等 1000+ 福利商品。',
+      pricingTiers: [{ name: 'Starter', priceMonthly: 299, desc: '最多 100 人' }],
+    },
+    {
+      slug: 'talent-map-360', name: '人才地图 360', tagline: '可视化人才分布，精准决策继任',
+      categoryId: catMap['analytics'], vendorId: vendMap['talentgraph'],
+      pricingModel: PricingModel.ONE_TIME, status: AppStatus.PUBLISHED,
+      featured: false, ratingAvg: 4.6, ratingCount: 203, installCount: 7120,
+      description: '基于九宫格、能力模型、绩效数据自动生成企业人才地图。',
+      pricingTiers: [{ name: '团队版', priceMonthly: 599, desc: '单部门' }],
+    },
+    {
+      slug: 'onboarding-experience', name: '入职体验管家', tagline: '让新人第一天就感受到归属',
+      categoryId: catMap['experience'], vendorId: vendMap['firstday'],
+      pricingModel: PricingModel.FREE, status: AppStatus.PUBLISHED,
+      featured: true, ratingAvg: 4.8, ratingCount: 312, installCount: 15680,
+      description: '从 Offer 接受到转正的全周期入职管理。',
+      pricingTiers: [{ name: '免费版', priceMonthly: 0, desc: '最多 20 人/月' }],
+    },
+  ];
+  for (const a of apps) {
+    await prisma.app.upsert({
+      where: { slug: a.slug },
+      update: {},
+      create: a as any,
+    });
+  }
 
   console.log('✅ Seed completed!');
 }
