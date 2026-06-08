@@ -42,7 +42,6 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { formatDate } from '@/utils/formatDate.js';
 import client from '@/api/client.js';
 
 const statCards = ref([

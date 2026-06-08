@@ -58,6 +58,17 @@ export const menuConfig = [
     ],
   },
   {
+    label: '应用广场',
+    icon: 'Grid',
+    roles: ['SUPER_ADMIN', 'ADMIN'],
+    children: [
+      { path: '/marketplace/apps', label: '应用管理', icon: 'Goods', roles: ['SUPER_ADMIN', 'ADMIN'] },
+      { path: '/marketplace/categories', label: '分类管理', icon: 'Folder', roles: ['SUPER_ADMIN', 'ADMIN'] },
+      { path: '/marketplace/reviews', label: '评价管理', icon: 'ChatDotSquare', roles: ['SUPER_ADMIN', 'ADMIN'] },
+      { path: '/marketplace/vendors', label: '厂商管理', icon: 'OfficeBuilding', roles: ['SUPER_ADMIN', 'ADMIN'] },
+    ],
+  },
+  {
     path: '/blogs',
     label: '博客管理',
     icon: 'Reading',
@@ -130,6 +141,10 @@ const routeComponentMap = {
   '/cases': () => import('@/views/CaseManagerView.vue'),
   '/news': () => import('@/views/NewsManagerView.vue'),
   '/jobs': () => import('@/views/JobManagerView.vue'),
+  '/marketplace/apps': () => import('@/views/AppManagerView.vue'),
+  '/marketplace/categories': () => import('@/views/CategoryManagerView.vue'),
+  '/marketplace/reviews': () => import('@/views/ReviewManagerView.vue'),
+  '/marketplace/vendors': () => import('@/views/VendorManagerView.vue'),
   '/blogs': () => import('@/views/BlogManagerView.vue'),
   '/forums': () => import('@/views/ForumManagerView.vue'),
   '/comment-moderation': () => import('@/views/CommentModerationView.vue'),

@@ -82,7 +82,7 @@ import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/CmsTable.vue';
 import Picture from '@/components/Picture.vue';
 import client from '@/api/client.js';
-import { useAuthStore } from '@/stores/auth.store.js';
+import { useAuthStore } from '@/stores/auth.js';
 
 const auth = useAuthStore();
 const uploadRef = ref(null);
