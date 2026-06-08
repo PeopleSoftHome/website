@@ -32,6 +32,7 @@ import { CareersModule } from '@/modules/careers/careers.module';
 import { AboutModule } from '@/modules/about/about.module';
 import { HealthModule } from '@/modules/health/health.module';
 import { MarketplaceModule } from '@/modules/marketplace/marketplace.module';
+import { PaymentModule } from '@/modules/payment/payment.module';
 
 export const FEATURE_MODULES = [
   AuthModule,
@@ -58,6 +59,7 @@ export const FEATURE_MODULES = [
   AboutModule,
   HealthModule,
   MarketplaceModule,
+  PaymentModule,
 ];
 
 // ─── Listeners ───

@@ -247,7 +247,7 @@
 .pricingFeatures {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -256,6 +256,34 @@
 .pricingFeature {
   font-size: 14px;
   color: var(--gray-600);
+}
+
+.pricingBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--primary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-top: auto;
+}
+
+.pricingBtn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.pricingBtnPrimary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.pricingBtnPrimary:hover {
+  background: var(--primary-dark);
 }
 
 .compatibilityList {

@@ -39,8 +39,8 @@
             </div>
 
             <div :class="s.heroActions">
-              <button :class="s.ctaPrimary" @click="handleInstall">
-                {{ t('marketplace.install') }}
+              <button :class="s.ctaPrimary" @click="scrollToPricing">
+                {{ t('marketplace.subscribe') }}
               </button>
               <button :class="s.ctaSecondary" @click="modalStore.openModal()">
                 {{ t('marketplace.contactSales') }}
@@ -64,13 +64,14 @@
           </div>
         </div>
 
-        <div v-if="app?.pricingTiers?.length" :class="s.section" class="reveal">
+        <div v-if="app?.pricingTiers?.length" id="pricing" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('marketplace.pricingPlans') }}</h2>
           <div :class="s.pricingGrid">
             <div
               v-for="(tier, i) in app.pricingTiers"
               :key="i"
-              :class="[s.pricingCard, i === 1 ? s.pricingCardHighlight : '']"
+              :class="[s.pricingCard, selectedTier === i ? s.pricingCardHighlight : '']"
+              @click="selectedTier = i"
             >
               <h3 :class="s.pricingName">{{ tier.name }}</h3>
               <div :class="s.pricingPrice">
@@ -87,6 +88,20 @@
                   ✓ {{ feat }}
                 </li>
               </ul>
+              <button
+                v-if="tier.priceMonthly > 0"
+                :class="[s.pricingBtn, selectedTier === i ? s.pricingBtnPrimary : '']"
+                @click.stop="handleSubscribe(tier)"
+              >
+                {{ t('marketplace.subscribeNow') }}
+              </button>
+              <button
+                v-else
+                :class="[s.pricingBtn, s.pricingBtnPrimary]"
+                @click.stop="handleFreeInstall"
+              >
+                {{ t('marketplace.freeInstall') }}
+              </button>
             </div>
           </div>
         </div>
@@ -126,9 +141,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
+import { marketplaceApi, paymentApi } from '@/api/marketplace.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
@@ -139,6 +155,7 @@ const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
 
 const app = computed(() => MARKETPLACE_APP_MAP[route.params.slug] || null);
+const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
   if (!app.value) return '';
@@ -175,8 +192,42 @@ const formatInstallCount = (n) => {
   return String(n);
 };
 
-const handleInstall = () => {
-  alert(t('marketplace.comingSoon') || '安装功能即将上线，敬请期待！');
+const scrollToPricing = () => {
+  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+const handleFreeInstall = async () => {
+  try {
+    await marketplaceApi.installApp(route.params.slug);
+    alert(t('marketplace.installSuccess') || '安装成功！');
+  } catch (e) {
+    alert(e.response?.data?.message || t('marketplace.installError') || '安装失败，请登录后重试');
+  }
+};
+
+const handleSubscribe = async (tier) => {
+  try {
+    const orderRes = await paymentApi.createOrder({
+      appId: app.value.id,
+      tierName: tier.name,
+      amount: tier.priceMonthly,
+      currency: 'CNY',
+      provider: 'STRIPE',
+    });
+    const order = orderRes.data;
+
+    const checkoutRes = await paymentApi.createStripeCheckout({
+      orderId: order.id,
+      successUrl: `${window.location.origin}/marketplace/payment/success?order_id=${order.id}`,
+      cancelUrl: `${window.location.origin}/marketplace/payment/cancel?order_id=${order.id}`,
+    });
+
+    if (checkoutRes.data?.url) {
+      window.location.href = checkoutRes.data.url;
+    }
+  } catch (e) {
+    alert(e.response?.data?.message || t('marketplace.paymentError') || '支付初始化失败');
+  }
 };
 
 const relatedApps = computed(() => {

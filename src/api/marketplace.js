@@ -11,3 +11,10 @@ export const marketplaceApi = {
   getMyApps: () => apiClient.get('/marketplace/workspace/apps'),
   getMySubscriptions: () => apiClient.get('/marketplace/workspace/subscriptions'),
 };
+
+export const paymentApi = {
+  createOrder: (data) => apiClient.post('/payments/orders', data),
+  getOrders: (params) => apiClient.get('/payments/orders', { params }),
+  getOrder: (id) => apiClient.get(`/payments/orders/${id}`),
+  createStripeCheckout: (data) => apiClient.post('/payments/stripe/checkout', data),
+};
