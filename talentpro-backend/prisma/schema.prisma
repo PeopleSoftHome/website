@@ -987,3 +987,209 @@ model Partner {
   @@index([featured])
   @@map("partners")
 }
+
+// ==================== App Marketplace ====================
+
+enum AppStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  PUBLISHED
+  REJECTED
+  SUSPENDED
+  DEPRECATED
+}
+
+enum PricingModel {
+  FREE
+  ONE_TIME
+  SUBSCRIPTION
+  USAGE_BASED
+  FREEMIUM
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+  ALIPAY
+  WECHAT_PAY
+  BANK_TRANSFER
+}
+
+model AppCategory {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0)
+  parentId    String?
+  parent      AppCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    AppCategory[] @relation("CategoryHierarchy")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  apps        App[]
+
+  @@index([parentId])
+  @@index([sortOrder])
+  @@map("app_categories")
+}
+
+model AppVendor {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  logoUrl     String?
+  website     String?
+  description String?  @db.Text
+  contactEmail String
+  contactPhone String?
+  verified    Boolean  @default(false)
+  certifications String[] @default([])
+  revenueShareRate Float @default(0.70)
+  userId      String?
+  apps        App[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@map("app_vendors")
+}
+
+model App {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  tagline     String
+  description String   @db.Text
+  categoryId  String
+  category    AppCategory @relation(fields: [categoryId], references: [id])
+  tags        String[] @default([])
+  vendorId    String
+  vendor      AppVendor @relation(fields: [vendorId], references: [id])
+  iconUrl     String
+  coverImages String[] @default([])
+  demoVideoUrl String?
+  pricingModel PricingModel
+  pricingTiers Json?
+  status      AppStatus @default(DRAFT)
+  featured    Boolean  @default(false)
+  featuredSortOrder Int?
+  installCount Int @default(0)
+  ratingAvg    Float @default(0)
+  ratingCount  Int @default(0)
+  version     String
+  compatibility String[] @default([])
+  integrationType String @default("oauth")
+  reviewNotes  String? @db.Text
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  workspaceId  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+  reviews      AppReview[]
+  subscriptions Subscription[]
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([categoryId])
+  @@index([vendorId])
+  @@index([featured, featuredSortOrder])
+  @@index([pricingModel])
+  @@map("apps")
+}
+
+model AppReview {
+  id        String @id @default(uuid())
+  appId     String
+  app       App @relation(fields: [appId], references: [id], onDelete: Cascade)
+  userId    String
+  workspaceId String?
+  rating    Int
+  title     String?
+  content   String @db.Text
+  replyContent String? @db.Text
+  replyBy      String?
+  replyAt      DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([appId])
+  @@index([userId])
+  @@index([workspaceId])
+  @@map("app_reviews")
+}
+
+model Subscription {
+  id          String @id @default(uuid())
+  appId       String
+  app         App @relation(fields: [appId], references: [id], onDelete: Cascade)
+  workspaceId String
+  tierName    String
+  pricingModel PricingModel
+  amount      Float
+  currency    String @default("CNY")
+  interval    String @default("month")
+  status      SubscriptionStatus @default(TRIAL)
+  trialEndsAt DateTime?
+  currentPeriodStart DateTime @default(now())
+  currentPeriodEnd   DateTime @default(now())
+  cancelAtPeriodEnd Boolean @default(false)
+  cancelledAt       DateTime?
+  provider      PaymentProvider?
+  providerSubId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  orders        Order[]
+
+  @@index([appId])
+  @@index([workspaceId])
+  @@index([status])
+  @@index([providerSubId])
+  @@map("subscriptions")
+}
+
+model Order {
+  id          String @id @default(uuid())
+  orderNo     String @unique
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  workspaceId String
+  userId      String
+  subtotal    Float
+  discount    Float @default(0)
+  tax         Float @default(0)
+  total       Float
+  currency    String @default("CNY")
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+  provider    PaymentProvider?
+  providerPaymentId String?
+  invoiceRequested Boolean @default(false)
+  invoiceNo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([orderNo])
+  @@map("orders")
+}

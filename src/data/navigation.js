@@ -67,6 +67,12 @@ export const NAV_LINKS = [
     hasDropdown: false,
     href: '/resources',
   },
+  {
+    id: 'marketplace',
+    label: '应用广场',
+    hasDropdown: false,
+    href: '/marketplace',
+  },
 ];
 
 export const FOOTER_LINKS = [

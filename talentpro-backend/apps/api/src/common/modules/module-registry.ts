@@ -31,6 +31,7 @@ import { NewsModule } from '@/modules/news/news.module';
 import { CareersModule } from '@/modules/careers/careers.module';
 import { AboutModule } from '@/modules/about/about.module';
 import { HealthModule } from '@/modules/health/health.module';
+import { MarketplaceModule } from '@/modules/marketplace/marketplace.module';
 
 export const FEATURE_MODULES = [
   AuthModule,
@@ -56,6 +57,7 @@ export const FEATURE_MODULES = [
   CareersModule,
   AboutModule,
   HealthModule,
+  MarketplaceModule,
 ];
 
 // ─── Listeners ───
