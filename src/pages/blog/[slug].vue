@@ -7,7 +7,7 @@
           ← {{ t('blog.back') }}
         </button>
 
-        <article v-if="post" :class="s.blogArticle">
+        <article v-if="post" :class="s.blogArticle" class="reveal">
           <div v-if="post.coverImage" :class="s.detailCover" :style="{ backgroundImage: `url(${post.coverImage})` }" />
           <div :class="s.detailMeta">
             <span :class="s.detailCategory">{{ post.category?.name }}</span>
@@ -48,13 +48,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, inject, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
 import { renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
+
+definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
@@ -63,16 +65,24 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
   `blog-${route.params.slug}`,
   async () => {
     const res = await blogApi.getPost(route.params.slug);
-    const data = res.data || res;
-    if (data) {
-      document.title = `${data.title} | ${t('blog.pageTitle')}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', data.excerpt?.slice(0, 160) || data.title);
-    }
-    return data;
+    return res.data || res;
   },
   { server: false, default: () => null }
 );
+
+useHead(() => {
+  if (!post.value) return {};
+  const p = post.value;
+  return {
+    title: `${p.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: p.excerpt?.slice(0, 160) || p.title },
+      { property: 'og:title', content: p.title },
+      { property: 'og:description', content: p.excerpt?.slice(0, 160) || p.title },
+      { property: 'og:type', content: 'article' },
+    ],
+  };
+});
 
 const error = computed(() => {
   if (!fetchError.value) return null;

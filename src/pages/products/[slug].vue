@@ -8,7 +8,7 @@
           { label: product?.name || t('productPage.detail') },
         ]" />
 
-        <div v-if="product" :class="s.hero">
+        <div v-if="product" :class="s.hero" class="reveal">
           <div :class="s.heroContent">
             <span :class="s.tag">{{ product.tabLabel }}</span>
             <h1 :class="s.title">{{ product.name }}</h1>
@@ -25,7 +25,7 @@
           </div>
         </div>
 
-        <div v-if="product?.features?.length" :class="s.section">
+        <div v-if="product?.features?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('productPage.features') }}</h2>
           <div :class="s.featureGrid">
             <div v-for="(f, i) in product.features" :key="i" :class="s.featureCard">
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div v-if="product?.scenarios?.length" :class="s.section">
+        <div v-if="product?.scenarios?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('productPage.scenarios') }}</h2>
           <div :class="s.scenarioGrid">
             <div v-for="(sc, i) in product.scenarios" :key="i" :class="s.scenarioCard">
@@ -46,7 +46,7 @@
           </div>
         </div>
 
-        <div v-if="product?.testimonial" :class="s.testimonial">
+        <div v-if="product?.testimonial" :class="s.testimonial" class="reveal">
           <div :class="s.testimonialContent">
             <p :class="s.testimonialQuote">"{{ product.testimonial.quote }}"</p>
             <div :class="s.testimonialAuthor">
@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <div v-if="product?.specs?.length" :class="s.section">
+        <div v-if="product?.specs?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('productPage.specs') }}</h2>
           <div :class="s.specGrid">
             <div v-for="(sp, i) in product.specs" :key="i" :class="s.specItem">
@@ -66,7 +66,7 @@
           </div>
         </div>
 
-        <div v-if="relatedProducts.length" :class="s.section">
+        <div v-if="relatedProducts.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('productPage.related') }}</h2>
           <div :class="s.relatedGrid">
             <NuxtLink
@@ -97,6 +97,8 @@ import { PRODUCT_MAP } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
+definePageMeta({ title: 'productPage.detail', description: 'productPage.subtitle' });
+
 const { t } = useI18n();
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
@@ -105,16 +107,25 @@ const { data: product } = useAsyncData(
   `product-${route.params.slug}`,
   async () => {
     const slug = route.params.slug;
-    const data = PRODUCT_MAP[slug] || null;
-    if (data) {
-      document.title = `${data.name} | ${t('productPage.title')}`;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute('content', `${data.name} | ${t('productPage.title')}`);
-    }
-    return data;
+    return PRODUCT_MAP[slug] || null;
   },
   { server: false, default: () => null }
 );
+
+useHead(() => {
+  if (!product.value) return {};
+  const name = product.value.name;
+  const desc = product.value.tagline || product.value.desc;
+  return {
+    title: `${name} | TalentPro`,
+    meta: [
+      { name: 'description', content: desc },
+      { property: 'og:title', content: name },
+      { property: 'og:description', content: desc },
+      { property: 'og:type', content: 'product' },
+    ],
+  };
+});
 
 const relatedProducts = computed(() => {
   if (!product.value?.related) return [];
@@ -124,7 +135,14 @@ const relatedProducts = computed(() => {
 onMounted(() => {
   watch(product, (val) => {
     if (val) {
-      injectJsonLd({ '@context': 'https://schema.org', '@type': 'Product', name: val.name || 'TalentPro 产品' });
+      injectJsonLd({
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: val.name,
+        description: val.tagline,
+        brand: { '@type': 'Brand', name: 'TalentPro' },
+        offers: { '@type': 'Offer', availability: 'https://schema.org/InStock' },
+      });
     }
   }, { immediate: true });
 });

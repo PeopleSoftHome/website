@@ -5,12 +5,12 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('resourcePage.title'), to: '/resources' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('resourcePage.title') }}</h1>
           <p :class="s.subtitle">{{ t('resourcePage.subtitle') }}</p>
         </div>
 
-        <div :class="s.filter">
+        <div :class="s.filter" class="reveal reveal-delay-1">
           <button
             v-for="type in types"
             :key="type.value"
@@ -21,7 +21,7 @@
           </button>
         </div>
 
-        <div v-if="featuredResources.length && !activeType" :class="s.featured">
+        <div v-if="featuredResources.length && !activeType" :class="s.featured" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('resourcePage.featured') }}</h2>
           <div :class="s.featuredGrid">
             <NuxtLink
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal">
           <NuxtLink
             v-for="r in filteredResources"
             :key="r.id"
@@ -74,7 +74,7 @@
 
 <script setup>
 definePageMeta({ title: 'resourcePage.title', description: 'resourcePage.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

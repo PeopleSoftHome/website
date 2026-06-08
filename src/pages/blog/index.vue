@@ -3,8 +3,8 @@
 
     <main :class="s.blogPage">
       <div class="container">
-        <h1 :class="s.pageTitle">{{ t('blog.title') }}</h1>
-        <div :class="s.blogCategories">
+        <h1 :class="s.pageTitle" class="reveal">{{ t('blog.title') }}</h1>
+        <div :class="s.blogCategories" class="reveal reveal-delay-1">
           <button
             v-for="cat in categories"
             :key="cat.id"
@@ -72,7 +72,7 @@
 
 <script setup>
 definePageMeta({ title: 'blog.pageTitle' });
-import { ref, onMounted, onUnmounted, inject, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog.js';

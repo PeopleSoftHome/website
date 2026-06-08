@@ -3,9 +3,9 @@
 
     <main :class="s.forumPage">
       <div class="container">
-        <h1 :class="s.pageTitle">{{ t('forum.title') }}</h1>
+        <h1 :class="s.pageTitle" class="reveal">{{ t('forum.title') }}</h1>
 
-        <div :class="s.forumCategories">
+        <div :class="s.forumCategories" class="reveal reveal-delay-1">
           <button
             v-for="cat in categories"
             :key="cat.id"
@@ -80,7 +80,7 @@
 
 <script setup>
 definePageMeta({ title: 'forum.pageTitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';

@@ -5,12 +5,12 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('productPage.title'), to: '/products' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('productPage.title') }}</h1>
           <p :class="s.subtitle">{{ t('productPage.subtitle') }}</p>
         </div>
 
-        <div :class="s.tabs">
+        <div :class="s.tabs" class="reveal reveal-delay-1">
           <button
             v-for="tab in tabs"
             :key="tab.id"
@@ -21,7 +21,7 @@
           </button>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal reveal-delay-2">
           <NuxtLink
             v-for="product in filteredProducts"
             :key="product.id"
@@ -44,7 +44,7 @@
           </NuxtLink>
         </div>
 
-        <div :class="s.ctaBand">
+        <div :class="s.ctaBand" class="reveal">
           <h3 :class="s.ctaTitle">{{ t('productPage.ctaTitle') }}</h3>
           <p :class="s.ctaDesc">{{ t('productPage.ctaDesc') }}</p>
           <button :class="s.ctaBtn" @click="modalStore.openModal()">{{ t('productPage.demoCta') }}</button>

@@ -5,12 +5,12 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('cases.title'), to: '/cases' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('cases.title') }}</h1>
           <p :class="s.subtitle">{{ t('cases.subtitle') }}</p>
         </div>
 
-        <div :class="s.filter">
+        <div :class="s.filter" class="reveal reveal-delay-1">
           <button
             v-for="ind in industries"
             :key="ind"
@@ -24,7 +24,7 @@
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && cases.length === 0" :class="s.error">{{ error }}</div>
 
-        <div v-if="featuredCase" :class="s.featured">
+        <div v-if="featuredCase" :class="s.featured" class="reveal">
           <NuxtLink :to="`/cases/${featuredCase.slug}`" :class="s.featuredCard">
             <div :class="s.featuredContent">
               <div :class="s.featuredHeader">
@@ -46,7 +46,7 @@
           </NuxtLink>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal">
           <NuxtLink
             v-for="c in cases"
             :key="c.id"
@@ -78,7 +78,7 @@
 
 <script setup>
 definePageMeta({ title: 'cases.title', description: 'cases.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { caseApi } from '@/api/case.js';
 import { CASES, CASE_INDUSTRIES } from '@/data/cases.js';

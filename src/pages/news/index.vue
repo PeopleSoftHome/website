@@ -5,7 +5,7 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('news.title'), to: '/news' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('news.title') }}</h1>
           <p :class="s.subtitle">{{ t('news.subtitle') }}</p>
         </div>
@@ -13,7 +13,7 @@
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && news.length === 0" :class="s.error">{{ error }}</div>
 
-        <div v-if="featuredNews" :class="s.featured">
+        <div v-if="featuredNews" :class="s.featured" class="reveal">
           <NuxtLink :to="`/news/${featuredNews.slug}`" :class="s.featuredCard">
             <div v-if="featuredNews.coverImage" :class="s.featuredCover" :style="`background-image:url(${featuredNews.coverImage})`" />
             <div v-else :class="s.featuredCoverPlaceholder">
@@ -31,7 +31,7 @@
           </NuxtLink>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal">
           <NuxtLink
             v-for="item in normalNews"
             :key="item.id"
@@ -60,7 +60,7 @@
 
 <script setup>
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
-import { computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';

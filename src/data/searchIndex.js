@@ -386,6 +386,150 @@ export const SEARCH_GENERAL = [
   },
 ];
 
+/* ══════════════ CASE STUDIES — 8 条 ══════════════ */
+export const SEARCH_CASES = [
+  {
+    id: 'cs-mengniu', type: 'case', weight: 0.85,
+    title: '蒙牛乳业：AI 招聘助手助力万人校招',
+    tags: ['蒙牛','校招','AI招聘','快消品','简历筛选','case'],
+    desc: '简历筛选效率提升 80%，校招周期缩短至 36 天',
+    section: 'cases', icon: 'award',
+    route: '/cases/mengniu-ai-recruit',
+  },
+  {
+    id: 'cs-haier', type: 'case', weight: 0.85,
+    title: '海尔集团：智能排班与考勤数字化',
+    tags: ['海尔','制造业','智能排班','考勤','薪酬核算','case'],
+    desc: '万人工厂人效提升 20%，算薪时间从 10 天缩短至 1 天',
+    section: 'cases', icon: 'factory',
+    route: '/cases/haier-manufacturing',
+  },
+  {
+    id: 'cs-suning', type: 'case', weight: 0.8,
+    title: '苏宁易购：2000+ 门店人事统一管控',
+    tags: ['苏宁','零售','门店','人才培养','组织人事','case'],
+    desc: '店长培养周期缩短 40%，新店人员到位率 100%',
+    section: 'cases', icon: 'store',
+    route: '/cases/suning-retail',
+  },
+  {
+    id: 'cs-picc', type: 'case', weight: 0.8,
+    title: '中国人保：金融行业人才数字化',
+    tags: ['人保','金融','保险','校招','后备人才','case'],
+    desc: '校招效率提升 60%，后备人才库覆盖核心岗位',
+    section: 'cases', icon: 'bank',
+    route: '/cases/picc-finance',
+  },
+  {
+    id: 'cs-stategrid', type: 'case', weight: 0.8,
+    title: '国家电网：央国企人才强企',
+    tags: ['电网','央国企','干部','竞聘','梯队','case'],
+    desc: '干部竞聘全流程线上化，年轻干部梯队建设',
+    section: 'cases', icon: 'landmark',
+    route: '/cases/stategrid-gov',
+  },
+  {
+    id: 'cs-bytedance', type: 'case', weight: 0.8,
+    title: '字节跳动：互联网敏捷人才管理',
+    tags: ['字节','互联网','OKR','HRBP','敏捷','case'],
+    desc: '全员 OKR 对齐，HRBP 数据驱动决策',
+    section: 'cases', icon: 'monitor',
+    route: '/cases/bytedance-internet',
+  },
+  {
+    id: 'cs-sindobiopharma', type: 'case', weight: 0.75,
+    title: '信达生物：医药研发人才全周期管理',
+    tags: ['信达','医药','研发','人才盘点','合规','case'],
+    desc: '研发人才全生命周期数字化管理，合规追溯',
+    section: 'cases', icon: 'heart',
+    route: '/cases/sindobiopharma-pharma',
+  },
+  {
+    id: 'cs-boe', type: 'case', weight: 0.75,
+    title: '京东方：制造业人才发展与继任',
+    tags: ['京东方','制造','继任','高潜','人才梯队','case'],
+    desc: '关键岗位继任者识别，系统化培养路径',
+    section: 'cases', icon: 'factory',
+    route: '/cases/boe-manufacturing',
+  },
+];
+
+/* ══════════════ SECONDARY PAGES — 直达 ══════════════ */
+export const SEARCH_PAGES = [
+  {
+    id: 'page-products', type: 'page', weight: 0.9,
+    title: '产品矩阵',
+    tags: ['产品','功能','模块','招聘','绩效','薪酬','product'],
+    desc: '20+ 产品覆盖 HR SaaS、AI Family、测评、PaaS',
+    section: 'products', icon: 'grid',
+    route: '/products',
+  },
+  {
+    id: 'page-solutions', type: 'page', weight: 0.9,
+    title: '行业解决方案',
+    tags: ['方案','行业','制造','零售','互联网','央国企','solution'],
+    desc: '5 大行业深度解决方案，开箱即用',
+    section: 'industry', icon: 'briefcase',
+    route: '/solutions',
+  },
+  {
+    id: 'page-cases', type: 'page', weight: 0.85,
+    title: '客户案例',
+    tags: ['案例','客户','成功故事','口碑','case study'],
+    desc: '8000+ 企业客户的数字化转型实践',
+    section: 'testimonials', icon: 'star',
+    route: '/cases',
+  },
+  {
+    id: 'page-resources', type: 'page', weight: 0.85,
+    title: '资源中心',
+    tags: ['资源','白皮书','报告','下载','干货','视频'],
+    desc: '白皮书、案例集、视频、操作指南等 16 种资源',
+    section: 'resources', icon: 'book-open',
+    route: '/resources',
+  },
+  {
+    id: 'page-news', type: 'page', weight: 0.75,
+    title: '新闻中心',
+    tags: ['新闻','动态','公司','媒体','报道'],
+    desc: 'TalentPro 最新产品动态与行业资讯',
+    section: 'general', icon: 'newspaper',
+    route: '/news',
+  },
+  {
+    id: 'page-careers', type: 'page', weight: 0.7,
+    title: '加入我们',
+    tags: ['招聘','职位','校招','社招','Careers','工作'],
+    desc: '与 TalentPro 一起成长，开放 100+ 职位',
+    section: 'general', icon: 'users',
+    route: '/careers',
+  },
+  {
+    id: 'page-about', type: 'page', weight: 0.7,
+    title: '了解我们',
+    tags: ['关于','公司','团队','介绍','品牌'],
+    desc: '20 年专注 HR SaaS，IDC 连续九年第一',
+    section: 'whyus', icon: 'home',
+    route: '/about',
+  },
+  {
+    id: 'page-blog', type: 'page', weight: 0.75,
+    title: '博客',
+    tags: ['博客','文章','HR','趋势','洞察','blog'],
+    desc: 'HR 数字化最佳实践与行业洞察',
+    section: 'general', icon: 'file-text',
+    route: '/blog',
+  },
+  {
+    id: 'page-forum', type: 'page', weight: 0.7,
+    title: '社区论坛',
+    tags: ['论坛','社区','讨论','问答','交流','forum'],
+    desc: 'HR 从业者交流社区，分享经验与答疑',
+    section: 'general', icon: 'message-circle',
+    route: '/forum',
+  },
+];
+
 /* ══════════════ 合并完整索引 ══════════════ */
 export const SEARCH_INDEX = [
   ...SEARCH_PRODUCTS,
@@ -393,6 +537,8 @@ export const SEARCH_INDEX = [
   ...SEARCH_RESOURCES,
   ...SEARCH_FEATURES,
   ...SEARCH_GENERAL,
+  ...SEARCH_CASES,
+  ...SEARCH_PAGES,
 ];
 
 /** 热门搜索词（无输入时展示）*/

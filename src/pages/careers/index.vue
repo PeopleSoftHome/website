@@ -5,7 +5,7 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('careers.title'), to: '/careers' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('careers.title') }}</h1>
           <p :class="s.subtitle">{{ t('careers.subtitle') }}</p>
         </div>
@@ -62,7 +62,7 @@
           </NuxtLink>
         </div>
 
-        <div :class="s.benefits">
+        <div :class="s.benefits" class="reveal">
           <h2 :class="s.benefitsTitle">{{ t('careers.benefits') }}</h2>
           <p :class="s.benefitsDesc">{{ t('careers.benefitsDesc') }}</p>
           <div :class="s.benefitGrid">
@@ -81,7 +81,7 @@
 
 <script setup>
 definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

@@ -8,12 +8,12 @@
           { label: t('careers.campus') },
         ]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('careers.campus') }}</h1>
           <p :class="s.subtitle">{{ t('careers.campusSubtitle') }}</p>
         </div>
 
-        <div :class="s.programs">
+        <div :class="s.programs" class="reveal">
           <div :class="s.programCard">
             <div :class="s.programIcon">🎯</div>
             <h3 :class="s.programTitle">{{ t('careers.gradProgram') }}</h3>
@@ -31,7 +31,7 @@
           </div>
         </div>
 
-        <div :class="s.jobs">
+        <div :class="s.jobs" class="reveal">
           <h2 :class="s.jobsTitle">{{ t('careers.viewJobs') }}</h2>
           <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
           <div v-else-if="error" :class="s.error">{{ error }}</div>
@@ -61,7 +61,7 @@
 
 <script setup>
 definePageMeta({ title: 'careers.campusSubtitle', description: 'careers.subtitle' });
-import { computed, onMounted, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

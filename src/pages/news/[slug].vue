@@ -11,7 +11,7 @@
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && !item" :class="s.error">{{ error }}</div>
 
-        <div v-else-if="item" :class="s.article">
+        <div v-else-if="item" :class="s.article" class="reveal">
           <div :class="s.header">
             <span :class="s.category">{{ item.category }}</span>
             <h1 :class="s.title">{{ item.title }}</h1>
@@ -34,11 +34,13 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, inject } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
-import { removeJsonLd } from '@/utils/jsonld.js';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
+
+definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
@@ -47,16 +49,22 @@ const { data: item, pending: loading, error: fetchError } = useAsyncData(
   `news-${route.params.slug}`,
   async () => {
     const res = await newsApi.getNewsItem(route.params.slug);
-    const data = res.data || null;
-    if (data) {
-      document.title = `${data.title} | ${t('news.title')}`;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute('content', `${data.title} | ${t('news.title')}`);
-    }
-    return data;
+    return res.data || null;
   },
   { server: false, default: () => null }
 );
+
+useHead(() => {
+  if (!item.value) return {};
+  return {
+    title: `${item.value.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: item.value.summary || item.value.title },
+      { property: 'og:title', content: item.value.title },
+      { property: 'og:description', content: item.value.summary || item.value.title },
+    ],
+  };
+});
 
 const error = computed(() => {
   if (!fetchError.value) return null;
@@ -72,6 +80,22 @@ const formatDate = (d) => {
   if (!d) return '';
   return new Date(d).toLocaleDateString();
 };
+
+onMounted(() => {
+  watch(item, (val) => {
+    if (val) {
+      injectJsonLd({
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: val.title,
+        description: val.summary || val.title,
+        datePublished: val.publishedAt,
+        author: { '@type': 'Organization', name: val.author || 'TalentPro' },
+        publisher: { '@type': 'Organization', name: 'TalentPro' },
+      });
+    }
+  }, { immediate: true });
+});
 
 onUnmounted(removeJsonLd);
 </script>

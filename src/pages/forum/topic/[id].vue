@@ -7,7 +7,7 @@
           ← {{ t('forum.back') }}
         </button>
 
-        <div v-if="topic" :class="s.topicDetail">
+        <div v-if="topic" :class="s.topicDetail" class="reveal">
           <div :class="s.topicHeader">
             <h1 :class="s.topicTitle">{{ topic.title }}</h1>
             <div :class="s.topicMeta">
@@ -74,6 +74,8 @@ import { escapeHtml, renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import s from './[id].vue.module.css';
 
+definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
+
 const { t } = useI18n();
 const route = useRoute();
 const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
@@ -85,16 +87,20 @@ const { data: topic, pending: loading } = useAsyncData(
   `forum-topic-${route.params.id}`,
   async () => {
     const res = await forumApi.getTopic(route.params.id);
-    const data = res.data || res;
-    if (data) {
-      document.title = `${data.title} | ${t('forum.pageTitle')}`;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', data.content?.slice(0, 160) || data.title);
-    }
-    return data;
+    return res.data || res;
   },
   { server: false, default: () => null }
 );
+
+useHead(() => {
+  if (!topic.value) return {};
+  return {
+    title: `${topic.value.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: topic.value.content?.slice(0, 160) || topic.value.title },
+    ],
+  };
+});
 
 const replies = ref([]);
 watch(topic, (val) => {

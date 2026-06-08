@@ -11,7 +11,7 @@
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && !job" :class="s.error">{{ error }}</div>
 
-        <div v-else-if="job" :class="s.job">
+        <div v-else-if="job" :class="s.job" class="reveal">
           <div :class="s.header">
             <h1 :class="s.title">{{ job.title }}</h1>
             <div :class="s.meta">
@@ -50,14 +50,26 @@
 </template>
 
 <script setup>
-import { computed, onUnmounted, inject } from 'vue';
+import { computed, onUnmounted } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import s from './[id].vue.module.css';
 
+definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
+
 const { t } = useI18n();
 const route = useRoute();
+
+useHead(() => {
+  if (!job.value) return {};
+  return {
+    title: `${job.value.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: job.value.description || t('careers.subtitle') },
+    ],
+  };
+});
 
 const { data: job, pending: loading, error: fetchError } = useAsyncData(
   `career-${route.params.id}`,

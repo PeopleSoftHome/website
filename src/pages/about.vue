@@ -5,7 +5,7 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('about.title'), to: '/about' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('about.title') }}</h1>
           <p :class="s.subtitle">{{ t('about.subtitle') }}</p>
         </div>
@@ -15,14 +15,14 @@
           <p :class="s.storyBody">{{ t('about.storyBody') }}</p>
         </div>
 
-        <div :class="s.stats">
+        <div :class="s.stats" class="reveal">
           <div v-for="(st, i) in stats" :key="i" :class="s.stat">
             <span :class="s.statValue">{{ st.value }}</span>
             <span :class="s.statLabel">{{ st.label }}</span>
           </div>
         </div>
 
-        <div :class="s.values">
+        <div :class="s.values" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('about.values') }}</h2>
           <div :class="s.valueGrid">
             <div v-for="(v, i) in values" :key="i" :class="s.valueCard">
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <div :class="s.links">
+        <div :class="s.links" class="reveal">
           <NuxtLink to="/about/team" :class="s.linkCard">
             <div :class="s.linkIcon">👥</div>
             <h3 :class="s.linkTitle">{{ t('team.title') }}</h3>
@@ -61,7 +61,7 @@
 
 <script setup>
 definePageMeta({ title: 'about.title', description: 'about.subtitle' });
-import { inject, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './about.vue.module.css';

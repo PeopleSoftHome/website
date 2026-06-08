@@ -5,12 +5,12 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('solutions.title'), to: '/solutions' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('solutions.title') }}</h1>
           <p :class="s.subtitle">{{ t('solutions.subtitle') }}</p>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal reveal-delay-1">
           <NuxtLink
             v-for="industry in industries"
             :key="industry.slug"
@@ -35,7 +35,7 @@
           </NuxtLink>
         </div>
 
-        <div :class="s.ctaBand">
+        <div :class="s.ctaBand" class="reveal">
           <h3 :class="s.ctaTitle">{{ t('solutions.ctaTitle') }}</h3>
           <p :class="s.ctaDesc">{{ t('solutions.ctaDesc') }}</p>
           <button :class="s.ctaBtn" @click="modalStore.openModal()">{{ t('solutions.demoCta') }}</button>

@@ -8,7 +8,7 @@
           { label: resource?.title || t('resourcePage.detail') },
         ]" />
 
-        <div v-if="resource" :class="s.article">
+        <div v-if="resource" :class="s.article" class="reveal">
           <div :class="s.header">
             <span :class="s.type" :style="typeStyle(resource.type)">{{ resource.typeLabel }}</span>
             <h1 :class="s.title">{{ resource.title }}</h1>
@@ -30,7 +30,7 @@
             </div>
           </div>
 
-          <div :class="s.related" v-if="relatedResources.length">
+          <div :class="s.related" v-if="relatedResources.length" class="reveal">
             <h3 :class="s.relatedTitle">{{ t('resourcePage.related') }}</h3>
             <div :class="s.relatedGrid">
               <NuxtLink
@@ -60,6 +60,8 @@ import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
+definePageMeta({ title: 'resourcePage.detail', description: 'resourcePage.subtitle' });
+
 const { t } = useI18n();
 const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
@@ -68,16 +70,22 @@ const { data: resource } = useAsyncData(
   `resource-${route.params.slug}`,
   async () => {
     const slug = route.params.slug;
-    const data = RESOURCES.find((r) => r.slug === slug) || null;
-    if (data) {
-      document.title = `${data.title} | ${t('resourcePage.title')}`;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute('content', `${data.title} | ${t('resourcePage.title')}`);
-    }
-    return data;
+    return RESOURCES.find((r) => r.slug === slug) || null;
   },
   { server: false, default: () => null }
 );
+
+useHead(() => {
+  if (!resource.value) return {};
+  return {
+    title: `${resource.value.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: resource.value.description },
+      { property: 'og:title', content: resource.value.title },
+      { property: 'og:description', content: resource.value.description },
+    ],
+  };
+});
 
 const relatedResources = computed(() => {
   if (!resource.value) return [];
@@ -97,7 +105,13 @@ const typeStyle = (type) => {
 onMounted(() => {
   watch(resource, (val) => {
     if (val) {
-      injectJsonLd({ '@context': 'https://schema.org', '@type': 'DigitalDocument', name: val.title || 'TalentPro 资源' });
+      injectJsonLd({
+        '@context': 'https://schema.org',
+        '@type': 'DigitalDocument',
+        name: val.title,
+        description: val.description,
+        publisher: { '@type': 'Organization', name: 'TalentPro' },
+      });
     }
   }, { immediate: true });
 });

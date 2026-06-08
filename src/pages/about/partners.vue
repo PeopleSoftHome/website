@@ -8,7 +8,7 @@
           { label: t('partners.title') },
         ]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('partners.title') }}</h1>
           <p :class="s.subtitle">{{ t('partners.subtitle') }}</p>
         </div>
@@ -16,7 +16,7 @@
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && partners.length === 0" :class="s.error">{{ error }}</div>
 
-        <div v-else :class="s.grid">
+        <div v-else :class="s.grid" class="reveal">
           <a
             v-for="p in partners"
             :key="p.id"
@@ -39,7 +39,7 @@
 
 <script setup>
 definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
-import { onMounted, onUnmounted, inject, computed } from 'vue';
+import { onMounted, onUnmounted, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

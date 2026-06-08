@@ -5,12 +5,12 @@
       <div class="container">
         <Breadcrumb :items="[{ label: t('contactPage.title'), to: '/about/contact' }]" />
 
-        <div :class="s.hero">
+        <div :class="s.hero" class="reveal">
           <h1 :class="s.title">{{ t('contactPage.title') }}</h1>
           <p :class="s.subtitle">{{ t('contactPage.subtitle') }}</p>
         </div>
 
-        <div :class="s.grid">
+        <div :class="s.grid" class="reveal">
           <div :class="s.info">
             <div v-for="(c, i) in contacts" :key="i" :class="s.infoCard">
               <div :class="s.infoIcon">{{ c.icon }}</div>
@@ -48,7 +48,7 @@
 
 <script setup>
 definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle' });
-import { ref, inject, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './contact.vue.module.css';

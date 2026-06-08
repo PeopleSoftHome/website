@@ -24,7 +24,7 @@ export const CASES = [
     quote: 'AI 招聘助手让我们的 HR 从繁琐的简历筛选中解放出来，真正去做人才战略层面的工作。',
     author: '王莉',
     authorTitle: '人力资源副总裁',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FF6B35'/%3E%3Cstop offset='100%25' stop-color='%23F7931E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E蒙牛%3C/text%3E%3C/svg%3E",
     date: '2026-01-20',
   },
   {
@@ -48,7 +48,7 @@ export const CASES = [
     quote: '智能排班让我们的产能与人力精准匹配，过去靠经验的排班现在靠数据驱动。',
     author: '张明',
     authorTitle: '全球人力资源总监',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232563EB'/%3E%3Cstop offset='100%25' stop-color='%231E40AF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E海尔%3C/text%3E%3C/svg%3E",
     date: '2026-02-15',
   },
   {
@@ -72,7 +72,7 @@ export const CASES = [
     quote: '总部终于可以实时看到每一家门店的人力状况，管理半径大大延伸。',
     author: '李芳',
     authorTitle: '人才发展总监',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23A855F7'/%3E%3Cstop offset='100%25' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E苏宁%3C/text%3E%3C/svg%3E",
     date: '2026-03-01',
   },
   {
@@ -96,7 +96,7 @@ export const CASES = [
     quote: '数字化让我们第一次真正「看见」了百万营销队伍的实时状态，管理从被动变为主动。',
     author: '赵强',
     authorTitle: '人力资源总经理',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F59E0B'/%3E%3Cstop offset='100%25' stop-color='%231E3A8A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E人保%3C/text%3E%3C/svg%3E",
     date: '2026-02-28',
   },
   {
@@ -120,7 +120,7 @@ export const CASES = [
     quote: '竞聘系统让干部选拔更加公开透明，全程留痕，审计时一键导出，合规压力大大减轻。',
     author: '刘建国',
     authorTitle: '组织部部长',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2310B981'/%3E%3Cstop offset='100%25' stop-color='%2306B6D4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E电网%3C/text%3E%3C/svg%3E",
     date: '2026-01-10',
   },
   {
@@ -144,7 +144,7 @@ export const CASES = [
     quote: 'OKR 对齐地图让我们第一次看清了 10 万人的目标网络，战略落地更有底气。',
     author: '周伟',
     authorTitle: 'HRBP 负责人',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233B82F6'/%3E%3Cstop offset='100%25' stop-color='%238B5CF6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E字节%3C/text%3E%3C/svg%3E",
     date: '2026-03-10',
   },
   {
@@ -168,7 +168,7 @@ export const CASES = [
     quote: 'AI 面试官对专业问题的理解深度超出了我们的预期，筛选出的候选人终面通过率显著提升。',
     author: '孙婷',
     authorTitle: '招聘总监',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2314B8A6'/%3E%3Cstop offset='100%25' stop-color='%2322C55E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E信达%3C/text%3E%3C/svg%3E",
     date: '2026-02-20',
   },
   {
@@ -192,7 +192,7 @@ export const CASES = [
     quote: '全球人力数据第一次在一个平台上实时呈现，总部的战略决策有了坚实的数据基础。',
     author: '吴刚',
     authorTitle: '全球 HR 总监',
-    coverImage: '',
+    coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2364748B'/%3E%3Cstop offset='100%25' stop-color='%23334155'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='white' font-family='system-ui'%3E京东方%3C/text%3E%3C/svg%3E",
     date: '2026-03-05',
   },
 ];
