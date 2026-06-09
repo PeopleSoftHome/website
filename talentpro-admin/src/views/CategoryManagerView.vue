@@ -4,7 +4,7 @@
     <el-card shadow="hover">
       <CmsTable
         ref="tableRef"
-        api-url="/marketplace/categories"
+        api-url="/admin/marketplace/categories"
         :columns="columns"
         :form-fields="formFields"
       >

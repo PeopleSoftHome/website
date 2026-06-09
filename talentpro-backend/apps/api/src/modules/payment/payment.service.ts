@@ -6,12 +6,12 @@ import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentService {
-  private stripe: Stripe;
+  private stripe: any;
 
   constructor(private prisma: PrismaService) {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (secretKey) {
-      this.stripe = new Stripe(secretKey, { apiVersion: '2025-05-28.basil' });
+      this.stripe = new Stripe(secretKey, { apiVersion: '2026-05-27.dahlia' });
     }
   }
 
@@ -117,7 +117,7 @@ export class PaymentService {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (!endpointSecret) return { received: false };
 
-    let event: Stripe.Event;
+    let event: any;
     try {
       event = this.stripe.webhooks.constructEvent(payload, signature, endpointSecret);
     } catch {
@@ -125,7 +125,7 @@ export class PaymentService {
     }
 
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object as any;
       const orderId = session.metadata?.orderId;
       if (orderId) {
         await this.confirmOrderPayment(orderId, PaymentProvider.STRIPE, session.id);
@@ -139,12 +139,12 @@ export class PaymentService {
 
   private async confirmOrderPayment(orderId: string, provider: PaymentProvider, providerPaymentId: string) {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order || order.status === PaymentStatus.PAID) return;
+    if (!order || order.status === PaymentStatus.COMPLETED) return;
 
     await this.prisma.$transaction([
       this.prisma.order.update({
         where: { id: orderId },
-        data: { status: PaymentStatus.PAID, paidAt: new Date(), provider, providerPaymentId },
+        data: { status: PaymentStatus.COMPLETED, paidAt: new Date(), provider, providerPaymentId },
       }),
       this.prisma.subscription.updateMany({
         where: { workspaceId: order.workspaceId },

@@ -180,6 +180,57 @@ export class MarketplaceService {
     return this.marketplaceRepo.update(id, { featured, featuredSortOrder: sortOrder });
   }
 
+  // ─── Admin Vendors ───
+
+  async findAllVendors({ page = 1, pageSize = 20 }: { page?: number; pageSize?: number }) {
+    const skip = getSkip(page, pageSize);
+    const [data, total] = await Promise.all([
+      this.prisma.appVendor.findMany({ skip, take: pageSize, orderBy: { createdAt: 'desc' } }),
+      this.prisma.appVendor.count(),
+    ]);
+    return buildPaginatedResponse(data, page, pageSize, total);
+  }
+
+  async createVendor(data: { name: string; slug: string; description?: string; contactEmail: string; verified?: boolean; revenueShareRate?: number }) {
+    return this.prisma.appVendor.create({ data });
+  }
+
+  async updateVendor(id: string, data: Record<string, unknown> | object) {
+    return this.prisma.appVendor.update({ where: { id }, data });
+  }
+
+  async deleteVendor(id: string) {
+    return this.prisma.appVendor.delete({ where: { id } });
+  }
+
+  // ─── Admin Categories ───
+
+  async findAllCategoriesForAdmin({ page = 1, pageSize = 20 }: { page?: number; pageSize?: number }) {
+    const skip = getSkip(page, pageSize);
+    const [data, total] = await Promise.all([
+      this.prisma.appCategory.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { sortOrder: 'asc' },
+        include: { parent: true },
+      }),
+      this.prisma.appCategory.count(),
+    ]);
+    return buildPaginatedResponse(data, page, pageSize, total);
+  }
+
+  async createCategory(data: { name: string; slug: string; description?: string; icon?: string; sortOrder?: number; parentId?: string }) {
+    return this.prisma.appCategory.create({ data });
+  }
+
+  async updateCategory(id: string, data: Record<string, unknown> | object) {
+    return this.prisma.appCategory.update({ where: { id }, data });
+  }
+
+  async deleteCategory(id: string) {
+    return this.prisma.appCategory.delete({ where: { id } });
+  }
+
   // ─── Helpers ───
 
   private async recalculateAppRating(appId: string) {

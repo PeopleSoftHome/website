@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { Public } from '@/common/decorators/public.decorator';
@@ -9,6 +9,8 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { MarketplaceService } from './marketplace.service';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { CreateVendorDto, UpdateVendorDto } from './dto/create-vendor.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from './dto/create-category.dto';
 import { AppStatus, PricingModel } from '@prisma/client';
 
 @ApiTags('应用市场')
@@ -160,5 +162,57 @@ export class MarketplaceAdminController {
     @Body('sortOrder') sortOrder?: number,
   ) {
     return this.marketplaceService.featureApp(id, featured, sortOrder);
+  }
+
+  // ─── Admin Vendors ───
+
+  @Get('vendors')
+  @ApiOperation({ summary: '厂商列表' })
+  findAllVendors(@Query() pagination: PaginationDto) {
+    return this.marketplaceService.findAllVendors({ page: pagination.page, pageSize: pagination.pageSize });
+  }
+
+  @Post('vendors')
+  @ApiOperation({ summary: '创建厂商' })
+  createVendor(@Body() dto: CreateVendorDto) {
+    return this.marketplaceService.createVendor(dto);
+  }
+
+  @Patch('vendors/:id')
+  @ApiOperation({ summary: '更新厂商' })
+  updateVendor(@Param('id') id: string, @Body() dto: UpdateVendorDto) {
+    return this.marketplaceService.updateVendor(id, dto);
+  }
+
+  @Delete('vendors/:id')
+  @ApiOperation({ summary: '删除厂商' })
+  deleteVendor(@Param('id') id: string) {
+    return this.marketplaceService.deleteVendor(id);
+  }
+
+  // ─── Admin Categories ───
+
+  @Get('categories')
+  @ApiOperation({ summary: '分类列表（Admin）' })
+  findAllCategoriesForAdmin(@Query() pagination: PaginationDto) {
+    return this.marketplaceService.findAllCategoriesForAdmin({ page: pagination.page, pageSize: pagination.pageSize });
+  }
+
+  @Post('categories')
+  @ApiOperation({ summary: '创建分类' })
+  createCategory(@Body() dto: CreateCategoryDto) {
+    return this.marketplaceService.createCategory(dto);
+  }
+
+  @Patch('categories/:id')
+  @ApiOperation({ summary: '更新分类' })
+  updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
+    return this.marketplaceService.updateCategory(id, dto);
+  }
+
+  @Delete('categories/:id')
+  @ApiOperation({ summary: '删除分类' })
+  deleteCategory(@Param('id') id: string) {
+    return this.marketplaceService.deleteCategory(id);
   }
 }
