@@ -6,7 +6,7 @@ export default [
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   {
-    files: ['src/**/*.{js,vue,ts}'],
+    files: ['src/**/*.{js,vue}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -38,7 +38,11 @@ export default [
         useApiData: 'readonly',
         useApiList: 'readonly',
         useCmsPageAsync: 'readonly',
+        useAuthStore: 'readonly',
         useI18n: 'readonly',
+        onMounted: 'readonly',
+        process: 'readonly',
+        API_BASE_URL: 'readonly',
       },
     },
     rules: {
@@ -48,6 +52,8 @@ export default [
       'no-new-func': 'error',
       // Vue 规范
       'vue/multi-word-component-names': 'off',
+      // Nuxt 3 <script setup> 自动导入导致大量误报
+      'no-unused-vars': 'off',
     },
   },
   {

@@ -37,7 +37,7 @@ const reviewsApiUrl = computed(() => {
   if (searchAppSlug.value) {
     return `/marketplace/apps/${searchAppSlug.value}/reviews`;
   }
-  return '/marketplace/apps/ai-interview-bot/reviews';
+  return '/marketplace/apps/smart-resume-screen/reviews';
 });
 
 const columns = [

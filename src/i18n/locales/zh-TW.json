@@ -546,6 +546,18 @@
     "backToMarketplace": "返回應用廣場",
     "viewMyApps": "查看我的應用",
     "tryAgain": "重新嘗試",
+    "addToCart": "加入購物車",
+    "addToCartSuccess": "已加入購物車！",
+    "addToCartError": "加入購物車失敗，請登入後重試",
+    "cart": {
+      "title": "購物車",
+      "empty": "購物車是空的",
+      "clear": "清空",
+      "total": "合計",
+      "checkout": "去結算",
+      "checkoutComingSoon": "結算功能即將上線",
+      "error": "操作失敗，請重試"
+    },
     "demoCta": "預約演示",
     "ctaTitle": "需要定製開發？",
     "ctaDesc": "告訴我們您的需求，我們的技術團隊將為您量身打造專屬解決方案",

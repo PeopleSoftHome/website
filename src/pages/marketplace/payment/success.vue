@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { paymentApi } from '@/api/marketplace.js';
 import s from './success.vue.module.css';
 
@@ -46,5 +46,29 @@ onMounted(async () => {
       // ignore
     }
   }
+});
+
+// 自动刷新订单状态（每 3 秒最多刷新 5 次）
+const refreshCount = ref(0);
+let refreshTimer = null;
+
+onMounted(() => {
+  refreshTimer = setInterval(async () => {
+    if (!order.value || order.value.status === 'COMPLETED' || refreshCount.value >= 5) {
+      clearInterval(refreshTimer);
+      return;
+    }
+    try {
+      const res = await paymentApi.getOrder(order.value.id);
+      order.value = res.data;
+      refreshCount.value++;
+    } catch {
+      clearInterval(refreshTimer);
+    }
+  }, 3000);
+});
+
+onUnmounted(() => {
+  if (refreshTimer) clearInterval(refreshTimer);
 });
 </script>

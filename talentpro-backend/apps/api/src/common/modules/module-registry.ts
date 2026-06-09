@@ -33,6 +33,7 @@ import { AboutModule } from '@/modules/about/about.module';
 import { HealthModule } from '@/modules/health/health.module';
 import { MarketplaceModule } from '@/modules/marketplace/marketplace.module';
 import { PaymentModule } from '@/modules/payment/payment.module';
+import { CartModule } from '@/modules/cart/cart.module';
 
 export const FEATURE_MODULES = [
   AuthModule,
@@ -60,6 +61,7 @@ export const FEATURE_MODULES = [
   HealthModule,
   MarketplaceModule,
   PaymentModule,
+  CartModule,
 ];
 
 // ─── Listeners ───

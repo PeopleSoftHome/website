@@ -651,7 +651,7 @@ async function main() {
           caseStudyId: caseStudy.id,
           label: m.label,
           value: m.value,
-          beforeValue: m.beforeValue,
+          beforeValue: (m as any).beforeValue,
         },
       });
     }

@@ -102,6 +102,13 @@
               >
                 {{ t('marketplace.freeInstall') }}
               </button>
+              <button
+                v-if="tier.priceMonthly > 0"
+                :class="s.pricingBtnSecondary"
+                @click.stop="handleAddToCart(tier)"
+              >
+                {{ t('marketplace.addToCart') }}
+              </button>
             </div>
           </div>
         </div>
@@ -144,7 +151,7 @@
 import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
-import { marketplaceApi, paymentApi } from '@/api/marketplace.js';
+import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
@@ -202,6 +209,23 @@ const handleFreeInstall = async () => {
     alert(t('marketplace.installSuccess') || '安装成功！');
   } catch (e) {
     alert(e.response?.data?.message || t('marketplace.installError') || '安装失败，请登录后重试');
+  }
+};
+
+const handleAddToCart = async (tier) => {
+  try {
+    await cartApi.addItem({
+      appId: app.value.id,
+      slug: app.value.slug,
+      name: app.value.name,
+      tierName: tier.name,
+      price: tier.priceMonthly,
+      currency: 'CNY',
+      quantity: 1,
+    });
+    alert(t('marketplace.addToCartSuccess') || '已加入购物车！');
+  } catch (e) {
+    alert(e.response?.data?.message || t('marketplace.addToCartError') || '加入购物车失败');
   }
 };
 

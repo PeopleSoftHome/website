@@ -18,3 +18,11 @@ export const paymentApi = {
   getOrder: (id) => apiClient.get(`/payments/orders/${id}`),
   createStripeCheckout: (data) => apiClient.post('/payments/stripe/checkout', data),
 };
+
+export const cartApi = {
+  getCart: () => apiClient.get('/cart'),
+  addItem: (data) => apiClient.post('/cart/items', data),
+  updateItem: (appId, tierName, quantity) => apiClient.post(`/cart/items/${appId}?tier=${tierName}`, { quantity }),
+  removeItem: (appId, tierName) => apiClient.delete(`/cart/items/${appId}?tier=${tierName}`),
+  clearCart: () => apiClient.delete('/cart'),
+};

@@ -546,6 +546,18 @@
     "backToMarketplace": "Back to Marketplace",
     "viewMyApps": "View My Apps",
     "tryAgain": "Try Again",
+    "addToCart": "Add to Cart",
+    "addToCartSuccess": "Added to cart!",
+    "addToCartError": "Failed to add to cart, please log in and try again",
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty",
+      "clear": "Clear",
+      "total": "Total",
+      "checkout": "Checkout",
+      "checkoutComingSoon": "Checkout coming soon",
+      "error": "Operation failed, please try again"
+    },
     "demoCta": "Book Demo",
     "ctaTitle": "Need Custom Development?",
     "ctaDesc": "Tell us your requirements and our team will build a tailored solution",

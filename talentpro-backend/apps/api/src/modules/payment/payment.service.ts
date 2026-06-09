@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentService {
-  private stripe: any;
+  private stripe: InstanceType<typeof Stripe> | null = null;
 
   constructor(private prisma: PrismaService) {
     const secretKey = process.env.STRIPE_SECRET_KEY;
