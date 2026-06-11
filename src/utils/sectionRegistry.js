@@ -197,6 +197,4 @@ export const sectionRegistry = {
   resolve: resolveSections,
 };
 
-export default defineNuxtPlugin(() => {
-  // sectionRegistry 在模块级别自动初始化，无需额外插件逻辑
-});
+// sectionRegistry 在模块级别自动初始化，无需额外插件逻辑

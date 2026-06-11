@@ -1,3 +1,4 @@
+import { waitForAppReady } from './helpers.js';
 import { test, expect } from '@playwright/test';
 
 async function dismissCookieBanner(page) {
@@ -11,7 +12,7 @@ async function dismissCookieBanner(page) {
 test.describe('Search', () => {
   test('should open search modal with Cmd+K', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForAppReady(page);
     await dismissCookieBanner(page);
 
     await page.keyboard.press('Control+k');
@@ -20,7 +21,7 @@ test.describe('Search', () => {
 
   test('should search and navigate to results', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForAppReady(page);
     await dismissCookieBanner(page);
 
     await page.keyboard.press('Control+k');
@@ -29,7 +30,7 @@ test.describe('Search', () => {
     await input.fill('AI');
     await page.waitForTimeout(300);
 
-    const firstResult = page.locator('[role="dialog"] [role="option"]').first();
+    const firstResult = page.locator('[role="dialog"] [class*="resultItem"]').first();
     await expect(firstResult).toBeVisible();
   });
 });

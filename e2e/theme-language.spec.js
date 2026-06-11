@@ -1,3 +1,4 @@
+import { waitForAppReady } from './helpers.js';
 import { test, expect } from '@playwright/test';
 
 async function dismissCookieBanner(page) {
@@ -11,7 +12,7 @@ async function dismissCookieBanner(page) {
 test.describe('Theme', () => {
   test('should toggle dark mode', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForAppReady(page);
     await dismissCookieBanner(page);
 
     const html = page.locator('html');
@@ -31,7 +32,7 @@ test.describe('Theme', () => {
 test.describe('Language', () => {
   test('should switch language', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForAppReady(page);
     await dismissCookieBanner(page);
 
     const html = page.locator('html');
