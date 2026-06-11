@@ -87,12 +87,17 @@ const route = useRoute();
 const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
   `case-${route.params.slug}`,
   async () => {
+    let data = null;
     try {
       const res = await caseApi.getCase(route.params.slug);
-      return res.data || null;
+      data = res.data || null;
     } catch {
-      return CASES.find((c) => c.slug === route.params.slug) || null;
+      data = CASES.find((c) => c.slug === route.params.slug) || null;
     }
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Case Study Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

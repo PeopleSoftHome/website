@@ -1,7 +1,7 @@
 # TalentPro HR Portal — 系统架构文档
 
-> **版本**：v3.0.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
-> **最后更新**：2026-05-28
+> **版本**：v4.1.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
+> **最后更新**：2026-06-09
 > **输入依据**：`AGENTS.md` + 实际代码库
 
 ---
@@ -27,14 +27,14 @@
 
 | 维度 | 决策 | 原因 |
 |------|------|------|
-| **框架** | Vue 3.5 | SFC + `<script setup>` 组合式 API，与 Element Plus 生态对齐 |
-| **构建工具** | Vite 8.0.14 | 冷启动 < 500ms，HMR 毫秒级，原生支持 Vue SFC，Rolldown 引擎 |
+| **框架** | Nuxt 3.4.6 | 基于 Vue 3.5 SFC + `<script setup>`，文件路由 + 自动导入 + Nitro 引擎 |
+| **构建工具** | Vite 8.0.14（Nuxt 内置）| 冷启动 < 500ms，HMR 毫秒级，Rolldown 引擎，Nuxt 统一封装 |
 | **语言** | JavaScript | 营销门户无复杂类型需求；TypeScript 后续可渐进迁移 |
 | **样式方案** | CSS Modules + CSS 自定义属性 | 零运行时开销，原生支持 Design Token，与现有变量体系无缝迁移 |
 | **动效** | CSS Keyframes + IntersectionObserver（原生）| 无需引入动效库，视觉还原度最高 |
-| **状态管理** | Vue `ref`/`computed` + `provide/inject` | 自定义 store 工厂函数（`createI18n`/`createTheme`/`createModal` 等）|
-| **路由** | Vue Router 4 | 博客/论坛多页面路由，`<router-view>` 挂载于 App.vue |
-| **部署** | 静态站点（Vite build → dist/）| Vercel / Nginx / OSS+CDN 均可直接托管 |
+| **状态管理** | Pinia 3.x + `provide/inject` 兼容层 | `@pinia/nuxt` 模块自动注册，`useAuthStore` 替代 legacy `createAuth()` |
+| **路由** | Nuxt 文件路由 | `src/pages/` 目录自动生成路由表，`[slug].vue` 动态路由，`[...slug].vue` 404 |
+| **部署** | SSG 静态生成（Nuxt build → .output/public/）| Nitro prerender 20 条路由为静态 HTML，Vercel / Nginx / OSS+CDN 均可托管 |
 
 **后端技术栈**
 
@@ -59,12 +59,13 @@
 │                     TalentPro 系统架构                           │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │               营销门户（Vue 3 SPA）                        │  │
-│  │  I18nProvider → ThemeProvider → SearchProvider            │  │
-│  │  → ModalContext → VideoModalContext → AuthProvider         │  │
+│  │               营销门户（Nuxt 3 SSG）                       │  │
+│  │  App.vue → NuxtLayout → NuxtPage                          │  │
+│  │  ├── 全局 IntersectionObserver（滚动入场动画）              │  │
+│  │  ├── MutationObserver（Tab 切换后重新扫描 reveal）          │  │
 │  │  │                                                       │  │
 │  │  ├── NavBar                    [SEC-01] 固定顶部导航       │  │
-│  │  ├── <router-view>                                         │  │
+│  │  ├── <NuxtPage>                                            │  │
 │  │  │   ├── HomePage           [SEC-02~14] 15 个 Section     │  │
 │  │  │   ├── ProductListView    产品列表（Tab 筛选）            │  │
 │  │  │   ├── ProductDetailView  产品详情（功能/场景/证言/规格） │  │
@@ -115,8 +116,8 @@
 │  │  └── LeadsView.vue        线索管理                         │  │
 │  └──────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────────┘
-         ↓ Vite Build
-      dist/（静态产物）→ CDN / Vercel / Nginx
+         ↓ Nuxt Build (SSG)
+      .output/public/（静态产物）→ CDN / Vercel / Nginx
 ```
 
 ---
@@ -243,49 +244,68 @@ App
 
 ```
 talentpro/
-├── index.html                      # Vite HTML 入口
-├── vite.config.js
+├── nuxt.config.ts                  # Nuxt 3 主配置（模块、SSR、Nitro、i18n、PWA）
 ├── package.json
-├── .eslintrc.cjs
+├── eslint.config.js
 │
 ├── public/
-│   └── favicon.ico
+│   ├── fonts/                      # NotoSansSC 子集化字体
+│   ├── icon-192x192.png            # PWA 图标
+│   └── icon-512x512.png
 │
 ├── src/
-│   ├── main.js                     # createApp + router 挂载
-│   ├── App.vue                     # 根组件：5 层 Provider + router-view
-│   ├── router/
-│   │   └── index.js                # Vue Router：24 条路由（首页 + 二级页面 + 博客/论坛/认证）
+│   ├── app.vue                     # 根组件：Provider + NuxtLayout + NuxtPage + 全局观察器
+│   ├── middleware/
+│   │   └── route.global.ts         # 全局路由中间件（认证守卫 + 页面 Meta 同步）
+│   │
+│   ├── layouts/
+│   │   └── default.vue             # 默认布局（NavBar + Footer + 浮动栏）
+│   │
+│   ├── pages/                      # Nuxt 文件路由（自动生成 20+ 条路由）
+│   │   ├── index.vue               # / 首页
+│   │   ├── blog/index.vue          # /blog 博客列表
+│   │   ├── blog/[slug].vue         # /blog/:slug 博客详情
+│   │   ├── forum/index.vue         # /forum 论坛列表
+│   │   ├── forum/topic/[id].vue    # /forum/topic/:id 话题详情
+│   │   ├── marketplace/index.vue   # /marketplace 应用广场
+│   │   ├── marketplace/[slug].vue  # /marketplace/:slug 应用详情
+│   │   ├── [...slug].vue           # /:pathMatch(.*)* 404 页面
+│   │   └── ...
 │   │
 │   ├── stores/
-│   │   ├── i18n.js                 # I18nProvider + useI18n
-│   │   ├── theme.js                # ThemeProvider + toggle
+│   │   ├── auth.pinia.js           # Pinia auth store（SSR-safe，推荐）
+│   │   ├── theme.js                # 暗色模式（localStorage + prefers-color-scheme）
 │   │   ├── modal.js                # DemoModal 状态
 │   │   ├── videoModal.js           # VideoModal 状态
-│   │   ├── search.js               # SearchProvider
-│   │   ├── analytics.js            # 埋点队列
-│   │   └── auth.js                 # Auth store（login/register/logout）
+│   │   ├── search.js               # 全局搜索开关
+│   │   └── analytics.js            # 埋点队列
 │   │
 │   ├── api/
-│   │   ├── client.js               # Axios 实例（含 token 拦截器）
-│   │   ├── blog.js                 # 博客 API 封装
-│   │   └── forum.js                # 论坛 API 封装
+│   │   ├── client.js               # Axios 实例（含 token 拦截器 + 401 自动刷新）
+│   │   ├── index.js                # Barrel 导出（所有 API 模块聚合）
+│   │   ├── blog.js / forum.js / case.js / news.js / about.js / careers.js
+│   │   ├── cms.js / lead.js / search.js / ai.js
+│   │   └── marketplace.js          # marketplaceApi + paymentApi + cartApi
 │   │
 │   ├── tokens/
 │   │   └── index.js                # ⭐ Design Token JS 常量（唯一真相来源）
 │   │
 │   ├── styles/
-│   │   ├── global.css              # :root CSS 变量 + Reset + body/a/img
+│   │   ├── global.css              # :root CSS 变量 + Reset + body + 暗色覆盖
 │   │   ├── animations.css          # @keyframes: fadeUp/float/gradShift/marquee/pulse
 │   │   └── reveal.css              # .reveal / .is-visible / .reveal-delay-N
 │   │
-│   ├── hooks/
-│   │   ├── useNavScroll.js         # 滚动位置 → scrolled 态 + 回到顶部
+│   ├── composables/                # 自动全局导入（unplugin-auto-import）
+│   │   ├── useNavScroll.js         # 导航滚动状态
 │   │   ├── useScrollReveal.js      # IntersectionObserver → is-visible
 │   │   ├── useCountUp.js           # 数字递增动画
-│   │   ├── useCarousel.js          # 轮播（含 resize 修复 + 悬停暂停）
+│   │   ├── useCarousel.js          # 轮播（resize 修复 + 悬停暂停）
 │   │   ├── useTabs.js              # Tab 切换
-│   │   └── useModal.js             # 弹窗状态机（含 ESC + body overflow）
+│   │   ├── useModal.js             # 弹窗状态机（ESC + body overflow）
+│   │   ├── useTheme.js             # 主题切换（data-theme + localStorage）
+│   │   ├── useSearch.js            # 搜索算法 + 防抖 + 键盘导航
+│   │   ├── useApiData.js           # API 数据加载（loading/error/retry）
+│   │   └── ...                     # 共 22 个 composables
 │   │
 │   ├── data/
 │   │   ├── navigation.js           # NAV_LINKS + FOOTER_LINKS（导航与页脚）
@@ -383,7 +403,8 @@ talentpro/
 │       └── HomePage.vue            # 组装所有 Section
 │
 ├── docs/
-└── dist/                           # 构建产物（gitignore）
+└── .output/                        # Nuxt 构建产物（gitignore）
+    └── public/                     # SSG 静态站点（Nginx root）
 ```
 
 ---
@@ -729,27 +750,32 @@ Vue 版本通过 `useCarousel` Composable 的 resize 监听，在宽度变化后
 
 ## 10. 构建与部署
 
-### 10.1 `vite.config.js`
+### 10.1 `nuxt.config.ts`
 
-```js
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-
-export default defineConfig({
-  plugins: [vue()],
-  build: {
-    outDir: 'dist',
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/vue/')) return 'vue';
-          if (id.includes('node_modules/vue-router/')) return 'vue-router';
-          if (id.includes('node_modules/axios/')) return 'axios';
-        }
-      }
-    }
+```ts
+export default defineNuxtConfig({
+  srcDir: 'src',
+  ssr: false,                          // 开发 SPA 模式
+  nitro: {
+    preset: 'static',                  // 生产 SSG 静态生成
+    prerender: { routes: ['/'], crawlLinks: true },
+    compressPublicAssets: true,        // gzip + brotli 预压缩
   },
-  server: { port: 3000 }
+  modules: [
+    '@pinia/nuxt',
+    '@nuxtjs/i18n',
+    '@vite-pwa/nuxt',
+    '@nuxt/image',
+  ],
+  components: [{ path: '~/components', pathPrefix: false }],
+  imports: { dirs: ['composables', 'stores', 'utils'] },
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN,
+    },
+  },
+  // ... 其他配置见 nuxt.config.ts 完整文件
 });
 ```
 
@@ -766,9 +792,9 @@ export default defineConfig({
 ---
 
 > 📌 **确认项**：
-> 1. 技术栈：Vue 3.5 + Vite 8.0.14 + CSS Modules + Vue Router（无 TypeScript，无 UI 库）
-> 2. 数据策略：营销门户纯静态 JS 常量；博客/论坛接入后端 NestJS API
-> 3. 部署平台：Vercel 静态站 / Nginx / OSS+CDN
+> 1. 技术栈：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + Pinia + @nuxtjs/i18n + CSS Modules（无 TypeScript，无 UI 库）
+> 2. 数据策略：营销门户纯静态 JS 常量；博客/论坛/认证接入后端 NestJS API
+> 3. 部署平台：Vercel / Nginx / OSS+CDN（产物路径 `.output/public/`）
 
 ---
 
@@ -812,6 +838,9 @@ talentpro-backend/apps/api/src/modules/
 ├── news/          # 新闻管理
 ├── careers/       # 招聘职位管理
 ├── about/         # 关于我们内容
+├── marketplace/   # 应用广场（App / Category / Vendor / Review / Subscription）
+├── payment/       # Stripe 支付（Checkout / Webhook / 订单生命周期）
+├── cart/          # Redis 购物车（TTL 7天）
 ├── system/        # 系统配置/IP 黑白名单
 └── health/        # 健康检查端点
 ```

@@ -5,7 +5,8 @@
 
 export default defineNuxtRouteMiddleware((to) => {
   const authStore = useAuthStore();
-  const { t } = useI18n();
+  const nuxtApp = useNuxtApp();
+  const t = nuxtApp.$i18n.t.bind(nuxtApp.$i18n);
 
   /* ── 认证守卫 ── */
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
@@ -18,14 +19,14 @@ export default defineNuxtRouteMiddleware((to) => {
   if (typeof document !== 'undefined') {
     const titleKey = to.meta.title;
     if (titleKey) {
-      const translated = t(titleKey);
+      const translated = t(titleKey as string);
       document.title = translated.startsWith('TalentPro')
         ? translated
         : `TalentPro — ${translated}`;
     }
     const descKey = to.meta.description;
     if (descKey) {
-      const translated = t(descKey);
+      const translated = t(descKey as string);
       const meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute('content', translated);
     }

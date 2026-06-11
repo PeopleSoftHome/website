@@ -65,7 +65,11 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
   `blog-${route.params.slug}`,
   async () => {
     const res = await blogApi.getPost(route.params.slug);
-    return res.data || res;
+    const data = res.data || res || null;
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

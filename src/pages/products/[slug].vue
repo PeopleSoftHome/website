@@ -107,7 +107,11 @@ const { data: product } = useAsyncData(
   `product-${route.params.slug}`,
   async () => {
     const slug = route.params.slug;
-    return PRODUCT_MAP[slug] || null;
+    const data = PRODUCT_MAP[slug] || null;
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

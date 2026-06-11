@@ -47,6 +47,15 @@
   --orange:          #EA580C;
   --green-text:      #16A34A;
 
+  /* Marketplace 扩展色 */
+  --indigo-400:      #818CF8;
+  --amber-500:       #F59E0B;
+  --amber-400:       #FBBF24;
+  --red-400:         #F87171;
+  --green-500:       #22C55E;
+  --green-400:       #4ADE80;
+  --rating:          #F59E0B;
+
   /* 标签辅助色 */
   --tag-blue-bg:   #EFF6FF;
   --tag-blue-text: #3B82F6;
@@ -75,6 +84,10 @@
   --grad-ai:   linear-gradient(135deg, #1A0533 0%, #2D1B69 50%, #1B4FA8 100%);
   --grad-cta:  linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%);
   --grad-text: linear-gradient(135deg, #60A5FA, #A78BFA);
+  --grad-primary-light: linear-gradient(135deg, #1B5FEB 0%, #818CF8 100%);
+  --grad-warning: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  --grad-error: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+  --grad-success: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);
 
   /* 圆角 */
   --radius-sm:   6px;

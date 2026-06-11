@@ -20,8 +20,8 @@
 <script setup>
 import { computed, inject, ref } from 'vue';
 
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
+
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';
 import s from './StatsSection.module.css';

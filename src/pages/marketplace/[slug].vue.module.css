@@ -25,8 +25,8 @@
   width: 80px;
   height: 80px;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
-  color: #fff;
+  background: var(--grad-primary-light, linear-gradient(135deg, var(--primary) 0%, #818cf8 100%));
+  color: var(--white, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,7 +46,7 @@
   padding: 4px 12px;
   border-radius: 20px;
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
   margin-bottom: 10px;
 }
 
@@ -98,7 +98,7 @@
   padding: 12px 28px;
   border-radius: 10px;
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
   font-size: 15px;
   font-weight: 600;
   border: none;
@@ -125,7 +125,7 @@
 
 .ctaSecondary:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
 }
 
 .section {
@@ -274,12 +274,12 @@
 
 .pricingBtn:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
 }
 
 .pricingBtnPrimary {
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
 }
 
 .pricingBtnPrimary:hover {
@@ -348,8 +348,8 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
-  color: #fff;
+  background: var(--grad-primary-light, linear-gradient(135deg, var(--primary) 0%, #818cf8 100%));
+  color: var(--white, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;

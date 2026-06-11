@@ -16,9 +16,11 @@ export const createRequestController = () => new AbortController();
 // Request interceptor: attach auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('tp_access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('tp_access_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -46,7 +48,10 @@ apiClient.interceptors.response.use(
     if (status === 401 && originalConfig && !originalConfig._retry) {
       originalConfig._retry = true;
       try {
-        const rt = localStorage.getItem('tp_refresh_token');
+        let rt = null;
+        if (typeof window !== 'undefined') {
+          rt = localStorage.getItem('tp_refresh_token');
+        }
         if (!rt) throw new Error('No refresh token');
         const refreshRes = await axios.post(
           `${API_BASE_URL}/auth/refresh`,
@@ -56,16 +61,20 @@ apiClient.interceptors.response.use(
         const body = refreshRes.data;
         const data = body && typeof body === 'object' && 'success' in body ? body.data : body;
         if (data?.accessToken) {
-          localStorage.setItem('tp_access_token', data.accessToken);
-          if (data.refreshToken) localStorage.setItem('tp_refresh_token', data.refreshToken);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('tp_access_token', data.accessToken);
+            if (data.refreshToken) localStorage.setItem('tp_refresh_token', data.refreshToken);
+          }
           originalConfig.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalConfig);
         }
       } catch {
         // Refresh failed, clear auth state and continue with original error
-        localStorage.removeItem('tp_access_token');
-        localStorage.removeItem('tp_refresh_token');
-        localStorage.removeItem('tp_user');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('tp_access_token');
+          localStorage.removeItem('tp_refresh_token');
+          localStorage.removeItem('tp_user');
+        }
       }
     }
 

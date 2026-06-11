@@ -334,6 +334,7 @@ async function main() {
     {
       slug: 'smart-resume-screen', name: '智能简历筛选 Pro', tagline: 'AI 驱动的简历解析与智能匹配',
       categoryId: catMap['recruitment'], vendorId: vendMap['talentai-lab'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.8, ratingCount: 342, installCount: 12580,
       description: '基于深度学习的简历解析引擎，支持 50+ 格式自动识别。',
@@ -342,6 +343,7 @@ async function main() {
     {
       slug: 'payroll-auto-calc', name: '薪酬自动核算助手', tagline: '一键算薪，合规无忧',
       categoryId: catMap['compensation'], vendorId: vendMap['paytech'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.6, ratingCount: 215, installCount: 8920,
       description: '自动关联考勤、绩效、社保数据，支持全国 300+ 城市个税政策。',
@@ -350,6 +352,7 @@ async function main() {
     {
       slug: 'okr-copilot', name: 'OKR 协同助手', tagline: '目标对齐，执行落地',
       categoryId: catMap['performance'], vendorId: vendMap['goalforge'],
+      iconUrl: "",
       pricingModel: PricingModel.FREE, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.7, ratingCount: 428, installCount: 23100,
       description: '从目标制定到执行复盘的全流程 OKR 管理工具。',
@@ -358,6 +361,7 @@ async function main() {
     {
       slug: 'lms-microlearning', name: '微课学习平台', tagline: '碎片化学习，体系化成长',
       categoryId: catMap['learning'], vendorId: vendMap['educloud'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: false, ratingAvg: 4.5, ratingCount: 189, installCount: 7650,
       description: '支持微课、直播、考试、证书全链路学习管理。',
@@ -366,6 +370,7 @@ async function main() {
     {
       slug: 'employee-pulse', name: '员工心声洞察', tagline: '实时感知员工情绪，主动干预留存',
       categoryId: catMap['experience'], vendorId: vendMap['peoplesense'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.9, ratingCount: 156, installCount: 5420,
       description: '通过匿名问卷、情绪分析、离职预警等多维数据洞察员工满意度。',
@@ -374,6 +379,7 @@ async function main() {
     {
       slug: 'compliance-guard', name: '合规卫士', tagline: '自动追踪法规变化，降低用工风险',
       categoryId: catMap['compliance'], vendorId: vendMap['legaltech-hr'],
+      iconUrl: "",
       pricingModel: PricingModel.ONE_TIME, status: AppStatus.PUBLISHED,
       featured: false, ratingAvg: 4.4, ratingCount: 98, installCount: 3890,
       description: '实时追踪全国劳动法规、个税政策、社保基数变化。',
@@ -382,6 +388,7 @@ async function main() {
     {
       slug: 'ai-interview-bot', name: 'AI 面试机器人', tagline: '7×24 自动面试，精准评估潜力',
       categoryId: catMap['ai'], vendorId: vendMap['talentai-lab'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.9, ratingCount: 512, installCount: 18760,
       description: '基于大语言模型的智能面试官，支持多种面试模式。',
@@ -390,6 +397,7 @@ async function main() {
     {
       slug: 'hr-analytics-pro', name: 'HR 数据洞察 Pro', tagline: '400+ 指标，一键生成高管报表',
       categoryId: catMap['analytics'], vendorId: vendMap['datavibe'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.7, ratingCount: 267, installCount: 9340,
       description: '预置 400+ HR 行业指标与高管驾驶舱模板。',
@@ -398,6 +406,7 @@ async function main() {
     {
       slug: 'campus-recruit-suite', name: '校园招聘套件', tagline: '从宣讲到 Offer，校招全流程数字化',
       categoryId: catMap['recruitment'], vendorId: vendMap['campushire'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: false, ratingAvg: 4.5, ratingCount: 178, installCount: 6540,
       description: '覆盖校招宣讲、简历收集、AI 初筛、在线测评全链路。',
@@ -406,6 +415,7 @@ async function main() {
     {
       slug: 'benefits-marketplace', name: '弹性福利商城', tagline: '员工自选福利，企业成本可控',
       categoryId: catMap['compensation'], vendorId: vendMap['flexbenefit'],
+      iconUrl: "",
       pricingModel: PricingModel.SUBSCRIPTION, status: AppStatus.PUBLISHED,
       featured: false, ratingAvg: 4.3, ratingCount: 134, installCount: 4780,
       description: '集成保险、体检、健身、餐饮等 1000+ 福利商品。',
@@ -414,6 +424,7 @@ async function main() {
     {
       slug: 'talent-map-360', name: '人才地图 360', tagline: '可视化人才分布，精准决策继任',
       categoryId: catMap['analytics'], vendorId: vendMap['talentgraph'],
+      iconUrl: "",
       pricingModel: PricingModel.ONE_TIME, status: AppStatus.PUBLISHED,
       featured: false, ratingAvg: 4.6, ratingCount: 203, installCount: 7120,
       description: '基于九宫格、能力模型、绩效数据自动生成企业人才地图。',
@@ -422,6 +433,7 @@ async function main() {
     {
       slug: 'onboarding-experience', name: '入职体验管家', tagline: '让新人第一天就感受到归属',
       categoryId: catMap['experience'], vendorId: vendMap['firstday'],
+      iconUrl: "",
       pricingModel: PricingModel.FREE, status: AppStatus.PUBLISHED,
       featured: true, ratingAvg: 4.8, ratingCount: 312, installCount: 15680,
       description: '从 Offer 接受到转正的全周期入职管理。',

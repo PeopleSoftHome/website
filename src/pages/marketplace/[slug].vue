@@ -152,6 +152,7 @@ import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
 import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace.js';
+import { showToast } from '@/utils/toast.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
@@ -162,6 +163,19 @@ const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
 
 const app = computed(() => MARKETPLACE_APP_MAP[route.params.slug] || null);
+
+// 404 guard: if slug not found in static data, return 404
+if (!app.value && process.client) {
+  // Allow a brief moment for API data to load if implemented later
+  // For now, static map is the source of truth
+}
+
+// Throw 404 on server/initial load when app is not found
+onMounted(() => {
+  if (!app.value) {
+    throw createError({ statusCode: 404, statusMessage: 'App Not Found', fatal: true });
+  }
+});
 const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
@@ -206,9 +220,9 @@ const scrollToPricing = () => {
 const handleFreeInstall = async () => {
   try {
     await marketplaceApi.installApp(route.params.slug);
-    alert(t('marketplace.installSuccess') || '安装成功！');
+    showToast(t('marketplace.installSuccess') || '安装成功！', 'success');
   } catch (e) {
-    alert(e.response?.data?.message || t('marketplace.installError') || '安装失败，请登录后重试');
+    showToast(e.response?.data?.message || t('marketplace.installError') || '安装失败，请登录后重试', 'error');
   }
 };
 
@@ -223,9 +237,9 @@ const handleAddToCart = async (tier) => {
       currency: 'CNY',
       quantity: 1,
     });
-    alert(t('marketplace.addToCartSuccess') || '已加入购物车！');
+    showToast(t('marketplace.addToCartSuccess') || '已加入购物车！', 'success');
   } catch (e) {
-    alert(e.response?.data?.message || t('marketplace.addToCartError') || '加入购物车失败');
+    showToast(e.response?.data?.message || t('marketplace.addToCartError') || '加入购物车失败', 'error');
   }
 };
 
@@ -250,7 +264,7 @@ const handleSubscribe = async (tier) => {
       window.location.href = checkoutRes.data.url;
     }
   } catch (e) {
-    alert(e.response?.data?.message || t('marketplace.paymentError') || '支付初始化失败');
+    showToast(e.response?.data?.message || t('marketplace.paymentError') || '支付初始化失败', 'error');
   }
 };
 

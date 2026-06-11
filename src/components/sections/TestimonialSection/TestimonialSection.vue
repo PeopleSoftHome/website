@@ -46,8 +46,8 @@
 import { ref, computed, onUnmounted, inject } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
+
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';

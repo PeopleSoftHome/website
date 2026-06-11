@@ -70,7 +70,7 @@ import { ref, onUnmounted, inject, watch } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
-import { escapeHtml, renderMarkdown } from '@/utils/markdown.js';
+import { renderMarkdown, renderMentions } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import s from './[id].vue.module.css';
 
@@ -109,12 +109,6 @@ watch(topic, (val) => {
 
 const replyContent = ref('');
 const replySubmitting = ref(false);
-
-const renderMentions = (text) => {
-  if (!text) return '';
-  return escapeHtml(text)
-    .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span class="mention-highlight">@$1</span>');
-};
 
 const submitReply = async () => {
   if (!replyContent.value.trim() || replySubmitting.value) return;

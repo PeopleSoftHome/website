@@ -52,7 +52,7 @@ const ContactModal = defineAsyncComponent(() => import('@/components/ui/ContactM
 const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/AuthModal.vue'));
 const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
-import { API_BASE_URL } from '@/api/baseUrl';
+import { API_BASE_URL } from '@/api/baseUrl.js';
 
 /* 全局状态 */
 const { t, locale } = useI18n();

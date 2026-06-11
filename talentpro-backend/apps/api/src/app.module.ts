@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { BullModule } from '@nestjs/bullmq';
 import { join } from 'path';
 
 import appConfig from './config/app.config';
@@ -109,6 +110,10 @@ import { IpFilterGuard } from './common/guards/ip-filter.guard';
     }),
     RedisModule,
     QueueModule,
+    BullModule.registerQueue(
+      { name: 'notification' },
+      { name: 'search-index' },
+    ),
     MeilisearchModule,
     PrismaModule,
     MetricsModule,

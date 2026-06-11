@@ -1,9 +1,9 @@
-// Markdown 渲染工具（预留 marked + DOMPurify 接口）
-// 当前实现：基于 XSS-safe 的轻量正则渲染
-// 待安装依赖后迁移：npm install marked dompurify
+// Markdown 渲染工具 — marked + DOMPurify
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 /**
- * HTML 实体编码，防止 XSS 注入
+ * HTML 实体编码，防止 XSS 注入（fallback 用于无 DOM 环境）
  * @param {string} text
  * @returns {string}
  */
@@ -18,32 +18,40 @@ export function escapeHtml(text) {
 }
 
 /**
- * 轻量 Markdown → HTML 渲染
- * 输入先经过 escapeHtml，再应用安全的 markdown 标签
+ * Markdown → HTML 渲染（marked + DOMPurify 净化）
  * @param {string} md
  * @returns {string}
  */
 export function renderMarkdown(md) {
   if (!md) return '';
-  const safe = escapeHtml(md);
-  return safe
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
+  // SSR-safe: DOMPurify requires DOM; fallback to escapeHtml on server
+  if (typeof window === 'undefined') {
+    const safe = escapeHtml(md);
+    return safe
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+  }
+  const rawHtml = marked.parse(md, { async: false, breaks: true });
+  return DOMPurify.sanitize(rawHtml, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li',
+      'code', 'pre', 'blockquote', 'hr', 'img', 'span', 'div',
+    ],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'class'],
+  });
 }
 
 /**
- * 预留接口：marked + DOMPurify 完整渲染
- * 安装依赖后替换 renderMarkdown 实现：
- *
- * import { marked } from 'marked';
- * import DOMPurify from 'dompurify';
- *
- * export function renderMarkdown(md) {
- *   if (!md) return '';
- *   const rawHtml = marked.parse(md, { async: false });
- *   return DOMPurify.sanitize(rawHtml, { ALLOWED_TAGS: ['p','br','h1','h2','h3','strong','em','a','ul','ol','li','code','pre','blockquote'] });
- * }
+ * @mention 高亮渲染（输入已转义，输出安全 HTML）
+ * @param {string} text
+ * @returns {string}
  */
+export function renderMentions(text) {
+  if (!text) return '';
+  return escapeHtml(text)
+    .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span class="mention-highlight">@$1</span>');
+}

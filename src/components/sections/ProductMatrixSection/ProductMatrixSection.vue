@@ -38,7 +38,7 @@ import { computed, inject, ref } from 'vue';
 
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';

@@ -24,10 +24,14 @@ export function useTheme() {
     }
   });
 
-  // 同步写入 DOM + localStorage
+  // 同步写入 DOM + localStorage（仅客户端）
   watch(theme, (t) => {
-    document.documentElement.setAttribute('data-theme', t);
-    localStorage.setItem('tp-theme', t);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('tp-theme', t);
+    }
   });
 
   // 监听系统主题变化（用户未手动设置时跟随系统）

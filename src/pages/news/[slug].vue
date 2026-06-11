@@ -49,7 +49,11 @@ const { data: item, pending: loading, error: fetchError } = useAsyncData(
   `news-${route.params.slug}`,
   async () => {
     const res = await newsApi.getNewsItem(route.params.slug);
-    return res.data || null;
+    const data = res.data || null;
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'News Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

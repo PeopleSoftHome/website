@@ -76,10 +76,8 @@ const { data: job, pending: loading, error: fetchError } = useAsyncData(
   async () => {
     const res = await careersApi.getJob(route.params.id);
     const data = res.data || null;
-    if (data) {
-      document.title = `${data.title} | ${t('careers.title')}`;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute('content', `${data.title} | ${t('careers.title')}`);
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Job Not Found', fatal: true });
     }
     return data;
   },

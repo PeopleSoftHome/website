@@ -11,7 +11,7 @@ export class PaymentService {
   constructor(private prisma: PrismaService) {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (secretKey) {
-      this.stripe = new Stripe(secretKey, { apiVersion: '2026-05-27.dahlia' });
+      this.stripe = new Stripe(secretKey, { apiVersion: '2024-12-18.acacia' as any });
     }
   }
 

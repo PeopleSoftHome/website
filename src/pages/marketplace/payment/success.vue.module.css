@@ -20,8 +20,8 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);
-  color: #fff;
+  background: var(--grad-success, linear-gradient(135deg, #22c55e 0%, #4ade80 100%));
+  color: var(--white, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,7 +68,7 @@
   padding: 12px 24px;
   border-radius: 10px;
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -93,7 +93,7 @@
 
 .btnSecondary:hover {
   background: var(--primary);
-  color: #fff;
+  color: var(--white, #ffffff);
 }
 
 @media (max-width: 768px) {

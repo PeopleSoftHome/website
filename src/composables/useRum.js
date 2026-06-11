@@ -12,7 +12,7 @@
  */
 import { onMounted, onUnmounted } from 'vue';
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from 'web-vitals';
-import { API_BASE_URL } from '@/api/baseUrl';
+import { API_BASE_URL } from '@/api/baseUrl.js';
 
 const RUM_ENDPOINT = `${API_BASE_URL}/analytics/web-vitals`;
 const SESSION_KEY = 'tp-rum-session';

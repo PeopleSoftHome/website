@@ -132,7 +132,11 @@ const { data: industry } = useAsyncData(
   `solution-${route.params.slug}`,
   async () => {
     const slug = route.params.slug;
-    return INDUSTRY_MAP[slug] || null;
+    const data = INDUSTRY_MAP[slug] || null;
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Solution Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

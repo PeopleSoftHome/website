@@ -43,6 +43,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { cartApi } from '@/api/marketplace.js';
+import { showToast } from '@/utils/toast.js';
 import s from './CartButton.module.css';
 
 const { t } = useI18n();
@@ -69,7 +70,7 @@ const handleRemove = async (item) => {
     await cartApi.removeItem(item.appId, item.tierName);
     await loadCart();
   } catch {
-    alert(t('cart.error'));
+    showToast(t('cart.error'), 'error');
   }
 };
 
@@ -78,13 +79,13 @@ const handleClear = async () => {
     await cartApi.clearCart();
     items.value = [];
   } catch {
-    alert(t('cart.error'));
+    showToast(t('cart.error'), 'error');
   }
 };
 
 const handleCheckout = () => {
   open.value = false;
-  alert(t('cart.checkoutComingSoon'));
+  showToast(t('cart.checkoutComingSoon'), 'info');
 };
 
 const handleClickOutside = (e) => {

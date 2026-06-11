@@ -55,6 +55,70 @@
 
 ---
 
+## [v4.1.0] - 2026-06-09 (Marketplace / Payment / Cart + 技术债务清零)
+
+### 🛒 Marketplace 模块
+
+- **应用广场**：`pages/marketplace/index.vue` + `[slug].vue`，静态 fallback `src/data/marketplace.js`（12 应用 / 8 分类 / 11 供应商）
+- **应用卡片**：渐变图标、评分星级、定价标签、Featured 精选区
+- **应用详情**：Hero 渐变、定价方案（3 档）、功能列表、兼容性标签、相关应用推荐
+- **管理后台**：`AppManagerView` / `CategoryManagerView` / `VendorManagerView` / `ReviewManagerView`
+- **后端 API**：`MarketplaceModule`（App / AppCategory / AppVendor / AppReview / Subscription）
+
+### 💳 Payment 模块
+
+- **Stripe Checkout**：`PaymentService.createStripeCheckout()` 生成 Session，`line_items` 映射定价方案
+- **Webhook 处理**：`handleStripeWebhook()` 监听 `checkout.session.completed`，自动激活订阅
+- **订单生命周期**：`PENDING` → `COMPLETED` / `FAILED` / `REFUNDED`，Prisma 事务保证
+- **前端支付页**：`payment/success.vue` / `payment/cancel.vue`，带订单信息展示
+- **环境变量**：`STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` / `STRIPE_API_VERSION='2024-12-18.acacia'`
+
+### 🛍️ Cart 模块
+
+- **Redis 购物车**：`cart:{userId}`，TTL 7天（`7 * 24 * 60 * 60`）
+- **CRUD 接口**：`getCart` / `addItem` / `updateItem` / `removeItem` / `clearCart`
+- **前端组件**：`CartButton.vue`（下拉列表、数量角标、结算入口）
+
+### 🔧 技术债务修复（P0 / P1 / P2 / P4）
+
+**P0 — 安全红线**
+- 删除误提交的 `talentpro-backend/.env`（含真实数据库密码）
+- Stripe API 版本修复：`2026-05-27.dahlia` → `2024-12-18.acacia`
+- SSR 安全：所有 `localStorage` / `document` / `window` 访问包裹 `typeof window !== 'undefined'` 或 `onMounted`
+- 8 个动态路由（blog/cases/news/products/resources/solutions/careers/marketplace）数据缺失时返回 HTTP 404
+- 后端新增 3 个 Jest 测试套件：`cart.service.spec.ts`（9 测）、`marketplace.service.spec.ts`（10 测）、`payment.service.spec.ts`（8 测）
+- 后端新增首个 E2E 测试：`app.e2e-spec.ts`（GET /health/live）
+
+**P1 — 架构修复**
+- 统一 API 解包风格：移除 14 处 `.then((r) => r.data)`，由响应拦截器统一 unwrap `{ success, data, meta }`
+- 补全 `src/api/index.js` 导出：新增 caseApi / newsApi / aboutApi / careersApi / marketplaceApi / paymentApi / cartApi / notificationApi / userApi / commentApi
+- 删除遗留 `src/stores/auth.js`（91 行），确认零引用
+- XSS 防护：安装 `marked` + `dompurify`，`renderMarkdown()` 统一使用 `DOMPurify.sanitize()`，`CommentItem.vue` / `forum/topic/[id].vue` / `MarkdownEditor.vue` 迁移到 `utils/markdown.js`
+- Docker `start:prod` 路径修复：`dist/main.js` → `dist/apps/api/src/main.js`
+- 前端 `.dockerignore` 排除 backend/admin 目录
+- `talentpro-admin/package.json` 补充 `lint` / `test` scripts
+
+**P2 — 代码质量**
+- CSS 硬编码色值清零：新增 11 个 Design Token（`indigo-400` / `amber-500` / `grad-primary-light` 等），替换 5 个文件 23 处硬编码
+- `alert()` → `showToast()`：`marketplace/[slug].vue` 和 `CartButton.vue` 全部替换
+- i18n key 补全：`marketplace` 命名空间 0 缺失（zh/en/zh-TW 三语言同步）
+- 删除遗留测试 `src/stores/auth.test.js`（引用已删除的 `auth.js`）
+
+**P4 — 清理与规范**
+- 删除遗留文件：`index.html.deprecated` / `src/api/baseUrl.ts` / `src/api/client.ts` / `scripts/prerender.js` / `src/stores/i18n.js` / `src/stores/i18n.test.js`
+- ESLint 配置修复：添加 `createError` 全局变量，删除 4 个重复全局定义
+- import 路径统一：`@/api/baseUrl` → `@/api/baseUrl.js`（App.vue / useRum.js）
+- `package.json` engines 字段：`node >= 18.0.0` / `npm >= 9.0.0`（根目录 + admin + backend）
+- AGENTS.md 同步：更新 stores/ 目录结构描述，移除 `auth.js` / `i18n.js` legacy 说明
+
+### 🐛 依赖与基础设施修复
+
+- **Bull 队列注册**：`NotificationModule` / `SearchModule` / `AppModule` 补充 `BullModule.registerQueue()`，修复 `@InjectQueue()` 运行时缺失队列错误
+- **Prisma 迁移**：`prisma migrate reset` 成功应用 10 个迁移，`prisma db seed` 完成（8 分类 + 11 供应商 + 12 应用）
+- **Schema 修复**：`isVerified` → `verified`、`logo` → `logoUrl`、seed 数据补充 `iconUrl` / `version`
+
+---
+
 ## [v3.5.0] - 2026-05-29 (Sprint 25)
 
 ### ⚡ 性能优化
@@ -253,12 +317,8 @@
 - **单元测试大幅提升**：后端 2 suites/9 tests → 7 suites/47 tests；前端 26/107 → 28/117
 - **API 类型定义**：`src/api/types.d.ts` JSDoc 类型补充
 
-### ⚠️ 待执行（手动）
+### ✅ 已完成的迁移任务
 
-```bash
-cd talentpro-backend
-npm install          # 安装 @nestjs/schedule, helmet
-npx prisma migrate dev --name p1_enums_indexes_soft_delete
-npx prisma generate
-```
+- `prisma migrate reset` 成功应用 10 个迁移
+- `prisma db seed` 完成：8 分类 + 11 供应商 + 12 应用
 ```

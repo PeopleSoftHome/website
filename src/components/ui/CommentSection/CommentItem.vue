@@ -52,16 +52,11 @@ defineProps({
 });
 
 const emit = defineEmits(['reply']);
+import { renderMentions } from '@/utils/markdown.js';
+
 const { t } = useI18n();
 
 const replying = ref(false);
-
-const renderMentions = (text) => {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span class="mention">@$1</span>');
-};
 
 const handleReply = (reply) => {
   emit('reply', { parentId: reply.parentId, reply });

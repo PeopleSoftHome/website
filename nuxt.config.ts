@@ -156,13 +156,13 @@ export default defineNuxtConfig({
 
   // ── 开发服务器 ──
   devServer: {
-    port: 3000,
+    port: 8080,
   },
 
   // ── TypeScript ──
   typescript: {
     strict: false,
-    typeCheck: false,
+    typeCheck: true,
   },
 
   // ── 应用配置 ──

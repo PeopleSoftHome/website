@@ -70,7 +70,11 @@ const { data: resource } = useAsyncData(
   `resource-${route.params.slug}`,
   async () => {
     const slug = route.params.slug;
-    return RESOURCES.find((r) => r.slug === slug) || null;
+    const data = RESOURCES.find((r) => r.slug === slug) || null;
+    if (!data) {
+      throw createError({ statusCode: 404, statusMessage: 'Resource Not Found', fatal: true });
+    }
+    return data;
   },
   { server: false, default: () => null }
 );

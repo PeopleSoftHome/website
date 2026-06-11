@@ -49,6 +49,15 @@ export const colors = {
   tagBlueBg:   '#EFF6FF',
   tagBlueText: '#3B82F6',
 
+  // Marketplace 扩展色
+  indigo400:    '#818CF8',
+  amber500:     '#F59E0B',
+  amber400:     '#FBBF24',
+  red400:       '#F87171',
+  green500:     '#22C55E',
+  green400:     '#4ADE80',
+  rating:       '#F59E0B',
+
   // 视频背景
   videoBg: '#000',
 
@@ -95,6 +104,10 @@ export const gradients = {
   cta:  'linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%)',
   text: 'linear-gradient(135deg, #60A5FA, #A78BFA)',
   primaryAi: 'linear-gradient(135deg, #1B5FEB, #7C3AED)',
+  primaryLight: 'linear-gradient(135deg, #1B5FEB 0%, #818CF8 100%)',
+  warning: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+  error: 'linear-gradient(135deg, #EF4444 0%, #F87171 100%)',
+  success: 'linear-gradient(135deg, #22C55E 0%, #4ADE80 100%)',
 };
 
 export const radii = {

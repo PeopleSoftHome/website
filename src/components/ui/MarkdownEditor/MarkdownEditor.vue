@@ -49,6 +49,7 @@
 <script setup>
 import { ref, inject, onUnmounted } from 'vue';
 import { userApi } from '@/api/user.js';
+import { renderMarkdown } from '@/utils/markdown.js';
 import Avatar from '../Avatar/Avatar.vue';
 import s from './MarkdownEditor.module.css';
 
@@ -162,28 +163,7 @@ const prefix = (prefixStr) => {
   timers.push(setTimeout(() => { el.focus(); el.setSelectionRange(start + prefixStr.length, start + prefixStr.length); }, 0));
 };
 
-const renderPreview = (md) => {
-  if (!md) return '';
-  return md
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/```\n([\s\S]*?)\n```/g, '<pre><code>$1</code></pre>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-      const safeUrl = /^https?:\/\//i.test(url) ? url : '#';
-      return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-    })
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
-    .replace(/^&gt; (.*$)/gim, '<blockquote>$1</blockquote>')
-    .replace(/^- (.*$)/gim, '<ul><li>$1</li></ul>')
-    .replace(/^\d+\. (.*$)/gim, '<ol><li>$1</li></ol>')
-    .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span style="color:var(--primary);font-weight:600">@$1</span>')
-    .replace(/\n/g, '<br>');
-};
+const renderPreview = renderMarkdown;
 
 onUnmounted(() => {
   timers.forEach(id => clearTimeout(id));

@@ -1094,7 +1094,7 @@ model App {
   installCount Int @default(0)
   ratingAvg    Float @default(0)
   ratingCount  Int @default(0)
-  version     String
+  version     String   @default("1.0.0")
   compatibility String[] @default([])
   integrationType String @default("oauth")
   reviewNotes  String? @db.Text

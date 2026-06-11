@@ -1,7 +1,7 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v4.0.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> **当前版本**：v4.1.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -135,13 +135,11 @@ talentpro-v2/
     │
     ├── stores/                   # 全局状态（Pinia + 兼容层）
     │   ├── auth.pinia.js         # Pinia auth store（SSR-safe，推荐）
-    │   ├── auth.js               # Legacy auth factory（保留兼容）
     │   ├── theme.js              # 暗色模式
     │   ├── modal.js              # 预约弹窗状态
     │   ├── videoModal.js         # 视频弹窗状态
     │   ├── search.js             # 全局搜索开关
-    │   ├── analytics.js          # 埋点队列
-    │   └── i18n.js               # ⚠️ Legacy i18n store（已废弃，业务代码统一使用 `useI18n()`）
+    │   └── analytics.js          # 埋点队列
     │
     ├── api/                      # 后端 API 封装
     │   ├── client.js             # Axios 实例（含 token 拦截器）
@@ -280,7 +278,7 @@ authModal    → 登录/注册弹窗
 abTest       → A/B 测试分流
 ```
 
-**i18n 已废弃 legacy store**：业务代码统一使用 `@nuxtjs/i18n` 提供的 `useI18n()` composable，禁止从 `stores/i18n.js` import。
+**状态管理**：业务代码统一使用 Pinia Store 或 `provide/inject`。`@nuxtjs/i18n` 提供 `useI18n()` composable。
 
 ---
 
@@ -312,7 +310,7 @@ abTest       → A/B 测试分流
 - 支持 `{var}` 插值：`t('stats.customers', { n: 6000 })`
 - 自动 SEO：`hreflang` link 自动生成，`<html lang>` 自动同步
 - 优先级：`detectBrowserLanguage`（cookie `tp-locale`）→ 浏览器语言 → `zh`
-- 业务代码统一使用 `useI18n()`，禁止 `inject('i18n')` 或引用 `stores/i18n.js`
+- 业务代码统一使用 `useI18n()`，禁止 `inject('i18n')`
 
 ### 5.4 全局搜索（v2.3.0）
 
@@ -574,4 +572,37 @@ npm run build
 
 ---
 
-*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 · AGENTS.md v4.0.0*
+## 13. v4.1.0 交易与扩展模块规范（新增）
+
+### Marketplace 模块
+- **后端**：`talentpro-backend/apps/api/src/modules/marketplace/`
+  - Controller: `MarketplaceController`（公开 API）+ `MarketplaceAdminController`（管理后台）
+  - Service: `MarketplaceService` — 应用列表/精选/分类/评论/安装/订阅管理
+  - Repository: `MarketplaceRepository extends BaseCrudRepository`
+  - 模型：`App`, `AppCategory`, `AppVendor`, `AppReview`, `Subscription`
+- **Admin 后台**：`talentpro-admin/src/views/AppManagerView.vue` / `CategoryManagerView.vue` / `ReviewManagerView.vue` / `VendorManagerView.vue`
+- **前端**：`src/pages/marketplace/index.vue`（列表）+ `src/pages/marketplace/[slug].vue`（详情）
+- **静态 fallback**：`src/data/marketplace.js` — `MARKETPLACE_APPS`, `MARKETPLACE_APP_MAP`, `MARKETPLACE_CATEGORIES`
+
+### Payment 模块
+- **后端**：`talentpro-backend/apps/api/src/modules/payment/`
+  - Stripe Checkout + Webhook 处理
+  - 订单生命周期：`PENDING` → `COMPLETED` / `FAILED` / `REFUNDED`
+  - `PaymentService.createOrder()` / `findOrders()` / `createStripeCheckout()` / `handleStripeWebhook()`
+- **前端**：`src/pages/marketplace/payment/success.vue` + `cancel.vue`
+- **环境变量**：`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+
+### Cart 模块
+- **后端**：`talentpro-backend/apps/api/src/modules/cart/`
+  - Redis TTL 7 天（`cart:{userId}`）
+  - `CartService` — `getCart` / `addItem` / `updateItem` / `removeItem` / `clearCart`
+- **前端**：`src/components/ui/CartButton/CartButton.vue`
+
+### Bull 队列注册规范
+- 任何使用 `@InjectQueue('queue-name')` 的 Listener 必须在 **其所在模块** 或 **AppModule** 中通过 `BullModule.registerQueue({ name: 'queue-name' })` 注册
+- 已注册队列：`notification`, `search-index`, `lead-nurture`
+- `@Processor('queue-name')` 不需要显式注册队列（使用全局连接）
+
+---
+
+*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 · AGENTS.md v4.1.0*

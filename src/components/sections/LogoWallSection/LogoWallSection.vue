@@ -40,8 +40,8 @@
 <script setup>
 import { computed, inject, ref } from 'vue';
 import { LOGO_FILTERS } from '@/data/logos.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
+
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';
 

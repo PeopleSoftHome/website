@@ -44,8 +44,8 @@ import { computed, inject, ref } from 'vue';
 
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useCmsDataByKey } from '@/composables/useCmsData.js';
+
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductScreenshot from './ProductScreenshot.vue';

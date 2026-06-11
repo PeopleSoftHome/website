@@ -31,3 +31,6 @@ coverage/
 .nuxt/
 *.deprecated
 .output/
+
+# Runtime PID files
+*.pid

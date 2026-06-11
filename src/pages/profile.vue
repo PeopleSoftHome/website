@@ -87,7 +87,7 @@ watch(asyncError, (err) => {
   if (err && (err.response?.status === 401 || err.message?.includes('未授权'))) {
     auth.logout();
     import('@/utils/toast.js').then(({ showToast }) => showToast(t('auth.noAccount'), 'warning'));
-    window.location.href = '/';
+    navigateTo('/', { replace: true });
   }
 });
 
