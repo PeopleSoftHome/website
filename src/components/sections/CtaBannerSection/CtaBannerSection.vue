@@ -15,10 +15,10 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './CtaBannerSection.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
+const modalStore = useModalStore();
 </script>

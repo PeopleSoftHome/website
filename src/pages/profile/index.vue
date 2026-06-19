@@ -70,7 +70,8 @@
 
 <script setup>
 definePageMeta({ title: 'profile.title', requiresAuth: true });
-import { inject, computed } from 'vue';
+import { computed } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { formatDate } from '@/utils/date.js';
 import { ACTIVITIES } from '@/data/profile.js';
@@ -80,7 +81,7 @@ import { paymentApi } from '@/api/marketplace.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
-const auth = inject('auth', { user: { value: null }, fetchProfile: async () => {} });
+const auth = useAuthStore();
 const user = auth.user;
 
 const { data: notifRes } = useAsyncData('profile-notifications-count', () => notificationApi.getNotifications(1, 1), { server: false, default: () => ({ total: 0 }) });

@@ -82,13 +82,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onUnmounted, h, watch, computed, onMounted } from 'vue';
+import { ref, reactive, onUnmounted, h, watch, computed, onMounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import s from './DemoModal.module.css';
 
 const PHONE_REG = /^1[3-9]\d{9}$/;
 
 const { t } = useI18n();
-const modalStore = inject('modal', { formData: { value: {} } });
+const modalStore = useModalStore();
 const emit = defineEmits(['next']);
 
 const fields = reactive({ name: '', company: '', phone: '', code: '', agreed: false });

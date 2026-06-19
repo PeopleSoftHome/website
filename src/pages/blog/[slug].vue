@@ -61,24 +61,25 @@ definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
+const slug = computed(() => route.params.slug);
 
 const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(
-  `blog-${route.params.slug}`,
+  () => `blog-${slug.value}`,
   async () => {
     try {
-      const res = await blogApi.getPost(route.params.slug);
+      const res = await blogApi.getPost(slug.value);
       const data = res.data || res || null;
       if (data) return data;
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    const fallback = BLOG_POST_MAP[route.params.slug] || null;
+    const fallback = BLOG_POST_MAP[slug.value] || null;
     if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
     }
     return fallback;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 useHead(() => {

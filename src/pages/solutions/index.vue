@@ -48,14 +48,15 @@
 
 <script setup>
 definePageMeta({ title: 'solutions.title', description: 'solutions.subtitle' });
-import { inject, onUnmounted } from 'vue';
+import { onUnmounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { INDUSTRY_TABS } from '@/data/industries.js';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
+const modalStore = useModalStore();
 const industries = INDUSTRY_TABS;
 onUnmounted(removeJsonLd);
 </script>

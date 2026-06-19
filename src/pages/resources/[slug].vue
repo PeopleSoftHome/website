@@ -134,7 +134,8 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, inject, watch } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
@@ -146,7 +147,8 @@ definePageMeta({ title: 'resourcePage.detail', description: 'resourcePage.subtit
 
 const { t } = useI18n();
 const route = useRoute();
-const modalStore = inject('modal', { openModal: () => {} });
+const slug = computed(() => route.params.slug);
+const modalStore = useModalStore();
 const { progressStyle } = useScrollProgress();
 const { activeId } = useSpyScroll('[data-section]');
 
@@ -157,16 +159,15 @@ const form = ref({ name: '', email: '', company: '' });
 const formError = ref('');
 
 const { data: resource } = useAsyncData(
-  `resource-${route.params.slug}`,
+  () => `resource-${slug.value}`,
   async () => {
-    const slug = route.params.slug;
-    const data = RESOURCES.find((r) => r.slug === slug) || null;
+    const data = RESOURCES.find((r) => r.slug === slug.value) || null;
     if (!data) {
       throw createError({ statusCode: 404, statusMessage: 'Resource Not Found', fatal: true });
     }
     return data;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 useHead(() => {

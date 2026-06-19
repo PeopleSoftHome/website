@@ -94,12 +94,12 @@
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
 
-          <template v-if="auth.isLoggedIn.value">
+          <template v-if="auth.isLoggedIn">
             <NotificationBell />
             <div :class="s.userWrap">
               <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
                 <span :class="s.userAvatar">{{ userInitial }}</span>
-                <span :class="s.userName">{{ auth.user.value?.name || auth.user.value?.email }}</span>
+                <span :class="s.userName">{{ auth.user?.name || auth.user?.email }}</span>
                 <Icon name="chevron-down" :size="12" />
               </button>
               <div v-if="userMenuOpen" :class="s.userMenu" role="menu">
@@ -139,12 +139,16 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, defineAsyncComponent, onUnmounted } from 'vue';
+import { ref, computed, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
 
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { useNavigation } from '@/composables/useNavigation.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
+import { useThemeStore } from '@/stores/theme.pinia.js';
+import { useSearchStore } from '@/stores/search.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 const localeOptions = computed(() => [
   { key: 'zh', label: t('nav.lang.zh') },
   { key: 'en', label: t('nav.lang.en') },
@@ -162,11 +166,11 @@ const { navLinks } = useNavigation();
 const { sitePhone } = useSiteConfig();
 
 const { t, locale, setLocale } = useI18n();
-const themeStore  = inject('theme', { theme: ref('light'), toggle: () => {} });
-const searchStore = inject('search', { openSearch: () => {} });
-const modalStore  = inject('modal', { openModal: () => {} });
-const auth        = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
-const authModal   = inject('authModal', { open: () => {} });
+const themeStore  = useThemeStore();
+const searchStore = useSearchStore();
+const modalStore  = useModalStore();
+const auth        = useAuthStore();
+const authOpen    = useState('authOpen', () => false);
 
 const mobileOpen = ref(false);
 const langMenuOpen = ref(false);
@@ -179,7 +183,7 @@ const router = useRouter();
 const openMobile = () => { mobileOpen.value = true; };
 const closeMobile = () => { mobileOpen.value = false; };
 const pickLang = (l) => { setLocale(l); langMenuOpen.value = false; };
-const openAuth = () => { authModal.open(); };
+const openAuth = () => { authOpen.value = true; };
 const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
 const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
 
@@ -203,9 +207,9 @@ const handleSearchKey = (e) => {
   if (e.key === 'Escape') closeSearchBar();
 };
 
-const isDark = computed(() => themeStore.theme?.value === 'dark');
+const isDark = computed(() => themeStore.isDark);
 const userInitial = computed(() => {
-  const name = auth.user.value?.name || auth.user.value?.email || '';
+  const name = auth.user?.name || auth.user?.email || '';
   return name.charAt(0).toUpperCase();
 });
 

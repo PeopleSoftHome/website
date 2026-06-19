@@ -12,6 +12,7 @@ let lockCount = 0;
 let originalOverflow = '';
 
 function lock() {
+  if (typeof document === 'undefined') return;
   if (lockCount === 0) {
     originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -20,6 +21,7 @@ function lock() {
 }
 
 function unlock() {
+  if (typeof document === 'undefined') return;
   if (lockCount > 0) {
     lockCount--;
     if (lockCount === 0) {

@@ -105,21 +105,22 @@ definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
+const slug = computed(() => route.params.slug);
 const showWxTip = ref(false);
 const subscribeEmail = ref('');
 const subscribeMsg = ref('');
 
 const { data: apiItem, pending: loading, error: fetchError } = useAsyncData(
-  `news-${route.params.slug}`,
+  () => `news-${slug.value}`,
   async () => {
     try {
-      const res = await newsApi.getNewsItem(route.params.slug);
+      const res = await newsApi.getNewsItem(slug.value);
       return res.data || null;
     } catch (e) {
       return null;
     }
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 const item = computed(() => {

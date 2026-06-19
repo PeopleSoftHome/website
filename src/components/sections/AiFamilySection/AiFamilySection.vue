@@ -40,7 +40,8 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import { AI_CARD_KEY_MAP } from '@/i18n/keyMap.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
 import { transformAiCards } from '@/api/transforms.js';
@@ -49,7 +50,7 @@ import AiCard from './AiCard.vue';
 import s from './AiFamilySection.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
+const modalStore = useModalStore();
 
 const { displayItems: displayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });
 

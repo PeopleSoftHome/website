@@ -32,12 +32,12 @@
 
 <script setup>
 definePageMeta({ title: 'profile.title', requiresAuth: true });
-import { inject } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import s from './profile.vue.module.css';
 
 const route = useRoute();
-const auth = inject('auth', { user: { value: null }, fetchProfile: async () => {} });
+const auth = useAuthStore();
 const user = auth.user;
 
 const { t } = useI18n();

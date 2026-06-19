@@ -37,10 +37,10 @@
         </template>
       </div>
       <div :class="s.panelFoot">
-        <template v-if="auth.isLoggedIn.value">
+        <template v-if="auth.isLoggedIn">
           <div :class="s.userInfo">
             <span :class="s.userAvatar">{{ userInitial }}</span>
-            <span>{{ auth.user.value?.name || auth.user.value?.email }}</span>
+            <span>{{ auth.user?.name || auth.user?.email }}</span>
           </div>
           <router-link to="/profile" :class="s.directLink" @click="emit('close')">{{ t('nav.profile') }}</router-link>
           <button :class="s.directLink" style="background:none;border:none;width:100%;text-align:left" @click="handleLogout">{{ t('nav.logout') }}</button>
@@ -59,7 +59,9 @@
 </template>
 
 <script setup>
-import { ref, inject, computed } from 'vue';
+import { ref, computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { useNavigation } from '@/composables/useNavigation.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import Button from '../../ui/Button/Button.vue';
@@ -67,9 +69,9 @@ import s from './MobileMenu.module.css';
 
 const { t } = useI18n();
 const { navLinks } = useNavigation();
-const modalStore = inject('modal', { openModal: () => {} });
-const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
-const authModal = inject('authModal', { open: () => {} });
+const modalStore = useModalStore();
+const auth = useAuthStore();
+const authOpen = useState('authOpen', () => false);
 
 defineProps({ isOpen: { type: Boolean, default: false } });
 const emit = defineEmits(['close', 'open-auth']);
@@ -80,12 +82,12 @@ const toggle = (id) => {
 };
 
 const userInitial = computed(() => {
-  const name = auth.user.value?.name || auth.user.value?.email || '';
+  const name = auth.user?.name || auth.user?.email || '';
   return name.charAt(0).toUpperCase();
 });
 
 const openAuth = () => {
-  authModal.open();
+  authOpen.value = true;
 };
 
 const handleLogout = () => {

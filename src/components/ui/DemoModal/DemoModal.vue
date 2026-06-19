@@ -32,7 +32,8 @@
 </template>
 
 <script setup>
-import { inject, computed } from 'vue';
+import { computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import ModalStep1 from './ModalStep1.vue';
@@ -42,7 +43,7 @@ import ModalSuccess from './ModalSuccess.vue';
 import s from './DemoModal.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', {});
+const modalStore = useModalStore();
 
 const stepText = computed(() =>
   t('modal.stepText', { current: modalStore.step.value + 1, total: 3 }),

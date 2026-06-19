@@ -3,7 +3,7 @@
     <h3 :class="s.sectionTitle">{{ t('comment.title') }} ({{ totalCount }})</h3>
 
     <CommentForm
-      v-if="auth.isLoggedIn.value"
+      v-if="auth.isLoggedIn"
       :entity-type="entityType"
       :entity-id="entityId"
       @submit="handleNewComment"
@@ -31,7 +31,8 @@
 </template>
 
 <script setup>
-import { ref, inject, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { commentApi } from '@/api/comment.js';
 import CommentForm from '../CommentForm/CommentForm.vue';
 import CommentItem from './CommentItem.vue';
@@ -43,14 +44,14 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
-const authModal = inject('authModal', { open: () => {} });
+const auth = useAuthStore();
+const authOpen = useState('authOpen', () => false);
 
 const comments = ref([]);
 const loading = ref(false);
 const totalCount = computed(() => comments.value.length);
 
-const openAuth = () => authModal.open();
+const openAuth = () => { authOpen.value = true; };
 
 const fetchComments = async () => {
   loading.value = true;

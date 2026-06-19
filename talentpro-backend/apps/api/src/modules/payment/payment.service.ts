@@ -35,11 +35,38 @@ export class PaymentService {
     const app = await this.prisma.app.findUnique({ where: { id: dto.appId } });
     if (!app) throw new NotFoundException('应用不存在');
 
+    const tier = this.findPricingTier(app.pricingTiers, dto.tierName);
+    if (!tier) throw new BadRequestException('指定的订阅套餐不存在');
+
+    const interval = dto.interval || 'month';
+    const expectedAmount = tier.price?.[interval] ?? tier.price;
+    if (expectedAmount === undefined) {
+      throw new BadRequestException('指定周期暂无价格');
+    }
+    if (Math.abs(expectedAmount - dto.amount) > 0.01) {
+      throw new BadRequestException('订单金额与套餐价格不一致');
+    }
+
     const orderNo = this.generateOrderNo();
+
+    // 创建待激活订阅，与订单绑定
+    const subscription = await this.prisma.subscription.create({
+      data: {
+        appId: dto.appId,
+        workspaceId,
+        tierName: dto.tierName,
+        pricingModel: app.pricingModel,
+        amount: dto.amount,
+        currency: dto.currency || 'CNY',
+        interval,
+        status: SubscriptionStatus.TRIAL,
+      },
+    });
 
     const order = await this.prisma.order.create({
       data: {
         orderNo,
+        subscriptionId: subscription.id,
         workspaceId,
         userId,
         subtotal: dto.amount,
@@ -53,6 +80,20 @@ export class PaymentService {
     });
 
     return order;
+  }
+
+  private findPricingTier(pricingTiers: unknown, tierName: string) {
+    if (!pricingTiers) return null;
+    try {
+      const tiers = typeof pricingTiers === 'string' ? JSON.parse(pricingTiers) : pricingTiers;
+      if (Array.isArray(tiers)) {
+        return tiers.find((t) => t.name === tierName || t.tierName === tierName);
+      }
+      if (tiers && typeof tiers === 'object') {
+        return tiers[tierName];
+      }
+    } catch { /* ignore */ }
+    return null;
   }
 
   async findOrders(userId: string, workspaceId: string, page = 1, pageSize = 20) {
@@ -148,16 +189,37 @@ export class PaymentService {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order || order.status === PaymentStatus.COMPLETED) return;
 
+    const updateSubscriptionOps = [];
+    if (order.subscriptionId) {
+      updateSubscriptionOps.push(
+        this.prisma.subscription.update({
+          where: { id: order.subscriptionId },
+          data: {
+            status: SubscriptionStatus.ACTIVE,
+            provider,
+            providerSubId: providerPaymentId,
+            currentPeriodStart: new Date(),
+            currentPeriodEnd: this.calculatePeriodEnd(order.interval || 'month'),
+          },
+        }),
+      );
+    }
+
     await this.prisma.$transaction([
       this.prisma.order.update({
         where: { id: orderId },
         data: { status: PaymentStatus.COMPLETED, paidAt: new Date(), provider, providerPaymentId },
       }),
-      this.prisma.subscription.updateMany({
-        where: { workspaceId: order.workspaceId },
-        data: { status: SubscriptionStatus.ACTIVE },
-      }),
+      ...updateSubscriptionOps,
     ]);
+  }
+
+  private calculatePeriodEnd(interval: string): Date {
+    const now = new Date();
+    if (interval === 'year') {
+      return new Date(now.setFullYear(now.getFullYear() + 1));
+    }
+    return new Date(now.setMonth(now.getMonth() + 1));
   }
 
   private generateOrderNo(): string {

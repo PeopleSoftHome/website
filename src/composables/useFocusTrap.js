@@ -19,6 +19,7 @@ export function useFocusTrap(isActive, containerRef) {
   };
 
   watch(isActive, (active) => {
+    if (typeof document === 'undefined') return;
     if (!active) {
       if (removeKeyListener) {
         removeKeyListener();

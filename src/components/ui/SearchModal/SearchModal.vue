@@ -99,7 +99,9 @@
 </template>
 
 <script setup>
-import { computed, watch, inject, onUnmounted } from 'vue';
+import { computed, watch, onUnmounted } from 'vue';
+import { useSearchStore } from '@/stores/search.pinia.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
 import { HOT_SEARCHES } from '@/data/searchIndex.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
 import { useSearch } from '@/composables/useSearch.js';
@@ -108,8 +110,8 @@ import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './SearchModal.module.css';
 
 const { t } = useI18n();
-const searchStore = inject('search', { isOpen: { value: false }, closeSearch: () => {} });
-const analytics = inject('analytics', { track: () => {} });
+const searchStore = useSearchStore();
+const analyticsStore = useAnalyticsStore();
 
 const {
   query, handleQueryChange,
@@ -125,7 +127,7 @@ const { hotTags: cmsHotTags } = useSiteConfig();
 const displayHotSearches = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : HOT_SEARCHES));
 
 const trackedSelectItem = (item) => {
-  analytics.track('search_click', { id: item.id, type: item.type, query: query.value });
+  analyticsStore.track('search_click', { id: item.id, type: item.type, query: query.value });
   selectItem(item);
 };
 
@@ -135,7 +137,7 @@ watch(() => debouncedQuery.value, (q) => {
   if (q && q.length >= 2) {
     clearTimeout(searchQueryTimer);
     searchQueryTimer = setTimeout(() => {
-      analytics.track('search_query', { query: q });
+      analyticsStore.track('search_query', { query: q });
     }, 300);
   }
 });
@@ -158,7 +160,7 @@ watch(() => searchStore.isOpen.value, (open) => {
 const trackedHandleKeyDown = (e) => {
   if (e.key === 'Enter' && focusIdx.value >= 0) {
     const item = flatResults.value[focusIdx.value];
-    if (item) analytics.track('search_click', { id: item.id, type: item.type, query: query.value });
+    if (item) analyticsStore.track('search_click', { id: item.id, type: item.type, query: query.value });
   }
   handleKeyDown(e);
 };

@@ -33,13 +33,14 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { notificationApi } from '@/api/notification.js';
 import Icon from '../Icon/Icon.vue';
 import s from './NotificationBell.module.css';
 
 const { t } = useI18n();
-const auth = inject('auth', { user: { value: null }, token: { value: '' }, isLoggedIn: { value: false } });
+const auth = useAuthStore();
 
 const open = ref(false);
 const notifications = ref([]);
@@ -47,7 +48,7 @@ const unreadCount = ref(0);
 let es = null;
 
 const fetchNotifications = async () => {
-  if (!auth.isLoggedIn.value) {
+  if (!auth.isLoggedIn) {
     notifications.value = [];
     unreadCount.value = 0;
     return;
@@ -89,7 +90,7 @@ const handleClick = async (n) => {
 let reconnectTimer = null;
 
 const connectSSE = () => {
-  if (!auth.isLoggedIn.value) return;
+  if (!auth.isLoggedIn) return;
   try {
     es = notificationApi.createEventSource();
     es.onmessage = (event) => {

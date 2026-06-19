@@ -95,7 +95,8 @@
 </template>
 
 <script setup>
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeatureCards.vue';
@@ -131,21 +132,21 @@ definePageMeta({ title: 'productPage.detail', description: 'productPage.subtitle
 
 const { t } = useI18n();
 const route = useRoute();
-const modalStore = inject('modal', { openModal: () => {} });
+const slug = computed(() => route.params.slug);
+const modalStore = useModalStore();
 const relatedRef = ref(null);
 
 const { data: product } = useAsyncData(
-  `product-${route.params.slug}`,
+  () => `product-${slug.value}`,
   async () => {
-    const slug = route.params.slug;
-    const fallback = PRODUCT_MAP[slug] || null;
+    const fallback = PRODUCT_MAP[slug.value] || null;
     try {
-      const cms = await cmsApi.getProductBySlug(slug);
+      const cms = await cmsApi.getProductBySlug(slug.value);
       const merged = mergeProduct(cms, fallback);
       if (merged) return merged;
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.warn(`[ProductDetail] CMS load failed for ${slug}, using fallback`, e.message);
+        console.warn(`[ProductDetail] CMS load failed for ${slug.value}, using fallback`, e.message);
       }
     }
     if (!fallback) {
@@ -153,7 +154,7 @@ const { data: product } = useAsyncData(
     }
     return fallback;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 useHead(() => {

@@ -81,7 +81,7 @@
           <AppPricing :tiers="app.pricingTiers" :selected="selectedTier" @select="selectedTier = $event" @subscribe="handleSubscribe" @addToCart="handleAddToCart" @freeInstall="handleFreeInstall" />
         </div>
 
-        <AppReviews :app-slug="String(route.params.slug)" />
+        <AppReviews :app-slug="String(slug.value)" />
 
         <div v-if="app?.compatibility?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('marketplace.compatibility') }}</h2>
@@ -108,7 +108,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import AppPricing from '@/components/sections/Marketplace/AppPricing.vue';
 import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
@@ -122,9 +123,10 @@ definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle
 
 const { t } = useI18n();
 const route = useRoute();
-const modalStore = inject('modal', { openModal: () => {} });
+const slug = computed(() => route.params.slug);
+const modalStore = useModalStore();
 
-const app = computed(() => MARKETPLACE_APP_MAP[route.params.slug] || null);
+const app = computed(() => MARKETPLACE_APP_MAP[slug.value] || null);
 const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
@@ -169,7 +171,7 @@ const scrollToPricing = () => {
 
 const handleFreeInstall = async () => {
   try {
-    await marketplaceApi.installApp(route.params.slug);
+    await marketplaceApi.installApp(slug.value);
     showToast(t('marketplace.installSuccess'), 'success');
   } catch (e) {
     showToast(e.response?.data?.message || t('marketplace.installError'), 'error');

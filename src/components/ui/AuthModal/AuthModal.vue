@@ -91,7 +91,8 @@
 </template>
 
 <script setup>
-import { ref, watch, inject } from 'vue';
+import { ref, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import { usePublicConfig } from '@/composables/usePublicConfig.js';
@@ -105,7 +106,7 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const { t } = useI18n();
-const auth = inject('auth', {});
+const auth = useAuthStore();
 const { recaptchaSiteKey } = usePublicConfig();
 
 const mode = ref(props.defaultMode);

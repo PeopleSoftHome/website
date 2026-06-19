@@ -1,18 +1,24 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ref } from 'vue';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
+import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import VideoModal from './VideoModal.vue';
 
 describe('VideoModal', () => {
-  beforeEach(() => { document.body.innerHTML = ''; });
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    setActivePinia(createPinia());
+  });
   afterEach(() => { document.body.innerHTML = ''; });
 
   it('renders when open', () => {
+    const store = useVideoModalStore();
+    store.openVideo();
     mount(VideoModal, {
       global: {
         provide: {
           i18n: { t: (k) => k },
-          videoModal: { isOpen: ref(true), closeVideo: vi.fn() },
         },
       },
       attachTo: document.body,
@@ -26,7 +32,6 @@ describe('VideoModal', () => {
       global: {
         provide: {
           i18n: { t: (k) => k },
-          videoModal: { isOpen: ref(false), closeVideo: vi.fn() },
         },
       },
       attachTo: document.body,
@@ -36,11 +41,12 @@ describe('VideoModal', () => {
   });
 
   it('contains iframe when open', () => {
+    const store = useVideoModalStore();
+    store.openVideo();
     mount(VideoModal, {
       global: {
         provide: {
           i18n: { t: (k) => k },
-          videoModal: { isOpen: ref(true), closeVideo: vi.fn() },
         },
       },
       attachTo: document.body,

@@ -34,12 +34,13 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Icon from '../Icon/Icon.vue';
 import s from './DemoModal.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { formData: { value: {} } });
+const modalStore = useModalStore();
 
 const lines = computed(() => t('modal.successSub').split('\n'));
 

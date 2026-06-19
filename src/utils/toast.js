@@ -3,6 +3,7 @@
  * 替代 alert()，用于 Portal 前端
  */
 export function showToast(message, type = 'info', duration = 3000) {
+  if (typeof document === 'undefined') return;
   const el = document.createElement('div');
   const colors = {
     info: 'var(--primary)',

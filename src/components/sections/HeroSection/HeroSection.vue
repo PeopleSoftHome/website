@@ -19,7 +19,7 @@
           <p :class="s.subtitle">{{ t('hero.subtitle') }}</p>
           <div :class="s.ctas">
             <button :class="s.ctaPrimary" @click="modalStore.openModal()">{{ t('hero.cta1') }}</button>
-            <button :class="s.ctaGhost" @click="videoStore.openVideo()">{{ t('hero.cta2') }}</button>
+            <button :class="s.ctaGhost" @click="videoModalStore.openVideo()">{{ t('hero.cta2') }}</button>
           </div>
           <div :class="s.trust">
             <span v-for="k in ['trust1','trust2','trust3','trust4']" :key="k" :class="s.trustItem">
@@ -75,12 +75,14 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import s from './HeroSection.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
-const videoStore = inject('videoModal', { openVideo: () => {} });
+const modalStore = useModalStore();
+const videoModalStore = useVideoModalStore();
 
 const numRefs = [];
 const dashStats = [

@@ -42,11 +42,13 @@ function onKey(e) {
 }
 
 watch(() => props.isOpen, (open) => {
+  if (typeof document === 'undefined') return;
   if (open) document.addEventListener('keydown', onKey);
   else document.removeEventListener('keydown', onKey);
 }, { immediate: true });
 
 onUnmounted(() => {
+  if (typeof document === 'undefined') return;
   document.removeEventListener('keydown', onKey);
 });
 </script>

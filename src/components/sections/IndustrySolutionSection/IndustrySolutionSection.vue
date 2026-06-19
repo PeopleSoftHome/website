@@ -40,8 +40,10 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
@@ -54,14 +56,14 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './IndustrySolutionSection.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
-const analytics = inject('analytics', { track: () => {} });
+const modalStore = useModalStore();
+const analyticsStore = useAnalyticsStore();
 const { activeIndex, selectTab } = useTabs(0);
 
 const originalSelectTab = selectTab;
 const trackedSelectTab = (idx) => {
   originalSelectTab(idx);
-  analytics.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
+  analyticsStore.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
 const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('industries', {

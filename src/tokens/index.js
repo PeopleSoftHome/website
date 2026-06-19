@@ -26,6 +26,7 @@ export const colors = {
   gray500: '#6B7280',
   gray600: '#475569',
   gray700: '#334155',
+  gray800: '#1E293B',
   gray900: '#0F172A',
 
   // 功能色
@@ -35,13 +36,17 @@ export const colors = {
   aiPurpleLight:  '#C4B5FD',
   aiPurpleText:   '#A78BFA',
   success:        '#059669',
+  successLight:   '#dcfce7',
   error:          '#EF4444',
+  errorBg:        '#FEF2F2',
+  errorBgLight:   '#fee2e2',
   errorLight:     '#FCA5A5',
   errorAlpha15:   'rgba(239,68,68,0.15)',
   warning:        '#D97706',
   warningBg:      '#FFF7ED',
   warningBorder:  '#FED7AA',
   warningText:    '#92400E',
+  warningLight:   '#fef3c7',
   orange:         '#EA580C',
   greenText:      '#16A34A',
 
@@ -50,13 +55,28 @@ export const colors = {
   tagBlueText: '#3B82F6',
 
   // Marketplace 扩展色
-  indigo400:    '#818CF8',
-  amber500:     '#F59E0B',
-  amber400:     '#FBBF24',
-  red400:       '#F87171',
-  green500:     '#22C55E',
-  green400:     '#4ADE80',
-  rating:       '#F59E0B',
+  indigo400:        '#818CF8',
+  indigo500Alpha5:  'rgba(99,102,241,0.05)',
+  indigo500Alpha12: 'rgba(99,102,241,0.12)',
+  indigo500Alpha15: 'rgba(99,102,241,0.15)',
+  indigo500Alpha20: 'rgba(99,102,241,0.20)',
+  amber500:         '#F59E0B',
+  amber400:         '#FBBF24',
+  red400:           '#F87171',
+  green500:         '#22C55E',
+  green400:         '#4ADE80',
+  rating:           '#F59E0B',
+
+  // 订单状态色
+  statusPendingBg:       '#fff7e6',
+  statusPendingText:     '#fa8c16',
+  statusPendingAlpha15:  'rgba(250,140,22,0.15)',
+  statusCompletedBg:     '#f6ffed',
+  statusCompletedText:   '#52c41a',
+  statusCompletedAlpha15:'rgba(82,196,26,0.15)',
+  statusRefundedBg:      '#fff1f0',
+  statusRefundedText:    '#f5222d',
+  statusRefundedAlpha15: 'rgba(245,34,45,0.15)',
 
   // 视频背景
   videoBg: '#000',
@@ -82,6 +102,7 @@ export const colors = {
   blackAlpha20: 'rgba(0,0,0,0.20)',
   blackAlpha25: 'rgba(0,0,0,0.25)',
   blackAlpha30: 'rgba(0,0,0,0.30)',
+  blackAlpha50: 'rgba(0,0,0,0.50)',
   blackAlpha60: 'rgba(0,0,0,0.60)',
   gray500Alpha15: 'rgba(107,114,128,0.15)',
 
@@ -89,13 +110,15 @@ export const colors = {
   whiteAlpha6:  'rgba(255,255,255,0.06)',
   whiteAlpha25: 'rgba(255,255,255,0.25)',
   whiteAlpha35: 'rgba(255,255,255,0.35)',
+  whiteAlpha90: 'rgba(255,255,255,0.90)',
 
   // 基础色
   white: '#ffffff',
   black: '#000000',
 
   // 语义化颜色
-  errorBg: '#FEF2F2',
+  primaryBrightAlpha20: 'rgba(39,141,247,0.20)',
+  blue500Alpha15:       'rgba(59,130,246,0.15)',
 };
 
 export const gradients = {

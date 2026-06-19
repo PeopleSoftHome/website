@@ -79,12 +79,13 @@
 
 <script setup>
 definePageMeta({ title: 'profile.menu.settings', requiresAuth: true });
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { userApi } from '@/api/user.js';
 import s from './settings.vue.module.css';
 
 const { t } = useI18n();
-const auth = inject('auth', { user: { value: null }, fetchProfile: async () => {} });
+const auth = useAuthStore();
 const user = auth.user;
 
 const saving = ref(false);

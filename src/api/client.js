@@ -42,7 +42,10 @@ apiClient.interceptors.response.use(
           {},
           { withCredentials: true, headers: { 'Content-Type': 'application/json' } },
         );
-        // 新 token 已通过 Set-Cookie 写入，直接重试原请求
+        // 新 token 已通过 Set-Cookie 写入；通知应用层重新同步用户状态
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('auth:refresh'));
+        }
         return apiClient(originalConfig);
       } catch {
         // Refresh failed, clear auth state and continue with original error

@@ -15,7 +15,8 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { commentApi } from '@/api/comment.js';
 import MarkdownEditor from '../MarkdownEditor/MarkdownEditor.vue';
 import s from './CommentForm.module.css';
@@ -30,7 +31,7 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'cancel']);
 
 const { t } = useI18n();
-const auth = inject('auth', { user: { value: null } });
+const auth = useAuthStore();
 
 const content = ref('');
 const submitting = ref(false);
@@ -44,7 +45,7 @@ const submit = async () => {
     const res = await commentApi.createComment({
       entityType: props.entityType,
       entityId: props.entityId,
-      authorId: auth.user.value?.id || 'guest',
+      authorId: auth.user?.id || 'guest',
       content: text,
       parentId: props.parentId || undefined,
     });

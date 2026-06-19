@@ -42,6 +42,7 @@ describe('PaymentService', () => {
               count: jest.fn(),
             },
             subscription: {
+              create: jest.fn(),
               findUnique: jest.fn(),
               update: jest.fn(),
               updateMany: jest.fn(),
@@ -66,7 +67,13 @@ describe('PaymentService', () => {
 
   describe('createOrder', () => {
     it('should create a pending order for existing app', async () => {
-      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({ id: 'a1', name: 'Test App' } as unknown as App);
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({
+        id: 'a1',
+        name: 'Test App',
+        pricingModel: 'RECURRING',
+        pricingTiers: [{ name: 'pro', price: { month: 299 } }],
+      } as unknown as App);
+      jest.spyOn(prisma.subscription, 'create').mockResolvedValue({ id: 'sub-1' } as unknown as import('@prisma/client').Subscription);
       jest.spyOn(prisma.order, 'create').mockResolvedValue({
         id: 'o1',
         orderNo: 'TP20240601ABC123',
@@ -82,6 +89,7 @@ describe('PaymentService', () => {
       });
 
       expect(prisma.app.findUnique).toHaveBeenCalledWith({ where: { id: 'a1' } });
+      expect(prisma.subscription.create).toHaveBeenCalled();
       expect(prisma.order.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
@@ -90,10 +98,35 @@ describe('PaymentService', () => {
             workspaceId: 'ws-1',
             userId: 'user-1',
             currency: 'CNY',
+            subscriptionId: 'sub-1',
           }),
         }),
       );
       expect(result.status).toBe(PaymentStatus.PENDING);
+    });
+
+    it('should throw BadRequestException when tier does not exist', async () => {
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({
+        id: 'a1',
+        name: 'Test App',
+        pricingTiers: [{ name: 'basic', price: 99 }],
+      } as unknown as App);
+
+      await expect(
+        service.createOrder('user-1', 'ws-1', { appId: 'a1', tierName: 'pro', amount: 299 }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException when amount mismatches tier price', async () => {
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({
+        id: 'a1',
+        name: 'Test App',
+        pricingTiers: [{ name: 'pro', price: { month: 299 } }],
+      } as unknown as App);
+
+      await expect(
+        service.createOrder('user-1', 'ws-1', { appId: 'a1', tierName: 'pro', amount: 199 }),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('should throw NotFoundException when app does not exist', async () => {

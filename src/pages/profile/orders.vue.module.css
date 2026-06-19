@@ -21,9 +21,9 @@
 .orderAmount { font-size: 18px; font-weight: 700; color: var(--primary); }
 .orderBottom { display: flex; justify-content: space-between; align-items: center; }
 .statusTag { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-sm); }
-.status_pending { background: #fff7e6; color: #fa8c16; }
-.status_completed { background: #f6ffed; color: #52c41a; }
-.status_refunded { background: #fff1f0; color: #f5222d; }
+.status_pending { background: var(--status-pending-bg); color: var(--status-pending-text); }
+.status_completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
+.status_refunded { background: var(--status-refunded-bg); color: var(--status-refunded-text); }
 .status_failed { background: var(--gray-100); color: var(--gray-500); }
 .orderDate { font-size: 13px; color: var(--gray-400); }
 
@@ -42,7 +42,7 @@
 
 [data-theme="dark"] .title { color: var(--gray-50); }
 [data-theme="dark"] .orderName { color: var(--gray-50); }
-[data-theme="dark"] .status_pending { background: rgba(250,140,22,0.15); }
-[data-theme="dark"] .status_completed { background: rgba(82,196,26,0.15); }
-[data-theme="dark"] .status_refunded { background: rgba(245,34,45,0.15); }
+[data-theme="dark"] .status_pending { background: var(--status-pending-alpha-15); }
+[data-theme="dark"] .status_completed { background: var(--status-completed-alpha-15); }
+[data-theme="dark"] .status_refunded { background: var(--status-refunded-alpha-15); }
 [data-theme="dark"] .status_failed { background: var(--gray-800); }

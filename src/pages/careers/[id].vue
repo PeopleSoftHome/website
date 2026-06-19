@@ -109,6 +109,7 @@ definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
+const id = computed(() => route.params.id);
 
 useHead(() => {
   if (!job.value) return {};
@@ -119,16 +120,16 @@ useHead(() => {
 });
 
 const { data: job, pending: loading, error: fetchError } = useAsyncData(
-  `career-${route.params.id}`,
+  () => `career-${id.value}`,
   async () => {
-    const res = await careersApi.getJob(route.params.id);
+    const res = await careersApi.getJob(id.value);
     const data = res.data || null;
     if (!data) {
       throw createError({ statusCode: 404, statusMessage: 'Job Not Found', fatal: true });
     }
     return data;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [id] }
 );
 
 const error = computed(() => {

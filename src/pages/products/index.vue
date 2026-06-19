@@ -57,14 +57,15 @@
 
 <script setup>
 definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { PRODUCT_TABS } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
+const modalStore = useModalStore();
 
 const tabs = [{ id: 'all', name: t('productPage.all') }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];
 const activeTab = ref('all');

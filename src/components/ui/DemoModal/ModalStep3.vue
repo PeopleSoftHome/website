@@ -17,11 +17,12 @@
 </template>
 
 <script setup>
-import { ref, inject, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import s from './DemoModal.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { formData: { value: {} } });
+const modalStore = useModalStore();
 const SCALES = t('modal.scales') || [];
 const selected = ref(SCALES[1] || '');
 

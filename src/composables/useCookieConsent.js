@@ -11,6 +11,7 @@ const STORAGE_KEY = 'tp-cookie-consent';
 
 function readStoredConsent() {
   try {
+    if (typeof localStorage === 'undefined') return null;
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch { /* ignore */ }
@@ -19,6 +20,7 @@ function readStoredConsent() {
 
 function writeStoredConsent(value) {
   try {
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   } catch { /* ignore */ }
 }

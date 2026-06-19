@@ -22,7 +22,7 @@
           <div :class="s.repliesSection">
             <h3>{{ t('forum.replies') }} ({{ replies.length }})</h3>
 
-            <div v-if="auth.isLoggedIn.value && topic" :class="s.replyForm">
+            <div v-if="auth.isLoggedIn && topic" :class="s.replyForm">
               <textarea
                 v-model="replyContent"
                 :class="s.replyTextarea"
@@ -35,7 +35,7 @@
                 </button>
               </div>
             </div>
-            <div v-else-if="!auth.isLoggedIn.value" :class="s.replyLogin">
+            <div v-else-if="!auth.isLoggedIn" :class="s.replyLogin">
               <button :class="s.replyLoginBtn" @click="openAuth">{{ t('comment.loginToComment') }}</button>
             </div>
 
@@ -66,7 +66,8 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, inject, watch } from 'vue';
+import { computed, ref, onUnmounted, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
@@ -79,24 +80,25 @@ definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
-const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
-const authModal = inject('authModal', { open: () => {} });
+const id = computed(() => route.params.id);
+const auth = useAuthStore();
+const authOpen = useState('authOpen', () => false);
 
-const openAuth = () => authModal.open();
+const openAuth = () => { authOpen.value = true; };
 
 const { data: topic, pending: loading } = useAsyncData(
-  `forum-topic-${route.params.id}`,
+  () => `forum-topic-${id.value}`,
   async () => {
     try {
-      const res = await forumApi.getTopic(route.params.id);
+      const res = await forumApi.getTopic(id.value);
       const data = res.data || res;
       if (data) return data;
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    return FORUM_TOPIC_MAP[route.params.id] || null;
+    return FORUM_TOPIC_MAP[id.value] || null;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [id] }
 );
 
 useHead(() => {
@@ -123,7 +125,7 @@ const submitReply = async () => {
   try {
     const res = await forumApi.createPost({
       topicId: topic.value.id,
-      authorId: auth.user.value?.id || 'guest',
+      authorId: auth.user?.id || 'guest',
       content: replyContent.value.trim(),
     });
     const newReply = (res.data || res)?.data || res.data || res;

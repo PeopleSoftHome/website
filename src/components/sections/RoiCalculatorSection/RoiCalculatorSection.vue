@@ -97,7 +97,9 @@
 </template>
 
 <script setup>
-import { inject, watch } from 'vue';
+import { watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
 import { useRoiCalculator } from '@/composables/useRoiCalculator.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -106,8 +108,8 @@ import RoiBarChart from './RoiBarChart.vue';
 import s from './RoiCalculatorSection.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
-const analytics = inject('analytics', { track: () => {} });
+const modalStore = useModalStore();
+const analyticsStore = useAnalyticsStore();
 
 const calc = useRoiCalculator();
 
@@ -116,7 +118,7 @@ let roiTimer = null;
 const trackRoi = () => {
   clearTimeout(roiTimer);
   roiTimer = setTimeout(() => {
-    analytics.track('roi_interact', {
+    analyticsStore.track('roi_interact', {
       employees: calc.employeeCount.value,
       monthlyHires: calc.monthlyHires.value,
       roi: Math.round(calc.roi.value),

@@ -65,7 +65,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, watch, inject } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
@@ -79,19 +80,20 @@ definePageMeta({ title: 'cases.detail', description: 'cases.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
-const videoStore = inject('videoModal', { openVideo: () => {} });
+const slug = computed(() => route.params.slug);
+const videoModalStore = useVideoModalStore();
 
 const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
-  `case-${route.params.slug}`,
+  () => `case-${slug.value}`,
   async () => {
     let data = null;
     try {
-      const res = await caseApi.getCase(route.params.slug);
+      const res = await caseApi.getCase(slug.value);
       data = res.data || null;
     } catch {
       // API 失败时使用静态 fallback
     }
-    const staticCase = CASES.find((c) => c.slug === route.params.slug) || null;
+    const staticCase = CASES.find((c) => c.slug === slug.value) || null;
     if (!data && !staticCase) {
       throw createError({ statusCode: 404, statusMessage: 'Case Study Not Found', fatal: true });
     }
@@ -109,7 +111,7 @@ const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
     }
     return data || staticCase;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 useHead(() => {
@@ -135,7 +137,7 @@ const relatedCases = computed(() => {
   return slugs.map((slug) => CASES.find((c) => c.slug === slug)).filter(Boolean).slice(0, 3);
 });
 
-const handlePlayVideo = () => videoStore.openVideo();
+const handlePlayVideo = () => videoModalStore.openVideo();
 
 onMounted(() => {
   watch(caseStudy, (val) => {

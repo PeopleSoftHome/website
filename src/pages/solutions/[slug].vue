@@ -67,7 +67,8 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
@@ -102,20 +103,20 @@ definePageMeta({ title: 'solutions.detail', description: 'solutions.subtitle' })
 
 const { t } = useI18n();
 const route = useRoute();
-const modalStore = inject('modal', { openModal: () => {} });
+const slug = computed(() => route.params.slug);
+const modalStore = useModalStore();
 
 const { data: industry } = useAsyncData(
-  `solution-${route.params.slug}`,
+  () => `solution-${slug.value}`,
   async () => {
-    const slug = route.params.slug;
-    const fallback = INDUSTRY_MAP[slug] || null;
+    const fallback = INDUSTRY_MAP[slug.value] || null;
     try {
-      const cms = await cmsApi.getIndustryBySlug(slug);
+      const cms = await cmsApi.getIndustryBySlug(slug.value);
       const merged = mergeIndustry(cms, fallback);
       if (merged) return merged;
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.warn(`[SolutionDetail] CMS load failed for ${slug}, using fallback`, e.message);
+        console.warn(`[SolutionDetail] CMS load failed for ${slug.value}, using fallback`, e.message);
       }
     }
     if (!fallback) {
@@ -123,7 +124,7 @@ const { data: industry } = useAsyncData(
     }
     return fallback;
   },
-  { server: false, default: () => null }
+  { server: false, default: () => null, watch: [slug] }
 );
 
 useHead(() => {

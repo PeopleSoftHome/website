@@ -27,6 +27,7 @@
   --gray-500-alpha-15: rgba(107, 114, 128, 0.15);
   --gray-600: #475569;
   --gray-700: #334155;
+  --gray-800: #1E293B;
   --gray-900: #0F172A;
 
   /* 功能色 */
@@ -36,25 +37,43 @@
   --ai-purple-light: #C4B5FD;
   --ai-purple-text:  #A78BFA;
   --success:         #059669;
+  --success-light:   #dcfce7;
   --error:           #EF4444;
   --error-bg:        #FEF2F2;
+  --error-bg-light:  #fee2e2;
   --error-light:     #FCA5A5;
   --error-alpha-15:  rgba(239, 68, 68, 0.15);
   --warning:         #D97706;
   --warning-bg:      #FFF7ED;
   --warning-border:  #FED7AA;
   --warning-text:    #92400E;
+  --warning-light:   #fef3c7;
   --orange:          #EA580C;
   --green-text:      #16A34A;
 
   /* Marketplace 扩展色 */
-  --indigo-400:      #818CF8;
-  --amber-500:       #F59E0B;
-  --amber-400:       #FBBF24;
-  --red-400:         #F87171;
-  --green-500:       #22C55E;
-  --green-400:       #4ADE80;
-  --rating:          #F59E0B;
+  --indigo-400:          #818CF8;
+  --indigo-500-alpha-5:  rgba(99, 102, 241, 0.05);
+  --indigo-500-alpha-12: rgba(99, 102, 241, 0.12);
+  --indigo-500-alpha-15: rgba(99, 102, 241, 0.15);
+  --indigo-500-alpha-20: rgba(99, 102, 241, 0.20);
+  --amber-500:           #F59E0B;
+  --amber-400:           #FBBF24;
+  --red-400:             #F87171;
+  --green-500:           #22C55E;
+  --green-400:           #4ADE80;
+  --rating:              #F59E0B;
+
+  /* 订单状态色 */
+  --status-pending-bg:        #fff7e6;
+  --status-pending-text:      #fa8c16;
+  --status-pending-alpha-15:  rgba(250, 140, 22, 0.15);
+  --status-completed-bg:      #f6ffed;
+  --status-completed-text:    #52c41a;
+  --status-completed-alpha-15:rgba(82, 196, 26, 0.15);
+  --status-refunded-bg:       #fff1f0;
+  --status-refunded-text:     #f5222d;
+  --status-refunded-alpha-15: rgba(245, 34, 45, 0.15);
 
   /* 标签辅助色 */
   --tag-blue-bg:   #EFF6FF;
@@ -123,12 +142,14 @@
   --black-alpha-20: rgba(0, 0, 0, 0.20);
   --black-alpha-25: rgba(0, 0, 0, 0.25);
   --black-alpha-30: rgba(0, 0, 0, 0.30);
+  --black-alpha-50: rgba(0, 0, 0, 0.50);
   --black-alpha-60: rgba(0, 0, 0, 0.60);
 
   --white-alpha-4:  rgba(255, 255, 255, 0.04);
   --white-alpha-6:  rgba(255, 255, 255, 0.06);
   --white-alpha-25: rgba(255, 255, 255, 0.25);
   --white-alpha-35: rgba(255, 255, 255, 0.35);
+  --white-alpha-90: rgba(255, 255, 255, 0.90);
 
   --white: #ffffff;
   --black: #000000;
@@ -193,6 +214,10 @@
 
   --surface-fallback-muted:  rgba(0, 0, 0, 0.06);
   --border-fallback-muted:   rgba(0, 0, 0, 0.12);
+
+  /* 其他语义化颜色 */
+  --primary-bright-alpha-20: rgba(39, 141, 247, 0.20);
+  --blue-500-alpha-15:       rgba(59, 130, 246, 0.15);
 }
 
 /* ═══════════════════════════════════════

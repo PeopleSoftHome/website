@@ -33,11 +33,12 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import s from './DemoModal.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { formData: { value: {} } });
+const modalStore = useModalStore();
 const PRODUCTS = t('modal.products') || [];
 const selected = ref(new Set(PRODUCTS.slice(0, 1)));
 

@@ -85,14 +85,15 @@
 
 <script setup>
 definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle' });
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { MARKETPLACE_APPS, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
-const modalStore = inject('modal', { openModal: () => {} });
+const modalStore = useModalStore();
 
 const activeCategory = ref('all');
 const searchQuery = ref('');

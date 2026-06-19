@@ -47,14 +47,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia.js';
 import Icon from '@/components/ui/Icon/Icon.vue';
 import { cartApi } from '@/api/marketplace.js';
 import { showToast } from '@/utils/toast.js';
 import s from './CartButton.module.css';
 
 const { t } = useI18n();
-const auth = inject('auth', { token: { value: '' }, isLoggedIn: { value: false }, user: { value: null } });
+const auth = useAuthStore();
 
 const open = ref(false);
 const items = ref([]);
@@ -63,7 +64,7 @@ const count = computed(() => items.value.reduce((sum, i) => sum + i.quantity, 0)
 const total = computed(() => items.value.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
 
 const loadCart = async () => {
-  if (!auth.isLoggedIn.value) {
+  if (!auth.isLoggedIn) {
     items.value = [];
     return;
   }

@@ -29,12 +29,12 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
-import { createTheme } from '@/stores/theme.js';
-import { createModal } from '@/stores/modal.js';
-import { createSearch } from '@/stores/search.js';
-import { createVideoModal } from '@/stores/videoModal.js';
-import { createAnalytics } from '@/stores/analytics.js';
+import { ref, onMounted, onUnmounted, onErrorCaptured, watch } from 'vue';
+import { useThemeStore } from '@/stores/theme.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia.js';
+import { useSearchStore } from '@/stores/search.pinia.js';
+import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { useAbTest } from '@/composables/useAbTest.js';
 import { useRum } from '@/composables/useRum.js';
@@ -56,30 +56,28 @@ import { useCmsTranslations } from '@/composables/useCmsTranslations.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
 import { apiClient } from '@/api/client.js';
 
-/* 全局状态 */
+/* 全局状态（Pinia Store） */
 const { t, locale } = useI18n();
-const theme = createTheme();
-const modal = createModal();
-const search = createSearch();
-const videoModal = createVideoModal();
-const analytics = createAnalytics();
+const theme = useThemeStore();
+const modalStore = useModalStore();
+const searchStore = useSearchStore();
+const videoModalStore = useVideoModalStore();
+const analyticsStore = useAnalyticsStore();
 
-/* Pinia auth store（SSR 安全，替代 legacy createAuth） */
+/* Pinia auth store（SSR 安全，无 localStorage token） */
 const auth = useAuthStore();
 if (typeof window !== 'undefined') auth.initFromStorage();
+
+/* 401 自动刷新后重新同步用户状态 */
+const onAuthRefresh = () => {
+  auth.fetchProfile().catch(() => {
+    auth.logout();
+  });
+};
 
 /* CMS 翻译覆盖层（运行时合并后端文案） */
 useCmsTranslations();
 
-provide('theme', theme);
-provide('search', search);
-provide('modal', modal);
-provide('videoModal', videoModal);
-provide('analytics', analytics);
-provide('auth', auth);
-provide('authModal', { open: () => { authOpen.value = true; } });
-
-const modalStore = modal;
 const contactOpen = ref(false);
 const chatOpen = ref(false);
 const authOpen = useState('authOpen', () => false);
@@ -116,8 +114,7 @@ watch([siteTitle, siteDescription], syncPageMeta);
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
 
 /* A/B 测试 + 热力图 + RUM */
-const abTest = useAbTest();
-provide('abTest', abTest);
+useAbTest();
 useRum();
 
 /* 全局错误捕获 + 上报 */
@@ -169,25 +166,27 @@ onMounted(() => {
   window.onunhandledrejection = (event) => {
     reportError('promise', event.reason?.message || event.reason, event.reason?.stack);
   };
+  window.addEventListener('auth:refresh', onAuthRefresh);
 });
 
 onUnmounted(() => {
   window.onerror = null;
   window.onunhandledrejection = null;
+  window.removeEventListener('auth:refresh', onAuthRefresh);
 });
 
 /* 页面加载埋点 + 热力图 + 滚动深度（动态加载，降低主包体积） */
 onMounted(() => {
-  analytics.track('page_view', { title: document.title });
+  analyticsStore.track('page_view', { title: document.title });
 
   let cleanupHeatmap = null;
   let cleanupScroll = null;
 
   import('@/composables/useHeatmap.js').then(({ useHeatmap }) => {
-    cleanupHeatmap = useHeatmap(analytics.track).initHeatmap();
+    cleanupHeatmap = useHeatmap(analyticsStore.track).initHeatmap();
   });
   import('@/composables/useScrollDepth.js').then(({ useScrollDepth }) => {
-    cleanupScroll = useScrollDepth(analytics.track).initScrollDepth();
+    cleanupScroll = useScrollDepth(analyticsStore.track).initScrollDepth();
   });
 
   onUnmounted(() => {
@@ -198,27 +197,27 @@ onMounted(() => {
 
 /* 语言/主题切换埋点 */
 watch(locale, (loc, prev) => {
-  if (prev !== undefined) analytics.track('lang_switch', { from: prev, to: loc });
+  if (prev !== undefined) analyticsStore.track('lang_switch', { from: prev, to: loc });
 });
 watch(() => theme.theme.value, (th, prev) => {
-  if (prev !== undefined) analytics.track('theme_switch', { theme: th });
+  if (prev !== undefined) analyticsStore.track('theme_switch', { theme: th });
 });
 
 /* 弹窗行为埋点 */
-watch(() => modal.isOpen.value, (open) => {
-  if (open) analytics.track('demo_modal_open');
+watch(() => modalStore.isOpen.value, (open) => {
+  if (open) analyticsStore.track('demo_modal_open');
 });
-watch(() => modal.step.value, (step, prev) => {
-  if (step > prev && prev !== undefined) analytics.track('demo_step_complete', { step });
+watch(() => modalStore.step.value, (step, prev) => {
+  if (step > prev && prev !== undefined) analyticsStore.track('demo_step_complete', { step });
 });
-watch(() => modal.isSuccess.value, (success) => {
-  if (success) analytics.track('demo_submit', { products: modal.formData.value.products });
+watch(() => modalStore.isSuccess.value, (success) => {
+  if (success) analyticsStore.track('demo_submit', { products: modalStore.formData.value.products });
 });
-watch(() => videoModal.isOpen.value, (open) => {
-  if (open) analytics.track('video_play');
+watch(() => videoModalStore.isOpen.value, (open) => {
+  if (open) analyticsStore.track('video_play');
 });
-watch(() => search.isOpen.value, (open) => {
-  if (open) analytics.track('search_open');
+watch(() => searchStore.isOpen.value, (open) => {
+  if (open) analyticsStore.track('search_open');
 });
 
 /* 全局 scroll reveal 观察器 */
@@ -233,7 +232,7 @@ onMounted(() => {
           const sectionId = entry.target.closest('section')?.id;
           if (sectionId && !seenSections.has(sectionId)) {
             seenSections.add(sectionId);
-            analytics.track('section_visible', { section: sectionId });
+            analyticsStore.track('section_visible', { section: sectionId });
           }
         }
       });
