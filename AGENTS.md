@@ -11,7 +11,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 - **产品定位**：B2B 企业级营销门户（Marketing Portal）
 - **核心页面**：Hero → 品牌滚动 → 统计 → 产品矩阵 → AI Family → 行业方案 → 客户证言 → Logo 墙 → 为什么选我们 → 资源中心 → CTA 通栏 → 页脚
-- **数据策略**：营销门户纯静态 JS 常量（`src/data/`）；博客/论坛接入后端 NestJS API（`src/api/`）
+- **数据策略**：首页 Section 数据优先从后端 CMS 获取，CMS 为空/失败时回退到 `src/data/` 静态常量；博客/论坛接入后端 NestJS API（`src/api/`）
 - **部署形态**：SSG 静态站点（`.output/public/` 目录直推 CDN / Nginx / Vercel）
 
 ---
