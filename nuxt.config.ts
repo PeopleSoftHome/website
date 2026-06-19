@@ -54,10 +54,9 @@ export default defineNuxtConfig({
       routes: ['/'],
       crawlLinks: true,
     },
-    compressPublicAssets: {
-      brotli: true,
-      gzip: true,
-    },
+    // 注：Nuxt 4 + static preset + Windows 下 compressPublicAssets 与资源复制存在竞态，
+    // 导致构建偶尔/必然 ENOENT。由 CDN/Nginx 统一压缩，关闭 Nitro 内置压缩。
+    compressPublicAssets: false,
     routeRules: {
       '/_nuxt/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
       '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },

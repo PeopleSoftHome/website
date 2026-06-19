@@ -75,6 +75,29 @@ async function main() {
     data: { permissions: { connect: allPerms.map((p) => ({ id: p.id })) } },
   });
 
+  // Assign admin-level permissions to ADMIN (all except audit_log/sensitive_word delete)
+  const adminPerms = allPerms.filter(
+    (p) => !(p.resource === 'audit_log' && p.action === 'delete') && !(p.resource === 'sensitive_word' && p.action === 'delete'),
+  );
+  await prisma.role.update({
+    where: { id: adminRole.id },
+    data: { permissions: { connect: adminPerms.map((p) => ({ id: p.id })) } },
+  });
+
+  // Assign content permissions to EDITOR
+  const editorResources = [
+    'page', 'product', 'industry', 'testimonial', 'resource', 'blog_post',
+    'case_study', 'news', 'job', 'forum_topic', 'forum_post', 'comment',
+    'blog_category', 'blog_tag', 'forum_category', 'cms', 'media', 'email_template',
+  ];
+  const editorPerms = allPerms.filter(
+    (p) => editorResources.includes(p.resource) && ['create', 'read', 'update'].includes(p.action),
+  );
+  await prisma.role.update({
+    where: { id: editorRole.id },
+    data: { permissions: { connect: editorPerms.map((p) => ({ id: p.id })) } },
+  });
+
   // ─── Default Admin User ───
   const adminPassword = process.env.SEED_ADMIN_PASSWORD;
   if (!adminPassword) {

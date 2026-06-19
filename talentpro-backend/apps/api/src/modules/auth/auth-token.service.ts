@@ -99,14 +99,14 @@ export class AuthTokenService {
     res.cookie('tp_access_token', tokens.accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'strict' : 'lax',
+      sameSite: 'lax',
       maxAge: accessMaxAge,
       path: '/',
     });
     res.cookie('tp_refresh_token', tokens.refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'strict' : 'lax',
+      sameSite: 'lax',
       maxAge: refreshMaxAge,
       path: '/',
     });

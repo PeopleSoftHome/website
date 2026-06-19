@@ -1,7 +1,7 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v4.2.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> **当前版本**：v4.2.0（文档版本；各 package.json 仍为 3.0.0） | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -22,9 +22,9 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 | 类别 | 技术 | 版本 | 说明 |
 |------|------|------|------|
-| 框架 | Nuxt | 3.4.6 | 文件路由 + 自动导入 + Nitro 引擎 |
-| 底层框架 | Vue | 3.5.34 | SFC + `<script setup>`，组合式 API |
-| 构建工具 | Vite | 8.0.14 | 开发端口 3000，Rolldown 引擎 |
+| 框架 | Nuxt | 4.4.8 | 文件路由 + 自动导入 + Nitro 引擎 |
+| 底层框架 | Vue | 3.5.38 | SFC + `<script setup>`，组合式 API |
+| 构建工具 | Vite | 7.3.5 | 开发端口 8080 |
 | 路由 | Nuxt 文件路由 | - | 自动基于 `src/pages/` 目录生成 |
 | 状态管理 | Pinia | 3.x | `@pinia/nuxt` 模块集成 |
 | i18n | @nuxtjs/i18n | 10.4.0 | 自动路由前缀 + SEO hreflang |
@@ -40,7 +40,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 # 安装依赖
 npm install
 
-# 开发服务器（http://localhost:3000，SPA 模式）
+# 开发服务器（http://localhost:8080，SPA 模式）
 npm run dev
 
 # 生产构建 → .output/public/ 目录（SSG 静态生成）
@@ -61,7 +61,7 @@ npm run generate
 - `ssr: false` — 开发 SPA 模式，减少开发摩擦
 - `nitro.preset: 'static'` — 生产 SSG 静态生成
 - `nitro.prerender: { routes: ['/'], crawlLinks: true }` — 自动爬取预渲染
-- `nitro.compressPublicAssets` — gzip + brotli 预压缩
+- `nitro.compressPublicAssets: false` — 已关闭 Nitro 内置压缩；由 CDN/Nginx 统一压缩（Nuxt 4 + static preset + Windows 存在压缩与资源复制竞态）
 - `components: [{ path: '~/components', pathPrefix: false }]` — 组件自动导入
 - `imports.dirs: ['composables', 'stores', 'utils']` — Composables/Stores/Utils 自动导入
 - `@nuxtjs/i18n` 模块 — 多语言 + 自动 hreflang
@@ -86,7 +86,7 @@ talentpro-v2/
     ├── pages/                    # 文件路由（Nuxt 自动生成路由表）
     │   ├── index.vue             # / 首页
     │   ├── [...slug].vue         # /:pathMatch(.*)* 404 页面
-    │   ├── about.vue             # /about 了解我们
+    │   ├── about/index.vue       # /about 了解我们
     │   ├── about/team.vue        # /about/team 团队介绍
     │   ├── about/contact.vue     # /about/contact 联系我们
     │   ├── about/partners.vue    # /about/partners 合作伙伴
@@ -104,7 +104,10 @@ talentpro-v2/
     │   ├── news/[slug].vue       # /news/:slug 新闻详情
     │   ├── products/index.vue    # /products 产品列表
     │   ├── products/[slug].vue   # /products/:slug 产品详情
-    │   ├── profile.vue           # /profile 个人中心
+    │   ├── profile/index.vue     # /profile 个人中心
+    │   ├── profile/orders.vue    # /profile/orders 我的订单
+    │   ├── profile/security.vue  # /profile/security 账号安全
+    │   ├── profile/settings.vue  # /profile/settings 个人设置
     │   ├── resources/index.vue   # /resources 资源中心列表
     │   ├── resources/[slug].vue  # /resources/:slug 资源详情
     │   ├── solutions/index.vue   # /solutions 解决方案列表
@@ -229,6 +232,8 @@ talentpro-v2/
 | UI 原子组件 | 60 行 | 无需拆分 |
 | CSS Module | 200 行 | 拆分 `@media` 块 |
 | Hook | 100 行 | 拆分职责 |
+
+> **说明**：上述行数限制是**可读性 guideline**，目标是让单个文件聚焦单一职责、降低认知负荷。150 行大约能容纳：模板 30–40 行 + 脚本 80–100 行 + 样式 20–40 行，足以表达一个 Section 的核心结构、状态与交互。但在以下情况允许豁免：SVG Sprite（`IconSprite.vue`）、复杂表单分步组件（`ModalStep1.vue`）、ChatBot 等状态机密集的 composable。若长期超出，应通过拆分子组件/提取 composable 逐步收敛，而非一次性机械拆分。
 
 ### 4.3 样式规范（重要）
 
@@ -496,7 +501,7 @@ npm run dev
 
 ### PII 字段级加密
 - User.phone / DemoBooking.phone / email 等敏感字段通过 Prisma 扩展自动 AES-256-GCM 加解密
-- 密钥来源优先级：`PII_ENCRYPTION_KEY` 环境变量 → `JWT_SECRET`（fallback，记录警告日志）
+- 密钥来源：`PII_ENCRYPTION_KEY` 环境变量（≥32 字符），无 `JWT_SECRET` fallback
 - 加密扩展在 `softDeleteExtension` 之后、workspace 扩展之前应用
 
 ### SSE Redis Pub/Sub
@@ -626,12 +631,12 @@ npm run dev
 - **前端不再存储 JWT**：`src/api/client.js` 统一启用 `withCredentials: true`，`src/stores/auth.pinia.js` 不再读写 `localStorage` 中的 `tp_access_token` / `tp_refresh_token`。
 - **后端 JWT 同时支持 Cookie 与 Bearer**：`JwtStrategy` 优先从 `tp_access_token` httpOnly Cookie 提取，再回退到 `Authorization: Bearer`；兼容 Admin 独立系统等仍使用 bearer 的场景。
 - **Refresh / Logout 读 Cookie**：`auth.controller.ts` 的 `refresh` 与 `logout` 优先从请求 Cookie 读取 token，同时兼容 body 传值。
-- **Cookie 安全属性**：生产环境 `secure: true`、`sameSite: 'lax'`、`httpOnly: true`；`TokenBlacklist` 记录已注销 token。
+- **Cookie 安全属性**：`secure: true`（仅生产）、`sameSite: 'lax'`、`httpOnly: true`；`TokenBlacklist` 记录已注销 token。
 
 ### PII 字段级加密
 
 - **扩展字段覆盖**：`field-encryption.extension.ts` 改为 `query` 扩展，支持 `User.phone`、`DemoBooking.phone/email`、`DownloadRecord.email/phone`、`JobApplication.email/phone/resumeUrl`、`AppVendor.contactEmail/contactPhone`、`TeamMember.email` 的自动 AES-256-GCM 加解密。
-- **密钥来源**：`PII_ENCRYPTION_KEY`（≥32 字符，推荐 64 字符 HEX/AES-256）→ `JWT_SECRET` fallback（记录警告日志）。
+- **密钥来源**：`PII_ENCRYPTION_KEY`（≥32 字符，推荐 64 字符 HEX/AES-256），无 `JWT_SECRET` fallback。
 - **查询字段保持明文**：用于登录/邀请等值查询的 `email` 字段暂不加解密，避免索引与查询失效。
 
 ### 审计日志
