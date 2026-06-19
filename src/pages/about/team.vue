@@ -54,10 +54,10 @@ const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.val
 const { data: apiTeam, pending: loading, error: asyncError } = useAsyncData(
   'about-team',
   async () => {
-    const res = await aboutApi.getTeam();
+    const res = await aboutApi.getTeam({});
     return res.data || [];
   },
-  { server: false, default: () => [] }
+  { server: false, default: () => [] as any[] }
 );
 
 const team = computed(() => {
@@ -68,12 +68,13 @@ const team = computed(() => {
 
 const displayTeam = computed(() => {
   if (activeCategory.value === '全部') return team.value;
-  return team.value.filter((m) => m.category === activeCategory.value);
+  return team.value.filter((m: any) => m.category === activeCategory.value);
 });
 
 const error = computed(() => {
   if (!asyncError.value) return null;
-  return asyncError.value.response?.data?.message || asyncError.value.message || t('common.loadError');
+  const err = asyncError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 onMounted(() => {

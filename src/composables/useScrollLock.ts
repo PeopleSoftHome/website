@@ -7,6 +7,7 @@
  * @param {Ref<boolean> | (() => boolean)} isLocked - 锁定状态 ref 或 getter
  */
 import { watch, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 
 let lockCount = 0;
 let originalOverflow = '';
@@ -30,7 +31,7 @@ function unlock() {
   }
 }
 
-export function useScrollLock(isLocked) {
+export function useScrollLock(isLocked: Ref<boolean> | (() => boolean)) {
   watch(isLocked, (locked) => {
     if (locked) lock();
     else unlock();

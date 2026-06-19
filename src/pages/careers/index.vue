@@ -109,14 +109,25 @@ const activeDept = ref('');
 const PAGE_SIZE = 6;
 const displayLimit = ref(PAGE_SIZE);
 
+interface Job {
+  id: string;
+  title: string;
+  type: string;
+  department: string;
+  location: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  summary?: string;
+}
+
 const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   'careers-jobs',
   () => careersApi.getJobs({ department: activeDept.value || undefined }),
-  { server: false, watch: [activeDept], default: () => ({ data: [] }) }
+  { server: false, watch: [activeDept], default: () => ({ data: [] as Job[] }) }
 );
 
 const filteredJobs = computed(() => {
-  const list = jobsRes.value?.data || [];
+  const list = (jobsRes.value as { data?: Job[] } | undefined)?.data || [];
   if (!activeDept.value) return list;
   return list.filter((j) => j.department === activeDept.value);
 });
@@ -126,17 +137,18 @@ const displayJobs = computed(() => {
   return list.map((j, idx) => ({ ...j, _stagger: idx }));
 });
 
-const departments = computed(() => {
-  const depts = new Set((jobsRes.value?.data || []).map((j) => j.department).filter(Boolean));
-  return Array.from(depts);
+const departments = computed<string[]>(() => {
+  const depts = new Set((jobsRes.value as { data?: Job[] } | undefined)?.data?.map((j) => j.department).filter(Boolean));
+  return Array.from(depts) as string[];
 });
 const jobs = computed(() => {
   if (fetchError.value) return [];
-  return jobsRes.value?.data || [];
+  return (jobsRes.value as { data?: Job[] } | undefined)?.data || [];
 });
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const benefits = [

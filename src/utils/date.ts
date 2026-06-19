@@ -7,7 +7,7 @@
  * @param {string|Date} d
  * @returns {string}
  */
-export function formatDate(d) {
+export function formatDate(d: string | Date | null | undefined) {
   if (!d) return '';
   return new Date(d).toLocaleDateString('zh-CN');
 }
@@ -17,7 +17,7 @@ export function formatDate(d) {
  * @param {string|Date} d
  * @returns {string}
  */
-export function formatTime(d) {
+export function formatTime(d: string | Date | null | undefined) {
   if (!d) return '';
   return new Date(d).toLocaleString('zh-CN', {
     month: 'short',
@@ -32,11 +32,11 @@ export function formatTime(d) {
  * @param {string|Date} d
  * @returns {string}
  */
-export function formatRelativeTime(d) {
+export function formatRelativeTime(d: string | Date | null | undefined) {
   if (!d) return '';
   const date = new Date(d);
   const now = new Date();
-  const diffMs = now - date;
+  const diffMs = now.getTime() - date.getTime();
   const diffSec = Math.floor(diffMs / 1000);
   const diffMin = Math.floor(diffSec / 60);
   const diffHour = Math.floor(diffMin / 60);

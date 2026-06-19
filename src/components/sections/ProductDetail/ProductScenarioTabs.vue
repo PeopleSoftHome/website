@@ -49,7 +49,13 @@ import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import s from './ProductScenarioTabs.vue.module.css';
 
-const props = defineProps({ scenarios: { type: Array, default: () => [] } });
+interface ProductScenario {
+  title: string;
+  desc: string;
+  metric?: string;
+}
+
+const props = defineProps({ scenarios: { type: Array as () => ProductScenario[], default: () => [] } });
 const { t } = useI18n();
 const activeIndex = ref(0);
 

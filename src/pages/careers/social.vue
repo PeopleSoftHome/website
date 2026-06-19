@@ -77,7 +77,8 @@ const jobs = computed(() => {
 });
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 onMounted(() => {

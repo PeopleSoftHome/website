@@ -54,11 +54,19 @@ import { cartApi } from '@/api/marketplace.js';
 import { showToast } from '@/utils/toast.js';
 import s from './CartButton.module.css';
 
+interface CartItem {
+  appId: string;
+  tierName: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 const { t } = useI18n();
 const auth = useAuthStore();
 
 const open = ref(false);
-const items = ref([]);
+const items = ref<CartItem[]>([]);
 
 const count = computed(() => items.value.reduce((sum, i) => sum + i.quantity, 0));
 const total = computed(() => items.value.reduce((sum, i) => sum + i.price * i.quantity, 0).toFixed(2));
@@ -76,7 +84,7 @@ const loadCart = async () => {
   }
 };
 
-const handleQty = async (item, delta) => {
+const handleQty = async (item: CartItem, delta: number) => {
   const next = item.quantity + delta;
   if (next < 1) return;
   try {
@@ -87,7 +95,7 @@ const handleQty = async (item, delta) => {
   }
 };
 
-const handleRemove = async (item) => {
+const handleRemove = async (item: CartItem) => {
   try {
     await cartApi.removeItem(item.appId, item.tierName);
     await loadCart();
@@ -110,8 +118,9 @@ const handleCheckout = () => {
   showToast(t('cart.checkoutComingSoon'), 'info');
 };
 
-const handleClickOutside = (e) => {
-  if (!e.target.closest('.' + s.wrap)) open.value = false;
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.' + s.wrap)) open.value = false;
 };
 
 onMounted(() => {

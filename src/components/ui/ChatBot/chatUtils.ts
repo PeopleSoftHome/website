@@ -1,4 +1,4 @@
-export const escapeHtml = (text) => {
+export const escapeHtml = (text: string): string => {
   if (!text) return '';
   return text
     .replace(/&/g, '&amp;')
@@ -8,11 +8,11 @@ export const escapeHtml = (text) => {
     .replace(/'/g, '&#39;');
 };
 
-export const formatMessage = (text) => {
+export const formatMessage = (text: string): string => {
   if (!text) return '';
   return text
     .split(/(\*\*[^*]+\*\*)/g)
-    .map((part) => {
+    .map((part: string) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return `<strong>${escapeHtml(part.slice(2, -2))}</strong>`;
       }
@@ -21,7 +21,7 @@ export const formatMessage = (text) => {
     .join('');
 };
 
-export const nowTime = (locale) => {
+export const nowTime = (locale: string): string => {
   const loc = locale === 'en' ? 'en-US' : locale === 'zh-TW' ? 'zh-TW' : 'zh-CN';
   return new Date().toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
 };

@@ -80,18 +80,29 @@ import { marketplaceApi } from '@/api/marketplace.js';
 import { paymentApi } from '@/api/marketplace.js';
 import s from './index.vue.module.css';
 
+interface UserProfile {
+  id: string;
+  name?: string;
+  email: string;
+  avatar?: string;
+  workspaceName?: string;
+  workspaceRole?: string;
+  bio?: string;
+  createdAt: string;
+}
+
 const { t } = useI18n();
 const auth = useAuthStore();
-const user = auth.user;
+const user = auth.user as UserProfile | null;
 
 const { data: notifRes } = useAsyncData('profile-notifications-count', () => notificationApi.getNotifications(1, 1), { server: false, default: () => ({ total: 0 }) });
 const { data: appsRes } = useAsyncData('profile-my-apps', () => marketplaceApi.getMyApps(), { server: false, default: () => ({ data: [] }) });
-const { data: ordersRes } = useAsyncData('profile-orders', () => paymentApi.getOrders(), { server: false, default: () => ({ data: [] }) });
+const { data: ordersRes } = useAsyncData('profile-orders', () => paymentApi.getOrders({}), { server: false, default: () => ({ data: [] }) });
 
 const stats = computed(() => [
-  { icon: '📦', value: ordersRes.value?.data?.length || 0, label: t('profile.statOrders') },
-  { icon: '📱', value: appsRes.value?.data?.length || 0, label: t('profile.statApps') },
-  { icon: '🔔', value: notifRes.value?.total || 0, label: t('profile.statNotifications') },
+  { icon: '📦', value: (ordersRes.value as any)?.data?.length || 0, label: t('profile.statOrders') },
+  { icon: '📱', value: (appsRes.value as any)?.data?.length || 0, label: t('profile.statApps') },
+  { icon: '🔔', value: (notifRes.value as any)?.total || 0, label: t('profile.statNotifications') },
   { icon: '⭐', value: '1,280', label: t('profile.statPoints') },
 ]);
 

@@ -10,7 +10,7 @@ export const useSearchStore = defineStore('search', () => {
   const openSearch = () => { isOpen.value = true; };
   const closeSearch = () => { isOpen.value = false; };
 
-  const handler = (e) => {
+  const handler = (e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       isOpen.value = !isOpen.value;

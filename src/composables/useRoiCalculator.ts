@@ -5,6 +5,14 @@
  */
 import { ref, computed } from 'vue';
 
+interface RoiInitial {
+  employeeCount?: number;
+  monthlyHires?: number;
+  hireCycleDays?: number;
+  hrTeamSize?: number;
+  hrMonthlySalary?: number;
+}
+
 const DEFAULTS = {
   employeeCount: 1000,
   monthlyHires: 30,
@@ -13,7 +21,7 @@ const DEFAULTS = {
   hrMonthlySalary: 12000,
 };
 
-export function useRoiCalculator(initial = {}) {
+export function useRoiCalculator(initial: RoiInitial = {}) {
   const employeeCount = ref(initial.employeeCount ?? DEFAULTS.employeeCount);
   const monthlyHires = ref(initial.monthlyHires ?? DEFAULTS.monthlyHires);
   const hireCycleDays = ref(initial.hireCycleDays ?? DEFAULTS.hireCycleDays);

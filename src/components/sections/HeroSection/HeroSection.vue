@@ -42,7 +42,7 @@
               </div>
               <div :class="s.dashStats">
                 <div v-for="(stat, i) in dashStats" :key="i" :class="s.dashStatCard">
-                  <div :ref="el => { if(el) numRefs[i] = el }" :class="s.dashStatNum">{{ i === 2 ? '0%' : '0' }}</div>
+                  <div :ref="el => { if(el) numRefs[i] = el as Element | null }" :class="s.dashStatNum">{{ i === 2 ? '0%' : '0' }}</div>
                   <div :class="s.dashStatLabel">{{ t(`hero.dash${i + 1}`) }}</div>
                 </div>
               </div>
@@ -84,7 +84,7 @@ const { t } = useI18n();
 const modalStore = useModalStore();
 const videoModalStore = useVideoModalStore();
 
-const numRefs = [];
+const numRefs: (Element | null)[] = [];
 const dashStats = [
   { target: 47, suffix: '' },
   { target: 23, suffix: '' },
@@ -100,9 +100,9 @@ const chartBars = [
 ];
 
 onMounted(() => {
-  const rafIds = [];
+  const rafIds: number[] = [];
 
-  const animateNum = (el, target, sfx = '') => {
+  const animateNum = (el: Element | null, target: number, sfx = '') => {
     if (!el) return;
     let cur = 0;
     const step = () => {
@@ -118,9 +118,9 @@ onMounted(() => {
   };
 
   const timer = setTimeout(() => {
-    animateNum(numRefs[0], dashStats[0].target, dashStats[0].suffix);
-    animateNum(numRefs[1], dashStats[1].target, dashStats[1].suffix);
-    animateNum(numRefs[2], dashStats[2].target, dashStats[2].suffix);
+    animateNum(numRefs[0]!, dashStats[0]!.target, dashStats[0]!.suffix);
+    animateNum(numRefs[1]!, dashStats[1]!.target, dashStats[1]!.suffix);
+    animateNum(numRefs[2]!, dashStats[2]!.target, dashStats[2]!.suffix);
   }, 1200);
 
   onUnmounted(() => {

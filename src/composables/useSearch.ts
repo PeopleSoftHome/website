@@ -9,21 +9,42 @@
  *  - 关键词高亮（返回 HTML 字符串）
  */
 import { ref, computed, onUnmounted, watch } from 'vue';
+import type { Ref } from 'vue';
 import { SEARCH_INDEX, TYPE_LABELS } from '@/data/searchIndex.js';
 import { searchApi } from '@/api/search.js';
 import { transformSearchResults } from '@/api/transforms.js';
 
-export function useSearch(onClose) {
+interface SearchItem {
+  id: string;
+  type: string;
+  title: string;
+  tags: string[];
+  desc: string;
+  section: string;
+  icon: string;
+  weight?: number;
+}
+
+interface SuggestionItem {
+  id: string;
+  type: string;
+  title: string;
+  desc: string;
+  icon: string;
+  section: string;
+}
+
+export function useSearch(onClose?: (() => void) | undefined) {
   const query = ref('');
   const focusIdx = ref(-1);
-  let debouncedTimer = null;
-  const inputRef = ref(null);
+  let debouncedTimer: ReturnType<typeof setTimeout> | null = null;
+  const inputRef: Ref<HTMLInputElement | null> = ref(null);
   const debouncedQuery = ref('');
-  const apiResults = ref([]);
+  const apiResults: Ref<SearchItem[]> = ref([]);
   const isSearching = ref(false);
 
   /* ── 本地评分函数（fallback）── */
-  const scoreItem = (item, q) => {
+  const scoreItem = (item: SearchItem, q: string) => {
     const lq = q.toLowerCase();
     let score = 0;
 
@@ -44,17 +65,17 @@ export function useSearch(onClose) {
   };
 
   /* ── 防抖查询 ── */
-  const handleQueryChange = (val) => {
+  const handleQueryChange = (val: string) => {
     query.value = val;
     focusIdx.value = -1;
-    clearTimeout(debouncedTimer);
+    if (debouncedTimer) clearTimeout(debouncedTimer);
     debouncedTimer = setTimeout(() => {
       debouncedQuery.value = val.trim();
     }, 150);
   };
 
   /* ── API 搜索 ── */
-  const suggestions = ref([]);
+  const suggestions: Ref<SuggestionItem[]> = ref([]);
   watch(debouncedQuery, async (q) => {
     if (!q) {
       apiResults.value = [];
@@ -64,15 +85,16 @@ export function useSearch(onClose) {
     isSearching.value = true;
     try {
       const [searchRes, suggestRes] = await Promise.all([
-        searchApi.search(q),
+        (searchApi.search as (q: string) => Promise<unknown>)(q),
         q.length >= 2 ? searchApi.getSuggestions(q) : Promise.resolve([]),
       ]);
-      apiResults.value = transformSearchResults(searchRes);
-      suggestions.value = suggestRes || [];
+      apiResults.value = transformSearchResults((searchRes as { data?: unknown[] }).data || []) as SearchItem[];
+      suggestions.value = ((suggestRes as { data?: unknown[] }).data || []) as SuggestionItem[];
     } catch (e) {
       apiResults.value = [];
       suggestions.value = [];
-      if (import.meta.env.DEV) console.warn('[Search API]', e.message);
+      const err = e as Error;
+      if (import.meta.env.DEV) console.warn('[Search API]', err.message);
     } finally {
       isSearching.value = false;
     }
@@ -82,21 +104,22 @@ export function useSearch(onClose) {
   const groupedResults = computed(() => {
     if (!debouncedQuery.value) return {};
 
-    let results = [];
+    let results: SearchItem[] = [];
     if (apiResults.value.length > 0) {
       results = apiResults.value;
     } else {
-      results = SEARCH_INDEX
+      results = (SEARCH_INDEX as SearchItem[])
         .map(item => ({ item, score: scoreItem(item, debouncedQuery.value) }))
         .filter(({ score }) => score > 0)
         .sort((a, b) => b.score - a.score)
         .map(({ item }) => item);
     }
 
-    const groups = {};
+    const groups: Record<string, SearchItem[]> = {};
     results.forEach((item) => {
       if (!groups[item.type]) groups[item.type] = [];
-      if (groups[item.type].length < 5) groups[item.type].push(item);
+      const group = groups[item.type];
+      if (group && group.length < 5) group.push(item);
     });
 
     return groups;
@@ -106,7 +129,7 @@ export function useSearch(onClose) {
   const totalResults = computed(() => flatResults.value.length);
 
   /* ── 高亮函数：在文本中标记关键词 ── */
-  const highlight = (text, q) => {
+  const highlight = (text: string, q: string) => {
     if (!q || !text) return text;
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const re = new RegExp(`(${escaped})`, 'gi');
@@ -118,13 +141,13 @@ export function useSearch(onClose) {
   };
 
   /* ── 跳转到 Section ── */
-  const goToSection = (sectionId) => {
+  const goToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   /* ── 选中结果 ── */
-  const selectItem = (item) => {
+  const selectItem = (item: SearchItem) => {
     goToSection(item.section);
     onClose?.();
     query.value = '';
@@ -134,7 +157,7 @@ export function useSearch(onClose) {
   };
 
   /* ── 键盘事件 ── */
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       focusIdx.value = Math.min(focusIdx.value + 1, totalResults.value - 1);
@@ -151,7 +174,7 @@ export function useSearch(onClose) {
   };
 
   /* ── 清理防抖 timer ── */
-  onUnmounted(() => clearTimeout(debouncedTimer));
+  onUnmounted(() => { if (debouncedTimer) clearTimeout(debouncedTimer); });
 
   /* ── 打开时自动聚焦输入框 ── */
   const focusInput = () => {

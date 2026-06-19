@@ -160,11 +160,10 @@ export default defineNuxtConfig({
   },
 
   // ── TypeScript ──
-  // 渐进式 TS 迁移期间关闭 Nuxt 自动 typeCheck；每批次通过 lint/build/test 验证，
-  // 全量迁移完成后重新开启并运行 vue-tsc。
+  // Batch 10: typeCheck 已重新开启；tsconfig 继承 .nuxt/tsconfig.json 并保留 strict。
   typescript: {
-    strict: false,
-    typeCheck: false,
+    strict: true,
+    typeCheck: true,
   },
 
   // ── 应用配置 ──

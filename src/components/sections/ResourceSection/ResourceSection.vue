@@ -48,23 +48,36 @@ import ResourceCard from './ResourceCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './ResourceSection.module.css';
 
+interface ResourceItem {
+  id: string;
+  type: string;
+  typeLabel: string;
+  icon: string;
+  imgGrad: string;
+  title: string;
+  desc: string;
+  date: string;
+  cta: string;
+}
+
 const { t } = useI18n();
 
-const { displayItems: displayResources } = useCmsDataByKey('resources', {
+const { displayItems: rawDisplayResources } = useCmsDataByKey('resources', {
   transform: transformResources,
   fallbackKey: 'resources',
 });
+const displayResources = computed(() => rawDisplayResources.value as unknown as ResourceItem[]);
 
 
 
 // 下载留资
 const gateOpen = ref(false);
-const gateResource = ref(null);
+const gateResource = ref<ResourceItem | null>(null);
 const gateLoading = ref(false);
 const gateError = ref('');
 const gateForm = ref({ name: '', email: '', company: '' });
 
-const openGate = (res) => {
+const openGate = (res: ResourceItem) => {
   gateResource.value = res;
   gateOpen.value = true;
   gateError.value = '';
@@ -78,7 +91,7 @@ const submitGate = async () => {
   gateLoading.value = true;
   try {
     await apiClient.post('/downloads', {
-      resourceId: gateResource.value.id,
+      resourceId: gateResource.value?.id,
       name: gateForm.value.name,
       email: gateForm.value.email,
       company: gateForm.value.company,
@@ -86,7 +99,8 @@ const submitGate = async () => {
     gateOpen.value = false;
     gateForm.value = { name: '', email: '', company: '' };
   } catch (e) {
-    gateError.value = e.response?.data?.error?.message || t('downloadGate.error');
+    const err = e as { response?: { data?: { error?: { message?: string } } } };
+    gateError.value = err.response?.data?.error?.message || t('downloadGate.error');
   } finally {
     gateLoading.value = false;
   }

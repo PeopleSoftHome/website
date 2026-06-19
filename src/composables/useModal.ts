@@ -6,6 +6,15 @@ import { ref, onUnmounted } from 'vue';
 import { leadApi } from '@/api/lead.js';
 import { usePublicConfig } from '@/composables/usePublicConfig.js';
 
+interface DemoFormData {
+  name: string;
+  company: string;
+  phone: string;
+  code: string;
+  products: string[];
+  scale: string;
+}
+
 export function useModal() {
   const { recaptchaSiteKey } = usePublicConfig();
 
@@ -16,7 +25,7 @@ export function useModal() {
   const submitError = ref('');
 
   // 表单数据（供各 Step 组件共享写入）
-  const formData = ref({
+  const formData = ref<DemoFormData>({
     name: '',
     company: '',
     phone: '',
@@ -25,7 +34,7 @@ export function useModal() {
     scale: '',
   });
 
-  let timer = null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
 
   const clearTimers = () => {
     if (timer) {
@@ -82,7 +91,8 @@ export function useModal() {
       isSuccess.value = true;
       timer = setTimeout(closeModal, 2500);
     } catch (e) {
-      submitError.value = e.message || '提交失败，请稍后重试';
+      const err = e as Error;
+      submitError.value = err.message || '提交失败，请稍后重试';
       // 保持在当前步骤，不跳转成功页
     } finally {
       isSubmitting.value = false;

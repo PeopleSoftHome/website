@@ -62,25 +62,33 @@ const emit = defineEmits(['update:modelValue']);
 
 const { t } = useI18n();
 
+interface MentionUser {
+  id: string;
+  name: string;
+  email?: string;
+  avatar?: string;
+}
+
 const mode = ref('edit');
-const textareaRef = ref(null);
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 // Mention autocomplete state
 const mentionOpen = ref(false);
 const mentionQuery = ref('');
-const mentionUsers = ref([]);
+const mentionUsers = ref<MentionUser[]>([]);
 const mentionLoading = ref(false);
 const mentionIndex = ref(0);
-let mentionTimer = null;
-const timers = [];
+let mentionTimer: ReturnType<typeof setTimeout> | null = null;
+const timers: ReturnType<typeof setTimeout>[] = [];
 let mentionStartPos = -1;
 
-const onInput = (e) => {
-  emit('update:modelValue', e.target.value);
-  handleMention(e.target.value, e.target.selectionStart);
+const onInput = (e: Event) => {
+  const target = e.target as HTMLTextAreaElement;
+  emit('update:modelValue', target.value);
+  handleMention(target.value, target.selectionStart);
 };
 
-const handleMention = (text, cursorPos) => {
+const handleMention = (text: string, cursorPos: number) => {
   const beforeCursor = text.slice(0, cursorPos);
   const atIndex = beforeCursor.lastIndexOf('@');
 
@@ -98,8 +106,8 @@ const handleMention = (text, cursorPos) => {
   }
 };
 
-const searchMentions = (q) => {
-  clearTimeout(mentionTimer);
+const searchMentions = (q: string) => {
+  if (mentionTimer) clearTimeout(mentionTimer);
   if (!q) { mentionUsers.value = []; return; }
   mentionLoading.value = true;
   mentionOpen.value = true;
@@ -120,16 +128,16 @@ const closeMention = () => {
   mentionStartPos = -1;
 };
 
-const selectMention = (user) => {
+const selectMention = (user: MentionUser) => {
   const text = props.modelValue;
   const before = text.slice(0, mentionStartPos);
-  const after = text.slice(textareaRef.value.selectionStart);
+  const after = text.slice(textareaRef.value?.selectionStart || 0);
   emit('update:modelValue', `${before}@${user.name} ${after}`);
   closeMention();
   timers.push(setTimeout(() => textareaRef.value?.focus(), 0));
 };
 
-const handleKeydown = (e) => {
+const handleKeydown = (e: KeyboardEvent) => {
   if (!mentionOpen.value) return;
   if (e.key === 'ArrowDown') { e.preventDefault(); mentionIndex.value = (mentionIndex.value + 1) % mentionUsers.value.length; }
   else if (e.key === 'ArrowUp') { e.preventDefault(); mentionIndex.value = (mentionIndex.value - 1 + mentionUsers.value.length) % mentionUsers.value.length; }
@@ -137,7 +145,7 @@ const handleKeydown = (e) => {
   else if (e.key === 'Escape') { closeMention(); }
 };
 
-const wrap = (before, after) => {
+const wrap = (before: string, after: string) => {
   const el = textareaRef.value;
   if (!el) return;
   const start = el.selectionStart;
@@ -152,7 +160,7 @@ const wrap = (before, after) => {
   }, 0));
 };
 
-const prefix = (prefixStr) => {
+const prefix = (prefixStr: string) => {
   const el = textareaRef.value;
   if (!el) return;
   const start = el.selectionStart;

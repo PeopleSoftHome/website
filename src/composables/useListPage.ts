@@ -13,15 +13,28 @@
  * @param {boolean} [options.server=false] - 是否服务端获取
  * @returns {Object}
  */
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, type Ref } from 'vue';
 
-export function useListPage(options) {
+interface UseListPageOptions<T = unknown, F extends Record<string, unknown> = Record<string, unknown>> {
+  key: string;
+  fetchFn: (filters: F) => Promise<unknown>;
+  filters?: Ref<F>;
+  fallbackData?: T[];
+  transform?: (data: unknown[]) => T[];
+  filterFn?: (item: T, filters: F) => boolean;
+  pageSize?: number;
+  server?: boolean;
+}
+
+export function useListPage<T = unknown, F extends Record<string, unknown> = Record<string, unknown>>(
+  options: UseListPageOptions<T, F>,
+) {
   const {
     key,
     fetchFn,
-    filters = ref({}),
+    filters = ref({} as F),
     fallbackData = [],
-    transform = (data) => data,
+    transform = (data: unknown[]): T[] => data as T[],
     filterFn = () => true,
     pageSize,
     server = false,
@@ -37,7 +50,9 @@ export function useListPage(options) {
 
   const apiItems = computed(() => {
     if (!apiRes.value) return [];
-    const data = Array.isArray(apiRes.value) ? apiRes.value : (apiRes.value?.data || []);
+    const data = Array.isArray(apiRes.value)
+      ? apiRes.value
+      : ((apiRes.value as { data?: unknown[] }).data || []);
     return transform(data);
   });
 

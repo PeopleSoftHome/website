@@ -9,11 +9,17 @@
  * @returns {{ ref: Ref<HTMLElement|null> }}
  */
 import { ref, onMounted, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 
-export function useCountUp(target, { duration = 1600, suffix = '' } = {}) {
-  const elRef = ref(null);
-  let rafId = null;
-  let obs = null;
+interface UseCountUpOptions {
+  duration?: number;
+  suffix?: string;
+}
+
+export function useCountUp(target: number, { duration = 1600, suffix = '' }: UseCountUpOptions = {}) {
+  const elRef: Ref<HTMLElement | null> = ref(null);
+  let rafId: number | null = null;
+  let obs: IntersectionObserver | null = null;
 
   onMounted(() => {
     const el = elRef.value;
@@ -21,11 +27,11 @@ export function useCountUp(target, { duration = 1600, suffix = '' } = {}) {
 
     obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !el.dataset.done) {
+        if (!entry || !entry.isIntersecting || el.dataset.done) return;
           el.dataset.done = '1';
           const start = performance.now();
 
-          const tick = (now) => {
+          const tick = (now: number) => {
             const progress = Math.min((now - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
             const current = Math.floor(eased * target);
@@ -39,7 +45,6 @@ export function useCountUp(target, { duration = 1600, suffix = '' } = {}) {
           };
 
           rafId = requestAnimationFrame(tick);
-        }
       },
       { threshold: 0.5 }
     );

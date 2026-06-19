@@ -86,16 +86,15 @@ import s from './settings.vue.module.css';
 
 const { t } = useI18n();
 const auth = useAuthStore();
-const user = auth.user;
 
 const saving = ref(false);
 const form = ref({
-  name: user.value?.name || '',
-  email: user.value?.email || '',
-  phone: user.value?.phone || '',
-  company: user.value?.company || '',
-  jobTitle: user.value?.jobTitle || '',
-  bio: user.value?.bio || '',
+  name: auth.user?.name || '',
+  email: auth.user?.email || '',
+  phone: auth.user?.phone || '',
+  company: auth.user?.company || '',
+  jobTitle: auth.user?.jobTitle || '',
+  bio: auth.user?.bio || '',
   language: 'zh',
   emailNotif: true,
   marketing: false,
@@ -115,7 +114,8 @@ const handleSave = async () => {
     auth.setUser(updated);
     import('@/utils/toast.js').then(({ showToast }) => showToast(t('profile.saveSuccess'), 'success'));
   } catch (e) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(e.response?.data?.message || t('profile.saveError'), 'error'));
+    const err = e as { response?: { data?: { message?: string } } };
+    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('profile.saveError'), 'error'));
   }
   saving.value = false;
 };

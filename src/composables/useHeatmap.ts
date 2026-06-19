@@ -2,11 +2,14 @@
  * useHeatmap — 热力图点击追踪
  * 动态加载，减少主包体积
  */
-export function useHeatmap(track) {
+type TrackFn = (event: string, props?: Record<string, unknown>) => void;
+
+export function useHeatmap(track: TrackFn) {
   const initHeatmap = () => {
     if (typeof window === 'undefined') return;
-    const handler = (e) => {
-      const el = e.target.closest('[data-track]') || e.target;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const el = target.closest('[data-track]') || target;
       const section = el.closest('section')?.id || el.closest('[id]')?.id || 'unknown';
       track('heatmap_click', {
         x: Math.round(e.clientX),

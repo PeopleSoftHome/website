@@ -78,6 +78,23 @@ import s from './[id].vue.module.css';
 
 definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
 
+interface Reply {
+  id: string;
+  author?: { name?: string; avatar?: string };
+  createdAt: string;
+  content: string;
+}
+
+interface Topic {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  author?: { name?: string };
+  category?: { name?: string };
+  posts?: Reply[];
+}
+
 const { t } = useI18n();
 const route = useRoute();
 const id = computed(() => route.params.id);
@@ -90,30 +107,31 @@ const { data: topic, pending: loading } = useAsyncData(
   () => `forum-topic-${id.value}`,
   async () => {
     try {
-      const res = await forumApi.getTopic(id.value);
+      const res = await forumApi.getTopic(id.value as string);
       const data = res.data || res;
-      if (data) return data;
+      if (data) return data as Topic;
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    return FORUM_TOPIC_MAP[id.value] || null;
+    return (FORUM_TOPIC_MAP as Record<string, Topic>)[id.value as string] || null;
   },
-  { server: false, default: () => null, watch: [id] }
+  { server: false, default: () => null as Topic | null, watch: [id] }
 );
 
 useHead(() => {
   if (!topic.value) return {};
+  const tpc = topic.value as Topic;
   return {
-    title: `${topic.value.title} | TalentPro`,
+    title: `${tpc.title} | TalentPro`,
     meta: [
-      { name: 'description', content: topic.value.content?.slice(0, 160) || topic.value.title },
+      { name: 'description', content: tpc.content?.slice(0, 160) || tpc.title },
     ],
   };
 });
 
-const replies = ref([]);
+const replies = ref<Reply[]>([]);
 watch(topic, (val) => {
-  replies.value = val?.posts || [];
+  replies.value = (val as Topic | null)?.posts || [];
 }, { immediate: true });
 
 const replyContent = ref('');
@@ -123,16 +141,18 @@ const submitReply = async () => {
   if (!replyContent.value.trim() || replySubmitting.value) return;
   replySubmitting.value = true;
   try {
+    const tpc = topic.value as Topic;
     const res = await forumApi.createPost({
-      topicId: topic.value.id,
-      authorId: auth.user?.id || 'guest',
+      topicId: tpc.id,
+      authorId: (auth.user as { id?: string } | null)?.id || 'guest',
       content: replyContent.value.trim(),
     });
-    const newReply = (res.data || res)?.data || res.data || res;
+    const newReply = ((res.data || res)?.data || res.data || res) as Reply;
     replies.value.push(newReply);
     replyContent.value = '';
   } catch (e) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(e.response?.data?.message || t('comment.submitError'), 'error'));
+    const err = e as { response?: { data?: { message?: string } } };
+    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
   }
   replySubmitting.value = false;
 };

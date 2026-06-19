@@ -1,7 +1,13 @@
 import { apiClient } from './client.js';
+import type { AxiosResponse } from 'axios';
+
+export type NewsListParams = Record<string, unknown>;
 
 export const newsApi = {
-  getNews: (params) => apiClient.get('/news', { params }),
-  getNewsItem: (slug) => apiClient.get(`/news/${slug}`),
-  getCategories: () => apiClient.get('/news/categories'),
+  getNews: (params: NewsListParams): Promise<AxiosResponse> =>
+    apiClient.get('/news', { params }),
+  getNewsItem: (slug: string): Promise<AxiosResponse> =>
+    apiClient.get(`/news/${slug}`),
+  getCategories: (): Promise<AxiosResponse> =>
+    apiClient.get('/news/categories'),
 };

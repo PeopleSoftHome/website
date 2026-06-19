@@ -37,8 +37,8 @@ const SKELETON_HEIGHTS = {
   'cta-banner': 440,
 };
 
-const sectionSkeletonHeight = (key) => {
-  return SKELETON_HEIGHTS[key] || 400;
+const sectionSkeletonHeight = (key: string) => {
+  return SKELETON_HEIGHTS[key as keyof typeof SKELETON_HEIGHTS] || 400;
 };
 
 const { t } = useI18n();

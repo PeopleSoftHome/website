@@ -27,9 +27,19 @@
 import { computed } from 'vue';
 import s from './AppCard.module.css';
 
-const props = defineProps({
-  app: { type: Object, required: true },
-});
+interface MarketplaceApp {
+  slug: string;
+  name: string;
+  tagline: string;
+  description?: string;
+  pricingModel: 'free' | 'subscription' | 'one_time' | 'usage_based' | 'freemium';
+  ratingAvg: number;
+  ratingCount: number;
+  installCount: number;
+  vendor: string;
+}
+
+const props = defineProps<{ app: MarketplaceApp }>();
 
 const { t } = useI18n();
 

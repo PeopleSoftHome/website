@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, type Ref } from 'vue';
 import { apiClient } from '@/api/client.js';
 import { usePublicConfig } from '@/composables/usePublicConfig.js';
 import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData.js';
@@ -11,7 +11,32 @@ const LOCAL_ACTIONS = {
 
 const STORAGE_KEY = 'tp-chat-session-id';
 
-function getSessionId() {
+interface ChatMessage {
+  id: number;
+  from: 'user' | 'bot';
+  text: string;
+  quickReplies?: string[];
+  time?: string;
+}
+
+interface ChatIntent {
+  keywords: string[];
+  reply?: string;
+  quickReplies?: string[];
+}
+
+interface ChatBotConfig {
+  intents: ChatIntent[];
+  quickReplies: string[];
+  fallbackCopy: string;
+}
+
+interface UseChatBotOptions {
+  emit: (event: string, ...args: unknown[]) => void;
+  locale: Ref<string>;
+}
+
+function getSessionId(): string {
   if (typeof window === 'undefined') return '';
   let id = sessionStorage.getItem(STORAGE_KEY);
   if (!id) {
@@ -21,18 +46,18 @@ function getSessionId() {
   return id;
 }
 
-export function useChatBot({ emit, locale }) {
+export function useChatBot({ emit, locale }: UseChatBotOptions) {
   const { recaptchaSiteKey } = usePublicConfig();
 
-  const messages = ref([]);
+  const messages = ref<ChatMessage[]>([]);
   const input = ref('');
   const isTyping = ref(false);
   const isHandoff = ref(false);
   const initialized = ref(false);
-  const timers = ref([]);
-  const abortController = ref(null);
+  const timers = ref<number[]>([]);
+  const abortController = ref<AbortController | null>(null);
   const sessionId = ref(getSessionId());
-  const botConfig = ref({
+  const botConfig = ref<ChatBotConfig>({
     intents: [],
     quickReplies: [],
     fallbackCopy: '',
@@ -43,10 +68,10 @@ export function useChatBot({ emit, locale }) {
   onMounted(async () => {
     try {
       const res = await apiClient.get('/system/chatbot-config', { silent: true });
-      const data = res?.data || res || {};
+      const data = (res?.data || res || {}) as Partial<ChatBotConfig>;
       botConfig.value = {
-        intents: Array.isArray(data.intents) ? data.intents : [],
-        quickReplies: Array.isArray(data.quickReplies) ? data.quickReplies : [],
+        intents: Array.isArray(data.intents) ? (data.intents as ChatIntent[]) : [],
+        quickReplies: Array.isArray(data.quickReplies) ? (data.quickReplies as string[]) : [],
         fallbackCopy: data.fallbackCopy || '',
       };
     } catch {
@@ -57,17 +82,17 @@ export function useChatBot({ emit, locale }) {
   const faqRules = computed(() => FAQ_RULES_META.map(meta => ({
     ...meta,
     reply: t(`chatBot.faq.${meta.id}.reply`),
-    quickReplies: t(`chatBot.faq.${meta.id}.quickReplies`) || [],
+    quickReplies: (t(`chatBot.faq.${meta.id}.quickReplies`) as unknown as string[]) || [],
   })));
 
   const fallbackReplies = computed(() => FALLBACK_REPLY_KEYS.map(k => t(`chatBot.${k}`)).filter(Boolean));
   const welcomeMessages = computed(() => [
-    { text: t('chatBot.welcome1'), quickReplies: [] },
-    { text: t('chatBot.welcome2'), quickReplies: t('chatBot.welcomeQuickReplies') || [] },
+    { text: t('chatBot.welcome1'), quickReplies: [] as string[] },
+    { text: t('chatBot.welcome2'), quickReplies: (t('chatBot.welcomeQuickReplies') as unknown as string[]) || [] },
   ]);
   const quickRepliesDefault = computed(() => {
     const cms = botConfig.value.quickReplies || [];
-    return cms.length ? cms : (t('chatBot.quickRepliesDefault') || []);
+    return cms.length ? cms : (t('chatBot.quickRepliesDefault') as unknown as string[]) || [];
   });
 
   const clearAllTimers = () => {
@@ -75,7 +100,7 @@ export function useChatBot({ emit, locale }) {
     timers.value = [];
   };
 
-  const matchIntent = (text) => {
+  const matchIntent = (text: string) => {
     const lower = text.toLowerCase();
     for (const intent of botConfig.value.intents) {
       if (Array.isArray(intent.keywords) && intent.keywords.some(k => lower.includes(k.toLowerCase()))) {
@@ -85,7 +110,7 @@ export function useChatBot({ emit, locale }) {
     return null;
   };
 
-  const matchRule = (text) => {
+  const matchRule = (text: string) => {
     const lower = text.toLowerCase();
     for (const rule of faqRules.value) {
       if (rule.keywords.some(kw => lower.includes(kw.toLowerCase()))) {
@@ -94,18 +119,18 @@ export function useChatBot({ emit, locale }) {
     }
     return {
       reply: fallbackReplies.value[Math.floor(Math.random() * fallbackReplies.value.length)] || '',
-      quickReplies: [],
+      quickReplies: [] as string[],
     };
   };
 
-  const detectLocalAction = (text) => {
+  const detectLocalAction = (text: string) => {
     const lower = text.toLowerCase();
     if (LOCAL_ACTIONS.demo.some(k => lower.includes(k))) return 'demo';
     if (LOCAL_ACTIONS.human.some(k => lower.includes(k))) return 'human';
     return null;
   };
 
-  const pushBotMessage = (text, quickReplies = []) => {
+  const pushBotMessage = (text: string, quickReplies: string[] = []) => {
     messages.value.push({
       id: Date.now(),
       from: 'bot',
@@ -123,7 +148,7 @@ export function useChatBot({ emit, locale }) {
       content: m.text,
     }));
 
-  const sendMessage = async (text) => {
+  const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
 
@@ -142,13 +167,13 @@ export function useChatBot({ emit, locale }) {
     if (action === 'demo') {
       isTyping.value = false;
       emit('openDemo');
-      pushBotMessage(t('chatBot.faq.demo.reply'), t('chatBot.faq.demo.quickReplies') || []);
+      pushBotMessage(t('chatBot.faq.demo.reply'), (t('chatBot.faq.demo.quickReplies') as unknown as string[]) || []);
       return;
     }
     if (action === 'human') {
       isTyping.value = false;
       isHandoff.value = true;
-      pushBotMessage(t('chatBot.faq.human.reply'), t('chatBot.faq.human.quickReplies') || []);
+      pushBotMessage(t('chatBot.faq.human.reply'), (t('chatBot.faq.human.quickReplies') as unknown as string[]) || []);
       return;
     }
 
@@ -171,7 +196,7 @@ export function useChatBot({ emit, locale }) {
         }
       }
 
-      const result = await apiClient.post(
+      const result = (await apiClient.post(
         '/ai/chat',
         {
           message: trimmed,
@@ -180,7 +205,7 @@ export function useChatBot({ emit, locale }) {
           sessionId: sessionId.value,
         },
         { signal: abortController.value.signal },
-      );
+      )).data as { content?: string; sessionId?: string };
 
       const replyText = result?.content || '';
       if (result?.sessionId && result.sessionId !== sessionId.value) {
@@ -204,7 +229,7 @@ export function useChatBot({ emit, locale }) {
     }
   };
 
-  const handleQuickReply = (text) => {
+  const handleQuickReply = (text: string) => {
     const lower = text.toLowerCase();
     if (lower.includes('演示') || lower.includes('demo') || lower.includes('预约') || lower.includes('book')) {
       emit('openDemo');
@@ -218,7 +243,7 @@ export function useChatBot({ emit, locale }) {
     sendMessage(text);
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage(input.value);

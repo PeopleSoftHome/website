@@ -64,7 +64,7 @@ const pages = computed(() => {
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
 
-const go = (p) => {
+const go = (p: number) => {
   if (p < 1 || p > totalPages.value || p === current.value) return;
   current.value = p;
 };

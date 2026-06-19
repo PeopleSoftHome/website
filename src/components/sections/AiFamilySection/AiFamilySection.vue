@@ -49,11 +49,19 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AiCard from './AiCard.vue';
 import s from './AiFamilySection.module.css';
 
+interface AiCardItem {
+  id: string;
+  icon: string;
+  name: string;
+  tagline: string;
+  hot?: boolean;
+}
+
 const { t } = useI18n();
 const modalStore = useModalStore();
 
-const { displayItems: displayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });
+const { displayItems: rawDisplayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });
+const displayCards = computed(() => rawDisplayCards.value as unknown as AiCardItem[]);
 
-
-const cardKey = (id) => AI_CARD_KEY_MAP[id];
+const cardKey = (id: string) => (AI_CARD_KEY_MAP as Record<string, string>)[id];
 </script>

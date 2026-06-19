@@ -3,10 +3,11 @@
  * 仅在客户端生效，生产环境通过 sendBeacon/fetch 上报到 /analytics/client-errors
  */
 import { onErrorCaptured, onMounted, onUnmounted } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
 import { apiClient } from '@/api/client.js';
 
 export function useGlobalErrorReporter() {
-  const reportError = (type, message, stack) => {
+  const reportError = (type: string, message: unknown, stack?: unknown) => {
     if (typeof window === 'undefined') return;
     try {
       const url = new URL(window.location.href);
@@ -39,7 +40,7 @@ export function useGlobalErrorReporter() {
 
   onErrorCaptured((err, instance, info) => {
     if (import.meta.env.DEV) {
-      const compName = instance?.$options?.name || instance?.__name || 'unknown';
+      const compName = instance?.$options?.name || (instance as unknown as { __name?: string })?.__name || 'unknown';
       console.error(`[Vue Error] Component: ${compName} | Info: ${info}`, err);
       console.trace('Error trace');
       throw err;

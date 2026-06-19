@@ -60,23 +60,32 @@ import { paymentApi } from '@/api/marketplace.js';
 import { ORDER_STATUSES, ORDER_FALLBACK } from '@/data/profile.js';
 import s from './orders.vue.module.css';
 
+interface Order {
+  id: string;
+  appName: string;
+  amount: number;
+  status: string;
+  date: string;
+  icon?: string;
+}
+
 const { t } = useI18n();
 const activeStatus = ref('all');
 const statuses = ORDER_STATUSES;
 
-const { data: ordersRes, pending: loading } = useAsyncData('profile-orders-page', () => paymentApi.getOrders(), { server: false, default: () => ({ data: ORDER_FALLBACK }) });
+const { data: ordersRes, pending: loading } = useAsyncData('profile-orders-page', () => paymentApi.getOrders({}), { server: false, default: () => ({ data: ORDER_FALLBACK as Order[] }) });
 
-const orders = computed(() => ordersRes.value?.data || []);
+const orders = computed<Order[]>(() => (ordersRes.value?.data as Order[] | undefined) || []);
 
 const filteredOrders = computed(() => {
   if (activeStatus.value === 'all') return orders.value;
-  return orders.value.filter((o) => o.status === activeStatus.value);
+  return orders.value.filter((o: Order) => o.status === activeStatus.value);
 });
 
-const displayOrders = computed(() => filteredOrders.value.map((o, i) => ({ ...o, _stagger: i })));
+const displayOrders = computed(() => filteredOrders.value.map((o: Order, i: number) => ({ ...o, _stagger: i })));
 
-const statusLabel = (status) => {
-  const map = {
+const statusLabel = (status: string) => {
+  const map: Record<string, string> = {
     pending: t('profile.orderStatus.pending'),
     completed: t('profile.orderStatus.completed'),
     refunded: t('profile.orderStatus.refunded'),

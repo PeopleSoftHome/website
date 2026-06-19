@@ -5,11 +5,11 @@
 
 const SCRIPT_ID = 'dynamic-jsonld';
 
-export function injectJsonLd(schema) {
+export function injectJsonLd(schema: unknown) {
   if (typeof document === 'undefined') return;
   // 开发环境也注入，便于调试
 
-  let el = document.getElementById(SCRIPT_ID);
+  let el = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
   if (!el) {
     el = document.createElement('script');
     el.id = SCRIPT_ID;

@@ -109,20 +109,22 @@ const {
 
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const filteredNews = computed(() => filteredItems.value);
 
 const featuredNews = computed(() => filteredNews.value.find((n) => n.featured) || filteredNews.value[0] || null);
 const normalNews = computed(() => {
-  if (!featuredNews.value) return filteredNews.value;
-  return filteredNews.value.filter((n) => n.id !== featuredNews.value.id);
+  const featured = featuredNews.value;
+  if (!featured) return filteredNews.value;
+  return filteredNews.value.filter((n) => n.id !== featured.id);
 });
 
 const displayNews = computed(() => news.value);
 
-const formatDate = (d) => {
+const formatDate = (d: string | number | Date | undefined) => {
   if (!d) return '';
   return new Date(d).toLocaleDateString();
 };

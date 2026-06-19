@@ -58,7 +58,12 @@ const { t } = useI18n();
 
 const replying = ref(false);
 
-const handleReply = (reply) => {
+interface ReplyComment {
+  parentId?: string;
+  [key: string]: unknown;
+}
+
+const handleReply = (reply: ReplyComment) => {
   emit('reply', { parentId: reply.parentId, reply });
   replying.value = false;
 };

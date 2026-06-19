@@ -3,17 +3,44 @@
  * 当 CMS / API 不可用时作为降级数据使用
  */
 
-export const BLOG_CATEGORIES = [
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface BlogTag {
+  id: string;
+  name: string;
+}
+
+export type BlogStatus = 'PUBLISHED' | 'DRAFT' | 'ARCHIVED';
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  createdAt: string;
+  updatedAt: string;
+  category: BlogCategory;
+  tags: BlogTag[];
+  status: BlogStatus;
+}
+
+export const BLOG_CATEGORIES: BlogCategory[] = [
   { id: 'cat-insight', name: '行业洞察', slug: 'insight' },
   { id: 'cat-product', name: '产品更新', slug: 'product' },
   { id: 'cat-practice', name: '最佳实践', slug: 'practice' },
   { id: 'cat-ai', name: 'AI 专栏', slug: 'ai' },
 ];
 
-const cover = (text) =>
+const cover = (text: string): string =>
   `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233B82F6'/%3E%3Cstop offset='100%25' stop-color='%238B5CF6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='32' fill='white' font-family='system-ui'%3E${encodeURIComponent(text)}%3C/text%3E%3C/svg%3E`;
 
-export const BLOG_POSTS = [
+export const BLOG_POSTS: BlogPost[] = [
   {
     id: 'blog-1',
     slug: 'ai-recruiting-2026',
@@ -175,4 +202,6 @@ AI Family 3.0 采用统一大模型底座 + 垂直领域小模型 + 企业知识
   },
 ];
 
-export const BLOG_POST_MAP = Object.fromEntries(BLOG_POSTS.map((p) => [p.slug, p]));
+export const BLOG_POST_MAP: Record<string, BlogPost> = Object.fromEntries(
+  BLOG_POSTS.map((p) => [p.slug, p]),
+);

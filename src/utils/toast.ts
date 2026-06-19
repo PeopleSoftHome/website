@@ -2,10 +2,10 @@
  * 轻量级 Toast 通知
  * 替代 alert()，用于 Portal 前端
  */
-export function showToast(message, type = 'info', duration = 3000) {
+export function showToast(message: string, type: string = 'info', duration = 3000): void {
   if (typeof document === 'undefined') return;
   const el = document.createElement('div');
-  const colors = {
+  const colors: Record<string, string> = {
     info: 'var(--primary)',
     success: '#10b981',
     error: '#ef4444',

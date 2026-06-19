@@ -1,8 +1,16 @@
 import { apiClient as client } from './client.js';
+import type { AxiosResponse } from 'axios';
+
+export type TopicListParams = Record<string, unknown>;
+export type ForumPostData = Record<string, unknown>;
 
 export const forumApi = {
-  getCategories: () => client.get('/forums/categories'),
-  getTopics: (params) => client.get('/forums/topics', { params }),
-  getTopic: (id) => client.get(`/forums/topics/${id}`),
-  createPost: (data) => client.post('/forums/posts', data),
+  getCategories: (): Promise<AxiosResponse> =>
+    client.get('/forums/categories'),
+  getTopics: (params: TopicListParams): Promise<AxiosResponse> =>
+    client.get('/forums/topics', { params }),
+  getTopic: (id: string | number): Promise<AxiosResponse> =>
+    client.get(`/forums/topics/${id}`),
+  createPost: (data: ForumPostData): Promise<AxiosResponse> =>
+    client.post('/forums/posts', data),
 };

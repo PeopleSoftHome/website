@@ -1,4 +1,5 @@
 import { defineAsyncComponent } from 'vue';
+import type { Component } from 'vue';
 
 /**
  * Section 插件注册表
@@ -17,19 +18,43 @@ import { defineAsyncComponent } from 'vue';
  *   // sections = [{ key, component, config, sortOrder, isActive }]
  */
 
-const registry = new Map();
+interface SectionPlugin {
+  title?: string;
+  icon?: string;
+  defaultConfig?: Record<string, unknown>;
+  required?: boolean;
+  component?: Component;
+}
+
+interface RegisteredSection extends SectionPlugin {
+  key: string;
+}
+
+interface PageSection {
+  type: string;
+  sortOrder?: number;
+  isActive?: boolean;
+  config?: Record<string, unknown>;
+}
+
+interface ResolvedSection {
+  key: string;
+  component: Component | null;
+  title: string;
+  config: Record<string, unknown>;
+  sortOrder: number;
+  isActive: boolean;
+  isUnknown: boolean;
+}
+
+const registry = new Map<string, RegisteredSection>();
 
 /**
  * 注册一个 Section 插件
- * @param {string} key - 唯一标识，如 'hero', 'stats', 'products'
- * @param {Object} plugin
- * @param {Function} plugin.component - defineAsyncComponent(() => import('...'))
- * @param {string} plugin.title - 中文名称
- * @param {string} [plugin.icon] - 图标名
- * @param {Object} [plugin.defaultConfig] - 默认配置（JSON）
- * @param {boolean} [plugin.required=false] - 是否必须显示（不可禁用）
+ * @param key - 唯一标识，如 'hero', 'stats', 'products'
+ * @param plugin - 插件配置
  */
-export function registerSection(key, plugin) {
+export function registerSection(key: string, plugin: SectionPlugin) {
   if (registry.has(key)) {
     if (import.meta.env.DEV) {
       console.warn(`[sectionRegistry] Section "${key}" is already registered, overwriting.`);
@@ -48,32 +73,41 @@ export function registerSection(key, plugin) {
 /**
  * 获取单个 Section 插件
  */
-export function getSection(key) {
+export function getSection(key: string): RegisteredSection | undefined {
   return registry.get(key);
 }
 
 /**
  * 获取所有已注册的 Section 插件
  */
-export function getAllSections() {
+export function getAllSections(): RegisteredSection[] {
   return Array.from(registry.values());
 }
 
 /**
  * 根据 CMS Page 配置解析要渲染的 Section 列表
  *
- * @param {Object} pageConfig - CMS 返回的 Page 对象
- * @param {Array} pageConfig.sections - [{ type, sortOrder, isActive, config }]
- * @returns {Array} 按 sortOrder 排序的 Section 渲染列表
+ * @param pageConfig - CMS 返回的 Page 对象
+ * @returns 按 sortOrder 排序的 Section 渲染列表
  */
-export function resolveSections(pageConfig) {
-  const sections = pageConfig?.sections || [];
+export function resolveSections(pageConfig: unknown = {}): ResolvedSection[] {
+  const config = pageConfig as { sections?: PageSection[] } | null | undefined;
+  const sections = config?.sections || [];
 
   if (sections.length === 0) {
     // CMS 无配置时，使用所有已注册且未标记 required=false 的 Section
     return getAllSections()
       .filter((s) => s.component)
-      .sort((a, b) => (DEFAULT_ORDER[a.key] ?? 99) - (DEFAULT_ORDER[b.key] ?? 99));
+      .map((s) => ({
+        key: s.key,
+        component: s.component || null,
+        title: s.title || s.key,
+        config: s.defaultConfig || {},
+        sortOrder: (DEFAULT_ORDER as Record<string, number>)[s.key] ?? 99,
+        isActive: true,
+        isUnknown: false,
+      }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
   return sections

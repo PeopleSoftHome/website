@@ -23,11 +23,11 @@ import s from './DemoModal.module.css';
 
 const { t } = useI18n();
 const modalStore = useModalStore();
-const SCALES = t('modal.scales') || [];
-const selected = ref(SCALES[1] || '');
+const SCALES = (t('modal.scales') as unknown as string[]) || [];
+const selected = ref<string>(SCALES[1] || '');
 
 watch(selected, (val) => {
-  modalStore.formData.value.scale = val;
+  modalStore.formData.scale = val;
 }, { immediate: true });
 
 const emit = defineEmits(['submit']);

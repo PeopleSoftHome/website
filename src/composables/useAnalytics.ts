@@ -7,6 +7,20 @@
 import { ref, readonly } from 'vue';
 import { apiClient } from '@/api/client.js';
 
+interface AnalyticsPayload {
+  event: string;
+  properties: Record<string, unknown>;
+  sessionId: string;
+}
+
+interface AnalyticsQueue {
+  queue?: unknown[];
+  push?: (evt: AnalyticsPayload) => void;
+  flush?: () => void;
+  _queue?: AnalyticsPayload[];
+  [key: string]: unknown;
+}
+
 function readConsent() {
   try {
     const raw = localStorage.getItem('tp-cookie-consent');
@@ -27,23 +41,24 @@ function getSessionId() {
 
 function flushQueue() {
   if (typeof window === 'undefined') return;
-  const q = window.tp_analytics || [];
+  const q = (window.tp_analytics?._queue || []) as AnalyticsPayload[];
   window.tp_analytics = {
     push: (evt) => {
-      q.push(evt);
+      q.push(evt as AnalyticsPayload);
       if (import.meta.env.DEV) console.log('[Analytics]', evt);
     },
-  };
+    _queue: q,
+  } as Window['tp_analytics'];
 }
 
 // 批量上报到后端（防抖）
-let flushTimer = null;
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
 function scheduleFlush() {
   if (flushTimer) clearTimeout(flushTimer);
   flushTimer = setTimeout(() => {
-    const queue = window.tp_analytics?._queue || [];
+    const queue = (window.tp_analytics as AnalyticsQueue)?._queue || [];
     if (queue.length === 0) return;
-    window.tp_analytics._queue = [];
+    (window.tp_analytics as AnalyticsQueue)._queue = [];
     apiClient.post('/analytics/events', { events: queue }).catch(() => {});
   }, 5000);
 }
@@ -51,17 +66,18 @@ function scheduleFlush() {
 export function useAnalytics() {
   const enabled = ref(readConsent());
 
-  const track = (event, props = {}) => {
+  const track = (event: string, props: Record<string, unknown> = {}) => {
     if (!enabled.value) return;
-    const payload = {
+    const payload: AnalyticsPayload = {
       event,
       properties: { ...props, ts: Date.now(), url: location.href },
       sessionId: getSessionId(),
     };
     if (typeof window !== 'undefined') {
-      window.tp_analytics?.push?.(payload);
-      if (!window.tp_analytics._queue) window.tp_analytics._queue = [];
-      window.tp_analytics._queue.push(payload);
+      (window.tp_analytics as AnalyticsQueue)?.push?.(payload);
+      const analytics = window.tp_analytics as AnalyticsQueue;
+      if (!analytics._queue) analytics._queue = [];
+      analytics._queue.push(payload);
       scheduleFlush();
     }
   };
@@ -77,7 +93,7 @@ export function useAnalytics() {
     });
     // 页面卸载前立即上报
     window.addEventListener('beforeunload', () => {
-      const queue = window.tp_analytics?._queue || [];
+      const queue = ((window.tp_analytics as AnalyticsQueue)?._queue || []) as AnalyticsPayload[];
       if (queue.length === 0) return;
       const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
       navigator.sendBeacon?.(

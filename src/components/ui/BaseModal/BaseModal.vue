@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 import { useScrollLock } from '@/composables/useScrollLock.js';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
 
@@ -28,16 +29,16 @@ const props = defineProps({
 });
 const emit = defineEmits(['close']);
 
-const overlayRef = ref(null);
+const overlayRef: Ref<HTMLElement | null> = ref(null);
 
 useScrollLock(() => props.isOpen);
 useFocusTrap(() => props.isOpen, overlayRef);
 
-function onOverlayClick(e) {
+function onOverlayClick(e: MouseEvent) {
   if (e.target === e.currentTarget) emit('close');
 }
 
-function onKey(e) {
+function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.isOpen) emit('close');
 }
 

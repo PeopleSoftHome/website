@@ -1,8 +1,14 @@
 import { ref, onMounted } from 'vue';
 import { apiClient } from '@/api/client.js';
 
-const experiments = ref([]);
-const variants = ref({}); // { experimentKey: 'A' | 'B' }
+interface Experiment {
+  id: string | number;
+  key: string;
+  trafficSplit?: number;
+}
+
+const experiments = ref<Experiment[]>([]);
+const variants = ref<Record<string, 'A' | 'B'>>({});
 const sessionId = ref('');
 
 function getSessionId() {
@@ -14,7 +20,7 @@ function getSessionId() {
   return sid;
 }
 
-function hashString(str) {
+function hashString(str: string) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) - hash) + str.charCodeAt(i);
@@ -23,7 +29,7 @@ function hashString(str) {
   return Math.abs(hash);
 }
 
-function assignVariant(experiment, sid) {
+function assignVariant(experiment: Experiment, sid: string): 'A' | 'B' {
   const hash = hashString(`${experiment.key}-${sid}`);
   const bucket = hash % 100;
   return bucket < (experiment.trafficSplit || 0.5) * 100 ? 'B' : 'A';
@@ -35,7 +41,7 @@ export function useAbTest() {
   const loadExperiments = async () => {
     try {
       const res = await apiClient.get('/experiments/running');
-      experiments.value = res.data?.data || [];
+      experiments.value = (res.data?.data || []) as Experiment[];
       for (const exp of experiments.value) {
         variants.value[exp.key] = assignVariant(exp, sessionId.value);
         // 上报 impression
@@ -50,11 +56,11 @@ export function useAbTest() {
     }
   };
 
-  const getVariant = (key) => {
+  const getVariant = (key: string) => {
     return variants.value[key] || 'A';
   };
 
-  const trackConversion = (key) => {
+  const trackConversion = (key: string) => {
     const exp = experiments.value.find(e => e.key === key);
     if (!exp) return;
     apiClient.post(`/experiments/${exp.id}/events`, {

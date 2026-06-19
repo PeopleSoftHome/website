@@ -2,7 +2,9 @@
  * useScrollDepth — 滚动深度追踪
  * 动态加载，减少主包体积
  */
-export function useScrollDepth(track) {
+type TrackFn = (event: string, props?: Record<string, unknown>) => void;
+
+export function useScrollDepth(track: TrackFn) {
   const initScrollDepth = () => {
     if (typeof window === 'undefined') return;
     const checkpoints = [25, 50, 75, 90];

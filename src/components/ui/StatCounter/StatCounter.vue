@@ -6,12 +6,12 @@
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({ value: { type: String, default: '' } });
-const el = ref(null);
+const el = ref<HTMLElement | null>(null);
 const display = ref(props.value);
 
 onMounted(() => {
   const match = String(props.value).match(/([0-9.]+)/);
-  if (!match || !el.value) return;
+  if (!match || !el.value || match.index === undefined) return;
   const target = parseFloat(match[0]);
   const prefix = props.value.slice(0, match.index);
   const suffix = props.value.slice(match.index + match[0].length);
@@ -19,11 +19,11 @@ onMounted(() => {
 
   const obs = new IntersectionObserver(
     ([entry]) => {
-      if (entry.isIntersecting && !el.value.dataset.animated) {
+      if (!entry || !entry.isIntersecting || !el.value || el.value.dataset.animated) return;
         el.value.dataset.animated = '1';
         const start = performance.now();
         const dur = 1600;
-        const tick = (now) => {
+        const tick = (now: number) => {
           const p = Math.min((now - start) / dur, 1);
           const eased = 1 - Math.pow(1 - p, 3);
           const cur = isFloat
@@ -34,7 +34,6 @@ onMounted(() => {
         };
         requestAnimationFrame(tick);
         obs.disconnect();
-      }
     },
     { threshold: 0.5 }
   );

@@ -7,8 +7,8 @@
  */
 import { ref } from 'vue';
 
-export function useTabs(initialIndex = 0) {
-  const activeIndex = ref(initialIndex);
-  const selectTab = (index) => { activeIndex.value = index; };
+export function useTabs(initialIndex: number = 0) {
+  const activeIndex = ref<number>(initialIndex);
+  const selectTab = (index: number) => { activeIndex.value = index; };
   return { activeIndex, selectTab };
 }

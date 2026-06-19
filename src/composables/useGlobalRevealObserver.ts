@@ -5,7 +5,15 @@
  */
 import { onMounted, onUnmounted } from 'vue';
 
-export function useGlobalRevealObserver({ analyticsStore }) {
+interface AnalyticsStoreLike {
+  track: (event: string, props?: Record<string, unknown>) => void;
+}
+
+interface UseGlobalRevealObserverOptions {
+  analyticsStore: AnalyticsStoreLike;
+}
+
+export function useGlobalRevealObserver({ analyticsStore }: UseGlobalRevealObserverOptions) {
   onMounted(() => {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
@@ -35,7 +43,7 @@ export function useGlobalRevealObserver({ analyticsStore }) {
 
     scan();
 
-    let scanTimer;
+    let scanTimer: ReturnType<typeof setTimeout> | undefined;
     const debouncedScan = () => {
       clearTimeout(scanTimer);
       scanTimer = setTimeout(scan, 150);

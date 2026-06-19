@@ -1,6 +1,11 @@
 import { apiClient } from './client.js';
+import type { AxiosResponse } from 'axios';
+
+export type AboutListParams = Record<string, unknown>;
 
 export const aboutApi = {
-  getTeam: (params) => apiClient.get('/about/team', { params }),
-  getPartners: (params) => apiClient.get('/about/partners', { params }),
+  getTeam: (params: AboutListParams): Promise<AxiosResponse> =>
+    apiClient.get('/about/team', { params }),
+  getPartners: (params: AboutListParams): Promise<AxiosResponse> =>
+    apiClient.get('/about/partners', { params }),
 };

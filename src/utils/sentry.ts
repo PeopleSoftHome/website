@@ -1,6 +1,12 @@
 import * as Sentry from '@sentry/vue';
+import type { App } from 'vue';
 
-export function initSentry(app, options = {}) {
+interface SentryOptions {
+  dsn?: string;
+  appEnv?: string;
+}
+
+export function initSentry(app: App, options: SentryOptions = {}) {
   const { dsn, appEnv = 'development' } = options;
   if (!dsn) {
     if (appEnv === 'development') {

@@ -1,14 +1,34 @@
 import { ref, computed } from 'vue';
+import type { Ref } from 'vue';
 import { systemApi } from '@/api/system.js';
+
+export interface SocialLink {
+  icon?: string;
+  href?: string;
+  label?: string;
+  ariaLabel?: string;
+  [key: string]: unknown;
+}
+
+interface SiteConfig {
+  sitePhone?: string;
+  copyright?: string;
+  featureFlags?: Record<string, unknown>;
+  hotTags?: string[];
+  socialLinks?: SocialLink[];
+  siteTitle?: string;
+  siteDescription?: string;
+  [key: string]: unknown;
+}
 
 /**
  * 站点级公开配置（由后端 /system/config/public 驱动）
  * 包含：recaptchaSiteKey、sentryDsn、sitePhone、copyright、featureFlags、hotTags、socialLinks、siteTitle、siteDescription 等
  * 请求一次后全局缓存，避免每个组件重复调用。
  */
-const config = ref(null);
+const config: Ref<SiteConfig | null> = ref(null);
 const loading = ref(false);
-let promise = null;
+let promise: Promise<void> | null = null;
 
 export function useSiteConfig() {
   if (!promise && config.value === null) {
@@ -16,7 +36,7 @@ export function useSiteConfig() {
     promise = systemApi
       .getPublicConfig()
       .then((res) => {
-        config.value = res?.data ?? res ?? {};
+        config.value = (res?.data ?? res ?? {}) as SiteConfig;
       })
       .catch(() => {
         config.value = {};

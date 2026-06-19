@@ -27,8 +27,22 @@
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './NavDropdown.module.css';
 
+interface NavDropdownItem {
+  icon: string;
+  title: string;
+  desc: string;
+  href: string;
+}
+
+interface NavDropdownBanner {
+  thumb: string;
+  title: string;
+  desc: string;
+  href: string;
+}
+
 defineProps({
-  items:  { type: Array, default: () => [] },
-  banner: { type: Object, default: null },
+  items:  { type: Array as () => NavDropdownItem[], default: () => [] },
+  banner: { type: Object as () => NavDropdownBanner | null, default: null },
 });
 </script>

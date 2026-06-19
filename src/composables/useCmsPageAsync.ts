@@ -6,7 +6,7 @@
 import { cmsApi } from '@/api/cms.js';
 import { sectionRegistry } from '@/utils/sectionRegistry.js';
 
-export function useCmsPageAsync(pageKey) {
+export function useCmsPageAsync(pageKey: string) {
   const { data: sections, pending, error, refresh } = useAsyncData(
     `cms-page-${pageKey}`,
     async () => {
@@ -14,8 +14,9 @@ export function useCmsPageAsync(pageKey) {
         const page = await cmsApi.getPage(pageKey);
         return sectionRegistry.resolve(page);
       } catch (e) {
-        if (import.meta.env.DEV && !/page.*不存在|not found/i.test(e.message || '')) {
-          console.warn(`[CmsPage] CMS page config load failed for ${pageKey}:`, e.message);
+        const err = e as Error;
+        if (import.meta.env.DEV && !/page.*不存在|not found/i.test(err.message || '')) {
+          console.warn(`[CmsPage] CMS page config load failed for ${pageKey}:`, err.message);
         }
         return sectionRegistry.resolve(null);
       }

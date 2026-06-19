@@ -40,7 +40,7 @@
         <template v-if="auth.isLoggedIn">
           <div :class="s.userInfo">
             <span :class="s.userAvatar">{{ userInitial }}</span>
-            <span>{{ auth.user?.name || auth.user?.email }}</span>
+            <span>{{ user?.name || user?.email }}</span>
           </div>
           <router-link to="/profile" :class="s.directLink" @click="emit('close')">{{ t('nav.profile') }}</router-link>
           <button :class="s.directLink" style="background:none;border:none;width:100%;text-align:left" @click="handleLogout">{{ t('nav.logout') }}</button>
@@ -67,6 +67,11 @@ import Icon from '../../ui/Icon/Icon.vue';
 import Button from '../../ui/Button/Button.vue';
 import s from './MobileMenu.module.css';
 
+interface UserInfo {
+  name?: string;
+  email?: string;
+}
+
 const { t } = useI18n();
 const { navLinks } = useNavigation();
 const modalStore = useModalStore();
@@ -76,13 +81,14 @@ const authOpen = useState('authOpen', () => false);
 defineProps({ isOpen: { type: Boolean, default: false } });
 const emit = defineEmits(['close', 'open-auth']);
 
-const expandedId = ref(null);
-const toggle = (id) => {
+const expandedId = ref<string | null>(null);
+const toggle = (id: string) => {
   expandedId.value = expandedId.value === id ? null : id;
 };
 
+const user = computed(() => auth.user as UserInfo | null | undefined);
 const userInitial = computed(() => {
-  const name = auth.user?.name || auth.user?.email || '';
+  const name = user.value?.name || user.value?.email || '';
   return name.charAt(0).toUpperCase();
 });
 

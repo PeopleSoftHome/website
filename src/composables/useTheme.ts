@@ -8,7 +8,7 @@ import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 
 export function useTheme() {
   const theme = ref('light');
-  let mqHandler = null;
+  let mqHandler: ((e: MediaQueryListEvent) => void) | null = null;
 
   onMounted(() => {
     // 初始化：localStorage → prefers-color-scheme → light
@@ -36,9 +36,11 @@ export function useTheme() {
 
   // 监听系统主题变化（用户未手动设置时跟随系统）
   onMounted(() => {
+    if (typeof localStorage === 'undefined') return;
     const stored = localStorage.getItem('tp-theme');
     if (stored) return; // 已手动设置，不跟随系统
 
+    if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mqHandler = (e) => { theme.value = e.matches ? 'dark' : 'light'; };
     mq.addEventListener('change', mqHandler);
@@ -46,13 +48,14 @@ export function useTheme() {
 
   onUnmounted(() => {
     if (mqHandler) {
+      if (typeof window === 'undefined') return;
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
       mq.removeEventListener('change', mqHandler);
     }
   });
 
   const toggle = () => { theme.value = theme.value === 'dark' ? 'light' : 'dark'; };
-  const setTheme = (t) => {
+  const setTheme = (t: string) => {
     if (t === 'dark' || t === 'light') theme.value = t;
   };
 

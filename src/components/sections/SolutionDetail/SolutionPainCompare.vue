@@ -34,6 +34,19 @@
 import { useI18n } from 'vue-i18n';
 import s from './SolutionPainCompare.vue.module.css';
 
-defineProps({ painPoints: { type: Array, default: () => [] }, solutions: { type: Array, default: () => [] } });
+interface PainPoint {
+  title: string;
+  desc: string;
+}
+
+interface SolutionItem {
+  title: string;
+  desc: string;
+}
+
+defineProps({
+  painPoints: { type: Array as () => PainPoint[], default: () => [] },
+  solutions: { type: Array as () => SolutionItem[], default: () => [] },
+});
 const { t } = useI18n();
 </script>

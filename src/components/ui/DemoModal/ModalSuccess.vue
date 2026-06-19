@@ -45,10 +45,10 @@ const modalStore = useModalStore();
 const lines = computed(() => t('modal.successSub').split('\n'));
 
 const summary = computed(() => ({
-  name: modalStore.formData.value.name || '',
-  company: modalStore.formData.value.company || '',
-  products: modalStore.formData.value.products || [],
-  scale: modalStore.formData.value.scale || '',
+  name: modalStore.formData.name || '',
+  company: modalStore.formData.company || '',
+  products: modalStore.formData.products || [],
+  scale: modalStore.formData.scale || '',
 }));
 
 const hasSummary = computed(() =>

@@ -5,16 +5,29 @@ import {
 } from '@/components/ui/ProductIcons/index.js';
 
 /* ─── Product Matrix ─── */
-export function transformProductTabs(apiTabs) {
+interface ProductTab {
+  slug: string;
+  label: string;
+  products?: Product[];
+}
+
+interface Product {
+  slug: string;
+  name: string;
+  description?: string;
+  tagline?: string;
+}
+
+export function transformProductTabs(apiTabs: unknown[]) {
   if (!Array.isArray(apiTabs)) return [];
-  return apiTabs.map((tab) => ({
+  return (apiTabs as ProductTab[]).map((tab) => ({
     id: tab.slug,
     label: tab.label,
-    iconColor: ICON_COLORS[tab.slug] || ICON_COLORS['hr-saas'],
-    iconBg: ICON_BG_COLORS[tab.slug] || ICON_BG_COLORS['hr-saas'],
+    iconColor: ICON_COLORS[tab.slug as keyof typeof ICON_COLORS] || ICON_COLORS['hr-saas'],
+    iconBg: ICON_BG_COLORS[tab.slug as keyof typeof ICON_BG_COLORS] || ICON_BG_COLORS['hr-saas'],
     products: (tab.products || []).map((p) => ({
       id: p.slug,
-      icon: PRODUCT_ICONS[p.slug] || PRODUCT_ICONS['recruit'],
+      icon: PRODUCT_ICONS[p.slug as keyof typeof PRODUCT_ICONS] || PRODUCT_ICONS['recruit'],
       name: p.name,
       desc: p.description || p.tagline || '',
     })),
@@ -22,9 +35,23 @@ export function transformProductTabs(apiTabs) {
 }
 
 /* ─── Industry Solution ─── */
-export function transformIndustries(apiIndustries) {
+interface IndustryFeature {
+  badge?: string;
+  title?: string;
+  desc?: string;
+}
+
+interface Industry {
+  slug: string;
+  label: string;
+  icon?: string;
+  features?: IndustryFeature[];
+  screenshot?: Record<string, unknown>;
+}
+
+export function transformIndustries(apiIndustries: unknown[]) {
   if (!Array.isArray(apiIndustries)) return [];
-  return apiIndustries.map((ind) => ({
+  return (apiIndustries as Industry[]).map((ind) => ({
     id: ind.slug,
     label: ind.label,
     icon: ind.icon || 'factory',
@@ -46,9 +73,19 @@ const GRAD_PRESETS = [
   'linear-gradient(135deg, #0284C7, #1B5FEB)',
 ];
 
-export function transformTestimonials(apiTestimonials) {
+interface Testimonial {
+  id: string;
+  industry?: string;
+  product?: string;
+  text?: string;
+  name?: string;
+  title?: string;
+  avatar?: string | null;
+}
+
+export function transformTestimonials(apiTestimonials: unknown[]) {
   if (!Array.isArray(apiTestimonials)) return [];
-  return apiTestimonials.map((t, i) => ({
+  return (apiTestimonials as Testimonial[]).map((t, i) => ({
     id: t.id,
     industry: t.industry,
     product: t.product,
@@ -68,11 +105,21 @@ const RESOURCE_TYPE_META = {
   article: { typeLabel: '干货文章', icon: 'target',    imgGrad: 'linear-gradient(135deg, #FFF7ED, #FFEDD5)', cta: '查看详情' },
   guide:   { typeLabel: '报告',   icon: 'clipboard-list', imgGrad: 'linear-gradient(135deg, #F0F9FF, #E0F2FE)', cta: '立即下载' },
   video:   { typeLabel: '直播视频', icon: 'play-circle', imgGrad: 'linear-gradient(135deg, #FDF4FF, #FAE8FF)', cta: '观看回放' },
-};
+} as const;
 
-export function transformResources(apiResources) {
+interface Resource {
+  slug?: string;
+  id?: string;
+  type: keyof typeof RESOURCE_TYPE_META;
+  title: string;
+  description?: string;
+  publishedAt?: string;
+  createdAt?: string;
+}
+
+export function transformResources(apiResources: unknown[]) {
   if (!Array.isArray(apiResources)) return [];
-  return apiResources.map((r) => {
+  return (apiResources as Resource[]).map((r) => {
     const meta = RESOURCE_TYPE_META[r.type] || RESOURCE_TYPE_META.article;
     return {
       id: r.slug || r.id,
@@ -84,16 +131,34 @@ export function transformResources(apiResources) {
       desc: r.description || '',
       date: r.publishedAt
         ? new Date(r.publishedAt).toISOString().split('T')[0]
-        : new Date(r.createdAt).toISOString().split('T')[0],
+        : new Date(r.createdAt as string).toISOString().split('T')[0],
       cta: meta.cta,
     };
   });
 }
 
 /* ─── Navigation ─── */
-export function transformNavigation(apiNav) {
-  if (!apiNav || !apiNav.items) return [];
-  return (apiNav.items || []).map((item) => ({
+interface NavChild {
+  icon?: string;
+  label?: string;
+  description?: string;
+  href?: string;
+}
+
+interface NavItem {
+  id?: string;
+  label?: string;
+  href?: string;
+  children?: NavChild[];
+}
+
+interface Navigation {
+  items?: NavItem[];
+}
+
+export function transformNavigation(apiNav: unknown) {
+  if (!apiNav || !(apiNav as Navigation).items) return [];
+  return ((apiNav as Navigation).items || []).map((item) => ({
     id: item.label?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || item.id,
     label: item.label,
     href: item.href || '#',
@@ -109,9 +174,16 @@ export function transformNavigation(apiNav) {
 }
 
 /* ─── Stats ─── */
-export function transformStats(apiStats) {
+interface Stat {
+  key: string;
+  value: string;
+  suffix?: string;
+  prefix?: string;
+}
+
+export function transformStats(apiStats: unknown[]) {
   if (!Array.isArray(apiStats)) return [];
-  return apiStats.map((s) => ({
+  return (apiStats as Stat[]).map((s) => ({
     id: s.key,
     target: parseInt(s.value.replace(/\D/g, ''), 10) || 0,
     suffix: s.suffix || '',
@@ -120,9 +192,14 @@ export function transformStats(apiStats) {
 }
 
 /* ─── Logos ─── */
-export function transformLogos(apiLogos) {
+interface Logo {
+  name: string;
+  industry?: string;
+}
+
+export function transformLogos(apiLogos: unknown[]) {
   if (!Array.isArray(apiLogos)) return [];
-  return apiLogos.map((l) => ({
+  return (apiLogos as Logo[]).map((l) => ({
     id: l.name.toLowerCase().replace(/\s+/g, '-'),
     name: l.name,
     initial: l.name.charAt(0),
@@ -132,9 +209,23 @@ export function transformLogos(apiLogos) {
 }
 
 /* ─── WhyUs ─── */
-export function transformWhyUsTabs(apiTabs) {
+interface Metric {
+  num?: string | number;
+  value?: string | number;
+  label?: string;
+  desc?: string;
+}
+
+interface WhyUsTab {
+  slug: string;
+  label: string;
+  icon?: string;
+  metrics?: Metric[];
+}
+
+export function transformWhyUsTabs(apiTabs: unknown[]) {
   if (!Array.isArray(apiTabs)) return [];
-  return apiTabs.map((t) => ({
+  return (apiTabs as WhyUsTab[]).map((t) => ({
     id: t.slug,
     label: t.label,
     icon: t.icon,
@@ -147,9 +238,16 @@ export function transformWhyUsTabs(apiTabs) {
 }
 
 /* ─── AI Cards ─── */
-export function transformAiCards(apiCards) {
+interface AiCard {
+  slug: string;
+  icon?: string;
+  name?: string;
+  tagline?: string;
+}
+
+export function transformAiCards(apiCards: unknown[]) {
   if (!Array.isArray(apiCards)) return [];
-  return apiCards.map((c) => ({
+  return (apiCards as AiCard[]).map((c) => ({
     id: c.slug,
     icon: c.icon || 'sparkles',
     name: c.name,
@@ -159,16 +257,25 @@ export function transformAiCards(apiCards) {
 }
 
 /* ─── Search Results ─── */
-export function transformSearchResults(apiResults) {
+const iconMap = {
+  post: 'file-text',
+  product: 'box',
+  industry: 'factory',
+  resource: 'book-open',
+  general: 'link',
+} as const;
+
+interface SearchResult {
+  id: string;
+  type: keyof typeof iconMap;
+  title: string;
+  description?: string;
+  url?: string;
+}
+
+export function transformSearchResults(apiResults: unknown[]) {
   if (!Array.isArray(apiResults)) return [];
-  const iconMap = {
-    post: 'file-text',
-    product: 'box',
-    industry: 'factory',
-    resource: 'book-open',
-    general: 'link',
-  };
-  return apiResults.map((r) => ({
+  return (apiResults as SearchResult[]).map((r) => ({
     id: r.id,
     type: r.type,
     title: r.title,

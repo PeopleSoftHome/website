@@ -12,6 +12,7 @@
  */
 import { onMounted, onUnmounted } from 'vue';
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from 'web-vitals';
+import type { Metric } from 'web-vitals';
 import { apiClient } from '@/api/client.js';
 
 const SESSION_KEY = 'tp-rum-session';
@@ -30,7 +31,7 @@ function getSessionId() {
   return sid;
 }
 
-function sendToAnalytics(metric) {
+function sendToAnalytics(metric: Metric) {
   const payload = {
     event: 'web_vital',
     properties: {
@@ -63,23 +64,31 @@ function sendToAnalytics(metric) {
   }
 }
 
+interface UseRumOptions {
+  reportAllChanges?: boolean;
+}
+
 /**
  * 初始化 RUM 监控
  * @param {Object} options
  * @param {boolean} options.reportAllChanges - 是否报告每次变化（默认 false，仅报告最终值）
  */
-export function useRum(options = {}) {
+export function useRum(options: UseRumOptions = {}) {
   const { reportAllChanges = false } = options;
 
   const opts = { reportAllChanges };
-  let cleanupLCP, cleanupINP, cleanupCLS, cleanupTTFB, cleanupFCP;
+  let cleanupLCP: (() => void) | undefined;
+  let cleanupINP: (() => void) | undefined;
+  let cleanupCLS: (() => void) | undefined;
+  let cleanupTTFB: (() => void) | undefined;
+  let cleanupFCP: (() => void) | undefined;
 
   onMounted(() => {
-    cleanupLCP = onLCP(sendToAnalytics, opts);
-    cleanupINP = onINP(sendToAnalytics, opts);
-    cleanupCLS = onCLS(sendToAnalytics, opts);
-    cleanupTTFB = onTTFB(sendToAnalytics, opts);
-    cleanupFCP = onFCP(sendToAnalytics, opts);
+    cleanupLCP = onLCP(sendToAnalytics, opts) as unknown as (() => void) | undefined;
+    cleanupINP = onINP(sendToAnalytics, opts) as unknown as (() => void) | undefined;
+    cleanupCLS = onCLS(sendToAnalytics, opts) as unknown as (() => void) | undefined;
+    cleanupTTFB = onTTFB(sendToAnalytics, opts) as unknown as (() => void) | undefined;
+    cleanupFCP = onFCP(sendToAnalytics, opts) as unknown as (() => void) | undefined;
   });
 
   onUnmounted(() => {

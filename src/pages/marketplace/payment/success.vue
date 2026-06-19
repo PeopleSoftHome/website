@@ -31,17 +31,25 @@ import s from './success.vue.module.css';
 
 definePageMeta({ title: 'marketplace.paymentSuccess', description: 'marketplace.subtitle' });
 
+interface Order {
+  id: string;
+  orderNo: string;
+  status: string;
+  total: number;
+  currency: string;
+}
+
 const { t } = useI18n();
 const route = useRoute();
 
-const order = ref(null);
+const order = ref<Order | null>(null);
 
 onMounted(async () => {
   const orderId = route.query.order_id;
   if (orderId) {
     try {
-      const res = await paymentApi.getOrder(orderId);
-      order.value = res.data;
+      const res = await paymentApi.getOrder(Array.isArray(orderId) ? orderId[0] : orderId);
+      order.value = res.data as Order;
     } catch {
       // ignore
     }
@@ -50,20 +58,21 @@ onMounted(async () => {
 
 // 自动刷新订单状态（每 3 秒最多刷新 5 次）
 const refreshCount = ref(0);
-let refreshTimer = null;
+let refreshTimer: ReturnType<typeof setInterval> | null = null;
 
 onMounted(() => {
   refreshTimer = setInterval(async () => {
-    if (!order.value || order.value.status === 'COMPLETED' || refreshCount.value >= 5) {
-      clearInterval(refreshTimer);
+    const ord = order.value;
+    if (!ord || ord.status === 'COMPLETED' || refreshCount.value >= 5) {
+      if (refreshTimer) clearInterval(refreshTimer);
       return;
     }
     try {
-      const res = await paymentApi.getOrder(order.value.id);
-      order.value = res.data;
+      const res = await paymentApi.getOrder(ord.id);
+      order.value = res.data as Order;
       refreshCount.value++;
     } catch {
-      clearInterval(refreshTimer);
+      if (refreshTimer) clearInterval(refreshTimer);
     }
   }, 3000);
 });

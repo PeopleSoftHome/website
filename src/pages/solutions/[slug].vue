@@ -78,7 +78,56 @@ import { INDUSTRY_MAP } from '@/data/industries.js';
 import { cmsApi } from '@/api/cms.js';
 import s from './[slug].vue.module.css';
 
-function mergeIndustry(cms, fallback) {
+interface RoadmapItem {
+  phase: string;
+  title: string;
+  desc: string;
+}
+
+interface StatItem {
+  value: string;
+  label: string;
+}
+
+interface PainPoint {
+  title: string;
+  desc: string;
+}
+
+interface SolutionItem {
+  title: string;
+  desc: string;
+}
+
+interface FeatureItem {
+  badge: string;
+  title: string;
+  desc: string;
+}
+
+interface RoiItem {
+  metric: string;
+  value: string;
+  desc: string;
+}
+
+interface IndustryDetail {
+  slug?: string;
+  label?: string;
+  icon?: string;
+  features?: FeatureItem[];
+  screenshot?: string;
+  heroTitle?: string;
+  heroDesc?: string;
+  painPoints?: PainPoint[];
+  architecture?: SolutionItem[];
+  roadmap?: RoadmapItem[];
+  caseStudy?: Record<string, unknown>;
+  roi?: RoiItem[];
+  stats?: StatItem[];
+}
+
+function mergeIndustry(cms: Partial<IndustryDetail> | null, fallback: Partial<IndustryDetail> | null): IndustryDetail | null {
   if (!cms && !fallback) return null;
   const base = fallback || {};
   return {
@@ -106,23 +155,28 @@ const route = useRoute();
 const slug = computed(() => route.params.slug);
 const modalStore = useModalStore();
 
-const { data: industry } = useAsyncData(
-  () => `solution-${slug.value}`,
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
+
+const { data: industry } = useAsyncData<IndustryDetail | null>(
+  () => `solution-${slugStr.value}`,
   async () => {
-    const fallback = INDUSTRY_MAP[slug.value] || null;
+    const key = slugStr.value || '';
+    const fallback = ((INDUSTRY_MAP as Record<string, unknown>)[key] as Partial<IndustryDetail> | undefined) || null;
     try {
-      const cms = await cmsApi.getIndustryBySlug(slug.value);
-      const merged = mergeIndustry(cms, fallback);
+      const cmsRes = await cmsApi.getIndustryBySlug(key);
+      const cms = (cmsRes?.data || cmsRes) as Partial<IndustryDetail> | undefined;
+      const merged = mergeIndustry(cms || null, fallback);
       if (merged) return merged;
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.warn(`[SolutionDetail] CMS load failed for ${slug.value}, using fallback`, e.message);
+        const err = e as Error;
+        console.warn(`[SolutionDetail] CMS load failed for ${key}, using fallback`, err.message);
       }
     }
     if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Solution Not Found', fatal: true });
     }
-    return fallback;
+    return fallback as IndustryDetail;
   },
   { server: false, default: () => null, watch: [slug] }
 );

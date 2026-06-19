@@ -3,10 +3,12 @@
  * 替代原 Vue Router 的 setupRouterGuards
  */
 
-export default defineNuxtRouteMiddleware((to) => {
+import type { RouteLocationNormalized } from 'vue-router';
+
+export default defineNuxtRouteMiddleware((to: RouteLocationNormalized) => {
   const authStore = useAuthStore();
   const nuxtApp = useNuxtApp();
-  const t = nuxtApp.$i18n.t.bind(nuxtApp.$i18n);
+  const t = (nuxtApp.$i18n as { t: (key: string) => string }).t.bind(nuxtApp.$i18n);
 
   /* ── 认证守卫 ── */
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {

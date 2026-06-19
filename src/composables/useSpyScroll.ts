@@ -8,7 +8,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
  */
 export function useSpyScroll(selector = '[data-section]') {
   const activeId = ref('');
-  let observer = null;
+  let observer: IntersectionObserver | null = null;
 
   onMounted(() => {
     const sections = document.querySelectorAll(selector);
@@ -25,7 +25,7 @@ export function useSpyScroll(selector = '[data-section]') {
       { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => { if (observer) observer.observe(section); });
   });
 
   onUnmounted(() => {

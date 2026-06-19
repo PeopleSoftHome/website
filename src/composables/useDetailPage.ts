@@ -13,15 +13,26 @@
  * @param {string} [options.notFoundMessage] - 404 状态消息
  * @returns {Object}
  */
-import { computed } from 'vue';
+import { computed, type Ref } from 'vue';
 
-export function useDetailPage(options) {
+interface UseDetailPageOptions<T = unknown> {
+  keyFn: () => string;
+  fetchFn: (value: string) => Promise<unknown>;
+  param: Ref<string | undefined>;
+  fallbackMap?: Record<string, T>;
+  transform?: (data: unknown) => T;
+  mergeFn?: (apiData: T, fallbackData: T) => T;
+  server?: boolean;
+  notFoundMessage?: string;
+}
+
+export function useDetailPage<T = unknown>(options: UseDetailPageOptions<T>) {
   const {
     keyFn,
     fetchFn,
     param,
     fallbackMap = {},
-    transform = (data) => data,
+    transform = (data: unknown): T => data as T,
     mergeFn,
     server = false,
     notFoundMessage = 'Not Found',
@@ -31,10 +42,13 @@ export function useDetailPage(options) {
     keyFn,
     async () => {
       const value = param.value;
-      let apiData = null;
+      if (!value) {
+        throw createError({ statusCode: 404, statusMessage: notFoundMessage, fatal: true });
+      }
+      let apiData: unknown = null;
       try {
         const res = await fetchFn(value);
-        apiData = res?.data || res || null;
+        apiData = (res as { data?: unknown })?.data || res || null;
       } catch (e) {
         if (import.meta.env.DEV) {
           console.warn(`[useDetailPage] fetch failed for ${value}:`, e);
@@ -56,11 +70,15 @@ export function useDetailPage(options) {
     { server, default: () => null, watch: [param] }
   );
 
-  const data = computed(() => apiRes.value);
+  const data = computed(() => apiRes.value as T | null);
 
   const error = computed(() => {
     if (!fetchError.value) return null;
-    return fetchError.value?.response?.data?.message || fetchError.value?.message || null;
+    const err = fetchError.value as unknown as {
+      response?: { data?: { message?: string } };
+      message?: string;
+    };
+    return err.response?.data?.message || err.message || null;
   });
 
   return {

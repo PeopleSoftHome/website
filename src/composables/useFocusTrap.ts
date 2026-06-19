@@ -2,14 +2,15 @@
  * useFocusTrap — 焦点陷阱 + 初始焦点 + 焦点恢复
  * 用于模态框、侧边栏等覆盖层，确保键盘焦点不逃逸到背景页面。
  *
- * @param {Ref<boolean>} isActive   - 是否激活陷阱
- * @param {Ref<HTMLElement|null>} containerRef - 陷阱容器 ref
+ * @param {Ref<boolean> | (() => boolean)} isActive   - 是否激活陷阱
+ * @param {Ref<HTMLElement|null> | (() => HTMLElement|null)} containerRef - 陷阱容器 ref
  */
-import { ref, watch, onUnmounted } from 'vue';
+import { ref, watch, onUnmounted, toValue } from 'vue';
+import type { Ref, WatchSource, MaybeRef } from 'vue';
 
-export function useFocusTrap(isActive, containerRef) {
-  const prevFocusRef = ref(null);
-  let removeKeyListener = null;
+export function useFocusTrap(isActive: WatchSource<boolean>, containerRef: MaybeRef<HTMLElement | null>) {
+  const prevFocusRef: Ref<HTMLElement | null> = ref(null);
+  let removeKeyListener: (() => void) | null = null;
 
   const restoreFocus = () => {
     if (prevFocusRef.value && typeof prevFocusRef.value.focus === 'function') {
@@ -29,23 +30,24 @@ export function useFocusTrap(isActive, containerRef) {
       return;
     }
 
-    prevFocusRef.value = document.activeElement;
-    const container = containerRef.value;
+    prevFocusRef.value = document.activeElement as HTMLElement | null;
+    const container = toValue(containerRef);
     if (!container) return;
 
     const getFocusable = () =>
       Array.from(
-        container.querySelectorAll(
+        container.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
-      ).filter((el) => !el.disabled && el.offsetParent !== null);
+      ).filter((el) => !('disabled' in el && (el as HTMLButtonElement).disabled) && el.offsetParent !== null);
 
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
       const focusable = getFocusable();
       if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
 
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();

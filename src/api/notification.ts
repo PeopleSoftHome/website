@@ -1,11 +1,18 @@
 import { apiClient } from './client.js';
+import type { AxiosResponse } from 'axios';
 
 /**
  * 基于 fetch + ReadableStream 的 EventSource 兼容封装
  * 支持自定义 Authorization header，避免 token 泄露到 URL / 日志 / 历史记录
  */
 class FetchEventSource {
-  constructor(url) {
+  url: string;
+  closed: boolean;
+  ctrl: AbortController;
+  onmessage: ((event: { data: string }) => void) | null;
+  onerror: ((error: Error) => void) | null;
+
+  constructor(url: string) {
     this.url = url;
     this.closed = false;
     this.ctrl = new AbortController();
@@ -22,6 +29,7 @@ class FetchEventSource {
     })
       .then((response) => {
         if (!response.ok) throw new Error(`SSE HTTP ${response.status}`);
+        if (!response.body) throw new Error('SSE response body is empty');
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -37,7 +45,7 @@ class FetchEventSource {
               buffer += decoder.decode(value, { stream: true });
               // SSE 消息以 \n\n 分隔
               const parts = buffer.split('\n\n');
-              buffer = parts.pop();
+              buffer = parts.pop() || '';
               parts.forEach((part) => {
                 const dataLine = part.split('\n').find((l) => l.startsWith('data:'));
                 if (dataLine && this.onmessage) {
@@ -64,15 +72,15 @@ class FetchEventSource {
 }
 
 export const notificationApi = {
-  getNotifications(page = 1, pageSize = 20) {
+  getNotifications(page = 1, pageSize = 20): Promise<AxiosResponse> {
     return apiClient.get('/notifications', { params: { page, pageSize } });
   },
 
-  markAsRead(id) {
+  markAsRead(id: string | number): Promise<AxiosResponse> {
     return apiClient.patch(`/notifications/${id}/read`);
   },
 
-  markAllAsRead() {
+  markAllAsRead(): Promise<AxiosResponse> {
     return apiClient.patch('/notifications/read-all');
   },
 
@@ -80,7 +88,7 @@ export const notificationApi = {
    * 创建 SSE 连接
    * 使用 httpOnly Cookie 鉴权，不将 token 暴露在 URL/header 中
    */
-  createEventSource() {
+  createEventSource(): FetchEventSource | EventSource {
     const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
     const url = `${baseUrl}/notifications/stream`;
 

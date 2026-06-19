@@ -1,9 +1,10 @@
 import { ref, onMounted, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 
-export function useLazyImage(imgRef) {
+export function useLazyImage(imgRef: Ref<HTMLImageElement | null>) {
   const isLoaded = ref(false);
   const isVisible = ref(false);
-  let observer = null;
+  let observer: IntersectionObserver | null = null;
 
   onMounted(() => {
     const el = imgRef.value;
@@ -19,7 +20,7 @@ export function useLazyImage(imgRef) {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             isVisible.value = true;
-            observer.unobserve(el);
+            if (observer) observer.unobserve(el);
           }
         });
       },

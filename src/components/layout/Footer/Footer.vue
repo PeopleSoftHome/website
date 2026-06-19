@@ -74,16 +74,16 @@ const { copyright: siteCopyright, hotTags: cmsHotTags, socialLinks: cmsSocialLin
 
 const displayHotTags = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : HOT_TAGS));
 
-const iconMap = { zhihu: markRaw(ZhihuIcon), weibo: markRaw(WeiboIcon) };
+const iconMap: Record<string, ReturnType<typeof markRaw>> = { zhihu: markRaw(ZhihuIcon), weibo: markRaw(WeiboIcon) };
 const defaultSocialLinks = computed(() => [
-  { component: markRaw(ZhihuIcon), href: '#', ariaLabel: t('footer.zhihuAria') },
-  { component: markRaw(WeiboIcon), href: '#', ariaLabel: t('footer.weiboAria') },
+  { component: markRaw(ZhihuIcon), href: '#', ariaLabel: t('footer.zhihuAria'), label: '' },
+  { component: markRaw(WeiboIcon), href: '#', ariaLabel: t('footer.weiboAria'), label: '' },
 ]);
 const displaySocialLinks = computed(() => {
   if (cmsSocialLinks.value.length) {
     return cmsSocialLinks.value.map((item) => ({
       ...item,
-      component: iconMap[item.icon] || null,
+      component: iconMap[item.icon || ''] || null,
     }));
   }
   return defaultSocialLinks.value;

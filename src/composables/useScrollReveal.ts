@@ -6,10 +6,11 @@
  * @returns {{ ref: Ref<HTMLElement|null> }}
  */
 import { ref, onMounted, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 
 export function useScrollReveal(threshold = 0.1) {
-  const elRef = ref(null);
-  let obs = null;
+  const elRef: Ref<HTMLElement | null> = ref(null);
+  let obs: IntersectionObserver | null = null;
 
   onMounted(() => {
     const el = elRef.value;
@@ -17,15 +18,14 @@ export function useScrollReveal(threshold = 0.1) {
 
     obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('is-visible');
-          obs.disconnect(); // 只触发一次
-        }
+        if (!entry || !entry.isIntersecting) return;
+        el.classList.add('is-visible');
+        if (obs) obs.disconnect(); // 只触发一次
       },
       { threshold }
     );
 
-    obs.observe(el);
+    if (obs) obs.observe(el);
   });
 
   onUnmounted(() => {

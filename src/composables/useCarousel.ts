@@ -5,13 +5,18 @@
  * ✅ 鼠标悬停时轮播暂停
  */
 import { ref, onMounted, onUnmounted } from 'vue';
+import type { Ref } from 'vue';
 
-export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
+interface UseCarouselOptions {
+  autoPlayInterval?: number;
+}
+
+export function useCarousel(itemCount: number, { autoPlayInterval = 4500 }: UseCarouselOptions = {}) {
   const currentIdx = ref(0);
-  const trackRef = ref(null);
-  let timer = null;
-  let resizeTimer = null;
-  const pauseCleanups = [];
+  const trackRef: Ref<HTMLElement | null> = ref(null);
+  let timer: ReturnType<typeof setInterval> | null = null;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  const pauseCleanups: (() => void)[] = [];
 
   // ── 获取当前列数（响应式，实时读取 DOM 宽度）──
   const getColCount = () => {
@@ -22,7 +27,7 @@ export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
   };
 
   // ── 跳转到指定 idx ──
-  const goTo = (idx) => {
+  const goTo = (idx: number) => {
     const max = Math.max(0, itemCount - getColCount());
     const next = typeof idx === 'number' ? idx : currentIdx.value;
     currentIdx.value = Math.max(0, Math.min(next, max));
@@ -46,7 +51,7 @@ export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
 
   // ── resize 防抖 200ms ──
   const onResize = () => {
-    clearTimeout(resizeTimer);
+    if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       const max = Math.max(0, itemCount - getColCount());
       currentIdx.value = Math.min(currentIdx.value, max);
@@ -61,13 +66,13 @@ export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
   onUnmounted(() => {
     stopAutoPlay();
     window.removeEventListener('resize', onResize);
-    clearTimeout(resizeTimer);
+    if (resizeTimer) clearTimeout(resizeTimer);
     pauseCleanups.forEach(fn => fn());
     pauseCleanups.length = 0;
   });
 
   // ── 绑定悬停暂停事件 ──
-  const bindPauseEvents = (el) => {
+  const bindPauseEvents = (el: HTMLElement | null) => {
     if (!el) return () => {};
     const onEnter = () => stopAutoPlay();
     const onLeave = () => startAutoPlay();
@@ -86,7 +91,7 @@ export function useCarousel(itemCount, { autoPlayInterval = 4500 } = {}) {
     if (!trackRef.value) return 0;
     const cols = getColCount();
     const gap = 20;
-    const totalW = trackRef.value.parentElement.offsetWidth;
+    const totalW = trackRef.value.parentElement?.offsetWidth ?? 0;
     const cardW = Math.floor((totalW - gap * (cols - 1)) / cols);
     return currentIdx.value * (cardW + gap);
   };

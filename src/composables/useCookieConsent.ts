@@ -9,6 +9,12 @@ import { ref, readonly } from 'vue';
 
 const STORAGE_KEY = 'tp-cookie-consent';
 
+interface ConsentPrefs {
+  analytics?: boolean;
+  marketing?: boolean;
+  timestamp?: number;
+}
+
 function readStoredConsent() {
   try {
     if (typeof localStorage === 'undefined') return null;
@@ -18,7 +24,7 @@ function readStoredConsent() {
   return null;
 }
 
-function writeStoredConsent(value) {
+function writeStoredConsent(value: ConsentPrefs) {
   try {
     if (typeof localStorage === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
@@ -50,7 +56,7 @@ export function useCookieConsent() {
     writeStoredConsent({ analytics: false, marketing: false, timestamp: Date.now() });
   };
 
-  const savePreferences = (prefs) => {
+  const savePreferences = (prefs: ConsentPrefs) => {
     analytics.value = !!prefs.analytics;
     marketing.value = !!prefs.marketing;
     hasConsent.value = true;

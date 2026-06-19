@@ -24,7 +24,7 @@
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
-            <router-link v-else :to="link.href" :class="s.item">
+            <router-link v-else :to="link.href || ''" :class="s.item">
               {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily'
                 : link.id === 'about' ? 'about'
                 : link.id}`) }}
@@ -99,7 +99,7 @@
             <div :class="s.userWrap">
               <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
                 <span :class="s.userAvatar">{{ userInitial }}</span>
-                <span :class="s.userName">{{ auth.user?.name || auth.user?.email }}</span>
+                <span :class="s.userName">{{ user?.name || user?.email }}</span>
                 <Icon name="chevron-down" :size="12" />
               </button>
               <div v-if="userMenuOpen" :class="s.userMenu" role="menu">
@@ -142,6 +142,27 @@
 import { ref, computed, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
 
+interface NavDropdownItem {
+  icon: string;
+  title: string;
+  desc: string;
+  href: string;
+}
+
+interface NavLinkItem {
+  id: string;
+  label: string;
+  href?: string;
+  hasDropdown: boolean;
+  items?: NavDropdownItem[];
+  banner?: { thumb: string; title: string; desc: string; href: string };
+}
+
+interface UserInfo {
+  name?: string;
+  email?: string;
+}
+
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import { useNavigation } from '@/composables/useNavigation.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
@@ -154,7 +175,7 @@ const localeOptions = computed(() => [
   { key: 'en', label: t('nav.lang.en') },
   { key: 'zh-TW', label: t('nav.lang.zhTw') },
 ]);
-const localeLabel = (code) => localeOptions.value.find((l) => l.key === code)?.label;
+const localeLabel = (code: string) => localeOptions.value.find((l: { key: string; label: string }) => l.key === code)?.label;
 import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
 import MobileMenu from './MobileMenu.vue';
@@ -162,7 +183,7 @@ import Button from '../../ui/Button/Button.vue';
 import s from './NavBar.module.css';
 
 const { scrolled } = useNavScroll();
-const { navLinks } = useNavigation();
+const { navLinks } = useNavigation() as unknown as { navLinks: NavLinkItem[] };
 const { sitePhone } = useSiteConfig();
 
 const { t, locale, setLocale } = useI18n();
@@ -177,17 +198,17 @@ const langMenuOpen = ref(false);
 const userMenuOpen = ref(false);
 const searchOpen = ref(false);
 const searchQuery = ref('');
-const searchInputRef = ref(null);
+const searchInputRef = ref<HTMLInputElement | null>(null);
 const router = useRouter();
 
 const openMobile = () => { mobileOpen.value = true; };
 const closeMobile = () => { mobileOpen.value = false; };
-const pickLang = (l) => { setLocale(l); langMenuOpen.value = false; };
+const pickLang = (l: string) => { setLocale(l as 'zh' | 'en' | 'zh-TW'); langMenuOpen.value = false; };
 const openAuth = () => { authOpen.value = true; };
 const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
 const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
 
-let searchFocusTimer = null;
+let searchFocusTimer: ReturnType<typeof setTimeout> | null = null;
 
 const openSearchBar = () => {
   searchOpen.value = true;
@@ -199,7 +220,7 @@ const closeSearchBar = () => {
   searchQuery.value = '';
 };
 
-const handleSearchKey = (e) => {
+const handleSearchKey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && searchQuery.value.trim()) {
     searchStore.openSearch();
     closeSearchBar();
@@ -208,8 +229,9 @@ const handleSearchKey = (e) => {
 };
 
 const isDark = computed(() => themeStore.isDark);
+const user = computed(() => auth.user as UserInfo | null | undefined);
 const userInitial = computed(() => {
-  const name = auth.user?.name || auth.user?.email || '';
+  const name = user.value?.name || user.value?.email || '';
   return name.charAt(0).toUpperCase();
 });
 
