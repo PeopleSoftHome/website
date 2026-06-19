@@ -83,6 +83,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news.js';
 import { NEWS_FALLBACK, NEWS_CATEGORIES } from '@/data/news.js';
+import { useListPage } from '@/composables/useListPage.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
@@ -91,16 +92,19 @@ const activeCategoryIndex = ref(0);
 const categoryTabs = computed(() => NEWS_CATEGORIES.map((c) => ({ id: c, label: c })));
 const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || NEWS_CATEGORIES[0]);
 
-const { data: newsRes, pending: loading, error: fetchError } = useAsyncData(
-  'news-list',
-  () => newsApi.getNews({ page: 1, pageSize: NEWS_PAGE_SIZE }),
-  { server: false, default: () => ({ data: [] }) }
-);
+const filters = computed(() => ({ category: activeCategory.value }));
 
-const news = computed(() => {
-  if (fetchError.value) return NEWS_FALLBACK;
-  const apiData = newsRes.value?.data || [];
-  return apiData.length > 0 ? apiData : NEWS_FALLBACK;
+const {
+  items: news,
+  filteredItems,
+  isLoading: loading,
+  error: fetchError,
+} = useListPage({
+  key: 'news-list',
+  fetchFn: () => newsApi.getNews({ page: 1, pageSize: NEWS_PAGE_SIZE }),
+  filters,
+  fallbackData: NEWS_FALLBACK,
+  filterFn: (item, f) => f.category === '全部' || item.category === f.category,
 });
 
 const error = computed(() => {
@@ -108,10 +112,7 @@ const error = computed(() => {
   return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
 });
 
-const filteredNews = computed(() => {
-  if (activeCategory.value === '全部') return news.value;
-  return news.value.filter((n) => n.category === activeCategory.value);
-});
+const filteredNews = computed(() => filteredItems.value);
 
 const featuredNews = computed(() => filteredNews.value.find((n) => n.featured) || filteredNews.value[0] || null);
 const normalNews = computed(() => {
