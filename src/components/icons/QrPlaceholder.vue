@@ -19,7 +19,7 @@
   </svg>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const dots = [
   [38, 38], [42, 38], [50, 38], [58, 38], [62, 38],
   [38, 42], [46, 42], [54, 42], [62, 42],

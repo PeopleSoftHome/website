@@ -64,7 +64,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

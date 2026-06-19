@@ -23,7 +23,7 @@
   </BaseModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
 import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import Icon from '../Icon/Icon.vue';

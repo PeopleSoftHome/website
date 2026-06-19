@@ -2,7 +2,7 @@
   <span ref="el">{{ display }}</span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
 const props = defineProps({ value: { type: String, default: '' } });

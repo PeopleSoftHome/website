@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';

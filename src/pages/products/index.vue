@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';

@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import s from './ProductFeatureCards.vue.module.css';

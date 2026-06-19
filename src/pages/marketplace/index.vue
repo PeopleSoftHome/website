@@ -83,7 +83,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';

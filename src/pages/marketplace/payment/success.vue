@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { paymentApi } from '@/api/marketplace.js';
 import s from './success.vue.module.css';

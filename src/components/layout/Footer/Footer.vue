@@ -58,7 +58,7 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, markRaw } from 'vue';
 import { useNavigation } from '@/composables/useNavigation.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';

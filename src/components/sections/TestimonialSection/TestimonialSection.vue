@@ -42,7 +42,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onUnmounted, inject } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel.js';

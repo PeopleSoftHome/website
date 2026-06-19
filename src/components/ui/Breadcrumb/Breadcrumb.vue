@@ -13,7 +13,7 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue';
 import s from './Breadcrumb.module.css';
 

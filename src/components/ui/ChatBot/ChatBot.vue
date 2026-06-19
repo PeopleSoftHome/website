@@ -58,7 +58,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
 import { useChatBot } from '@/composables/useChatBot.js';

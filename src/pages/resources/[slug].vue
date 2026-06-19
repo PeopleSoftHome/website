@@ -133,7 +133,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';

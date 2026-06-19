@@ -74,7 +74,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import { useVideoModalStore } from '@/stores/videoModal.pinia.js';

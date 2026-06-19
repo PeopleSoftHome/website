@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';

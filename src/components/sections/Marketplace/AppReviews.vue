@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { REVIEWS } from '@/data/marketplace.js';
 import s from './AppReviews.module.css';

@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './NavDropdown.module.css';
 

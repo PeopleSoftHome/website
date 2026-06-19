@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps({ tiers: { type: Array, required: true }, selected: { type: Number, default: 0 } });
 defineEmits(['select', 'subscribe', 'addToCart', 'freeInstall']);
 import s from './AppPricing.module.css';

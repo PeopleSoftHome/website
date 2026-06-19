@@ -2,7 +2,7 @@
   <span ref="el">{{ display }}</span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onUnmounted, inject } from 'vue';
 
 const props = defineProps({

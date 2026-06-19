@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'forum.pageTitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';

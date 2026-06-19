@@ -43,7 +43,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';

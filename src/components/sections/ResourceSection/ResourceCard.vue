@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
 import { RESOURCE_TYPE_STYLES } from '@/data/resources.js';

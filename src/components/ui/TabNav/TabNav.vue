@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './TabNav.module.css';
 
 defineProps({

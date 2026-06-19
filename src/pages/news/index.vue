@@ -74,7 +74,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination.js';

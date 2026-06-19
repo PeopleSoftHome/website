@@ -33,7 +33,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 
 import { useAnalyticsStore } from '@/stores/analytics.pinia.js';

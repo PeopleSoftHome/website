@@ -138,7 +138,7 @@
   <MobileMenu :is-open="mobileOpen" @close="closeMobile" @open-auth="authOpen = true" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
 

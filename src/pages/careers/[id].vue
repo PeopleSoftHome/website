@@ -98,7 +98,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onUnmounted } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';

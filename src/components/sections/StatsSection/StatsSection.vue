@@ -17,7 +17,7 @@
   </RevealWrapper>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 
 import { useCmsDataByKey } from '@/composables/useCmsData.js';

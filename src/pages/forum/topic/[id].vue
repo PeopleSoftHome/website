@@ -65,7 +65,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, onUnmounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { removeJsonLd } from '@/utils/jsonld.js';

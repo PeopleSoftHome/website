@@ -58,7 +58,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import { useAuthStore } from '@/stores/auth.pinia.js';

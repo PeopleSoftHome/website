@@ -96,7 +96,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import { useAnalyticsStore } from '@/stores/analytics.pinia.js';

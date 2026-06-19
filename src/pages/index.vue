@@ -15,7 +15,7 @@
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'pageTitle', description: 'pageDesc' });
 import { onMounted, onUnmounted, inject } from 'vue';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';

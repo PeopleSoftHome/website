@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject, onUnmounted } from 'vue';
 import { userApi } from '@/api/user.js';
 import { renderMarkdown } from '@/utils/markdown.js';

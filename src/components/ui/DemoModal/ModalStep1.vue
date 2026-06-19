@@ -81,7 +81,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onUnmounted, h, watch, computed, onMounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import s from './DemoModal.module.css';

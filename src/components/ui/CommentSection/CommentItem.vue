@@ -38,7 +38,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue';
 import Avatar from '../Avatar/Avatar.vue';
 import CommentForm from '../CommentForm/CommentForm.vue';

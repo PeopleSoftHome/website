@@ -77,7 +77,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'profile.menu.settings', requiresAuth: true });
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';

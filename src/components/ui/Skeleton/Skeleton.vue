@@ -2,7 +2,7 @@
   <div :class="[s.skeleton, animate ? s.animate : '']" :style="wrapStyle" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import s from './Skeleton.module.css';
 

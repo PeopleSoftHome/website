@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';

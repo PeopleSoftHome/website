@@ -70,7 +70,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'blog.pageTitle' });
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';

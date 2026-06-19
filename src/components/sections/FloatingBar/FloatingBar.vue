@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useModalStore } from '@/stores/modal.pinia.js';
 import { useNavScroll } from '@/composables/useNavScroll.js';
 import Icon from '../../ui/Icon/Icon.vue';

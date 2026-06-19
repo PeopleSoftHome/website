@@ -98,7 +98,7 @@
   </BaseModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, watch, onUnmounted } from 'vue';
 import { useSearchStore } from '@/stores/search.pinia.js';
 import { useAnalyticsStore } from '@/stores/analytics.pinia.js';

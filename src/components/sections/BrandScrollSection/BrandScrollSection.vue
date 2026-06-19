@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue';
 import { BRAND_LOGOS } from '@/data/stats.js';
 import s from './BrandScrollSection.module.css';

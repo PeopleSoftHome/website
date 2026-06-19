@@ -30,7 +30,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { commentApi } from '@/api/comment.js';

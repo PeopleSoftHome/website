@@ -37,7 +37,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 import { LOGO_FILTERS } from '@/data/logos.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';

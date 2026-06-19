@@ -39,7 +39,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 
 import { useModalStore } from '@/stores/modal.pinia.js';

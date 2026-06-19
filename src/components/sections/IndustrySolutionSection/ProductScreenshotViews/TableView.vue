@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from '../ProductScreenshot.module.css';
 
 const { t } = useI18n();
