@@ -5,6 +5,8 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 import { PostStatus } from '@prisma/client';
 import { MEILISEARCH_CLIENT } from '../meilisearch/meilisearch.module';
 
+type SearchDocument = Record<string, unknown>;
+
 @Injectable()
 export class SearchIndexService {
   private readonly logger = new Logger(SearchIndexService.name);
@@ -14,17 +16,17 @@ export class SearchIndexService {
     @Inject(MEILISEARCH_CLIENT) private readonly meili: MeiliSearch,
   ) {}
 
-  async indexDocument(entityType: string, payload: any) {
+  async indexDocument(entityType: string, payload: SearchDocument) {
     const indexName = this.mapIndexName(entityType);
     if (!indexName) return;
     try {
       await this.meili.index(indexName).addDocuments([payload]);
-    } catch (e: any) {
-      this.logger.warn(`indexDocument failed: ${e.message}`);
+    } catch (e: unknown) {
+      this.logger.warn(`indexDocument failed: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
-  async updateDocument(entityType: string, entityId: string, payload?: any) {
+  async updateDocument(entityType: string, entityId: string, payload?: SearchDocument) {
     const indexName = this.mapIndexName(entityType);
     if (!indexName) return;
     try {
@@ -36,8 +38,8 @@ export class SearchIndexService {
           await this.meili.index(indexName).updateDocuments([doc]);
         }
       }
-    } catch (e: any) {
-      this.logger.warn(`updateDocument failed: ${e.message}`);
+    } catch (e: unknown) {
+      this.logger.warn(`updateDocument failed: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
@@ -46,8 +48,8 @@ export class SearchIndexService {
     if (!indexName) return;
     try {
       await this.meili.index(indexName).deleteDocument(entityId);
-    } catch (e: any) {
-      this.logger.warn(`deleteDocument failed: ${e.message}`);
+    } catch (e: unknown) {
+      this.logger.warn(`deleteDocument failed: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
@@ -55,7 +57,7 @@ export class SearchIndexService {
     const indexName = this.mapIndexName(entityType);
     if (!indexName) return;
 
-    let documents: any[] = [];
+    let documents: SearchDocument[] = [];
 
     if (entityType === 'blog_post') {
       const posts = await this.prisma.blogPost.findMany({
@@ -119,7 +121,7 @@ export class SearchIndexService {
     return map[entityType] || null;
   }
 
-  async fetchDocumentForIndex(entityType: string, entityId: string): Promise<any | null> {
+  async fetchDocumentForIndex(entityType: string, entityId: string): Promise<SearchDocument | null> {
     if (entityType === 'blog_post') {
       const post = await this.prisma.blogPost.findUnique({
         where: { id: entityId },

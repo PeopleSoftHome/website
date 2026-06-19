@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, ValidationPipe,
+  NotFoundException,
+} from '@nestjs/common';
 import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CmsService } from './cms.service';
@@ -19,6 +22,10 @@ import { CreateResourceDto } from './dto/create-resource.dto';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { BatchUpdateSectionsDto } from './dto/batch-update-sections.dto';
+import { FindCmsContentDto } from './dto/find-cms-content.dto';
+import { FindTranslationListDto } from './dto/find-translation-list.dto';
+import { UpsertTranslationDto } from './dto/upsert-translation.dto';
+import { UpdateTranslationDto } from './dto/update-translation.dto';
 
 @ApiTags('CMS内容管理')
 @Controller('cms')
@@ -27,6 +34,41 @@ export class CmsController {
     private cmsService: CmsService,
     private cmsGenericService: CmsGenericService,
   ) {}
+
+  // URL 类型标识 → Prisma 模型名映射（支持 kebab / 复数 / 单数别名）
+  private readonly contentTypeMap: Record<string, string> = {
+    'product-tabs': 'productTab',
+    'product-tab': 'productTab',
+    productTab: 'productTab',
+    products: 'product',
+    product: 'product',
+    industries: 'industry',
+    industry: 'industry',
+    testimonials: 'testimonial',
+    testimonial: 'testimonial',
+    stats: 'stat',
+    stat: 'stat',
+    logos: 'clientLogo',
+    logo: 'clientLogo',
+    clientLogo: 'clientLogo',
+    'why-us': 'whyUsTab',
+    whyUs: 'whyUsTab',
+    whyUsTab: 'whyUsTab',
+    'ai-cards': 'aiCard',
+    'ai-card': 'aiCard',
+    aiCard: 'aiCard',
+    'resource-categories': 'resourceCategory',
+    'resource-category': 'resourceCategory',
+    resourceCategory: 'resourceCategory',
+    resources: 'resource',
+    resource: 'resource',
+  };
+
+  private resolveContentType(type: string): string {
+    const model = this.contentTypeMap[type];
+    if (!model) throw new NotFoundException(`CMS 内容类型 "${type}" 不存在`);
+    return model;
+  }
 
   // Pages
   @Get('pages')
@@ -65,6 +107,14 @@ export class CmsController {
     return this.cmsService.findAllProducts();
   }
 
+  @Get('products/:slug')
+  @Public()
+  @Cacheable({ key: 'cms:product', ttl: 300 })
+  @ApiOperation({ summary: '产品详情' })
+  findProductBySlug(@Param('slug') slug: string) {
+    return this.cmsService.findProductBySlug(slug);
+  }
+
   @Post('product-tabs')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
@@ -83,6 +133,14 @@ export class CmsController {
   @ApiOperation({ summary: '行业方案列表' })
   findAllIndustries() {
     return this.cmsService.findAllIndustries();
+  }
+
+  @Get('industries/:slug')
+  @Public()
+  @Cacheable({ key: 'cms:industry', ttl: 300 })
+  @ApiOperation({ summary: '行业方案详情' })
+  findIndustryBySlug(@Param('slug') slug: string) {
+    return this.cmsService.findIndustryBySlug(slug);
   }
 
   @Post('industries')
@@ -231,6 +289,55 @@ export class CmsController {
     return this.cmsService.findTranslations(locale, context);
   }
 
+  @Get('translations/list')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:read')
+  @ApiBearerAuth()
+  @Cacheable({ key: 'cms:translations:list', ttl: 60 })
+  @ApiOperation({ summary: '翻译列表（管理后台）' })
+  findAllTranslations(@Query() query: FindTranslationListDto) {
+    return this.cmsService.findAllTranslations(
+      query.page,
+      query.pageSize,
+      query.locale,
+      query.context,
+    );
+  }
+
+  @Post('translations')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:translations', 'cms:translations:list'] })
+  @ApiOperation({ summary: '创建/覆盖翻译' })
+  upsertTranslation(@Body() dto: UpsertTranslationDto) {
+    return this.cmsService.upsertTranslation(dto);
+  }
+
+  @Patch('translations/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:translations', 'cms:translations:list'] })
+  @ApiOperation({ summary: '更新翻译' })
+  updateTranslation(@Param('id') id: string, @Body() dto: UpdateTranslationDto) {
+    return this.cmsService.updateTranslation(id, dto);
+  }
+
+  @Delete('translations/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:delete')
+  @ApiBearerAuth()
+  @CacheEvict({ keys: ['cms:translations', 'cms:translations:list'] })
+  @ApiOperation({ summary: '删除翻译' })
+  deleteTranslation(@Param('id') id: string) {
+    return this.cmsService.deleteTranslation(id);
+  }
+
   // Sections
   @Get('pages/:pageId/sections')
   @Public()
@@ -287,21 +394,74 @@ export class CmsController {
   // ─── 通用内容类型 CRUD（新增内容类型免写独立端点）───
 
   @Get('content/:type')
-  @Public()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:read')
+  @ApiBearerAuth()
   @Cacheable({ key: 'cms:content', ttl: 300 })
   @ApiOperation({ summary: '通用内容类型列表' })
   findAllContent(
     @Param('type') type: string,
-    @Query() pagination: PaginationDto,
+    @Query() pagination: FindCmsContentDto,
   ) {
-    return this.cmsGenericService.findAll(type, pagination.page, pagination.pageSize);
+    const model = this.resolveContentType(type);
+    return this.cmsGenericService.findAll(model, pagination.page, pagination.pageSize, {
+      status: pagination.status,
+    });
   }
 
   @Get('content/:type/:slug')
-  @Public()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:read')
+  @ApiBearerAuth()
   @Cacheable({ key: 'cms:content', ttl: 300 })
   @ApiOperation({ summary: '通用内容类型详情' })
   findContentBySlug(@Param('type') type: string, @Param('slug') slug: string) {
-    return this.cmsGenericService.findBySlug(type, slug);
+    const model = this.resolveContentType(type);
+    return this.cmsGenericService.findBySlug(model, slug);
+  }
+
+  @Post('content/:type')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:create')
+  @ApiBearerAuth()
+  @CacheEvict({ key: 'cms:content' })
+  @ApiOperation({ summary: '创建通用内容类型' })
+  createContent(
+    @Param('type') type: string,
+    @Body(new ValidationPipe({ whitelist: false, transform: true })) data: Record<string, unknown>,
+  ) {
+    const model = this.resolveContentType(type);
+    return this.cmsGenericService.create(model, data);
+  }
+
+  @Patch('content/:type/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:update')
+  @ApiBearerAuth()
+  @CacheEvict({ key: 'cms:content' })
+  @ApiOperation({ summary: '更新通用内容类型' })
+  updateContent(
+    @Param('type') type: string,
+    @Param('id') id: string,
+    @Body(new ValidationPipe({ whitelist: false, transform: true })) data: Record<string, unknown>,
+  ) {
+    const model = this.resolveContentType(type);
+    return this.cmsGenericService.update(model, id, data);
+  }
+
+  @Delete('content/:type/:id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('cms:delete')
+  @ApiBearerAuth()
+  @CacheEvict({ key: 'cms:content' })
+  @ApiOperation({ summary: '删除通用内容类型' })
+  deleteContent(@Param('type') type: string, @Param('id') id: string) {
+    const model = this.resolveContentType(type);
+    return this.cmsGenericService.delete(model, id);
   }
 }

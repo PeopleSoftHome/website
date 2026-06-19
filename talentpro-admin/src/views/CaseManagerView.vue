@@ -6,6 +6,7 @@
         api-url="/case-studies"
         :columns="columns"
         :form-fields="formFields"
+        ai-assist="case-study"
       >
         <template #column-status="{ row }">
           <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'">

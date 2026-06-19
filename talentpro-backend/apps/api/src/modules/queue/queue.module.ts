@@ -22,7 +22,7 @@ import { BullModule } from '@nestjs/bullmq';
             connection: {
               host: clusterNodes[0].host,
               port: clusterNodes[0].port,
-            } as any,
+            } as unknown as { host: string; port: number },
           };
         }
 

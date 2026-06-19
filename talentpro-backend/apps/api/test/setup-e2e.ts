@@ -52,6 +52,7 @@ jest.mock('ioredis', () => {
     isCluster = false;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (MockRedis as any).Cluster = class MockCluster {
     get = jest.fn().mockResolvedValue(null);
     set = jest.fn().mockResolvedValue('OK');

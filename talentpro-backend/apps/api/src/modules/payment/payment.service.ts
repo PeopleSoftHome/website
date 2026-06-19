@@ -1,16 +1,23 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PaymentStatus, PaymentProvider, SubscriptionStatus } from '@prisma/client';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 import Stripe from 'stripe';
+import type { Stripe as StripeTypes } from 'stripe/cjs/stripe.core.js';
 
 @Injectable()
 export class PaymentService {
-  private stripe: InstanceType<typeof Stripe> | null = null;
+  private stripe: StripeTypes | null = null;
 
-  constructor(private prisma: PrismaService) {
-    const secretKey = process.env.STRIPE_SECRET_KEY;
+  constructor(
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {
+    const secretKey = this.config.get<string>('STRIPE_SECRET_KEY');
     if (secretKey) {
+      // Stripe 版本字符串尚未包含在当前类型定义中
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.stripe = new Stripe(secretKey, { apiVersion: '2024-12-18.acacia' as any });
     }
   }
@@ -83,7 +90,7 @@ export class PaymentService {
       throw new BadRequestException('订单状态不允许支付');
     }
 
-    const origin = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const origin = this.config.get<string>('app.frontendUrl', 'http://localhost:3000');
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -114,10 +121,10 @@ export class PaymentService {
   async handleStripeWebhook(signature: string, payload: Buffer) {
     if (!this.stripe) return { received: false };
 
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const endpointSecret = this.config.get<string>('STRIPE_WEBHOOK_SECRET');
     if (!endpointSecret) return { received: false };
 
-    let event: any;
+    let event: StripeTypes.Event;
     try {
       event = this.stripe.webhooks.constructEvent(payload, signature, endpointSecret);
     } catch {
@@ -125,7 +132,7 @@ export class PaymentService {
     }
 
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as any;
+      const session = event.data.object as unknown as StripeTypes.Checkout.Session;
       const orderId = session.metadata?.orderId;
       if (orderId) {
         await this.confirmOrderPayment(orderId, PaymentProvider.STRIPE, session.id);

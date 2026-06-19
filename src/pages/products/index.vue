@@ -66,7 +66,7 @@ import s from './index.vue.module.css';
 const { t } = useI18n();
 const modalStore = inject('modal', { openModal: () => {} });
 
-const tabs = [{ id: 'all', name: t('productPage.all') || '全部' }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];
+const tabs = [{ id: 'all', name: t('productPage.all') }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];
 const activeTab = ref('all');
 
 const allProducts = computed(() => {

@@ -143,7 +143,7 @@ export class MarketplaceAdminController {
 
   @Patch('apps/:id/status')
   @CacheEvict({ keys: ['marketplace:apps', 'marketplace:featured', 'marketplace:app'] })
-  @Permission('marketplace:update')
+  @Permission('marketplace_app:update')
   @ApiOperation({ summary: '更新应用状态' })
   updateAppStatus(
     @Param('id') id: string,
@@ -154,7 +154,7 @@ export class MarketplaceAdminController {
 
   @Post('apps/:id/feature')
   @CacheEvict({ keys: ['marketplace:apps', 'marketplace:featured', 'marketplace:app'] })
-  @Permission('marketplace:update')
+  @Permission('marketplace_app:update')
   @ApiOperation({ summary: '设置应用推荐' })
   featureApp(
     @Param('id') id: string,
@@ -173,18 +173,21 @@ export class MarketplaceAdminController {
   }
 
   @Post('vendors')
+  @Permission('marketplace_vendor:create')
   @ApiOperation({ summary: '创建厂商' })
   createVendor(@Body() dto: CreateVendorDto) {
     return this.marketplaceService.createVendor(dto);
   }
 
   @Patch('vendors/:id')
+  @Permission('marketplace_vendor:update')
   @ApiOperation({ summary: '更新厂商' })
   updateVendor(@Param('id') id: string, @Body() dto: UpdateVendorDto) {
     return this.marketplaceService.updateVendor(id, dto);
   }
 
   @Delete('vendors/:id')
+  @Permission('marketplace_vendor:delete')
   @ApiOperation({ summary: '删除厂商' })
   deleteVendor(@Param('id') id: string) {
     return this.marketplaceService.deleteVendor(id);
@@ -199,18 +202,21 @@ export class MarketplaceAdminController {
   }
 
   @Post('categories')
+  @Permission('marketplace_category:create')
   @ApiOperation({ summary: '创建分类' })
   createCategory(@Body() dto: CreateCategoryDto) {
     return this.marketplaceService.createCategory(dto);
   }
 
   @Patch('categories/:id')
+  @Permission('marketplace_category:update')
   @ApiOperation({ summary: '更新分类' })
   updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
     return this.marketplaceService.updateCategory(id, dto);
   }
 
   @Delete('categories/:id')
+  @Permission('marketplace_category:delete')
   @ApiOperation({ summary: '删除分类' })
   deleteCategory(@Param('id') id: string) {
     return this.marketplaceService.deleteCategory(id);

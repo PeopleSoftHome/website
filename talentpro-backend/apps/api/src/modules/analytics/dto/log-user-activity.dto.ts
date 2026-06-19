@@ -5,5 +5,5 @@ export class LogUserActivityDto {
   action: string;
 
   @IsOptional()
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

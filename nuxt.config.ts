@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1',
+      appEnv: process.env.NUXT_PUBLIC_APP_ENV || 'development',
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       recaptchaSiteKey: process.env.NUXT_PUBLIC_RECAPTCHA_SITE_KEY || '',
       assetBaseUrl: process.env.NUXT_PUBLIC_ASSET_BASE_URL || '/',

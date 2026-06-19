@@ -23,6 +23,7 @@ export default defineConfig({
     include: ['src/**/*.test.js'],
     exclude: ['node_modules', 'dist', '.nuxt'],
     setupFiles: ['./src/test/setup.js'],
+    maxWorkers: 2,
   },
   resolve: {
     alias: {

@@ -11,9 +11,9 @@ export class CreateExperimentDto {
   @IsString()
   description?: string;
 
-  variantA: any;
+  variantA: Record<string, unknown>;
 
-  variantB: any;
+  variantB: Record<string, unknown>;
 
   @IsOptional()
   @IsNumber()

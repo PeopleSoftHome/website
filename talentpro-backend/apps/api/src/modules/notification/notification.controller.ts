@@ -16,6 +16,7 @@ import { NotificationSseService } from './notification-sse.service';
 import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 
 @ApiTags('通知中心')
@@ -50,12 +51,14 @@ export class NotificationController {
   }
 
   @Patch(':id/read')
+  @Permission('notification:update')
   @ApiOperation({ summary: '标记已读' })
   markAsRead(@CurrentUser('id') userId: string, @Param('id') id: string) {
     return this.notificationService.markAsRead(userId, id);
   }
 
   @Patch('read-all')
+  @Permission('notification:update')
   @ApiOperation({ summary: '全部已读' })
   markAllAsRead(@CurrentUser('id') userId: string) {
     return this.notificationService.markAllAsRead(userId);

@@ -65,12 +65,12 @@
         </div>
 
         <div v-if="mode === 'register'" :class="s.formGroup">
-          <label :class="s.label">{{ t('auth.company') || '公司/团队名称' }}</label>
+          <label :class="s.label">{{ t('auth.company') }}</label>
           <input
             v-model="form.company"
             type="text"
             :class="[s.input, fieldError.company ? s.inputError : '']"
-            :placeholder="t('auth.companyPlaceholder') || '请输入公司或团队名称（可选）'"
+            :placeholder="t('auth.companyPlaceholder')"
           />
           <span v-if="fieldError.company" :class="s.errorMsg">{{ fieldError.company }}</span>
         </div>
@@ -91,10 +91,10 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { inject } from 'vue';
+import { ref, watch, inject } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
+import { usePublicConfig } from '@/composables/usePublicConfig.js';
 import s from './AuthModal.module.css';
 
 const props = defineProps({
@@ -106,6 +106,7 @@ const emit = defineEmits(['close']);
 
 const { t } = useI18n();
 const auth = inject('auth', {});
+const { recaptchaSiteKey } = usePublicConfig();
 
 const mode = ref(props.defaultMode);
 const error = ref('');
@@ -164,10 +165,10 @@ const handleSubmit = async () => {
     } else {
       // 注册时获取 reCAPTCHA token
       let recaptchaToken = '';
-      if (window.grecaptcha) {
+      if (recaptchaSiteKey && window.grecaptcha) {
         try {
           recaptchaToken = await window.grecaptcha.execute(
-            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            recaptchaSiteKey,
             { action: 'register' },
           );
         } catch {

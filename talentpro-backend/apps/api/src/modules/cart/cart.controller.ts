@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { CartService } from './cart.service';
 import { AddCartItemDto, UpdateCartItemDto } from './dto/cart-item.dto';
 
@@ -17,12 +18,14 @@ export class CartController {
   }
 
   @Post('items')
+  @Permission('cart:manage')
   @ApiOperation({ summary: '添加商品到购物车' })
   addItem(@CurrentUser('id') userId: string, @Body() dto: AddCartItemDto) {
     return this.cartService.addItem(userId, dto);
   }
 
   @Post('items/:appId')
+  @Permission('cart:manage')
   @ApiOperation({ summary: '更新购物车商品数量' })
   updateItem(
     @CurrentUser('id') userId: string,
@@ -34,6 +37,7 @@ export class CartController {
   }
 
   @Delete('items/:appId')
+  @Permission('cart:manage')
   @ApiOperation({ summary: '移除购物车商品' })
   removeItem(
     @CurrentUser('id') userId: string,
@@ -44,6 +48,7 @@ export class CartController {
   }
 
   @Delete()
+  @Permission('cart:manage')
   @ApiOperation({ summary: '清空购物车' })
   clearCart(@CurrentUser('id') userId: string) {
     return this.cartService.clearCart(userId);

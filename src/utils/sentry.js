@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/vue';
 
-export function initSentry(app) {
-  const dsn = import.meta.env.VITE_SENTRY_DSN;
+export function initSentry(app, options = {}) {
+  const { dsn, appEnv = 'development' } = options;
   if (!dsn) {
-    if (import.meta.env.DEV) {
+    if (appEnv === 'development') {
       console.log('[Sentry] DSN not configured, skipping initialization');
     }
     return;
@@ -13,8 +13,8 @@ export function initSentry(app) {
     app,
     dsn,
     integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-    environment: import.meta.env.VITE_APP_ENV || 'development',
+    tracesSampleRate: appEnv === 'production' ? 0.1 : 1.0,
+    environment: appEnv,
     beforeSend(event) {
       // 过滤敏感信息
       if (event.request?.headers?.Authorization) {

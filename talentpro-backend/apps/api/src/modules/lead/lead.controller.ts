@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { LeadService } from './lead.service';
 import { LeadStatus } from '@prisma/client';
 import { RolesGuard } from '@/common/guards/roles.guard';
@@ -8,6 +9,7 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserContext } from '@/common/types';
 import { Request } from 'express';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -26,7 +28,7 @@ export class LeadController {
   @ApiOperation({ summary: '线索列表' })
   @ApiQuery({ name: 'status', required: false, enum: LeadStatus })
   findAll(
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Query() pagination: PaginationDto,
     @Query('status') status?: LeadStatus,
   ) {
@@ -53,7 +55,7 @@ export class LeadController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: '线索详情' })
-  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user: UserContext) {
     const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
     return this.leadService.findOne(id, workspaceId);
   }
@@ -61,6 +63,7 @@ export class LeadController {
   @Post()
   @Public()
   @UseGuards(RecaptchaGuard)
+  @Throttle({ lead: { limit: 5, ttl: 3600000 } })
   @ApiOperation({ summary: '提交预约演示' })
   create(@Body() dto: CreateLeadDto, @Req() req: Request) {
     return this.leadService.create({
@@ -78,7 +81,7 @@ export class LeadController {
   @ApiOperation({ summary: '更新线索状态' })
   updateStatus(
     @Param('id') id: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: UpdateLeadStatusDto,
   ) {
     const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
@@ -88,9 +91,10 @@ export class LeadController {
   @Post(':id/follow-ups')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('lead:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '添加跟进记录' })
-  addFollowUp(@Param('id') id: string, @CurrentUser() user: any, @Body() dto: AddFollowUpDto) {
+  addFollowUp(@Param('id') id: string, @CurrentUser() user: UserContext, @Body() dto: AddFollowUpDto) {
     const workspaceId = user.role?.name === 'SUPER_ADMIN' ? undefined : user.workspaceId;
     return this.leadService.addFollowUp(id, dto, workspaceId);
   }

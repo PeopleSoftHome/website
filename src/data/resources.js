@@ -23,6 +23,15 @@ export const RESOURCES = [
     downloads: 3200,
     tags: ['AI+HR', '数字化转型', '成熟度模型'],
     featured: true,
+    formRequired: true,
+    audience: 'HRD、HRVP、CIO、企业高管',
+    keyTakeaways: ['HRDIMM 成熟度模型五维度评估框架', '567 家企业数智化现状数据洞察', '三阶转型路径与关键里程碑'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '本白皮书首次提出 HR 数智化成熟度模型 HRDIMM，基于 567 家企业调研数据，系统评估企业在数字化人才管理方面的成熟度水平。' },
+      { id: 'model', title: '成熟度模型', content: 'HRDIMM 包含战略规划、数据治理、技术应用、组织能力和用户体验五大维度，每个维度分 1-5 级，帮助企业精准定位当前所处阶段。' },
+      { id: 'insights', title: '数据洞察', content: '调研显示，仅 12% 的企业达到 L4 级（智能化），46% 的企业停留在 L2 级（数字化）。领先企业在 AI 招聘、智能分析、自动化流程三个领域投入产出比最高。' },
+      { id: 'roadmap', title: '转型路径', content: '针对不同成熟度企业，我们提出「基础夯实→场景突破→全面智能」三阶转型路径，每阶段配套具体举措、工具选型建议和预期收益测算。' },
+    ],
   },
   {
     id: 'campus-guide',
@@ -59,6 +68,15 @@ export const RESOURCES = [
     downloads: 1500,
     tags: ['数字化', '实施路径', 'HRIS'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '《HR 数字化升级全景指南》的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 案例集
   {
@@ -78,6 +96,15 @@ export const RESOURCES = [
     downloads: 1800,
     tags: ['AI 面试', '客户案例', '招聘提效'],
     featured: true,
+    formRequired: true,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '《2026 AI 面试官精选案例集》的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'mfg-cases',
@@ -96,6 +123,15 @@ export const RESOURCES = [
     downloads: 1200,
     tags: ['制造业', '数字化转型', '蓝领招聘'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '《制造业 HR 数字化转型实战案例集》的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 干货文章
   {
@@ -115,6 +151,15 @@ export const RESOURCES = [
     downloads: 950,
     tags: ['AI', '人才盘点', '九宫格'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '如何应用 AI 重塑企业人才盘点体系的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'okr-guide',
@@ -133,6 +178,15 @@ export const RESOURCES = [
     downloads: 780,
     tags: ['OKR', '绩效管理', '组织变革'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: 'OKR 落地失败的 5 大原因与对策的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 直播视频
   {
@@ -152,6 +206,15 @@ export const RESOURCES = [
     downloads: 800,
     tags: ['人才管理', '直播', '方法论'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '人才选用育留一体化：从理念到实践的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'ai-demo-video',
@@ -170,6 +233,15 @@ export const RESOURCES = [
     downloads: 650,
     tags: ['AI Family', '产品演示', '视频教程'],
     featured: true,
+    formRequired: true,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: 'AI Family 产品演示：10 大 AI 助手全景解读的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 产品手册
   {
@@ -189,6 +261,15 @@ export const RESOURCES = [
     downloads: 2100,
     tags: ['招聘系统', '操作手册', '用户指南'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '招聘管理系统 · 用户操作手册的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'manual-performance',
@@ -207,6 +288,15 @@ export const RESOURCES = [
     downloads: 1800,
     tags: ['绩效系统', '配置手册', '管理员'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '绩效管理系统 · 管理员配置手册的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'manual-api',
@@ -225,6 +315,15 @@ export const RESOURCES = [
     downloads: 950,
     tags: ['API', '开发者', '集成指南'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '开放 API · 开发者接入指南的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 问题排查手册
   {
@@ -244,6 +343,15 @@ export const RESOURCES = [
     downloads: 1200,
     tags: ['考勤', '问题排查', '自助解决'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '考勤异常排查手册的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'trouble-payroll',
@@ -262,6 +370,15 @@ export const RESOURCES = [
     downloads: 980,
     tags: ['薪酬', '问题排查', '个税社保'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: '薪酬核算异常排查手册的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   // 公司资料
   {
@@ -281,6 +398,15 @@ export const RESOURCES = [
     downloads: 3500,
     tags: ['公司介绍', '品牌资料', '合作伙伴'],
     featured: true,
+    formRequired: true,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: 'TalentPro 企业介绍手册的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
   {
     id: 'security-whitepaper',
@@ -299,6 +425,15 @@ export const RESOURCES = [
     downloads: 1600,
     tags: ['安全', '合规', '隐私保护'],
     featured: false,
+    formRequired: false,
+    audience: 'HR 从业者、企业管理者',
+    keyTakeaways: ['核心要点一', '核心要点二', '核心要点三'],
+    chapters: [
+      { id: 'overview', title: '概述', content: 'TalentPro 安全与合规白皮书的概述内容。' },
+      { id: 'keypoints', title: '核心要点', content: '本资源的核心要点与关键发现。' },
+      { id: 'practice', title: '实践建议', content: '基于内容总结的实践建议与落地方法。' },
+      { id: 'download', title: '下载与使用', content: '点击下方按钮下载完整资料，或预约演示获取更多支持。' },
+    ],
   },
 ];
 

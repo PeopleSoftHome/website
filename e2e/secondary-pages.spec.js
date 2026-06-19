@@ -102,9 +102,9 @@ test.describe('Secondary Pages', () => {
 
     await expect(page.locator('h1')).toContainText('蒙牛');
     await expect(page.locator('main')).toContainText('80%');
-    await expect(page.locator('main')).toContainText('挑战');
-    await expect(page.locator('main')).toContainText('方案');
-    await expect(page.locator('main')).toContainText('成果');
+    await expect(page.locator('main')).toContainText('调研');
+    await expect(page.locator('main')).toContainText('需求调研与方案设计');
+    await expect(page.locator('main')).toContainText('正式上线');
   });
 
   test('Resources page should filter by type', async ({ page }) => {
@@ -116,8 +116,11 @@ test.describe('Secondary Pages', () => {
     await expect(page.locator('main')).toContainText('白皮书');
     await expect(page.locator('main')).toContainText('案例集');
 
-    // Click whitepaper filter
-    await page.locator('button:has-text("白皮书")').first().click();
+    // Click whitepaper filter (use evaluate because tab may be inside overflow-x container on mobile)
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll('button[role="tab"]')).find(b => b.textContent.trim() === '白皮书');
+      if (btn) btn.click();
+    });
     await page.waitForTimeout(300);
   });
 

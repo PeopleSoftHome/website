@@ -54,6 +54,7 @@ import { blogApi } from '@/api/blog.js';
 import { renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { BLOG_POST_MAP } from '@/data/blog.js';
 import s from './[slug].vue.module.css';
 
 definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
@@ -64,12 +65,18 @@ const route = useRoute();
 const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(
   `blog-${route.params.slug}`,
   async () => {
-    const res = await blogApi.getPost(route.params.slug);
-    const data = res.data || res || null;
-    if (!data) {
+    try {
+      const res = await blogApi.getPost(route.params.slug);
+      const data = res.data || res || null;
+      if (data) return data;
+    } catch (e) {
+      // API 不可用时降级到静态 fallback
+    }
+    const fallback = BLOG_POST_MAP[route.params.slug] || null;
+    if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
     }
-    return data;
+    return fallback;
   },
   { server: false, default: () => null }
 );

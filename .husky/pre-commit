@@ -1,17 +1,16 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # 运行 lint-staged（前端）
 npx lint-staged
+
+ROOT_DIR=$(pwd)
 
 # 如果后端文件有修改，运行后端 lint
 if git diff --cached --name-only | grep -q "^talentpro-backend/"; then
   echo "Running backend lint..."
-  cd talentpro-backend && npm run lint
+  (cd "$ROOT_DIR/talentpro-backend" && npm run lint)
 fi
 
 # 如果 admin 文件有修改，运行 admin lint
 if git diff --cached --name-only | grep -q "^talentpro-admin/"; then
   echo "Running admin lint..."
-  cd talentpro-admin && npm run lint
+  (cd "$ROOT_DIR/talentpro-admin" && npm run lint)
 fi

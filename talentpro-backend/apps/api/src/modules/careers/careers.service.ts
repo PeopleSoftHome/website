@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { JobRepository } from './job.repository';
 
@@ -10,7 +11,7 @@ export class CareersService {
   ) {}
 
   async findAll(type?: string, department?: string, location?: string, page = 1, pageSize = 20) {
-    const where: any = { status: 'open', deletedAt: null };
+    const where: Prisma.JobWhereInput = { status: 'open', deletedAt: null };
     if (type) where.type = type;
     if (department) where.department = department;
     if (location) where.location = { contains: location, mode: 'insensitive' };

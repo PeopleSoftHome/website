@@ -5,48 +5,43 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
+import * as ipaddr from 'ipaddr.js';
 
-function ipToLong(ip: string): number {
-  const parts = ip.split('.').map(Number);
-  return parts[0] * 16777216 + parts[1] * 65536 + parts[2] * 256 + parts[3];
-}
+/**
+ * 判断 IP/CIDR 模式是否匹配目标地址
+ * 支持 IPv4/IPv6 精确匹配与 CIDR，IPv4 额外支持通配符（如 192.168.1.*）
+ */
+function matchIpPattern(target: string, pattern: string): boolean {
+  const trimmedPattern = pattern.trim();
+  if (!trimmedPattern) return false;
 
-function parseCidr(cidr: string): { start: number; end: number } {
-  const [ip, maskStr] = cidr.split('/');
-  const long = ipToLong(ip);
-  const bits = parseInt(maskStr, 10);
-  const hostBits = 32 - bits;
-  const start = Math.floor(long / Math.pow(2, hostBits)) * Math.pow(2, hostBits);
-  const end = start + Math.pow(2, hostBits) - 1;
-  return { start, end };
-}
-
-function matchIpPattern(ip: string, pattern: string): boolean {
   // CIDR
-  if (pattern.includes('/')) {
-    const { start, end } = parseCidr(pattern);
-    const long = ipToLong(ip);
-    return long >= start && long <= end;
+  if (trimmedPattern.includes('/')) {
+    try {
+      const [parsedNetwork, prefix] = ipaddr.parseCIDR(trimmedPattern);
+      const parsedTarget = ipaddr.parse(target);
+      if (parsedTarget.kind() !== parsedNetwork.kind()) return false;
+      return parsedTarget.match(parsedNetwork, prefix);
+    } catch {
+      return false;
+    }
   }
 
-  // Wildcard
-  if (pattern.includes('*')) {
+  // Wildcard（仅 IPv4）
+  if (trimmedPattern.includes('*')) {
     const regex = new RegExp(
-      '^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '\\d{1,3}') + '$',
+      '^' + trimmedPattern.replace(/\./g, '\\.').replace(/\*/g, '\\d{1,3}') + '$',
     );
-    return regex.test(ip);
+    return regex.test(target);
   }
 
   // Exact match
-  return ip === pattern;
-}
-
-function getClientIp(request: any): string {
-  const forwarded = request.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0].trim();
+  try {
+    return ipaddr.parse(target).toString() === ipaddr.parse(trimmedPattern).toString();
+  } catch {
+    return target === trimmedPattern;
   }
-  return request.ip || '';
 }
 
 @Injectable()
@@ -54,8 +49,8 @@ export class IpFilterGuard implements CanActivate {
   constructor(private configService: ConfigService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    const clientIp = getClientIp(request);
+    const request = context.switchToHttp().getRequest<Request>();
+    const clientIp = this.getClientIp(request);
 
     // 未获取到 IP，默认放行
     if (!clientIp) {
@@ -87,6 +82,35 @@ export class IpFilterGuard implements CanActivate {
     }
 
     return true;
+  }
+
+  /**
+   * 获取客户端真实 IP
+   * - 配置 TRUSTED_PROXIES 后，才信任 X-Forwarded-For
+   * - 否则直接使用 Express 解析的 request.ip，避免客户端伪造
+   */
+  private getClientIp(request: Request): string {
+    const trustedProxies = this.parseIpList('TRUSTED_PROXIES');
+    const remoteAddress =
+      (request.socket?.remoteAddress) ||
+      (request.connection?.remoteAddress) ||
+      request.ip ||
+      '';
+
+    const forwarded = request.headers['x-forwarded-for'];
+    if (
+      trustedProxies.length > 0 &&
+      remoteAddress &&
+      trustedProxies.some((pattern) => matchIpPattern(remoteAddress, pattern)) &&
+      typeof forwarded === 'string' &&
+      forwarded.length > 0
+    ) {
+      // 取 X-Forwarded-For 中第一个非空地址作为客户端地址
+      const firstIp = forwarded.split(',')[0].trim();
+      if (firstIp) return firstIp;
+    }
+
+    return request.ip || remoteAddress;
   }
 
   private parseIpList(envKey: string): string[] {

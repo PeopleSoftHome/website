@@ -45,6 +45,7 @@ import { computed, inject, ref } from 'vue';
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
+import { transformIndustries } from '@/api/transforms.js';
 
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
@@ -64,15 +65,7 @@ const trackedSelectTab = (idx) => {
 };
 
 const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('industries', {
-  transform: (active) => (active || []).map((item) => ({
-    id: item.name
-      ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-      : `industry-${Math.random().toString(36).slice(2, 7)}`,
-    label: item.name || '',
-    icon: item.icon || 'factory',
-    features: item.features || [],
-    screenshot: item.screenshot || {},
-  })),
+  transform: transformIndustries,
   fallbackKey: 'industries',
 });
 
@@ -94,7 +87,7 @@ const features = computed(() => {
   if (panel.value?.features && panel.value.features.length > 0) {
     return panel.value.features;
   }
-  const key = indKey.value || 'manufacturing';
+  const key = indKey.value || 'mfg';
   return [
     { badge: t('industry.badges.f1'), title: t(`industry.${key}.f1title`), desc: t(`industry.${key}.f1desc`) },
     { badge: t('industry.badges.f2'), title: t(`industry.${key}.f2title`), desc: t(`industry.${key}.f2desc`) },

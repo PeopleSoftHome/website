@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import { EmailTemplate } from '@prisma/client';
 import { MailService, MailPayload } from './mail.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
@@ -13,7 +14,6 @@ jest.mock('nodemailer', () => ({
 describe('MailService', () => {
   let service: MailService;
   let prisma: PrismaService;
-  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,7 +23,7 @@ describe('MailService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              const map: Record<string, any> = {
+              const map: Record<string, unknown> = {
                 SMTP_HOST: 'smtp.example.com',
                 SMTP_PORT: 587,
                 SMTP_USER: 'user@example.com',
@@ -47,7 +47,6 @@ describe('MailService', () => {
 
     service = module.get<MailService>(MailService);
     prisma = module.get<PrismaService>(PrismaService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   afterEach(() => {
@@ -73,7 +72,7 @@ describe('MailService', () => {
         html: '<p>Hello {{name}}</p>',
         body: '<p>Hello {{name}}</p>',
       };
-      jest.spyOn(prisma.emailTemplate, 'findUnique').mockResolvedValue(mockTemplate as any);
+      jest.spyOn(prisma.emailTemplate, 'findUnique').mockResolvedValue(mockTemplate as unknown as EmailTemplate);
 
       await service.send(payload);
 
@@ -121,9 +120,9 @@ describe('MailService', () => {
 
     it('should log mock message when SMTP is not configured', async () => {
       // Recreate service with no SMTP config
-      const noSmtpConfig = { get: jest.fn(() => null) } as any;
+      const noSmtpConfig = { get: jest.fn(() => null) } as unknown as ConfigService;
       const noSmtpService = new MailService(noSmtpConfig, prisma);
-      const loggerLog = jest.spyOn((noSmtpService as any).logger, 'log').mockImplementation(() => {});
+      const loggerLog = jest.spyOn((noSmtpService as unknown as { logger: { log: jest.Mock } }).logger, 'log').mockImplementation(() => {});
 
       const payload: MailPayload = {
         to: 'user@example.com',

@@ -33,10 +33,24 @@
         </el-form-item>
       </el-form>
       <template #footer>
+        <AiAssistButton
+          type="email-template"
+          :title="form.subject"
+          :content="form.body || form.html"
+          @result="(p) => { aiPayload.value = p; aiVisible.value = true; }"
+        />
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
+
+    <AiAssistDialog
+      v-model:visible="aiVisible"
+      type="email-template"
+      :title="aiPayload.title"
+      :content="aiPayload.content"
+      @apply="(r) => applyAiResult(r, form)"
+    />
   </div>
 </template>
 
@@ -44,6 +58,11 @@
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
+import AiAssistButton from '@/components/AiAssistButton.vue';
+import AiAssistDialog from '@/components/AiAssistDialog.vue';
+
+const aiVisible = ref(false);
+const aiPayload = ref({ type: 'email-template', title: '', content: '' });
 
 const templates = ref([]);
 const loading = ref(false);
@@ -98,4 +117,12 @@ const handleDelete = async (row) => {
 };
 
 onMounted(fetchTemplates);
+
+const applyAiResult = ({ action, result }, target) => {
+  if (result.title) target.subject = result.title;
+  if (result.summary) target.body = result.summary;
+  if (result.content) target.body = result.content;
+  if (result.translation) target.body = result.translation;
+  ElMessage.success('已应用生成结果，请确认后再保存');
+};
 </script>

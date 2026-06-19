@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ResourceType } from '@prisma/client';
+import { Prisma, ResourceType } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { CmsContentRepository } from './cms-content.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';
@@ -22,6 +22,10 @@ export class CmsContentService {
     });
   }
 
+  async findProductBySlug(slug: string) {
+    return this.cmsRepo.forModel('product').findBySlug(slug);
+  }
+
   async createProductTab(data: { label: string; slug: string; icon?: string; iconColor?: string; iconBg?: string }) {
     return this.cmsRepo.forModel('productTab').create(data);
   }
@@ -29,7 +33,7 @@ export class CmsContentService {
   async createProduct(data: { tabId: string; slug: string; name: string; tagline: string; description?: string; icon?: string; features?: Record<string, unknown>[] }) {
     const product = await this.cmsRepo.forModel('product').create({
       ...data,
-      features: (data.features || []) as any,
+      features: data.features || [],
     });
     this.eventEmitter.emit('search.index', new SearchIndexEvent('product', product.id, 'create'));
     return product;
@@ -44,11 +48,15 @@ export class CmsContentService {
     });
   }
 
+  async findIndustryBySlug(slug: string) {
+    return this.cmsRepo.forModel('industry').findBySlug(slug);
+  }
+
   async createIndustry(data: { slug: string; label: string; icon?: string; features?: Record<string, unknown>[]; screenshot?: Record<string, unknown> }) {
     return this.cmsRepo.forModel('industry').create({
       ...data,
-      features: (data.features || []) as any,
-      screenshot: (data.screenshot || {}) as any,
+      features: data.features || [],
+      screenshot: data.screenshot || {},
     });
   }
 
@@ -107,8 +115,8 @@ export class CmsContentService {
   async upsertWhyUsTab(data: { slug: string; label: string; icon?: string; metrics?: Record<string, unknown>[]; sortOrder?: number }) {
     return this.cmsRepo.forModel('whyUsTab').upsert(
       { slug: data.slug },
-      { label: data.label, icon: data.icon, metrics: data.metrics as any, sortOrder: data.sortOrder },
-      data as any,
+      { label: data.label, icon: data.icon, metrics: data.metrics, sortOrder: data.sortOrder },
+      data,
     );
   }
 
@@ -124,14 +132,14 @@ export class CmsContentService {
   async upsertAiCard(data: { slug: string; name: string; tagline: string; description?: string; icon?: string; features?: Record<string, unknown>[]; color?: string; sortOrder?: number }) {
     return this.cmsRepo.forModel('aiCard').upsert(
       { slug: data.slug },
-      { name: data.name, tagline: data.tagline, description: data.description, icon: data.icon, features: data.features as any, color: data.color, sortOrder: data.sortOrder },
-      data as any,
+      { name: data.name, tagline: data.tagline, description: data.description, icon: data.icon, features: data.features, color: data.color, sortOrder: data.sortOrder },
+      data,
     );
   }
 
   // ─── Resource ───
   async findAllResources(page = 1, pageSize = 20, categorySlug?: string) {
-    const where: any = { status: 'PUBLISHED' };
+    const where: Prisma.ResourceWhereInput = { status: 'PUBLISHED' };
     if (categorySlug) {
       where.category = { slug: categorySlug };
     }

@@ -13,7 +13,7 @@ export class UpsertWhyUsTabDto {
 
   @IsOptional()
   @IsArray()
-  metrics?: any[];
+  metrics?: Record<string, unknown>[];
 
   @IsOptional()
   @IsInt()

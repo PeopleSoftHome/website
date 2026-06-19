@@ -346,7 +346,7 @@ Notifications       —                    —
 | # | 技术债 | 影响 | 建议修复方案 | 状态 |
 |---|--------|------|-------------|------|
 | P0-1 | **Admin CMS内容管理无CRUD** | 运营无法维护门户内容 | 为每个CMS板块创建Admin管理页 | ✅ v3.0.0 已完成 |
-| P0-2 | **`User.email`全局`@unique`阻塞多租户** | SaaS无法支持一人多Workspace | Prisma迁移：改为`@@unique([email, workspaceId])` | ⏳ 待 Prisma migrate |
+| P0-2 | **`User.email`全局`@unique`阻塞多租户** | SaaS无法支持一人多Workspace | Prisma迁移：改为`@@unique([email, workspaceId])` | ✅ v3.0.0 已完成（`prisma/schema.prisma` 已改为复合唯一） |
 | P0-3 | **Admin路由无权限拦截** | 低权限用户可浏览管理界面 | `router.beforeEach`增加角色校验 | ✅ v3.0.0 已完成 |
 | P0-4 | **营销门户仍读静态JS常量** | CMS后端能力浪费 | 营销门户核心Section接入CMS API | ✅ v3.0.0 HomePage已接入 |
 
@@ -370,13 +370,13 @@ Notifications       —                    —
 
 | # | 技术债 | 影响 | 建议修复方案 | 状态 |
 |---|--------|------|-------------|------|
-| P2-1 | **PRD与架构文档严重滞后** | 新成员上手成本高 | 重写`prd.md`和`architecture.md` | ⏳ 排入Sprint 21 |
-| P2-2 | **Admin无响应式适配** | 移动端体验差 | 增加Element Plus响应式布局 | ⏳ 低优先级 |
+| P2-1 | **PRD与架构文档严重滞后** | 新成员上手成本高 | 重写`prd.md`和`architecture.md` | ✅ v4.1.0 已同步 |
+| P2-2 | **Admin无响应式适配** | 移动端体验差 | 增加Element Plus响应式布局 | ⚠️ 基础响应式已具备（mobile drawer + 768px 媒体查询），表格/表单细节适配仍待完善 |
 | P2-3 | **Admin无面包屑导航** | 导航体验差 | 增加Breadcrumb组件 | ✅ v3.0.0 LayoutView已集成el-breadcrumb |
 | P2-4 | **Admin无通知中心** | 后端SSE通知无法消费 | 增加通知角标和消息列表 | ✅ v3.0.0 NotificationBell.vue已实现 |
 | P2-5 | **后端无Sentry集成** | 错误追踪依赖日志 | 增加Sentry NestJS SDK | ✅ v3.0.0 占位文件已创建 |
 | P2-6 | **无组件复用体系** | 维护成本高 | 抽离通用组件 | ✅ v3.0.0 CmsTable等通用组件已创建 |
-| P2-7 | **无图片上传组件** | 无法直接管理媒体 | 集成Element Plus Upload | ⏳ 排入Sprint 21（模块A） |
+| P2-7 | **无图片上传组件** | 无法直接管理媒体 | 集成Element Plus Upload | ✅ `ImageUpload.vue` 已集成到 CmsTable / 设置表单 |
 | P2-8 | **JSON-LD结构化数据未完全** | SEO-03标记为⏳ | 补全所有页面JSON-LD | ✅ 本次会话已完成24个页面 |
 | P2-9 | **字体子集化未实现** | PERF-02标记为⏳ | 实施Noto Sans SC子集化 | ✅ v3.0.0 已集成到build脚本 |
 | P2-10 | **前端console.log未完全清理** | 生产环境可能泄露信息 | 扫描并移除硬编码console | ✅ v3.0.0 全部已加DEV保护 |

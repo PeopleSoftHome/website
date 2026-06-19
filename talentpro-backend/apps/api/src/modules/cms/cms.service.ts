@@ -22,10 +22,10 @@ export class CmsService {
 
   // ─── Section (delegate) ───
   findSectionsByPage(pageId: string) { return this.pageService.findSectionsByPage(pageId); }
-  createSection(data: any) { return this.pageService.createSection(data); }
-  updateSection(id: string, data: any) { return this.pageService.updateSection(id, data); }
+  createSection(data: Parameters<CmsPageService['createSection']>[0]) { return this.pageService.createSection(data); }
+  updateSection(id: string, data: Parameters<CmsPageService['updateSection']>[1]) { return this.pageService.updateSection(id, data); }
   deleteSection(id: string) { return this.pageService.deleteSection(id); }
-  batchUpdateSections(sections: any[]) { return this.pageService.batchUpdateSections(sections); }
+  batchUpdateSections(sections: Parameters<CmsPageService['batchUpdateSections']>[0]) { return this.pageService.batchUpdateSections(sections); }
 
   // ─── Navigation (delegate) ───
   findNavigation(key: string) { return this.pageService.findNavigation(key); }
@@ -34,14 +34,19 @@ export class CmsService {
   // ─── Translation (delegate) ───
   findTranslations(locale: string, context?: string) { return this.pageService.findTranslations(locale, context); }
   upsertTranslation(data: Parameters<CmsPageService['upsertTranslation']>[0]) { return this.pageService.upsertTranslation(data); }
+  findAllTranslations(page?: number, pageSize?: number, locale?: string, context?: string) { return this.pageService.findAllTranslations(page, pageSize, locale, context); }
+  updateTranslation(id: string, data: Parameters<CmsPageService['updateTranslation']>[1]) { return this.pageService.updateTranslation(id, data); }
+  deleteTranslation(id: string) { return this.pageService.deleteTranslation(id); }
 
   // ─── Product (delegate) ───
   findAllProducts() { return this.contentService.findAllProducts(); }
+  findProductBySlug(slug: string) { return this.contentService.findProductBySlug(slug); }
   createProductTab(data: Parameters<CmsContentService['createProductTab']>[0]) { return this.contentService.createProductTab(data); }
   createProduct(data: Parameters<CmsContentService['createProduct']>[0]) { return this.contentService.createProduct(data); }
 
   // ─── Industry (delegate) ───
   findAllIndustries() { return this.contentService.findAllIndustries(); }
+  findIndustryBySlug(slug: string) { return this.contentService.findIndustryBySlug(slug); }
   createIndustry(data: Parameters<CmsContentService['createIndustry']>[0]) { return this.contentService.createIndustry(data); }
 
   // ─── Testimonial (delegate) ───

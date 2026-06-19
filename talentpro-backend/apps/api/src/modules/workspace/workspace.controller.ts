@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Patch, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { WorkspaceService } from './workspace.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { InviteMemberDto } from './dto/invite-member.dto';
@@ -19,26 +20,29 @@ export class WorkspaceController {
   }
 
   @Post()
+  @Permission('workspace:create')
   @ApiOperation({ summary: '创建工作空间' })
   create(@CurrentUser('id') userId: string, @Body() dto: CreateWorkspaceDto) {
     return this.workspaceService.create(userId, dto);
   }
 
   @Patch(':id')
+  @Permission('workspace:update')
   @ApiOperation({ summary: '更新工作空间' })
   update(
     @CurrentUser('id') userId: string,
-    @Body('id') workspaceId: string,
+    @Param('id') workspaceId: string,
     @Body() dto: UpdateWorkspaceDto,
   ) {
     return this.workspaceService.update(userId, workspaceId, dto);
   }
 
   @Post(':id/invite')
+  @Permission('workspace:invite')
   @ApiOperation({ summary: '邀请成员' })
   invite(
     @CurrentUser('id') userId: string,
-    @Body('id') workspaceId: string,
+    @Param('id') workspaceId: string,
     @Body() dto: InviteMemberDto,
   ) {
     return this.workspaceService.inviteMember(userId, workspaceId, dto.email);

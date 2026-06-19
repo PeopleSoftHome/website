@@ -20,7 +20,7 @@ export class UpsertAiCardDto {
 
   @IsOptional()
   @IsArray()
-  features?: any[];
+  features?: Record<string, unknown>[];
 
   @IsOptional()
   @IsString()

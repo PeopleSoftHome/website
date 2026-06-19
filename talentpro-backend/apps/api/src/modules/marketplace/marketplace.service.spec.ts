@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException, ConflictException } from '@nestjs/common';
-import { AppStatus, PricingModel, SubscriptionStatus } from '@prisma/client';
+import { AppStatus, PricingModel, SubscriptionStatus, App, AppCategory, Subscription } from '@prisma/client';
 import { MarketplaceService } from './marketplace.service';
 import { MarketplaceRepository } from './marketplace.repository';
 import { PrismaService } from '@/common/prisma/prisma.service';
@@ -68,7 +68,7 @@ describe('MarketplaceService', () => {
       const mockApps = [
         { id: 'a1', name: 'Test App', slug: 'test-app', status: AppStatus.PUBLISHED, pricingModel: PricingModel.FREE },
       ];
-      jest.spyOn(prisma.app, 'findMany').mockResolvedValue(mockApps as any);
+      jest.spyOn(prisma.app, 'findMany').mockResolvedValue(mockApps as unknown as App[]);
       jest.spyOn(prisma.app, 'count').mockResolvedValue(1);
 
       const result = await service.findAllApps({ page: 1, pageSize: 20 });
@@ -78,7 +78,7 @@ describe('MarketplaceService', () => {
     });
 
     it('should filter by category slug', async () => {
-      jest.spyOn(prisma.app, 'findMany').mockResolvedValue([] as any);
+      jest.spyOn(prisma.app, 'findMany').mockResolvedValue([] as unknown as App[]);
       jest.spyOn(prisma.app, 'count').mockResolvedValue(0);
 
       await service.findAllApps({ category: 'recruitment' });
@@ -95,7 +95,7 @@ describe('MarketplaceService', () => {
     });
 
     it('should search by name/tagline/description', async () => {
-      jest.spyOn(prisma.app, 'findMany').mockResolvedValue([] as any);
+      jest.spyOn(prisma.app, 'findMany').mockResolvedValue([] as unknown as App[]);
       jest.spyOn(prisma.app, 'count').mockResolvedValue(0);
 
       await service.findAllApps({ search: 'AI' });
@@ -117,7 +117,7 @@ describe('MarketplaceService', () => {
   describe('findFeaturedApps', () => {
     it('should return featured published apps ordered by sortOrder', async () => {
       const mockApps = [{ id: 'a1', name: 'Featured', featured: true }];
-      jest.spyOn(prisma.app, 'findMany').mockResolvedValue(mockApps as any);
+      jest.spyOn(prisma.app, 'findMany').mockResolvedValue(mockApps as unknown as App[]);
 
       const result = await service.findFeaturedApps();
 
@@ -134,7 +134,7 @@ describe('MarketplaceService', () => {
   describe('findAppBySlug', () => {
     it('should return app when found', async () => {
       const mockApp = { id: 'a1', name: 'Test', slug: 'test' };
-      jest.spyOn(prisma.app, 'findFirst').mockResolvedValue(mockApp as any);
+      jest.spyOn(prisma.app, 'findFirst').mockResolvedValue(mockApp as unknown as App);
 
       const result = await service.findAppBySlug('test');
 
@@ -151,7 +151,7 @@ describe('MarketplaceService', () => {
   describe('findCategories', () => {
     it('should return root categories with children', async () => {
       const mockCats = [{ id: 'c1', name: 'HR', children: [], _count: { apps: 5 } }];
-      jest.spyOn(prisma.appCategory, 'findMany').mockResolvedValue(mockCats as any);
+      jest.spyOn(prisma.appCategory, 'findMany').mockResolvedValue(mockCats as unknown as AppCategory[]);
 
       const result = await service.findCategories();
 
@@ -168,10 +168,10 @@ describe('MarketplaceService', () => {
   describe('installApp', () => {
     it('should create trial subscription and increment install count', async () => {
       const mockApp = { id: 'a1', slug: 'test', pricingModel: PricingModel.SUBSCRIPTION };
-      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue(mockApp as any);
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue(mockApp as unknown as App);
       jest.spyOn(prisma.subscription, 'findFirst').mockResolvedValue(null);
-      jest.spyOn(prisma.subscription, 'create').mockResolvedValue({ id: 's1' } as any);
-      jest.spyOn(prisma.app, 'update').mockResolvedValue({} as any);
+      jest.spyOn(prisma.subscription, 'create').mockResolvedValue({ id: 's1' } as unknown as Subscription);
+      jest.spyOn(prisma.app, 'update').mockResolvedValue({} as unknown as App);
 
       const result = await service.installApp('test', 'ws-1', 'user-1');
 
@@ -196,8 +196,8 @@ describe('MarketplaceService', () => {
 
     it('should throw ConflictException when already installed', async () => {
       const mockApp = { id: 'a1', slug: 'test' };
-      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue(mockApp as any);
-      jest.spyOn(prisma.subscription, 'findFirst').mockResolvedValue({ id: 's1' } as any);
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue(mockApp as unknown as App);
+      jest.spyOn(prisma.subscription, 'findFirst').mockResolvedValue({ id: 's1' } as unknown as Subscription);
 
       await expect(service.installApp('test', 'ws-1', 'user-1')).rejects.toThrow(ConflictException);
     });

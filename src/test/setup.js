@@ -52,3 +52,4 @@ vi.stubGlobal('useAsyncData', vi.fn((key, fetcher) => {
 vi.stubGlobal('useRoute', vi.fn(() => ref({ params: {}, query: {}, meta: {} })));
 vi.stubGlobal('useRouter', vi.fn(() => ({ push: vi.fn(), replace: vi.fn() })));
 vi.stubGlobal('useHead', vi.fn());
+vi.stubGlobal('useRuntimeConfig', vi.fn(() => ({ public: {} })));

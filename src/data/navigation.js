@@ -68,10 +68,18 @@ export const NAV_LINKS = [
     href: '/resources',
   },
   {
-    id: 'marketplace',
-    label: '应用广场',
-    hasDropdown: false,
-    href: '/marketplace',
+    id: 'about',
+    label: '关于我们',
+    hasDropdown: true,
+    items: [
+      { icon: 'building', title: '公司介绍', desc: '了解 TalentPro 的发展历程与愿景', href: '/about' },
+      { icon: 'newspaper', title: '新闻动态', desc: '最新产品发布与企业资讯', href: '/news' },
+      { icon: 'grid', title: '应用广场', desc: '探索丰富的 HR 生态应用', href: '/marketplace' },
+      { icon: 'book-open', title: '博客', desc: 'HR 数字化实践与行业洞察', href: '/blog' },
+      { icon: 'message-circle', title: '社区', desc: '用户交流与最佳实践分享', href: '/forum' },
+      { icon: 'users', title: '加入我们', desc: '与我们一起打造下一代 HR SaaS', href: '/careers' },
+      { icon: 'mail', title: '联系我们', desc: '获取产品咨询与专业支持', href: '/about/contact' },
+    ],
   },
 ];
 
@@ -101,6 +109,9 @@ export const FOOTER_LINKS = [
     links: [
       { label: '公司介绍', href: '/about' },
       { label: '新闻动态', href: '/news' },
+      { label: '应用广场', href: '/marketplace' },
+      { label: '博客', href: '/blog' },
+      { label: '社区', href: '/forum' },
       { label: '安全保障', href: '/about' },
       { label: '联系我们', href: '/about/contact' },
       { label: '加入我们', href: '/careers' },

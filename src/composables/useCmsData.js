@@ -32,6 +32,7 @@ export function registerFallbackModule(key, loader) {
  * @returns {Object} { items, displayItems, isLoading, error, reload }
  */
 export function useCmsData(fetchFn, options = {}) {
+  // CMS 原始数据
   const items = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
@@ -52,6 +53,18 @@ export function useCmsData(fetchFn, options = {}) {
     } finally {
       fallbackLoaded.value = true;
     }
+  };
+
+  /**
+   * 判断当前 CMS 数据是否应回退到静态 fallback
+   * 优先级：CMS 返回有效数据 > fallback > 空。
+   * 当 CMS 已返回数据时优先使用 CMS；CMS 为空/失败时才使用 fallback。
+   */
+  const shouldUseFallback = () => {
+    if (!options.fallbackKey) return false;
+    if (!fallbackLoaded.value) return false;
+    if (items.value.length > 0) return false;
+    return fallbackData.value.length > 0;
   };
 
   const load = async () => {
@@ -82,7 +95,7 @@ export function useCmsData(fetchFn, options = {}) {
   });
 
   const displayItems = computed(() =>
-    items.value.length > 0 ? items.value : fallbackData.value
+    shouldUseFallback() ? fallbackData.value : items.value
   );
 
   return { items, displayItems, isLoading, error, reload: load };

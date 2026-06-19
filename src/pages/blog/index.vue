@@ -80,6 +80,7 @@ import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './index.vue.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination.js';
+import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog.js';
 
 const { t } = useI18n();
 
@@ -98,15 +99,24 @@ const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyn
   { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
 );
 
-const posts = computed(() => postsRes.value?.data || []);
-const total = computed(() => postsRes.value?.meta?.total || 0);
+const fallbackPosts = computed(() => {
+  let list = BLOG_POSTS;
+  if (activeCategory.value) {
+    list = list.filter((p) => p.category?.slug === activeCategory.value || p.category?.id === activeCategory.value);
+  }
+  return list;
+});
+const hasApiPosts = computed(() => Array.isArray(postsRes.value?.data) && postsRes.value.data.length > 0);
+const posts = computed(() => hasApiPosts.value ? postsRes.value.data : fallbackPosts.value);
+const total = computed(() => hasApiPosts.value ? (postsRes.value?.meta?.total || 0) : fallbackPosts.value.length);
 
 const { data: catRes } = useAsyncData(
   'blog-categories',
   () => blogApi.getCategories(),
-  { server: false, default: () => [] }
+  { server: false, default: () => ({ data: BLOG_CATEGORIES }) }
 );
-const categories = computed(() => catRes.value?.data || catRes.value || []);
+const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
+const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : BLOG_CATEGORIES);
 
 const setCategory = (slug) => {
   activeCategory.value = activeCategory.value === slug ? null : slug;

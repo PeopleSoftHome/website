@@ -72,6 +72,7 @@ import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum.js';
 import { renderMarkdown, renderMentions } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
+import { FORUM_TOPIC_MAP } from '@/data/forum.js';
 import s from './[id].vue.module.css';
 
 definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
@@ -86,8 +87,14 @@ const openAuth = () => authModal.open();
 const { data: topic, pending: loading } = useAsyncData(
   `forum-topic-${route.params.id}`,
   async () => {
-    const res = await forumApi.getTopic(route.params.id);
-    return res.data || res;
+    try {
+      const res = await forumApi.getTopic(route.params.id);
+      const data = res.data || res;
+      if (data) return data;
+    } catch (e) {
+      // API 不可用时降级到静态 fallback
+    }
+    return FORUM_TOPIC_MAP[route.params.id] || null;
   },
   { server: false, default: () => null }
 );

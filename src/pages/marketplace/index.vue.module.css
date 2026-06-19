@@ -84,6 +84,9 @@
 }
 
 .catBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 8px 18px;
   border-radius: 20px;
   border: 1px solid var(--gray-200);
@@ -108,6 +111,10 @@
 .catActive:hover {
   color: var(--white, #ffffff);
 }
+
+.catIcon { font-size: 15px; }
+
+.resultBar { margin-bottom: 20px; font-size: 14px; color: var(--gray-500); }
 
 .featured {
   margin-bottom: 48px;
@@ -203,6 +210,13 @@
   border: 1px solid var(--gray-100);
   text-decoration: none;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  animation: cardIn 0.45s var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0) * 40ms);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .card:hover {

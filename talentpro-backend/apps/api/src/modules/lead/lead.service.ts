@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { DemoBookingScale, LeadSource } from '@prisma/client';
+import { Prisma, DemoBookingScale, LeadSource } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
@@ -27,7 +27,7 @@ export class LeadService {
 
   async findAll(page = 1, pageSize = 20, status?: LeadStatus, workspaceId?: string) {
     const skip = getSkip(page, pageSize);
-    const where: any = {};
+    const where: Prisma.DemoBookingWhereInput = {};
     if (status) where.status = status;
     if (workspaceId) where.workspaceId = workspaceId;
     const [data, total] = await Promise.all([
@@ -44,7 +44,7 @@ export class LeadService {
   }
 
   async findOne(id: string, workspaceId?: string) {
-    const where: any = { id };
+    const where: Prisma.DemoBookingWhereInput = { id };
     if (workspaceId) where.workspaceId = workspaceId;
     const booking = await this.prisma.demoBooking.findFirst({
       where,
@@ -110,7 +110,7 @@ export class LeadService {
   };
 
   async updateStatus(id: string, status: LeadStatus, assignedTo?: string, notes?: string, workspaceId?: string) {
-    const where: any = { id };
+    const where: Prisma.DemoBookingWhereInput = { id };
     if (workspaceId) where.workspaceId = workspaceId;
     const booking = await this.prisma.demoBooking.findFirst({ where });
     if (!booking) throw new NotFoundException('预约记录不存在');

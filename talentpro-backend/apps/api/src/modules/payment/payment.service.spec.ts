@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { PaymentStatus, PaymentProvider } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { PaymentStatus, App, Order } from '@prisma/client';
 import { PaymentService } from './payment.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
@@ -12,6 +13,19 @@ describe('PaymentService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              const map: Record<string, unknown> = {
+                'app.frontendUrl': 'http://localhost:3000',
+                STRIPE_SECRET_KEY: '',
+                STRIPE_WEBHOOK_SECRET: '',
+              };
+              return map[key] ?? undefined;
+            }),
+          },
+        },
         {
           provide: PrismaService,
           useValue: {
@@ -52,14 +66,14 @@ describe('PaymentService', () => {
 
   describe('createOrder', () => {
     it('should create a pending order for existing app', async () => {
-      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({ id: 'a1', name: 'Test App' } as any);
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({ id: 'a1', name: 'Test App' } as unknown as App);
       jest.spyOn(prisma.order, 'create').mockResolvedValue({
         id: 'o1',
         orderNo: 'TP20240601ABC123',
         status: PaymentStatus.PENDING,
         total: 299,
         currency: 'CNY',
-      } as any);
+      } as unknown as Order);
 
       const result = await service.createOrder('user-1', 'ws-1', {
         appId: 'a1',
@@ -94,7 +108,7 @@ describe('PaymentService', () => {
   describe('findOrders', () => {
     it('should return paginated orders for workspace and user', async () => {
       const mockOrders = [{ id: 'o1', orderNo: 'ORD-001', status: PaymentStatus.COMPLETED }];
-      jest.spyOn(prisma.order, 'findMany').mockResolvedValue(mockOrders as any);
+      jest.spyOn(prisma.order, 'findMany').mockResolvedValue(mockOrders as unknown as Order[]);
       jest.spyOn(prisma.order, 'count').mockResolvedValue(1);
 
       const result = await service.findOrders('user-1', 'ws-1', 1, 20);
@@ -114,7 +128,7 @@ describe('PaymentService', () => {
   describe('findOrderById', () => {
     it('should return order when found and belongs to user', async () => {
       const mockOrder = { id: 'o1', orderNo: 'ORD-001', userId: 'user-1' };
-      jest.spyOn(prisma.order, 'findFirst').mockResolvedValue(mockOrder as any);
+      jest.spyOn(prisma.order, 'findFirst').mockResolvedValue(mockOrder as unknown as Order);
 
       const result = await service.findOrderById('user-1', 'o1');
 

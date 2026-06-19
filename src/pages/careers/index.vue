@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <main :class="s.page">
       <div class="container">
         <Breadcrumb :items="[{ label: t('careers.title'), to: '/careers' }]" />
@@ -26,29 +25,15 @@
         </div>
 
         <div :class="s.filter">
-          <button :class="[s.filterBtn, !activeDept ? s.filterActive : '']" @click="activeDept = ''">
-            {{ t('careers.all') }}
-          </button>
-          <button
-            v-for="d in departments"
-            :key="d"
-            :class="[s.filterBtn, activeDept === d ? s.filterActive : '']"
-            @click="activeDept = d"
-          >
-            {{ d }}
-          </button>
+          <button :class="[s.filterBtn, !activeDept ? s.filterActive : '']" @click="activeDept = ''">{{ t('careers.all') }}</button>
+          <button v-for="d in departments" :key="d" :class="[s.filterBtn, activeDept === d ? s.filterActive : '']" @click="activeDept = d">{{ d }}</button>
         </div>
 
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
         <div v-else-if="error && jobs.length === 0" :class="s.error">{{ error }}</div>
 
         <div v-else :class="s.list">
-          <NuxtLink
-            v-for="job in jobs"
-            :key="job.id"
-            :to="`/careers/${job.id}`"
-            :class="s.job"
-          >
+          <NuxtLink v-for="job in displayJobs" :key="job.id" :to="`/careers/${job.id}`" :class="s.job" :style="{ '--stagger': job._stagger }">
             <div :class="s.jobHeader">
               <h3 :class="s.jobTitle">{{ job.title }}</h3>
               <span :class="s.jobType">{{ job.type }}</span>
@@ -60,6 +45,37 @@
             </div>
             <p v-if="job.summary" :class="s.jobSummary">{{ job.summary }}</p>
           </NuxtLink>
+          <div v-if="displayJobs.length < filteredJobs.length" :class="s.moreWrap">
+            <button :class="s.moreBtn" @click="displayLimit += PAGE_SIZE">{{ t('common.loadMore') }}</button>
+          </div>
+        </div>
+
+        <div :class="s.path" class="reveal">
+          <h2 :class="s.sectionTitle">{{ t('careers.pathTitle') }}</h2>
+          <div :class="s.pathList">
+            <div v-for="(p, i) in careerPath" :key="i" :class="s.pathItem">
+              <div :class="s.pathIcon">{{ p.icon }}</div>
+              <h4 :class="s.pathStage">{{ p.stage }}</h4>
+              <p :class="s.pathDesc">{{ p.desc }}</p>
+              <div v-if="i < careerPath.length - 1" :class="s.pathLine" />
+            </div>
+          </div>
+        </div>
+
+        <div :class="s.testimonials" class="reveal">
+          <h2 :class="s.sectionTitle">{{ t('careers.testimonialTitle') }}</h2>
+          <div :class="s.testiList">
+            <div v-for="(item, i) in testimonials" :key="i" :class="s.testiCard" :style="{ '--stagger': i }">
+              <div :class="s.testiQuote">{{ item.quote }}</div>
+              <div :class="s.testiAuthor">
+                <div :class="s.testiAvatar">{{ item.avatar }}</div>
+                <div>
+                  <div :class="s.testiName">{{ item.name }}</div>
+                  <div :class="s.testiRole">{{ item.role }} · {{ item.joinYear }} 年加入</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div :class="s.benefits" class="reveal">
@@ -75,7 +91,6 @@
         </div>
       </div>
     </main>
-
   </div>
 </template>
 
@@ -84,12 +99,15 @@ definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
+import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
 
 const activeDept = ref('');
+const PAGE_SIZE = 6;
+const displayLimit = ref(PAGE_SIZE);
 
 const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   'careers-jobs',
@@ -97,13 +115,24 @@ const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   { server: false, watch: [activeDept], default: () => ({ data: [] }) }
 );
 
-const jobs = computed(() => {
-  if (fetchError.value) return [];
-  return jobsRes.value?.data || [];
+const filteredJobs = computed(() => {
+  const list = jobsRes.value?.data || [];
+  if (!activeDept.value) return list;
+  return list.filter((j) => j.department === activeDept.value);
 });
+
+const displayJobs = computed(() => {
+  const list = filteredJobs.value.slice(0, displayLimit.value);
+  return list.map((j, idx) => ({ ...j, _stagger: idx }));
+});
+
 const departments = computed(() => {
   const depts = new Set((jobsRes.value?.data || []).map((j) => j.department).filter(Boolean));
   return Array.from(depts);
+});
+const jobs = computed(() => {
+  if (fetchError.value) return [];
+  return jobsRes.value?.data || [];
 });
 const error = computed(() => {
   if (!fetchError.value) return null;
@@ -119,6 +148,9 @@ const benefits = [
   { icon: '🌍', nameKey: 'careers.benefits.team', descKey: 'careers.benefits.teamDesc' },
 ];
 
+const careerPath = CAREER_PATH;
+const testimonials = CAREER_TESTIMONIALS;
+
 onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
@@ -126,11 +158,7 @@ onMounted(() => {
     name: t('careers.jsonLdName'),
     description: t('careers.jsonLdDesc'),
     url: 'https://talentpro.cn/careers',
-    publisher: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-    },
+    publisher: { '@type': 'Organization', name: 'TalentPro', logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' } },
   });
 });
 onUnmounted(removeJsonLd);

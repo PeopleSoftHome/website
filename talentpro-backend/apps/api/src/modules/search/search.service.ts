@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SearchMeilisearchService } from './search-meilisearch.service';
 import { SearchPrismaService } from './search-prisma.service';
 import { SearchIndexService } from './search-index.service';
-import { SearchResult } from './search.types';
+import { SearchDocument, SearchResult } from './search.types';
 
 /**
  * SearchService — Facade
@@ -25,8 +25,8 @@ export class SearchService {
 
     try {
       return await this.meiliService.search(q, filters?.type, limit);
-    } catch (e: any) {
-      this.logger.warn(`Meilisearch search failed, falling back to Prisma: ${e.message}`);
+    } catch (e: unknown) {
+      this.logger.warn(`Meilisearch search failed, falling back to Prisma: ${e instanceof Error ? e.message : String(e)}`);
       return this.prismaService.search(q, filters?.type, limit);
     }
   }
@@ -36,8 +36,8 @@ export class SearchService {
     if (!q || q.length < 2) return [];
     try {
       return await this.meiliService.suggest(q, limit);
-    } catch (e: any) {
-      this.logger.warn(`Suggest failed: ${e.message}`);
+    } catch (e: unknown) {
+      this.logger.warn(`Suggest failed: ${e instanceof Error ? e.message : String(e)}`);
       return [];
     }
   }
@@ -53,11 +53,11 @@ export class SearchService {
   }
 
   // 索引操作委托给 SearchIndexService
-  async indexDocument(entityType: string, payload: any) {
+  async indexDocument(entityType: string, payload: SearchDocument) {
     return this.indexService.indexDocument(entityType, payload);
   }
 
-  async updateDocument(entityType: string, entityId: string, payload?: any) {
+  async updateDocument(entityType: string, entityId: string, payload?: SearchDocument) {
     return this.indexService.updateDocument(entityType, entityId, payload);
   }
 

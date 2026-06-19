@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <main :class="s.page">
       <div class="container">
         <Breadcrumb :items="[{ label: t('marketplace.title'), to: '/marketplace' }]" />
@@ -12,12 +11,7 @@
 
         <div :class="s.toolbar" class="reveal reveal-delay-1">
           <div :class="s.searchWrap">
-            <input
-              v-model="searchQuery"
-              type="text"
-              :placeholder="t('marketplace.searchPlaceholder')"
-              :class="s.searchInput"
-            />
+            <input v-model="searchQuery" type="text" :placeholder="t('marketplace.searchPlaceholder')" :class="s.searchInput" />
           </div>
           <div :class="s.sortWrap">
             <select v-model="sortBy" :class="s.sortSelect">
@@ -30,25 +24,21 @@
         </div>
 
         <div :class="s.categories" class="reveal reveal-delay-1">
-          <button
-            v-for="cat in categories"
-            :key="cat.id"
-            :class="[s.catBtn, activeCategory === cat.id ? s.catActive : '']"
-            @click="activeCategory = cat.id"
-          >
-            {{ cat.label }}
+          <button v-for="cat in categories" :key="cat.id" :class="[s.catBtn, activeCategory === cat.id ? s.catActive : '']" @click="activeCategory = cat.id">
+            <span v-if="cat.icon" :class="s.catIcon">{{ categoryIcon(cat.icon) }}</span>
+            <span>{{ cat.label }}</span>
           </button>
+        </div>
+
+        <div :class="s.resultBar" class="reveal">
+          <span v-if="searchQuery" :class="s.resultText">{{ t('marketplace.resultsFor') }} “{{ searchQuery }}”：{{ filteredApps.length }} {{ t('marketplace.items') }}</span>
+          <span v-else :class="s.resultText">{{ t('marketplace.showing') }} {{ filteredApps.length }} {{ t('marketplace.items') }}</span>
         </div>
 
         <div v-if="featuredApps.length" :class="s.featured" class="reveal">
           <h2 :class="s.featuredTitle">{{ t('marketplace.featured') }}</h2>
           <div :class="s.featuredGrid">
-            <NuxtLink
-              v-for="app in featuredApps"
-              :key="app.id"
-              :to="`/marketplace/${app.slug}`"
-              :class="s.featuredCard"
-            >
+            <NuxtLink v-for="app in featuredApps" :key="app.id" :to="`/marketplace/${app.slug}`" :class="s.featuredCard">
               <div :class="s.featuredIcon">{{ app.name.charAt(0) }}</div>
               <div :class="s.featuredInfo">
                 <h3 :class="s.featuredCardTitle">{{ app.name }}</h3>
@@ -63,12 +53,7 @@
         </div>
 
         <div :class="s.grid" class="reveal">
-          <NuxtLink
-            v-for="app in filteredApps"
-            :key="app.id"
-            :to="`/marketplace/${app.slug}`"
-            :class="s.card"
-          >
+          <NuxtLink v-for="(app, i) in filteredApps" :key="app.id" :to="`/marketplace/${app.slug}`" :class="s.card" :style="{ '--stagger': i }">
             <div :class="s.cardHeader">
               <div :class="s.cardIcon">{{ app.name.charAt(0) }}</div>
               <div :class="s.cardMeta">
@@ -86,9 +71,7 @@
           </NuxtLink>
         </div>
 
-        <div v-if="filteredApps.length === 0" :class="s.empty">
-          {{ t('marketplace.noResults') }}
-        </div>
+        <div v-if="filteredApps.length === 0" :class="s.empty">{{ t('marketplace.noResults') }}</div>
 
         <div :class="s.ctaBand" class="reveal">
           <h3 :class="s.ctaTitle">{{ t('marketplace.ctaTitle') }}</h3>
@@ -97,7 +80,6 @@
         </div>
       </div>
     </main>
-
   </div>
 </template>
 
@@ -116,59 +98,50 @@ const activeCategory = ref('all');
 const searchQuery = ref('');
 const sortBy = ref('featured');
 
+const iconMap = {
+  users: '👥', 'dollar-sign': '💵', target: '🎯', 'book-open': '📖', heart: '❤️',
+  shield: '🛡️', bot: '🤖', 'bar-chart-2': '📊', recruitment: '👥', compensation: '💵',
+  performance: '🎯', learning: '📖', experience: '❤️', compliance: '🛡️', ai: '🤖', analytics: '📊',
+};
+
+const categoryIcon = (icon) => iconMap[icon] || '•';
+
 const categories = computed(() => [
-  { id: 'all', label: t('common.all') || '全部' },
-  ...MARKETPLACE_CATEGORIES.map((c) => ({ id: c.id, label: c.label })),
+  { id: 'all', label: t('common.all') },
+  ...MARKETPLACE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, icon: c.icon })),
 ]);
 
 const filteredApps = computed(() => {
   let list = [...MARKETPLACE_APPS];
-
-  if (activeCategory.value !== 'all') {
-    list = list.filter((a) => a.category === activeCategory.value);
-  }
-
+  if (activeCategory.value !== 'all') list = list.filter((a) => a.category === activeCategory.value);
   const q = searchQuery.value.trim().toLowerCase();
   if (q) {
-    list = list.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) ||
-        a.tagline.toLowerCase().includes(q) ||
-        a.description.toLowerCase().includes(q) ||
-        a.vendor.toLowerCase().includes(q)
+    list = list.filter((a) =>
+      a.name.toLowerCase().includes(q) ||
+      a.tagline.toLowerCase().includes(q) ||
+      a.description.toLowerCase().includes(q) ||
+      a.vendor.toLowerCase().includes(q)
     );
   }
-
   switch (sortBy.value) {
-    case 'rating':
-      list.sort((a, b) => b.ratingAvg - a.ratingAvg);
-      break;
-    case 'installCount':
-      list.sort((a, b) => b.installCount - a.installCount);
-      break;
-    case 'name':
-      list.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
-      break;
-    case 'featured':
-    default:
-      list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || b.ratingAvg - a.ratingAvg);
-      break;
+    case 'rating': list.sort((a, b) => b.ratingAvg - a.ratingAvg); break;
+    case 'installCount': list.sort((a, b) => b.installCount - a.installCount); break;
+    case 'name': list.sort((a, b) => a.name.localeCompare(b.name, 'zh')); break;
+    default: list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || b.ratingAvg - a.ratingAvg); break;
   }
-
-  return list;
+  return list.map((a, i) => ({ ...a, _stagger: i }));
 });
 
-const featuredApps = computed(() => {
-  return MARKETPLACE_APPS.filter((a) => a.featured).slice(0, 4);
-});
+const featuredApps = computed(() => MARKETPLACE_APPS.filter((a) => a.featured).slice(0, 4));
 
 const formatPricing = (model) => {
   const map = {
-    free: t('marketplace.priceFree') || '免费',
-    subscription: t('marketplace.priceSubscription') || '订阅制',
-    one_time: t('marketplace.priceOneTime') || '一次性',
-    usage_based: t('marketplace.priceUsage') || '按量计费',
-    freemium: t('marketplace.priceFreemium') || '免费增值',
+    free: t('marketplace.priceFree'),
+    subscription: t('marketplace.priceSubscription'),
+    one_time: t('marketplace.priceOneTime'),
+    usage_based: t('marketplace.priceUsage'),
+    freemium: t('marketplace.priceFreemium'),
+    paid: t('marketplace.pricePaid'),
   };
   return map[model] || model;
 };
@@ -185,10 +158,7 @@ onMounted(() => {
     '@type': 'ItemList',
     name: t('marketplace.jsonLdName'),
     itemListElement: MARKETPLACE_APPS.slice(0, 8).map((app, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: app.name,
-      description: app.tagline,
+      '@type': 'ListItem', position: i + 1, name: app.name, description: app.tagline,
     })),
   });
 });

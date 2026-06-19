@@ -4,7 +4,11 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthTokenService } from './auth-token.service';
 import { JwtService } from '@nestjs/jwt';
+import { Response, Request } from 'express';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -46,7 +50,7 @@ describe('AuthController', () => {
         {
           provide: ConfigService,
           useValue: { get: jest.fn((key: string) => {
-            const map: Record<string, any> = {
+            const map: Record<string, unknown> = {
               JWT_SECRET: 'test-secret-key-at-least-32-characters-long',
               JWT_ACCESS_EXPIRATION: '15m',
               JWT_REFRESH_EXPIRATION: '7d',
@@ -73,9 +77,9 @@ describe('AuthController', () => {
         name: 'Test User',
       };
       const expected = { id: 'u1', email: dto.email, name: dto.name };
-      jest.spyOn(authService, 'register').mockResolvedValue(expected as any);
+      jest.spyOn(authService, 'register').mockResolvedValue(expected as unknown as ReturnType<AuthService['register']>);
 
-      const result = await controller.register(dto as any);
+      const result = await controller.register(dto as unknown as RegisterDto);
 
       expect(authService.register).toHaveBeenCalledWith(dto);
       expect(result).toEqual(expected);
@@ -90,10 +94,10 @@ describe('AuthController', () => {
         refreshToken: 'rtoken',
         expiresAt: new Date(),
       };
-      const mockRes = { cookie: jest.fn() } as any;
-      jest.spyOn(authService, 'login').mockResolvedValue(expected as any);
+      const mockRes = { cookie: jest.fn() } as unknown as Response;
+      jest.spyOn(authService, 'login').mockResolvedValue(expected as unknown as ReturnType<AuthService['login']>);
 
-      const result = await controller.login(dto as any, mockRes);
+      const result = await controller.login(dto as unknown as LoginDto, mockRes);
 
       expect(authService.login).toHaveBeenCalledWith(dto);
       expect(result).toEqual(expected);
@@ -104,10 +108,11 @@ describe('AuthController', () => {
     it('should return new access token', async () => {
       const body = { refreshToken: 'old-rtoken' };
       const expected = { accessToken: 'new-atoken', expiresAt: new Date() };
-      const mockRes = { cookie: jest.fn() } as any;
-      jest.spyOn(authService, 'refresh').mockResolvedValue(expected as any);
+      const mockReq = { cookies: {} } as unknown as Request;
+      const mockRes = { cookie: jest.fn() } as unknown as Response;
+      jest.spyOn(authService, 'refresh').mockResolvedValue(expected as unknown as ReturnType<AuthService['refresh']>);
 
-      const result = await controller.refresh(body, mockRes);
+      const result = await controller.refresh(body as unknown as RefreshTokenDto, mockReq, mockRes);
 
       expect(authService.refresh).toHaveBeenCalledWith(body.refreshToken);
       expect(result).toEqual(expected);
@@ -117,10 +122,11 @@ describe('AuthController', () => {
   describe('POST /auth/logout', () => {
     it('should call authService.logout with refreshToken and accessToken', async () => {
       const dto = { refreshToken: 'rtoken' };
-      const mockRes = { clearCookie: jest.fn() } as any;
-      jest.spyOn(authService, 'logout').mockResolvedValue({ success: true } as any);
+      const mockReq = { cookies: {} } as unknown as Request;
+      const mockRes = { clearCookie: jest.fn() } as unknown as Response;
+      jest.spyOn(authService, 'logout').mockResolvedValue({ success: true } as unknown as ReturnType<AuthService['logout']>);
 
-      const result = await controller.logout(dto, 'Bearer atoken', mockRes);
+      const result = await controller.logout(dto as unknown as RefreshTokenDto, mockReq, 'Bearer atoken', mockRes);
 
       expect(authService.logout).toHaveBeenCalledWith('rtoken', 'atoken');
       expect(result).toEqual({ success: true });

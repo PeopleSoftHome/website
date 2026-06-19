@@ -5,10 +5,16 @@ export const cmsApi = {
   getProducts() {
     return apiClient.get('/cms/products');
   },
+  getProductBySlug(slug) {
+    return apiClient.get(`/cms/products/${slug}`, { silent: true });
+  },
 
   // Industries
   getIndustries() {
     return apiClient.get('/cms/industries');
+  },
+  getIndustryBySlug(slug) {
+    return apiClient.get(`/cms/industries/${slug}`, { silent: true });
   },
 
   // Testimonials
@@ -48,7 +54,7 @@ export const cmsApi = {
 
   // Page (首页配置)
   getPage(slug = 'home') {
-    return apiClient.get(`/cms/pages/${slug}`);
+    return apiClient.get(`/cms/pages/${slug}`, { silent: true });
   },
 
   // Translations

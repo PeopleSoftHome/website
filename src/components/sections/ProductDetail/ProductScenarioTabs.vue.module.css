@@ -1,0 +1,21 @@
+.section { margin-bottom: 64px; }
+.tabNav { margin-bottom: 24px; }
+.scenarioWrap { min-height: 220px; }
+.scenarioCard { display: grid; grid-template-columns: 320px 1fr; gap: 40px; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-xl); padding: 40px; animation: fadeIn 0.35s var(--ease-out); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.scenarioVisual { display: flex; align-items: center; justify-content: center; }
+.scenarioSvg { width: 100%; max-width: 260px; height: auto; }
+.scenarioBody { max-width: 540px; }
+.scenarioTitle { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+.scenarioDesc { font-size: 15px; color: var(--gray-600); line-height: 1.7; margin-bottom: 20px; }
+.metric { display: inline-flex; align-items: center; gap: 8px; background: var(--grad-primary-light); color: var(--white); padding: 10px 20px; border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; }
+.metricValue { font-size: 15px; font-weight: 700; }
+
+@media (max-width: 1023px) {
+  .scenarioCard { grid-template-columns: 1fr; padding: 24px; gap: 20px; text-align: center; }
+  .scenarioSvg { max-width: 200px; }
+  .scenarioBody { max-width: 100%; }
+}
+
+[data-theme="dark"] .scenarioTitle { color: var(--gray-50); }
+[data-theme="dark"] .scenarioCard { background: var(--card-bg); }

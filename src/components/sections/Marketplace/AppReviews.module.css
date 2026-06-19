@@ -1,0 +1,21 @@
+.reviews { margin-bottom: 48px; }
+.title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px; }
+.list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px; animation: cardIn 0.4s var(--ease-out) both; animation-delay: calc(var(--stagger, 0) * 60ms); }
+.header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: var(--white); display: grid; place-items: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.user { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.company { font-size: 12px; color: var(--gray-500); }
+.rating { margin-left: auto; display: flex; gap: 2px; }
+.star { font-size: 14px; color: var(--gray-300); }
+.starActive { color: #f59e0b; }
+.text { font-size: 14px; color: var(--gray-600); line-height: 1.7; margin-bottom: 10px; }
+.date { font-size: 12px; color: var(--gray-400); text-align: right; }
+
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1023px) { .list { grid-template-columns: 1fr; } }
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .user { color: var(--gray-50); }
+[data-theme="dark"] .text { color: var(--gray-400); }

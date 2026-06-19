@@ -5,5 +5,7 @@ export interface SearchResult {
   description?: string;
   slug?: string;
   url?: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 }
+
+export type SearchDocument = Record<string, unknown>;

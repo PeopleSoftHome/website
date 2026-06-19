@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getQueueToken } from '@nestjs/bullmq';
-import { LeadStatus, DemoBookingScale, LeadSource } from '@prisma/client';
+import { Queue } from 'bullmq';
+import { LeadStatus, DemoBookingScale, LeadSource, DemoBooking } from '@prisma/client';
 import { LeadService } from './lead.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
@@ -12,7 +13,7 @@ describe('LeadService', () => {
   let prisma: PrismaService;
   let mailService: MailService;
   let eventEmitter: EventEmitter2;
-  let notificationQueue: any;
+  let notificationQueue: Queue;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -82,7 +83,7 @@ describe('LeadService', () => {
           followUps: [],
         },
       ];
-      jest.spyOn(prisma.demoBooking, 'findMany').mockResolvedValue(mockBookings as any);
+      jest.spyOn(prisma.demoBooking, 'findMany').mockResolvedValue(mockBookings as unknown as DemoBooking[]);
       jest.spyOn(prisma.demoBooking, 'count').mockResolvedValue(1);
 
       const result = await service.findAll(1, 20);
@@ -101,7 +102,7 @@ describe('LeadService', () => {
 
     it('should filter by status and workspaceId when provided', async () => {
       const mockBookings = [{ id: 'b1', status: LeadStatus.NEW }];
-      jest.spyOn(prisma.demoBooking, 'findMany').mockResolvedValue(mockBookings as any);
+      jest.spyOn(prisma.demoBooking, 'findMany').mockResolvedValue(mockBookings as unknown as DemoBooking[]);
       jest.spyOn(prisma.demoBooking, 'count').mockResolvedValue(1);
 
       const result = await service.findAll(1, 20, LeadStatus.NEW, 'w1');
@@ -124,7 +125,7 @@ describe('LeadService', () => {
         status: LeadStatus.NEW,
         followUps: [],
       };
-      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as any);
+      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as unknown as DemoBooking);
 
       const result = await service.findOne('b1');
 
@@ -163,7 +164,7 @@ describe('LeadService', () => {
         scale: DemoBookingScale.SCALE_11_50,
         source: LeadSource.WEBSITE,
       };
-      jest.spyOn(prisma.demoBooking, 'create').mockResolvedValue(mockBooking as any);
+      jest.spyOn(prisma.demoBooking, 'create').mockResolvedValue(mockBooking as unknown as DemoBooking);
 
       const result = await service.create(dto);
       // Allow unawaited async side effects (scheduleNurtureEmails) to flush
@@ -208,7 +209,7 @@ describe('LeadService', () => {
         scale: DemoBookingScale.SCALE_51_200,
         source: LeadSource.WEBSITE,
       };
-      jest.spyOn(prisma.demoBooking, 'create').mockResolvedValue(mockBooking as any);
+      jest.spyOn(prisma.demoBooking, 'create').mockResolvedValue(mockBooking as unknown as DemoBooking);
 
       const result = await service.create(dto);
 
@@ -222,8 +223,8 @@ describe('LeadService', () => {
     it('should update status when transition is valid', async () => {
       const mockBooking = { id: 'b1', status: LeadStatus.NEW };
       const updatedBooking = { id: 'b1', status: LeadStatus.CONTACTED, assignedTo: 'u1', notes: 'Called' };
-      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as any);
-      jest.spyOn(prisma.demoBooking, 'update').mockResolvedValue(updatedBooking as any);
+      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as unknown as DemoBooking);
+      jest.spyOn(prisma.demoBooking, 'update').mockResolvedValue(updatedBooking as unknown as DemoBooking);
 
       const result = await service.updateStatus('b1', LeadStatus.CONTACTED, 'u1', 'Called');
 
@@ -245,7 +246,7 @@ describe('LeadService', () => {
 
     it('should throw BadRequestException when status transition is invalid', async () => {
       const mockBooking = { id: 'b1', status: LeadStatus.WON };
-      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as any);
+      jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as unknown as DemoBooking);
 
       await expect(service.updateStatus('b1', LeadStatus.NEW)).rejects.toThrow(BadRequestException);
       await expect(service.updateStatus('b1', LeadStatus.NEW)).rejects.toThrow('状态无法从 WON 变更为 NEW');

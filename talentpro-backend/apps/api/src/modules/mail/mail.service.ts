@@ -8,7 +8,7 @@ export interface MailPayload {
   to: string;
   subject: string;
   templateKey?: string;
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
   text?: string;
   html?: string;
 }

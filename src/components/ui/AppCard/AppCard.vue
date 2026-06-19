@@ -31,13 +31,15 @@ const props = defineProps({
   app: { type: Object, required: true },
 });
 
+const { t } = useI18n();
+
 const pricingLabel = computed(() => {
   const map = {
-    free: '免费',
-    subscription: '订阅',
-    one_time: '买断',
-    usage_based: '按量',
-    freemium: '增值',
+    free: t('marketplace.pricingShort.free'),
+    subscription: t('marketplace.pricingShort.subscription'),
+    one_time: t('marketplace.pricingShort.oneTime'),
+    usage_based: t('marketplace.pricingShort.usage'),
+    freemium: t('marketplace.pricingShort.freemium'),
   };
   return map[props.app.pricingModel] || '';
 });
@@ -50,8 +52,9 @@ const stars = computed(() => {
 
 const installText = computed(() => {
   const n = props.app.installCount || 0;
-  if (n >= 10000) return `${(n / 10000).toFixed(1)}万 次安装`;
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k 次安装`;
-  return `${n} 次安装`;
+  const suffix = t('marketplace.installs');
+  if (n >= 10000) return `${(n / 10000).toFixed(1)}${t('units.tenThousand')} ${suffix}`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k ${suffix}`;
+  return `${n} ${suffix}`;
 });
 </script>

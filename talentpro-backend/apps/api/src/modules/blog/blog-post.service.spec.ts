@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PostStatus } from '@prisma/client';
+import { PostStatus, BlogPost, Comment } from '@prisma/client';
 import { BlogPostService } from './blog-post.service';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
@@ -81,7 +81,7 @@ describe('BlogPostService', () => {
           tags: [],
         },
       ];
-      jest.spyOn(prisma.blogPost, 'findMany').mockResolvedValue(mockPosts as any);
+      jest.spyOn(prisma.blogPost, 'findMany').mockResolvedValue(mockPosts as unknown as BlogPost[]);
       jest.spyOn(prisma.blogPost, 'count').mockResolvedValue(1);
 
       const result = await service.findAllPosts(1, 20);
@@ -110,7 +110,7 @@ describe('BlogPostService', () => {
           tags: [],
         },
       ];
-      jest.spyOn(prisma.blogPost, 'findMany').mockResolvedValue(mockPosts as any);
+      jest.spyOn(prisma.blogPost, 'findMany').mockResolvedValue(mockPosts as unknown as BlogPost[]);
       jest.spyOn(prisma.blogPost, 'count').mockResolvedValue(1);
 
       const result = await service.findAllPosts(1, 20, 'frontend');
@@ -147,9 +147,9 @@ describe('BlogPostService', () => {
           replies: [],
         },
       ];
-      jest.spyOn(prisma.blogPost, 'findFirst').mockResolvedValue(mockPost as any);
-      jest.spyOn(prisma.blogPost, 'update').mockResolvedValue({ ...mockPost, viewCount: 11 } as any);
-      jest.spyOn(prisma.comment, 'findMany').mockResolvedValue(mockComments as any);
+      jest.spyOn(prisma.blogPost, 'findFirst').mockResolvedValue(mockPost as unknown as BlogPost);
+      jest.spyOn(prisma.blogPost, 'update').mockResolvedValue({ ...mockPost, viewCount: 11 } as unknown as BlogPost);
+      jest.spyOn(prisma.comment, 'findMany').mockResolvedValue(mockComments as unknown as Comment[]);
 
       const result = await service.findPostBySlug('hello-world');
 
@@ -194,7 +194,7 @@ describe('BlogPostService', () => {
         category: { id: 'c1', name: 'Tech' },
         tags: [{ id: 't1', name: 'Vue' }, { id: 't2', name: 'NestJS' }],
       };
-      jest.spyOn(prisma.blogPost, 'create').mockResolvedValue(mockPost as any);
+      jest.spyOn(prisma.blogPost, 'create').mockResolvedValue(mockPost as unknown as BlogPost);
 
       const result = await service.createPost(dto);
 
@@ -227,7 +227,7 @@ describe('BlogPostService', () => {
         category: { id: 'c1', name: 'Tech' },
         tags: [],
       };
-      jest.spyOn(prisma.blogPost, 'create').mockResolvedValue(mockPost as any);
+      jest.spyOn(prisma.blogPost, 'create').mockResolvedValue(mockPost as unknown as BlogPost);
 
       const result = await service.createPost(dto);
 

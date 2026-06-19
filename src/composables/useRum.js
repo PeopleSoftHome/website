@@ -12,10 +12,14 @@
  */
 import { onMounted, onUnmounted } from 'vue';
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from 'web-vitals';
-import { API_BASE_URL } from '@/api/baseUrl.js';
+import { apiClient } from '@/api/client.js';
 
-const RUM_ENDPOINT = `${API_BASE_URL}/analytics/web-vitals`;
 const SESSION_KEY = 'tp-rum-session';
+
+function getRumEndpoint() {
+  const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
+  return `${baseUrl}/analytics/web-vitals`;
+}
 
 function getSessionId() {
   let sid = sessionStorage.getItem(SESSION_KEY);
@@ -43,11 +47,14 @@ function sendToAnalytics(metric) {
     ts: Date.now(),
   };
 
+  const endpoint = getRumEndpoint();
+
   // 优先使用 sendBeacon（不阻塞页面卸载）
   if (navigator.sendBeacon) {
-    navigator.sendBeacon(RUM_ENDPOINT, JSON.stringify(payload));
+    const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+    navigator.sendBeacon(endpoint, blob);
   } else {
-    fetch(RUM_ENDPOINT, {
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

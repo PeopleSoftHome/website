@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ForumTopic } from '@prisma/client';
 import { ForumTopicService } from './forum-topic.service';
 import { ForumCategoryRepository } from './forum-category.repository';
 import { ForumTopicRepository } from './forum-topic.repository';
@@ -67,7 +68,7 @@ describe('ForumTopicService', () => {
           _count: { posts: 5 },
         },
       ];
-      jest.spyOn(prisma.forumTopic, 'findMany').mockResolvedValue(mockTopics as any);
+      jest.spyOn(prisma.forumTopic, 'findMany').mockResolvedValue(mockTopics as unknown as ForumTopic[]);
       jest.spyOn(prisma.forumTopic, 'count').mockResolvedValue(1);
 
       const result = await service.findAllTopics(1, 20);
@@ -95,7 +96,7 @@ describe('ForumTopicService', () => {
           _count: { posts: 3 },
         },
       ];
-      jest.spyOn(prisma.forumTopic, 'findMany').mockResolvedValue(mockTopics as any);
+      jest.spyOn(prisma.forumTopic, 'findMany').mockResolvedValue(mockTopics as unknown as ForumTopic[]);
       jest.spyOn(prisma.forumTopic, 'count').mockResolvedValue(1);
 
       const result = await service.findAllTopics(1, 20, 'c2');
@@ -125,8 +126,8 @@ describe('ForumTopicService', () => {
           },
         ],
       };
-      jest.spyOn(prisma.forumTopic, 'findFirst').mockResolvedValue(mockTopic as any);
-      jest.spyOn(prisma.forumTopic, 'update').mockResolvedValue({ ...mockTopic, viewCount: 1 } as any);
+      jest.spyOn(prisma.forumTopic, 'findFirst').mockResolvedValue(mockTopic as unknown as ForumTopic);
+      jest.spyOn(prisma.forumTopic, 'update').mockResolvedValue({ ...mockTopic, viewCount: 1 } as unknown as ForumTopic);
 
       const result = await service.findTopicById('t1');
 
@@ -174,7 +175,7 @@ describe('ForumTopicService', () => {
         category: { id: 'c1', name: 'General' },
         author: { id: 'u1', name: 'Alice', avatar: null },
       };
-      jest.spyOn(prisma.forumTopic, 'create').mockResolvedValue(mockTopic as any);
+      jest.spyOn(prisma.forumTopic, 'create').mockResolvedValue(mockTopic as unknown as ForumTopic);
 
       const result = await service.createTopic(dto);
 

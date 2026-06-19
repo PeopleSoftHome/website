@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Cacheable } from '@/common/decorators/cache.decorator';
 import { SystemService } from './system.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { UpsertSettingDto } from './dto/upsert-setting.dto';
 import { CreateAuditLogDto } from './dto/create-audit-log.dto';
@@ -40,7 +42,7 @@ export class SystemController {
   @Post('settings')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('setting:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新设置' })
   upsertSetting(@Body() dto: UpsertSettingDto) {
@@ -50,11 +52,19 @@ export class SystemController {
   @Delete('settings/:key')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('setting:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除设置' })
   deleteSetting(@Param('key') key: string) {
     return this.systemService.deleteSetting(key);
+  }
+
+  @Get('config/public')
+  @Public()
+  @Cacheable({ key: 'system:public-config', ttl: 300 })
+  @ApiOperation({ summary: '公开站点配置' })
+  getPublicConfig() {
+    return this.systemService.getPublicConfig();
   }
 
   // AuditLogs
@@ -79,10 +89,10 @@ export class SystemController {
 
   @Post('audit-logs')
   @UseGuards(RolesGuard)
-  @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Roles('SUPER_ADMIN')
+  @Permission('audit_log:create')
   @ApiBearerAuth()
-  @ApiOperation({ summary: '记录审计日志' })
+  @ApiOperation({ summary: '记录审计日志（仅 SUPER_ADMIN）' })
   createAuditLog(@Body() dto: CreateAuditLogDto) {
     return this.systemService.createAuditLog(dto);
   }
@@ -109,7 +119,7 @@ export class SystemController {
   @Post('email-templates')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('email_template:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新邮件模板' })
   upsertEmailTemplate(@Body() dto: UpsertEmailTemplateDto) {
@@ -119,7 +129,7 @@ export class SystemController {
   @Delete('email-templates/:key')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('email_template:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除邮件模板' })
   deleteEmailTemplate(@Param('key') key: string) {
@@ -139,7 +149,7 @@ export class SystemController {
   @Post('sensitive-words')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('sensitive_word:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '添加敏感词' })
   createSensitiveWord(@Body() dto: CreateSensitiveWordDto) {
@@ -149,7 +159,7 @@ export class SystemController {
   @Delete('sensitive-words/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('sensitive_word:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除敏感词' })
   deleteSensitiveWord(@Param('id') id: string) {
@@ -159,10 +169,29 @@ export class SystemController {
   @Post('moderation-test')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('system:manage')
+  @Permission('sensitive_word:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '内容检测模拟' })
   testModeration(@Body() dto: TestModerationDto) {
     return this.systemService.testModeration(dto.content);
+  }
+
+  // ChatBot Config
+  @Get('chatbot-config')
+  @Public()
+  @Cacheable({ key: 'system:chatbot-config', ttl: 300 })
+  @ApiOperation({ summary: 'ChatBot 公开配置' })
+  getChatBotConfig() {
+    return this.systemService.getChatBotConfig();
+  }
+
+  @Post('chatbot-config')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('setting:update')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '更新 ChatBot 配置' })
+  upsertChatBotConfig(@Body() dto: { intents?: unknown[]; quickReplies?: unknown[]; fallbackCopy?: string }) {
+    return this.systemService.upsertChatBotConfig(dto);
   }
 }

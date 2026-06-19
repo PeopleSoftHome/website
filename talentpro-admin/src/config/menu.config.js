@@ -34,6 +34,7 @@ export const menuConfig = [
     roles: ['SUPER_ADMIN', 'ADMIN'],
     children: [
       { path: '/system/settings', label: '系统设置', icon: 'Tools', roles: ['SUPER_ADMIN', 'ADMIN'] },
+      { path: '/system/feature-flags', label: '功能开关', icon: 'Switch', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/system/email-templates', label: '邮件模板', icon: 'Message', roles: ['SUPER_ADMIN'] },
       { path: '/system/audit-logs', label: '审计日志', icon: 'List', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/system/roles', label: '角色管理', icon: 'Key', roles: ['SUPER_ADMIN'] },
@@ -52,6 +53,7 @@ export const menuConfig = [
       { path: '/cms/testimonials', label: '客户证言', icon: 'ChatDotSquare', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/cms/products', label: '产品矩阵', icon: 'Goods', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/cms/industries', label: '行业方案', icon: 'OfficeBuilding', roles: ['SUPER_ADMIN', 'ADMIN'] },
+      { path: '/cms/translations', label: '翻译管理', icon: 'Global', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/cases', label: '客户案例', icon: 'Document', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/news', label: '新闻管理', icon: 'Message', roles: ['SUPER_ADMIN', 'ADMIN'] },
       { path: '/jobs', label: '招聘管理', icon: 'OfficeBuilding', roles: ['SUPER_ADMIN', 'ADMIN'] },
@@ -111,6 +113,12 @@ export const menuConfig = [
     roles: ['SUPER_ADMIN', 'ADMIN'],
   },
   {
+    path: '/ai-assistant',
+    label: 'AI 内容助手',
+    icon: 'Cpu',
+    roles: ['SUPER_ADMIN', 'ADMIN'],
+  },
+  {
     path: '/analytics',
     label: '数据分析',
     icon: 'DataAnalysis',
@@ -127,6 +135,7 @@ const routeComponentMap = {
   '/leads': () => import('@/views/LeadsView.vue'),
   '/users': () => import('@/views/UsersView.vue'),
   '/system/settings': () => import('@/views/SettingsView.vue'),
+  '/system/feature-flags': () => import('@/views/FeatureFlagView.vue'),
   '/system/email-templates': () => import('@/views/EmailTemplateView.vue'),
   '/system/audit-logs': () => import('@/views/AuditLogView.vue'),
   '/system/roles': () => import('@/views/RolesView.vue'),
@@ -138,6 +147,7 @@ const routeComponentMap = {
   '/cms/testimonials': () => import('@/views/TestimonialsView.vue'),
   '/cms/products': () => import('@/views/ProductsView.vue'),
   '/cms/industries': () => import('@/views/IndustriesView.vue'),
+  '/cms/translations': () => import('@/views/TranslationManagerView.vue'),
   '/cases': () => import('@/views/CaseManagerView.vue'),
   '/news': () => import('@/views/NewsManagerView.vue'),
   '/jobs': () => import('@/views/JobManagerView.vue'),
@@ -153,6 +163,7 @@ const routeComponentMap = {
   '/download-records': () => import('@/views/DownloadRecordView.vue'),
   '/sensitive-words': () => import('@/views/SensitiveWordView.vue'),
   '/medias': () => import('@/views/MediaView.vue'),
+  '/ai-assistant': () => import('@/views/AiAssistantView.vue'),
 };
 
 /**

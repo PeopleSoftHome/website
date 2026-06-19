@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // 动态导入 Sentry，避免开发环境加载
   import('@/utils/sentry.js').then(({ initSentry }) => {
-    initSentry(nuxtApp.vueApp);
+    initSentry(nuxtApp.vueApp, { dsn: sentryDsn, appEnv: config.public.appEnv || 'development' });
   }).catch(() => {
     // Sentry 初始化失败静默处理
   });

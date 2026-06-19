@@ -39,7 +39,7 @@ import Icon from '../Icon/Icon.vue';
 import s from './NotificationBell.module.css';
 
 const { t } = useI18n();
-const auth = inject('auth', { user: { value: null }, token: { value: '' } });
+const auth = inject('auth', { user: { value: null }, token: { value: '' }, isLoggedIn: { value: false } });
 
 const open = ref(false);
 const notifications = ref([]);
@@ -47,6 +47,11 @@ const unreadCount = ref(0);
 let es = null;
 
 const fetchNotifications = async () => {
+  if (!auth.isLoggedIn.value) {
+    notifications.value = [];
+    unreadCount.value = 0;
+    return;
+  }
   try {
     const res = await notificationApi.getNotifications(1, 20);
     const result = res.data || res;
@@ -84,9 +89,9 @@ const handleClick = async (n) => {
 let reconnectTimer = null;
 
 const connectSSE = () => {
-  if (!auth.token.value) return;
+  if (!auth.isLoggedIn.value) return;
   try {
-    es = notificationApi.createEventSource(auth.token.value);
+    es = notificationApi.createEventSource();
     es.onmessage = (event) => {
       try {
         const notif = JSON.parse(event.data);

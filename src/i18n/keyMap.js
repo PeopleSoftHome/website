@@ -43,9 +43,10 @@ export const AI_CARD_KEY_MAP = {
 
 /** Industry tab ID → i18n key */
 export const INDUSTRY_KEY_MAP = {
-  'mfg':      'mfg',
-  'retail':   'retail',
-  'internet': 'internet',
-  'gov':      'gov',
-  'finance':  'finance',
+  'mfg':           'mfg',
+  'manufacturing': 'mfg',
+  'retail':        'retail',
+  'internet':      'internet',
+  'gov':           'gov',
+  'finance':       'finance',
 };

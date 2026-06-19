@@ -7,7 +7,7 @@
     "dev": "vite --port 3457",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.ts,.tsx",
+    "lint": "eslint src",
     "test": "vitest run"
   },
   "dependencies": {
@@ -25,7 +25,13 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.0",
-    "vite": "^5.4.0"
+    "@vue/test-utils": "^2.4.11",
+    "eslint": "^9.20.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^15.14.0",
+    "happy-dom": "^20.10.3",
+    "vite": "^5.4.0",
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": ">=18.0.0",

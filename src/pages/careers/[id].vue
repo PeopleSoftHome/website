@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <main :class="s.page">
       <div class="container">
         <Breadcrumb :items="[
@@ -22,14 +21,65 @@
             </div>
           </div>
 
+          <div :class="s.infoCard">
+            <div :class="s.infoRow">
+              <div :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.department') }}</span>
+                <span :class="s.infoValue">{{ job.department }}</span>
+              </div>
+              <div :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.location') }}</span>
+                <span :class="s.infoValue">{{ job.location }}</span>
+              </div>
+              <div :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.type') }}</span>
+                <span :class="s.infoValue">{{ job.type }}</span>
+              </div>
+              <div v-if="job.experience" :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.experience') }}</span>
+                <span :class="s.infoValue">{{ job.experience }}</span>
+              </div>
+              <div v-if="job.education" :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.education') }}</span>
+                <span :class="s.infoValue">{{ job.education }}</span>
+              </div>
+              <div v-if="job.headcount" :class="s.infoCell">
+                <span :class="s.infoLabel">{{ t('careers.detailLabels.headcount') }}</span>
+                <span :class="s.infoValue">{{ job.headcount }}{{ t('units.people') }}</span>
+              </div>
+            </div>
+          </div>
+
           <div :class="s.sections">
             <div :class="s.section">
               <h2 :class="s.sectionTitle">{{ t('careers.description') }}</h2>
-              <p :class="s.sectionBody">{{ job.description || t('careers.noDescription') }}</p>
+              <div :class="s.sectionBody">
+                <p v-for="(para, i) in descriptionParagraphs" :key="i" :class="s.paragraph">{{ para }}</p>
+              </div>
             </div>
             <div :class="s.section">
               <h2 :class="s.sectionTitle">{{ t('careers.requirements') }}</h2>
-              <p :class="s.sectionBody">{{ job.requirements || t('careers.noRequirements') }}</p>
+              <ul :class="s.requireList">
+                <li v-for="(r, i) in requirementsList" :key="i">{{ r }}</li>
+              </ul>
+            </div>
+            <div :class="s.section">
+              <h2 :class="s.sectionTitle">{{ t('careers.detailLabels.responsibilities') }}</h2>
+              <ul :class="s.requireList">
+                <li v-for="(r, i) in responsibilitiesList" :key="i">{{ r }}</li>
+              </ul>
+            </div>
+            <div :class="s.section">
+              <h2 :class="s.sectionTitle">{{ t('careers.detailLabels.applyProcess') }}</h2>
+              <div :class="s.process">
+                <div v-for="(step, i) in processSteps" :key="i" :class="s.processItem">
+                  <div :class="s.processNum">{{ i + 1 }}</div>
+                  <div>
+                    <div :class="s.processTitle">{{ step.title }}</div>
+                    <div :class="s.processDesc">{{ step.desc }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div :class="s.section">
               <h2 :class="s.sectionTitle">{{ t('careers.benefits') }}</h2>
@@ -45,7 +95,6 @@
         <div v-else :class="s.empty">{{ t('careers.notFound') }}</div>
       </div>
     </main>
-
   </div>
 </template>
 
@@ -65,9 +114,7 @@ useHead(() => {
   if (!job.value) return {};
   return {
     title: `${job.value.title} | TalentPro`,
-    meta: [
-      { name: 'description', content: job.value.description || t('careers.subtitle') },
-    ],
+    meta: [{ name: 'description', content: job.value.description || t('careers.subtitle') }],
   };
 });
 
@@ -89,8 +136,32 @@ const error = computed(() => {
   return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
 });
 
+const descriptionParagraphs = computed(() => {
+  const d = job.value?.description || '';
+  return d.split(/\n{2,}/).filter(Boolean);
+});
+
+const requirementsList = computed(() => {
+  const r = job.value?.requirements || '';
+  if (!r) return [];
+  return r.split('\n').filter((l) => l.trim()).map((l) => l.replace(/^[\s\-•]+/, '').trim());
+});
+
+const responsibilitiesList = computed(() => {
+  const r = job.value?.responsibilities || '';
+  if (!r) return [];
+  return r.split('\n').filter((l) => l.trim()).map((l) => l.replace(/^[\s\-•]+/, '').trim());
+});
+
+const processSteps = [
+  { title: t('careers.process.submit'), desc: t('careers.process.submitDesc') },
+  { title: t('careers.process.screen'), desc: t('careers.process.screenDesc') },
+  { title: t('careers.process.interview'), desc: t('careers.process.interviewDesc') },
+  { title: t('careers.process.offer'), desc: t('careers.process.offerDesc') },
+];
+
 const handleApply = () => {
-  import('@/utils/toast.js').then(({ showToast }) => showToast(t('careers.applyPrompt') || '申请已提交，我们会尽快与您联系！', 'success'));
+  import('@/utils/toast.js').then(({ showToast }) => showToast(t('careers.applyPrompt'), 'success'));
 };
 
 onUnmounted(removeJsonLd);

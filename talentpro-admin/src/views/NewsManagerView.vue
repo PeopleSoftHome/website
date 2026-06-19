@@ -6,6 +6,7 @@
         api-url="/news"
         :columns="columns"
         :form-fields="formFields"
+        ai-assist="news"
       >
         <template #column-status="{ row }">
           <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'">
@@ -47,6 +48,7 @@ const formFields = [
   { prop: 'slug', label: 'Slug', type: 'input' },
   { prop: 'category', label: '分类', type: 'input' },
   { prop: 'summary', label: '摘要', type: 'textarea', rows: 3 },
+  { prop: 'coverImage', label: '封面图', type: 'image-upload' },
   { prop: 'content', label: '内容', type: 'textarea', rows: 4 },
   { prop: 'author', label: '作者', type: 'input' },
   { prop: 'status', label: '状态', type: 'input' },

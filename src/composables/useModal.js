@@ -4,8 +4,11 @@
  */
 import { ref, onUnmounted } from 'vue';
 import { leadApi } from '@/api/lead.js';
+import { usePublicConfig } from '@/composables/usePublicConfig.js';
 
 export function useModal() {
+  const { recaptchaSiteKey } = usePublicConfig();
+
   const isOpen = ref(false);
   const step = ref(0);
   const isSuccess = ref(false);
@@ -57,10 +60,10 @@ export function useModal() {
     try {
       // 获取 reCAPTCHA token（如果配置了）
       let recaptchaToken = '';
-      if (window.grecaptcha) {
+      if (recaptchaSiteKey && window.grecaptcha) {
         try {
           recaptchaToken = await window.grecaptcha.execute(
-            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            recaptchaSiteKey,
             { action: 'demo_booking' },
           );
         } catch {

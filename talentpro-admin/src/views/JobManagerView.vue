@@ -6,6 +6,7 @@
         api-url="/jobs"
         :columns="columns"
         :form-fields="formFields"
+        ai-assist="job"
       >
         <template #column-status="{ row }">
           <el-tag :type="row.status === 'open' ? 'success' : row.status === 'paused' ? 'warning' : 'info'">

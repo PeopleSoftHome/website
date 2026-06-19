@@ -1,14 +1,12 @@
 import { apiClient } from './client.js';
-import { API_BASE_URL } from './baseUrl.js';
 
 /**
  * 基于 fetch + ReadableStream 的 EventSource 兼容封装
  * 支持自定义 Authorization header，避免 token 泄露到 URL / 日志 / 历史记录
  */
 class FetchEventSource {
-  constructor(url, token) {
+  constructor(url) {
     this.url = url;
-    this.token = token;
     this.closed = false;
     this.ctrl = new AbortController();
     this.onmessage = null;
@@ -18,7 +16,8 @@ class FetchEventSource {
 
   _connect() {
     fetch(this.url, {
-      headers: { Authorization: `Bearer ${this.token}`, Accept: 'text/event-stream' },
+      credentials: 'include',
+      headers: { Accept: 'text/event-stream' },
       signal: this.ctrl.signal,
     })
       .then((response) => {
@@ -79,17 +78,17 @@ export const notificationApi = {
 
   /**
    * 创建 SSE 连接
-   * 优先使用 FetchEventSource（header 传 token），降级到标准 EventSource（query param）
+   * 使用 httpOnly Cookie 鉴权，不将 token 暴露在 URL/header 中
    */
-  createEventSource(token) {
-    const url = `${API_BASE_URL}/notifications/stream`;
+  createEventSource() {
+    const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
+    const url = `${baseUrl}/notifications/stream`;
 
     if (typeof ReadableStream !== 'undefined' && typeof AbortController !== 'undefined') {
-      return new FetchEventSource(url, token);
+      return new FetchEventSource(url);
     }
 
-    // 降级：标准 EventSource（token 通过 query parameter 传递）
-    const fallbackUrl = `${url}?token=${encodeURIComponent(token)}`;
-    return new EventSource(fallbackUrl);
+    // 降级：标准 EventSource 同样携带同源 Cookie
+    return new EventSource(url, { withCredentials: true });
   },
 };

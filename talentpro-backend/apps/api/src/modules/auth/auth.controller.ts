@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus, Headers, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus, Headers, Res, Req, UnauthorizedException } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthTokenService } from './auth-token.service';
 import { RegisterDto } from './dto/register.dto';
@@ -11,6 +11,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 
 @ApiTags('认证')
 @Controller('auth')
@@ -48,8 +49,16 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '刷新 Token' })
-  async refresh(@Body() dto: RefreshTokenDto, @Res({ passthrough: true }) res: Response) {
-    const result = await this.authService.refresh(dto.refreshToken);
+  async refresh(
+    @Body() dto: RefreshTokenDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = dto.refreshToken || req.cookies?.tp_refresh_token;
+    if (!refreshToken) {
+      throw new UnauthorizedException('缺少刷新令牌');
+    }
+    const result = await this.authService.refresh(refreshToken);
     this.tokenService.setAuthCookies(res, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
@@ -59,15 +68,18 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @Permission('auth:logout')
   @ApiOperation({ summary: '登出' })
   logout(
     @Body() dto: RefreshTokenDto,
+    @Req() req: Request,
     @Headers('authorization') auth: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const accessToken = auth?.replace('Bearer ', '');
+    const refreshToken = dto.refreshToken || req.cookies?.tp_refresh_token;
+    const accessToken = auth?.replace('Bearer ', '') || req.cookies?.tp_access_token;
     this.tokenService.clearAuthCookies(res);
-    return this.authService.logout(dto.refreshToken, accessToken);
+    return this.authService.logout(refreshToken, accessToken);
   }
 
   @Get('me')
@@ -79,6 +91,7 @@ export class AuthController {
 
   @Patch('profile')
   @ApiBearerAuth()
+  @Permission('auth:update')
   @ApiOperation({ summary: '更新当前用户资料' })
   updateProfile(
     @CurrentUser('id') userId: string,

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { PostStatus } from '@prisma/client';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
@@ -40,7 +40,7 @@ export class BlogPostService {
   // ─── Posts ───
   async findAllPosts(page = 1, pageSize = 20, categorySlug?: string, status?: PostStatus) {
     const skip = getSkip(page, pageSize);
-    const where: any = { status: 'PUBLISHED' };
+    const where: Prisma.BlogPostWhereInput = { status: 'PUBLISHED' };
     if (categorySlug) where.category = { slug: categorySlug };
     if (status) where.status = status;
     const [data, total] = await Promise.all([

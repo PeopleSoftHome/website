@@ -7,6 +7,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserContext } from '../types';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -27,7 +28,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = request.headers?.authorization?.replace('Bearer ', '');
+    const token =
+      request.cookies?.['tp_access_token'] ||
+      request.headers?.authorization?.replace('Bearer ', '');
 
     // 检查 token 是否在黑名单中
     if (token) {
@@ -42,7 +45,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context) as boolean;
   }
 
-  handleRequest(err: any, user: any) {
+  handleRequest<TUser = UserContext>(err: unknown, user: TUser | null): TUser {
     if (err || !user) {
       throw err || new UnauthorizedException('未授权，请登录');
     }

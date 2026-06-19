@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { WorkspaceStatus } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -18,14 +19,6 @@ export class WorkspaceService {
   }
 
   async create(userId: string, data: { name: string }) {
-    const existing = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { workspace: true },
-    });
-    if (existing?.workspace) {
-      throw new ConflictException('您已拥有一个工作空间');
-    }
-
     const slug = await this.generateUniqueSlug(data.name);
 
     const result = await this.prisma.$transaction(async (tx) => {
@@ -76,19 +69,39 @@ export class WorkspaceService {
     const invitee = await this.prisma.user.findFirst({
       where: { email: inviteeEmail },
     });
-    if (!invitee) {
-      throw new NotFoundException('用户不存在');
-    }
-    if (invitee.workspaceId) {
-      throw new ConflictException('该用户已加入其他工作空间');
+
+    // 被邀请人已注册：直接加入工作空间
+    if (invitee) {
+      if (invitee.workspaceId === workspaceId) {
+        throw new ConflictException('该用户已是该工作空间成员');
+      }
+
+      await this.prisma.user.update({
+        where: { id: invitee.id },
+        data: { workspaceId, workspaceRole: 'MEMBER' },
+      });
+
+      return { message: '邀请成功' };
     }
 
-    await this.prisma.user.update({
-      where: { id: invitee.id },
-      data: { workspaceId, workspaceRole: 'MEMBER' },
+    // 被邀请人未注册：生成邀请码，注册时凭码加入
+    const token = randomUUID();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    const invite = await this.prisma.workspaceInvite.create({
+      data: {
+        email: inviteeEmail,
+        workspaceId,
+        token,
+        expiresAt,
+      },
     });
 
-    return { message: '邀请成功' };
+    return {
+      message: '邀请已发送，等待用户注册',
+      inviteToken: invite.token,
+      expiresAt: invite.expiresAt,
+    };
   }
 
   private async generateUniqueSlug(base: string): Promise<string> {

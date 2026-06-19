@@ -1,12 +1,20 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
 export class AuthUserService {
   constructor(private prisma: PrismaService) {}
 
-  async register(dto: { email: string; password: string; name: string; phone?: string; company?: string }) {
+  async register(dto: {
+    email: string;
+    password: string;
+    name: string;
+    phone?: string;
+    company?: string;
+    inviteToken?: string;
+  }) {
     const existing = await this.prisma.user.findFirst({
       where: { email: dto.email },
     });
@@ -19,6 +27,52 @@ export class AuthUserService {
       where: { name: 'USER' },
     });
 
+    // 如果携带邀请码，加入现有工作空间
+    if (dto.inviteToken) {
+      const invite = await this.prisma.workspaceInvite.findUnique({
+        where: { token: dto.inviteToken },
+      });
+      if (!invite || invite.email !== dto.email || invite.usedAt || invite.expiresAt < new Date()) {
+        throw new BadRequestException('邀请码无效或已过期');
+      }
+
+      const result = await this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            email: dto.email,
+            password: hashedPassword,
+            name: dto.name,
+            phone: dto.phone,
+            roleId: defaultRole?.id || '',
+            workspaceId: invite.workspaceId,
+            workspaceRole: 'MEMBER',
+          },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            status: true,
+            createdAt: true,
+            workspaceId: true,
+            workspaceRole: true,
+          },
+        });
+
+        await tx.workspaceInvite.update({
+          where: { id: invite.id },
+          data: { usedAt: new Date() },
+        });
+
+        return { user };
+      });
+
+      return {
+        message: '注册成功',
+        user: result.user,
+      };
+    }
+
+    // 默认行为：创建新工作空间并成为 OWNER
     const baseName = dto.company || dto.name || dto.email.split('@')[0];
     const slug = await this.generateUniqueSlug(baseName);
 
@@ -72,6 +126,10 @@ export class AuthUserService {
       message: '注册成功',
       user: result.user,
     };
+  }
+
+  private generateInviteToken(): string {
+    return randomUUID();
   }
 
   private async generateUniqueSlug(base: string): Promise<string> {

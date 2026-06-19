@@ -50,7 +50,10 @@ import s from './ResourceSection.module.css';
 
 const { t } = useI18n();
 
-const { displayItems: displayResources } = useCmsDataByKey('resources', { transform: transformResources, fallbackKey: 'resources' });
+const { displayItems: displayResources } = useCmsDataByKey('resources', {
+  transform: transformResources,
+  fallbackKey: 'resources',
+});
 
 
 

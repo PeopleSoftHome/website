@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { NotificationType } from '@prisma/client';
+import { NotificationType, Prisma } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class NotificationService {
@@ -53,7 +53,7 @@ export class NotificationService {
         title: data.title,
         content: data.content,
         workspaceId: data.workspaceId,
-        data: (data.data || {}) as any,
+        data: (data.data || {}) as Prisma.InputJsonValue,
       },
     });
     return notif;

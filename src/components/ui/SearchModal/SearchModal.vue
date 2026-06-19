@@ -43,7 +43,7 @@
         <div v-if="!hasQuery" :class="s.hotSection">
           <div :class="s.hotTitle">{{ t('search.hot') }}</div>
           <div :class="s.hotTags">
-            <button v-for="term in HOT_SEARCHES" :key="term" :class="s.hotTag" @click="handleQueryChange(term)">
+            <button v-for="term in displayHotSearches" :key="term" :class="s.hotTag" @click="handleQueryChange(term)">
               {{ term }}
             </button>
           </div>
@@ -82,7 +82,7 @@
           <div :class="s.emptyTitle">{{ t('search.noResult', { query }) }}</div>
           <div :class="s.emptySub">{{ t('search.noResultSub') }}</div>
           <div :class="s.hotTags" style="justify-content:center;margin-top:16px">
-            <button v-for="term in HOT_SEARCHES.slice(0, 4)" :key="term" :class="s.hotTag" @click="handleQueryChange(term)">
+            <button v-for="term in displayHotSearches.slice(0, 4)" :key="term" :class="s.hotTag" @click="handleQueryChange(term)">
               {{ term }}
             </button>
           </div>
@@ -101,6 +101,7 @@
 <script setup>
 import { computed, watch, inject, onUnmounted } from 'vue';
 import { HOT_SEARCHES } from '@/data/searchIndex.js';
+import { useSiteConfig } from '@/composables/useSiteConfig.js';
 import { useSearch } from '@/composables/useSearch.js';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
@@ -119,6 +120,9 @@ const {
   TYPE_LABELS, debouncedQuery, flatResults,
   suggestions,
 } = useSearch(() => searchStore.closeSearch());
+
+const { hotTags: cmsHotTags } = useSiteConfig();
+const displayHotSearches = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : HOT_SEARCHES));
 
 const trackedSelectItem = (item) => {
   analytics.track('search_click', { id: item.id, type: item.type, query: query.value });

@@ -66,8 +66,8 @@ export class AuthTokenService {
     });
     if (accessToken) {
       try {
-        const decoded = this.jwtService.decode(accessToken) as any;
-        if (decoded?.exp) {
+        const decoded = this.jwtService.decode(accessToken) as { exp?: number; sub?: string };
+        if (decoded?.exp && decoded?.sub) {
           await this.prisma.tokenBlacklist.create({
             data: {
               token: accessToken,

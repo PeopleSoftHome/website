@@ -1,7 +1,7 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v4.1.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> **当前版本**：v4.2.0 | **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -163,7 +163,7 @@ talentpro-v2/
     │   ├── useApiData.js         # API 数据加载（loading/error/retry）
     │   ├── useCmsData.js         # CMS 配置驱动数据加载（含 fallback）
     │   ├── useAnalytics.js       # 埋点队列 + 热力图 + 滚动深度
-    │   ├── useChatBot.js         # ChatBot 状态 + SSE 流式消息
+    │   ├── useChatBot.js         # ChatBot 状态 + POST 非流式对话（端点 /ai/chat）
     │   ├── useCookieConsent.js   # Cookie 同意横幅
     │   ├── useFocusTrap.js       # 焦点陷阱（弹窗无障碍）
     │   ├── useLazyImage.js       # 图片懒加载
@@ -424,6 +424,19 @@ npm run build
 - OSS + CDN（阿里云、腾讯云等）
 - Docker（`docker/Dockerfile.frontend` 多阶段构建）
 
+**本地全栈开发环境（含测试数据）**：
+```bash
+# 一键启动 PostgreSQL / Redis / Meilisearch / MinIO / 后端 API，并自动 migration + seed
+docker-compose -f docker-compose.dev.yml up -d
+
+# 前端 dev server 仍在宿主机启动（避免卷映射与 HMR 冲突）
+npm run dev
+```
+启动后：
+- 前端：http://localhost:8080
+- 后端 Swagger：http://localhost:4000/api/docs
+- 默认管理员：`admin@talentpro.com` / `TalentPro@123`（由 `SEED_ADMIN_PASSWORD` 控制）
+
 **注意**：
 - Nuxt SSG 已预渲染全部 20 条路由为静态 HTML，首屏无需 JavaScript 即可渲染
 - SPA fallback 仍需要 `try_files $uri $uri/ /index.html;` 支持动态路由（如 `/blog/:slug`）
@@ -569,6 +582,7 @@ npm run build
 - CI/CD artifact 路径已同步更新
 - `nitro.compressPublicAssets` 预生成 gzip + brotli 压缩文件
 - 静态资源（`_nuxt/**`、`fonts/**`）配置 1 年长期缓存头
+- `Noto Sans SC` 子集字体在 `global.css` 声明 `@font-face`，并在 `nuxt.config.ts` 预加载 400/700 字重
 
 ---
 
@@ -605,4 +619,67 @@ npm run build
 
 ---
 
-*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 · AGENTS.md v4.1.0*
+## 14. v4.2.0 配置治理与安全加固（新增）
+
+### 认证与 JWT
+
+- **前端不再存储 JWT**：`src/api/client.js` 统一启用 `withCredentials: true`，`src/stores/auth.pinia.js` 不再读写 `localStorage` 中的 `tp_access_token` / `tp_refresh_token`。
+- **后端 JWT 同时支持 Cookie 与 Bearer**：`JwtStrategy` 优先从 `tp_access_token` httpOnly Cookie 提取，再回退到 `Authorization: Bearer`；兼容 Admin 独立系统等仍使用 bearer 的场景。
+- **Refresh / Logout 读 Cookie**：`auth.controller.ts` 的 `refresh` 与 `logout` 优先从请求 Cookie 读取 token，同时兼容 body 传值。
+- **Cookie 安全属性**：生产环境 `secure: true`、`sameSite: 'lax'`、`httpOnly: true`；`TokenBlacklist` 记录已注销 token。
+
+### PII 字段级加密
+
+- **扩展字段覆盖**：`field-encryption.extension.ts` 改为 `query` 扩展，支持 `User.phone`、`DemoBooking.phone/email`、`DownloadRecord.email/phone`、`JobApplication.email/phone/resumeUrl`、`AppVendor.contactEmail/contactPhone`、`TeamMember.email` 的自动 AES-256-GCM 加解密。
+- **密钥来源**：`PII_ENCRYPTION_KEY`（≥32 字符，推荐 64 字符 HEX/AES-256）→ `JWT_SECRET` fallback（记录警告日志）。
+- **查询字段保持明文**：用于登录/邀请等值查询的 `email` 字段暂不加解密，避免索引与查询失效。
+
+### 审计日志
+
+- `AuditInterceptor` 在 `PATCH/PUT/DELETE` 操作前捕获资源快照，操作后记录完整 `oldValue` / `newValue`；所有敏感字段自动脱敏。
+- `POST /system/audit-logs` 仅限 `SUPER_ADMIN` 使用，避免伪造审计记录。
+
+### IP 过滤
+
+- `IpFilterGuard` 引入 `TRUSTED_PROXIES` 配置（支持 IPv4/IPv6 与 CIDR，如 `10.0.0.0/8,::1`）。
+- 仅当远端地址在可信代理列表内时才信任 `X-Forwarded-For`；直接使用 `ipaddr.js` 做 CIDR/IPv6 匹配。
+- 支持 `APP_ALLOWED_IPS` / `APP_BLOCKED_IPS` 黑白名单。
+
+### 工程化配置
+
+- **Joi 校验补全**：`app.module.ts` 校验 `APP_*`、`JWT_*`、`PII_ENCRYPTION_KEY`、`MEILISEARCH_*`、`SENTRY_DSN`、`STRIPE_*`、`THROTTLE_*`、`TRUSTED_PROXIES` 等关键环境变量。
+- **限流可配置**：`ThrottlerModule` 通过 `ConfigService` 读取 `THROTTLE_TTL`、`THROTTLE_LIMIT` 等；不再强制覆盖 `.env` 中的兜底值。
+- **`process.env` 收敛**：`PaymentService`、`PrismaService`、`main.ts` 统一使用 `ConfigService`，禁止直接读取 `process.env`。
+- **公开配置 API**：`GET /system/config/public` 白名单返回 `recaptchaSiteKey`、`sentryDsn`、`featureFlags`、`sitePhone`、`copyright` 等；前端通过 `usePublicConfig()` 消费。
+- **前端 env 统一**：`nuxt.config.ts` 使用 `runtimeConfig.public.apiBaseUrl`；构建/运行时使用 `NUXT_PUBLIC_API_BASE_URL`。
+- **导航/页脚 CMS 化**：`NavBar.vue`、`MobileMenu.vue`、`Footer.vue` 通过 `useNavigation()` 优先读取 `GET /cms/navigations/:key`；CMS 为空或失败时自动回退到 `src/data/navigation.js`，实现运营可配且不影响现有渲染。
+- **功能开关**：后端 `GET /system/config/public` 返回 `featureFlags`；前端 `useFeatureFlag(key)` 按 key 读取布尔开关，未配置默认关闭。
+
+### Admin 与 CMS
+
+- **AI 内容生成**：后端新增 `POST /api/v1/ai/generate`（`ADMIN`/`SUPER_ADMIN`），支持 `blog`/`product`/`seo`/`translate`/`moderate` 等类型；Admin 可在各内容管理页通过 `AiAssistButton` 调用（已接入 Blog/News/Case/EmailTemplate/Products/Industries/Job/AppManager）。
+- **CMS 通用 CRUD**：`/cms/content/:type` 暴露完整 `POST/PATCH/DELETE`，统一走 `CmsGenericService`。
+- **翻译后端化**：前端 `useCmsTranslations()` 在 i18n 初始化后调用 `GET /cms/translations?locale=xx` 合并 CMS 覆盖层；Admin 新增 `/cms/translations` 翻译管理页，后端提供 `GET /cms/translations/list`、`POST /cms/translations`、`PATCH /cms/translations/:id`、`DELETE /cms/translations/:id`。
+- **ChatBot 配置与历史持久化**：后端新增 `ChatBotConfig` / `AiChatSession` 模型；公开 `GET /system/chatbot-config` 返回 intents / quickReplies / fallbackCopy；`POST /ai/chat` 与 `/ai/chat-stream` 接收 `sessionId` 并持久化多轮对话；前端 `useChatBot.js` 加载后端配置并维护 `sessionStorage` 会话 ID。
+- **站点配置全面后端化**：`GET /system/config/public` 白名单扩展至 `sitePhone`、`copyright`、`featureFlags`、`hotTags`、`socialLinks`、`siteTitle`、`siteDescription`；`useSiteConfig()` 统一消费；Footer / SearchModal 热门标签与社交链接、App.vue 默认 title/description 均支持后端热更新。
+- **Admin 功能开关**：新增 `/system/feature-flags` 管理页，可视化增删改 `featureFlags` JSON 开关。
+- **Admin 移动端响应式**：新增 `src/styles/responsive.css` 并全局引入；768px 以下自动适配表格横向滚动、弹窗宽度、表单标签、按钮组换行等细节。
+- **TypeScript 迁移启动**：Admin 已新增 `tsconfig.json` + `src/env.d.ts`，入口 `main.ts` 已迁移；其余 `.js` 文件按季度规划逐步推进。
+
+---
+
+### P2 可观测性与架构债
+
+- **Pino 结构化日志**：`nestjs-pino` 已启用；`main.ts` 使用 `app.useLogger(app.get(Logger))`；日志级别由 `LOG_LEVEL` 控制；自动脱敏 `authorization`、`cookie`、`password`、`refreshToken` 等字段。
+- **请求 ID**：`pino-http` 的 `genReqId` 读取 `X-Request-ID` Header、现有 `req.requestId` 或生成 UUID；后端响应头 `X-Request-Id` 仍由中间件设置。
+- **CSP 策略**：`helmet` 显式配置 `Content-Security-Policy`，限制 `defaultSrc`/`scriptSrc`/`styleSrc`/`objectSrc`/`frameAncestors` 等。
+- **ErrorBoundary**：`App.vue` 已使用 `<ErrorBoundary>` 包裹 `<NuxtPage />`，组件级错误不再导致整站白屏。
+- **Redis 缓存隔离**：`CACHE_KEY_PREFIX` 控制所有 `@Cacheable` 缓存键前缀；非 `development` 环境默认使用 `APP_ENV:` 前缀；`Cache-Control` 拦截器改用精确正则匹配，避免 `path.includes` 误命中私有路径。
+- **AI 内容审核**：`CommentModerationService` 在规则引擎基础上叠加 OpenAI Moderation API，输出 `aiRiskScore` / `aiFlags`。
+- **LLM 多提供商抽象**：新增 `LlmProvider` 接口与 `LlmProviderConfig`；`AiOpenAiService` 实现该接口；模型参数（`OPENAI_MODEL`、`OPENAI_TEMPERATURE`、`OPENAI_MAX_TOKENS`、`OPENAI_BASE_URL`）由环境变量驱动，便于后续接入 Azure/Anthropic/OpenRouter。
+- **依赖漏洞治理**：前端/后端 `npm audit` 均为 0；`package.json` 使用 `overrides` 锁定安全版本（如 `esbuild`、`form-data`、`js-yaml`、`launch-editor`、`tar`、`vite-plugin-checker`）。
+- **渐进 TypeScript 迁移**：新增根目录 `tsconfig.json` 作为迁移起点；完整文件迁移按季度规划推进。
+
+---
+
+*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 · AGENTS.md v4.2.0*

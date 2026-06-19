@@ -52,7 +52,9 @@ const ContactModal = defineAsyncComponent(() => import('@/components/ui/ContactM
 const AuthModal = defineAsyncComponent(() => import('@/components/ui/AuthModal/AuthModal.vue'));
 const ChatBot = defineAsyncComponent(() => import('@/components/ui/ChatBot/ChatBot.vue'));
 import { useCookieConsent } from '@/composables/useCookieConsent.js';
-import { API_BASE_URL } from '@/api/baseUrl.js';
+import { useCmsTranslations } from '@/composables/useCmsTranslations.js';
+import { useSiteConfig } from '@/composables/useSiteConfig.js';
+import { apiClient } from '@/api/client.js';
 
 /* 全局状态 */
 const { t, locale } = useI18n();
@@ -65,6 +67,9 @@ const analytics = createAnalytics();
 /* Pinia auth store（SSR 安全，替代 legacy createAuth） */
 const auth = useAuthStore();
 if (typeof window !== 'undefined') auth.initFromStorage();
+
+/* CMS 翻译覆盖层（运行时合并后端文案） */
+useCmsTranslations();
 
 provide('theme', theme);
 provide('search', search);
@@ -79,6 +84,9 @@ const contactOpen = ref(false);
 const chatOpen = ref(false);
 const authOpen = useState('authOpen', () => false);
 
+/* 站点配置（后端驱动 title / description / hotTags / socialLinks 等） */
+const { siteTitle, siteDescription } = useSiteConfig();
+
 /* 语言切换时同步更新页面 title / meta description */
 const route = useRoute();
 const syncPageMeta = () => {
@@ -88,15 +96,21 @@ const syncPageMeta = () => {
     document.title = translated.startsWith('TalentPro')
       ? translated
       : `TalentPro — ${translated}`;
+  } else if (siteTitle.value) {
+    document.title = siteTitle.value;
   }
   const descKey = route.meta?.description;
   if (descKey) {
     const translated = t(descKey);
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', translated);
+  } else if (siteDescription.value) {
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', siteDescription.value);
   }
 };
 watch(locale, syncPageMeta);
+watch([siteTitle, siteDescription], syncPageMeta);
 
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
@@ -121,7 +135,7 @@ const reportError = (type, message, stack) => {
       ua: navigator.userAgent,
       time: new Date().toISOString(),
     };
-    const baseUrl = API_BASE_URL;
+    const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
     if (navigator.sendBeacon) {
       navigator.sendBeacon(`${baseUrl}/analytics/client-errors`, JSON.stringify(payload));
     } else {
@@ -211,6 +225,7 @@ watch(() => search.isOpen.value, (open) => {
 onMounted(() => {
   const io = new IntersectionObserver(
     (entries) => {
+      // observer entries
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
@@ -228,7 +243,9 @@ onMounted(() => {
 
   const seenSections = new Set();
   const scan = () => {
-    document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
+    const els = document.querySelectorAll('.reveal:not(.is-visible)');
+    // scan
+    els.forEach((el) => {
       io.observe(el);
     });
   };
@@ -241,13 +258,22 @@ onMounted(() => {
     scanTimer = setTimeout(scan, 150);
   });
 
-  const mainEl = document.querySelector('main');
-  if (mainEl) mo.observe(mainEl, { childList: true, subtree: true });
+  // 监听 Nuxt 根节点：路由切换会替换 <main>，只监听旧的 main 会失效
+  const rootEl = document.querySelector('#__nuxt') || document.body || document.documentElement;
+  if (rootEl) mo.observe(rootEl, { childList: true, subtree: true });
+
+  // 路由切换完成后主动扫描一次，避免 MutationObserver 漏掉快速复用的 DOM
+  const router = useRouter();
+  const stopAfterEach = router.afterEach(() => {
+    clearTimeout(scanTimer);
+    scanTimer = setTimeout(scan, 100);
+  });
 
   onUnmounted(() => {
     io.disconnect();
     mo.disconnect();
     clearTimeout(scanTimer);
+    stopAfterEach();
   });
 });
 </script>

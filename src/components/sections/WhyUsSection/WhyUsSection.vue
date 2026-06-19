@@ -50,7 +50,7 @@ import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
 import { transformWhyUsTabs } from '@/api/transforms.js';
-import { STATS_BAR } from '@/data/whyUs.js';
+import { STATS_BAR, WHY_US_TABS } from '@/data/whyUs.js';
 import { SECURITY_CERTS } from '@/data/security.js';
 import Icon from '../../ui/Icon/Icon.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
@@ -75,8 +75,8 @@ const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'produc
 const currentMetrics = computed(() => {
   const apiTab = apiTabs.value[activeIndex.value];
   if (apiTab?.metrics?.length) return apiTab.metrics;
-  const m = t(`whyUs.metrics.${currentTabId.value}`);
-  return Array.isArray(m) ? m : [];
+  const staticTab = WHY_US_TABS.find((tab) => tab.id === currentTabId.value);
+  return staticTab?.metrics || [];
 });
 
 const barRefs = [];
@@ -107,12 +107,6 @@ onMounted(() => {
   });
 });
 
-const certLabel = (i) => {
-  const data = t(`whyUs.security.certs.${i}`);
-  return typeof data === 'object' ? data.label : SECURITY_CERTS[i].label;
-};
-const certDesc = (i) => {
-  const data = t(`whyUs.security.certs.${i}`);
-  return typeof data === 'object' ? data.desc : SECURITY_CERTS[i].desc;
-};
+const certLabel = (i) => SECURITY_CERTS[i]?.label || '';
+const certDesc = (i) => SECURITY_CERTS[i]?.desc || '';
 </script>

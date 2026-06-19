@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -20,25 +21,25 @@ export class AnalyticsService {
   // ─── EventTrack ───
   async trackEvent(data: {
     event: string;
-    properties?: Record<string, any>;
+    properties?: Record<string, unknown>;
     userId?: string;
     sessionId: string;
   }) {
     return this.prisma.eventTrack.create({
-      data: { ...data, properties: data.properties || {} },
+      data: { ...data, properties: (data.properties || {}) as Prisma.InputJsonValue },
     });
   }
 
   async trackEvents(events: {
     event: string;
-    properties?: Record<string, any>;
+    properties?: Record<string, unknown>;
     userId?: string;
     sessionId: string;
   }[]) {
     const result = await this.prisma.$transaction(
       events.map((e) =>
         this.prisma.eventTrack.create({
-          data: { ...e, properties: e.properties || {} },
+          data: { ...e, properties: (e.properties || {}) as Prisma.InputJsonValue },
         }),
       ),
     );
@@ -49,10 +50,10 @@ export class AnalyticsService {
   async logUserActivity(data: {
     userId: string;
     action: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }) {
     return this.prisma.userActivity.create({
-      data: { ...data, metadata: data.metadata || {} },
+      data: { ...data, metadata: (data.metadata || {}) as Prisma.InputJsonValue },
     });
   }
 

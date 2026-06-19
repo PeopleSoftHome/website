@@ -47,6 +47,7 @@ import { ref, computed, onUnmounted, inject } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
+import { transformTestimonials } from '@/api/transforms.js';
 
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
@@ -65,18 +66,7 @@ const GRAD_PRESETS = [
 ];
 
 const { displayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
-  transform: (active) => (active || []).map((item, i) => ({
-    id: item.name
-      ? item.name.toLowerCase().replace(/\s+/g, '-')
-      : `testimonial-${i}`,
-    industry: item.industry || '',
-    product: item.product || '',
-    text: item.text || '',
-    name: item.name || '',
-    title: item.title || '',
-    avatarGrad: GRAD_PRESETS[i % GRAD_PRESETS.length],
-    avatarChar: item.name ? item.name.charAt(0) : '?',
-  })),
+  transform: transformTestimonials,
   fallbackKey: 'testimonials',
 });
 

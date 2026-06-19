@@ -5,7 +5,7 @@ export class TrackEventDto {
   event: string;
 
   @IsOptional()
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 
   @IsString()
   sessionId: string;

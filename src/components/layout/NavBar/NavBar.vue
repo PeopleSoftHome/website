@@ -11,29 +11,30 @@
 
         <!-- 桌面导航链接 -->
         <div :class="s.links">
-          <template v-for="link in NAV_LINKS" :key="link.id">
+          <template v-for="link in navLinks" :key="link.id">
             <div v-if="link.hasDropdown" :class="s.item">
               <span :class="s.itemLabel">
                 {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily'
                   : link.id === 'solutions' ? 'solutions'
                   : link.id === 'cases'     ? 'cases'
                   : link.id === 'resources' ? 'resources'
+                  : link.id === 'about'     ? 'about'
                   : link.id}`) }}
                 <span :class="s.arrow"><Icon name="chevron-down" :size="14" /></span>
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
             <router-link v-else :to="link.href" :class="s.item">
-              {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily' : link.id}`) }}
+              {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily'
+                : link.id === 'about' ? 'about'
+                : link.id}`) }}
             </router-link>
           </template>
-          <router-link to="/blog" :class="s.item">{{ t('nav.blog') }}</router-link>
-          <router-link to="/forum" :class="s.item">{{ t('nav.forum') }}</router-link>
         </div>
 
         <!-- 右侧操作区 -->
         <div :class="s.right">
-          <span :class="s.phone">{{ t('nav.phone') }}</span>
+          <span :class="s.phone">{{ sitePhone || t('nav.phone') }}</span>
 
           <!-- 搜索栏（内联展开） -->
           <div :class="[s.searchWrap, searchOpen ? s.searchExpanded : '', scrolled ? s.searchScrolled : '']">
@@ -66,20 +67,23 @@
               :aria-label="t('nav.langLabel')"
               :aria-expanded="langMenuOpen"
             >
-              <Icon name="globe" :size="14" /> {{ LOCALES[locale]?.label ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
+              <Icon name="globe" :size="14" /> {{ localeLabel(locale) ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
             </button>
             <div v-if="langMenuOpen" :class="s.langMenu" role="menu">
               <button
-                v-for="[key, { label }] in Object.entries(LOCALES)"
-                :key="key"
+                v-for="loc in localeOptions"
+                :key="loc.key"
                 role="menuitem"
-                :class="[s.langOption, locale === key ? s.langActive : '']"
-                @click="pickLang(key)"
+                :class="[s.langOption, locale === loc.key ? s.langActive : '']"
+                @click="pickLang(loc.key)"
               >
-                {{ label }}
+                {{ loc.label }}
               </button>
             </div>
           </div>
+
+          <!-- 购物车 -->
+          <CartButton />
 
           <!-- 主题切换 -->
           <button
@@ -139,12 +143,14 @@ import { ref, computed, inject, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
 
 import { useNavScroll } from '@/composables/useNavScroll.js';
-import { NAV_LINKS } from '@/data/navigation.js';
-const LOCALES = {
-  'zh': { label: '简体中文' },
-  'en': { label: 'English' },
-  'zh-TW': { label: '繁體中文' },
-};
+import { useNavigation } from '@/composables/useNavigation.js';
+import { useSiteConfig } from '@/composables/useSiteConfig.js';
+const localeOptions = computed(() => [
+  { key: 'zh', label: t('nav.lang.zh') },
+  { key: 'en', label: t('nav.lang.en') },
+  { key: 'zh-TW', label: t('nav.lang.zhTw') },
+]);
+const localeLabel = (code) => localeOptions.value.find((l) => l.key === code)?.label;
 import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
 import MobileMenu from './MobileMenu.vue';
@@ -152,6 +158,8 @@ import Button from '../../ui/Button/Button.vue';
 import s from './NavBar.module.css';
 
 const { scrolled } = useNavScroll();
+const { navLinks } = useNavigation();
+const { sitePhone } = useSiteConfig();
 
 const { t, locale, setLocale } = useI18n();
 const themeStore  = inject('theme', { theme: ref('light'), toggle: () => {} });

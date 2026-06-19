@@ -22,6 +22,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "ts-node scripts/seed.ts",
+    "db:seed:rich": "ts-node scripts/seed-rich-data.ts",
     "db:studio": "prisma studio",
     "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
     "docker:down": "docker-compose -f docker/docker-compose.yml down"
@@ -56,6 +57,7 @@
     "multer": "^1.4.5-lts.1",
     "nestjs-pino": "^4.4.0",
     "nodemailer": "^8.0.9",
+    "openai": "^6.42.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -129,7 +131,8 @@
   "overrides": {
     "exceljs": {
       "uuid": "^11.1.1"
-    }
+    },
+    "js-yaml": "^4.1.2"
   },
   "engines": {
     "node": ">=18.0.0",

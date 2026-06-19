@@ -39,6 +39,7 @@ import { computed, inject, ref } from 'vue';
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
 import { useTabs } from '@/composables/useTabs.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
+import { transformProductTabs } from '@/api/transforms.js';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';
@@ -56,29 +57,7 @@ const trackedSelectTab = (idx) => {
 };
 
 const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('products', {
-  transform: (active) => {
-    if (!active || active.length === 0) return [];
-    const groups = {};
-    active.forEach((item) => {
-      const tabName = item.tabName || t('common.other');
-      if (!groups[tabName]) groups[tabName] = [];
-      groups[tabName].push(item);
-    });
-    return Object.entries(groups).map(([tabName, products]) => ({
-      id: tabName.toLowerCase().replace(/\s+/g, '-'),
-      label: tabName,
-      iconColor: '',
-      iconBg: '',
-      products: products.map((p, pIdx) => ({
-        id: p.name
-          ? p.name.toLowerCase().replace(/\s+/g, '-')
-          : `product-${pIdx}`,
-        icon: p.icon || 'box',
-        name: p.name || '',
-        desc: p.description || '',
-      })),
-    }));
-  },
+  transform: transformProductTabs,
   fallbackKey: 'products',
 });
 

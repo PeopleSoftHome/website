@@ -1,0 +1,47 @@
+.header { margin-bottom: 20px; }
+.title { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+.panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
+.sectionTitle { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+.form { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+.input { padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); background: var(--page-bg); color: var(--gray-900); font-size: 14px; font-family: inherit; }
+.input:focus { outline: none; border-color: var(--primary); }
+.panelActions { margin-top: 16px; text-align: right; }
+.btnPrimary { padding: 10px 24px; border-radius: var(--radius-md); border: none; background: var(--primary); color: var(--white); font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: inherit; }
+.btnPrimary:hover { background: var(--primary-dark); }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.prefItem { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.prefName { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.prefDesc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+.toggle { width: 44px; height: 24px; border-radius: 12px; border: none; background: var(--gray-300); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.toggleOn { background: var(--primary); }
+.toggleKnob { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); transition: transform 0.2s; display: block; }
+.toggleOn .toggleKnob { transform: translateX(20px); }
+
+/* History table */
+.historyTable { display: flex; flex-direction: column; gap: 2px; }
+.historyHead { display: grid; grid-template-columns: 1.6fr 1.4fr 1fr 0.8fr 0.8fr; gap: 12px; padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.3px; }
+.historyRow { display: grid; grid-template-columns: 1.6fr 1.4fr 1fr 0.8fr 0.8fr; gap: 12px; padding: 12px; border-radius: var(--radius-md); font-size: 13px; color: var(--gray-700); background: var(--page-bg); }
+.currentTag { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-10); padding: 2px 8px; border-radius: var(--radius-sm); }
+.pastTag { color: var(--gray-400); }
+
+@media (max-width: 1023px) {
+  .form { grid-template-columns: 1fr; }
+  .historyHead { display: none; }
+  .historyRow { display: flex; flex-direction: column; gap: 4px; padding: 14px; }
+  .historyRow span::before { font-weight: 600; color: var(--gray-500); display: inline-block; min-width: 70px; }
+  .historyRow span:nth-child(1)::before { content: '时间: '; }
+  .historyRow span:nth-child(2)::before { content: '设备: '; }
+  .historyRow span:nth-child(3)::before { content: 'IP: '; }
+  .historyRow span:nth-child(4)::before { content: '地点: '; }
+  .historyRow span:nth-child(5)::before { content: '状态: '; }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .sectionTitle { color: var(--gray-50); }
+[data-theme="dark"] .input { background: var(--gray-800); border-color: var(--gray-700); color: var(--gray-50); }
+[data-theme="dark"] .prefName { color: var(--gray-50); }
+[data-theme="dark"] .historyRow { background: var(--gray-800); color: var(--gray-400); }

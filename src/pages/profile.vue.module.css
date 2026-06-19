@@ -1,87 +1,25 @@
-.profilePage { padding: 60px 0 80px; background: var(--page-bg); min-height: 60vh; }
-.profileCard {
-  max-width: 640px;
-  margin: 0 auto;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  padding: 36px;
-}
-.profileHeader {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  position: relative;
-}
-.profileInfo { flex: 1; }
-.profileName { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-.profileEmail { font-size: 14px; color: var(--gray-500); margin-bottom: 8px; }
-.profileBio { font-size: 15px; color: var(--gray-700); line-height: 1.6; margin-bottom: 8px; }
-.profileMeta { font-size: 13px; color: var(--gray-500); }
+.page { padding: 40px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 32px; align-items: start; }
+.sidebar { position: sticky; top: 100px; }
+.userBrief { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); margin-bottom: 16px; }
+.userBriefInfo { min-width: 0; }
+.userBriefName { font-size: 15px; font-weight: 700; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.userBriefEmail { font-size: 12px; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav { display: flex; flex-direction: column; gap: 4px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 8px; }
+.navLink { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--gray-700); text-decoration: none; transition: all 0.2s; }
+.navLink:hover { background: var(--gray-100); color: var(--gray-900); }
+.navLinkActive { background: var(--primary-10); color: var(--primary); }
+.navLinkActive:hover { background: var(--primary-10); }
+.navIcon { font-size: 16px; width: 20px; text-align: center; }
+.content { min-width: 0; }
 
-.profileEditBtn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--gray-200);
-  background: var(--card-bg);
-  color: var(--gray-700);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
+@media (max-width: 1023px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .userBrief { display: none; }
+  .nav { flex-direction: row; overflow-x: auto; gap: 8px; padding: 8px 12px; }
+  .navLink { white-space: nowrap; }
 }
-.profileEditBtn:hover { border-color: var(--primary); color: var(--primary); }
 
-.profileEditForm { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--card-border); }
-.formGroup { margin-bottom: 16px; }
-.formGroup label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
-.formGroup input,
-.formGroup textarea {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--gray-900);
-  background: var(--card-bg);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.formGroup input:focus,
-.formGroup textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-
-.formActions { display: flex; justify-content: flex-end; gap: 10px; }
-.btnSecondary {
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--gray-200);
-  background: var(--card-bg);
-  color: var(--gray-700);
-  font-size: 14px;
-  cursor: pointer;
-  font-family: inherit;
-}
-.btnPrimary {
-  padding: 8px 20px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: var(--primary);
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-}
-.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.profileEmpty { text-align: center; padding: 60px; color: var(--gray-500); }
-
-[data-theme="dark"] .profileName { color: var(--gray-50); }
-[data-theme="dark"] .profileBio { color: var(--gray-400); }
+[data-theme="dark"] .userBriefName { color: var(--gray-50); }
+[data-theme="dark"] .navLink:hover { background: var(--gray-800); color: var(--gray-50); }

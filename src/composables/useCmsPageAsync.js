@@ -14,7 +14,7 @@ export function useCmsPageAsync(pageKey) {
         const page = await cmsApi.getPage(pageKey);
         return sectionRegistry.resolve(page);
       } catch (e) {
-        if (import.meta.env.DEV) {
+        if (import.meta.env.DEV && !/page.*不存在|not found/i.test(e.message || '')) {
           console.warn(`[CmsPage] CMS page config load failed for ${pageKey}:`, e.message);
         }
         return sectionRegistry.resolve(null);

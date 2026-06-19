@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center">
+    <div class="cms-table-header">
       <div>
         <el-button type="primary" @click="openDialog()">+ 新建</el-button>
         <el-button
@@ -73,7 +73,7 @@
       style="margin-top: 16px; justify-content: flex-end"
       layout="prev, pager, next"
       :total="total"
-      :page-size="pageSize"
+      :page-size="crud.pageSize"
       v-model:current-page="page"
     />
 
@@ -116,18 +116,36 @@
         </el-form-item>
       </el-form>
       <template #footer>
+        <AiAssistButton
+          v-if="aiAssist"
+          :type="aiAssistType"
+          :title="form.title || ''"
+          :content="form.content || form.summary || form.excerpt || form.description || ''"
+          @result="(p) => { aiPayload = p; aiVisible = true; }"
+        />
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
+
+    <AiAssistDialog
+      v-if="aiAssist"
+      v-model:visible="aiVisible"
+      :type="aiAssistType"
+      :title="aiPayload.title"
+      :content="aiPayload.content"
+      @apply="applyAiResult"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
 import ImageUpload from './ImageUpload.vue';
+import AiAssistButton from './AiAssistButton.vue';
+import AiAssistDialog from './AiAssistDialog.vue';
 import { useCrud } from '@/composables/useCrud.js';
 
 const props = defineProps({
@@ -139,6 +157,7 @@ const props = defineProps({
   selection: { type: Boolean, default: false },
   pageSize: { type: Number, default: 20 },
   apiParams: { type: Object, default: () => ({}) },
+  aiAssist: { type: [Boolean, Object], default: false },
 });
 
 const buildEmptyForm = () => {
@@ -185,6 +204,44 @@ const crud = useCrud({
 });
 
 const selectedRows = ref([]);
+const aiVisible = ref(false);
+const aiPayload = ref({ type: 'content', title: '', content: '' });
+const aiAssistType = computed(() => {
+  if (typeof props.aiAssist === 'string') return props.aiAssist;
+  if (props.aiAssist && typeof props.aiAssist === 'object' && props.aiAssist.type) return props.aiAssist.type;
+  return 'content';
+});
+
+const applyAiResult = ({ action, result }) => {
+  // 标题类字段：优先 title，其次 name / label
+  if (result.title) {
+    if ('title' in form.value) form.value.title = result.title;
+    else if ('name' in form.value) form.value.name = result.title;
+    else if ('label' in form.value) form.value.label = result.title;
+    else if ('subject' in form.value) form.value.subject = result.title;
+  }
+  // 描述类字段
+  if (result.description) {
+    if ('description' in form.value) form.value.description = result.description;
+    else if ('tagline' in form.value) form.value.tagline = result.description;
+    else if ('summary' in form.value) form.value.summary = result.description;
+    else if ('excerpt' in form.value) form.value.excerpt = result.description;
+  }
+  if (result.summary && 'summary' in form.value) form.value.summary = result.summary;
+  if (result.excerpt && 'excerpt' in form.value) form.value.excerpt = result.excerpt;
+  // 正文类字段
+  if (result.content) {
+    if ('content' in form.value) form.value.content = result.content;
+    else if ('body' in form.value) form.value.body = result.content;
+  }
+  if (result.translation) {
+    if ('content' in form.value) form.value.content = result.translation;
+    else if ('body' in form.value) form.value.body = result.translation;
+  }
+  // SEO 关键词：如果表单有 keywords 字段则填入
+  if (result.keywords && 'keywords' in form.value) form.value.keywords = result.keywords;
+  ElMessage.success('已应用生成结果，请确认后再保存');
+};
 
 const handleSelectionChange = (rows) => {
   selectedRows.value = rows;
@@ -218,7 +275,6 @@ const {
   items,
   total,
   page,
-  pageSize,
   loading,
   dialogVisible,
   isEdit,

@@ -106,39 +106,40 @@ enum NotificationType {
 // ==================== Identity ====================
 
 model User {
-  id             String          @id @default(uuid())
-  email          String
-  password       String
-  name           String?
-  avatar         String?
-  phone          String?
-  bio            String?
-  status         UserStatus      @default(ACTIVE)
-  roleId         String
-  role           Role            @relation(fields: [roleId], references: [id])
-  workspaceId    String?
-  workspace      Workspace?      @relation(fields: [workspaceId], references: [id])
-  workspaceRole  WorkspaceRole?  @default(MEMBER)
-  abVariant      String?         // A/B测试分组
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  deletedAt      DateTime?
+  id            String         @id @default(uuid())
+  email         String
+  password      String
+  name          String?
+  avatar        String?
+  phone         String?
+  bio           String?
+  status        UserStatus     @default(ACTIVE)
+  roleId        String
+  role          Role           @relation(fields: [roleId], references: [id])
+  workspaceId   String?
+  workspace     Workspace?     @relation(fields: [workspaceId], references: [id])
+  workspaceRole WorkspaceRole? @default(MEMBER)
+  abVariant     String? // A/B测试分组
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
 
-  posts           BlogPost[]
-  topics          ForumTopic[]
-  replies         ForumPost[]
-  comments        Comment[]
-  activities      UserActivity[]
-  auditLogs       AuditLog[]
-  downloads       DownloadRecord[]
-  notifications   Notification[]
-  medias          Media[]
-  followUps       FollowUp[]
-  assignedBookings DemoBooking[] @relation("AssignedBookings")
-  updatedSettings Setting[]
-  ownedWorkspaces Workspace[]    @relation("WorkspaceOwner")
+  posts            BlogPost[]
+  topics           ForumTopic[]
+  replies          ForumPost[]
+  comments         Comment[]
+  activities       UserActivity[]
+  auditLogs        AuditLog[]
+  downloads        DownloadRecord[]
+  notifications    Notification[]
+  medias           Media[]
+  followUps        FollowUp[]
+  assignedBookings DemoBooking[]    @relation("AssignedBookings")
+  updatedSettings  Setting[]
+  ownedWorkspaces  Workspace[]      @relation("WorkspaceOwner")
 
   @@unique([email, workspaceId])
+  @@index([email])
   @@index([workspaceId])
   @@index([roleId])
   @@map("users")
@@ -156,28 +157,44 @@ model Role {
 }
 
 model Permission {
-  id        String @id @default(uuid())
-  resource  String
-  action    String
-  roles     Role[]
+  id       String @id @default(uuid())
+  resource String
+  action   String
+  roles    Role[]
 
   @@unique([resource, action])
   @@map("permissions")
 }
 
 model Workspace {
-  id        String   @id @default(uuid())
+  id        String          @id @default(uuid())
   name      String
-  slug      String   @unique
+  slug      String          @unique
   plan      WorkspacePlan   @default(FREE)
   status    WorkspaceStatus @default(ACTIVE)
   ownerId   String
-  owner     User     @relation("WorkspaceOwner", fields: [ownerId], references: [id])
+  owner     User            @relation("WorkspaceOwner", fields: [ownerId], references: [id])
   users     User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  invites   WorkspaceInvite[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   @@map("workspaces")
+}
+
+model WorkspaceInvite {
+  id          String    @id @default(uuid())
+  email       String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  token       String    @unique
+  usedAt      DateTime?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  @@index([email])
+  @@index([workspaceId])
+  @@map("workspace_invites")
 }
 
 model RefreshToken {
@@ -221,10 +238,10 @@ model Section {
 }
 
 model Translation {
-  id      String @id @default(uuid())
+  id      String  @id @default(uuid())
   locale  String
   key     String
-  value   String @db.Text
+  value   String  @db.Text
   context String?
 
   @@unique([locale, key])
@@ -235,30 +252,30 @@ model Translation {
 // ==================== Navigation ====================
 
 model Navigation {
-  id        String      @id @default(uuid())
-  key       String      @unique
+  id        String    @id @default(uuid())
+  key       String    @unique
   label     String
-  location  String      @default("header")
+  location  String    @default("header")
   items     NavItem[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("navigations")
 }
 
 model NavItem {
-  id            String  @id @default(uuid())
-  navigationId  String
-  navigation    Navigation @relation(fields: [navigationId], references: [id], onDelete: Cascade)
-  parentId      String?
-  parent        NavItem?   @relation("NavChildren", fields: [parentId], references: [id])
-  children      NavItem[]  @relation("NavChildren")
-  label         String
-  href          String?
-  icon          String?
-  description   String?
-  sortOrder     Int        @default(0)
-  isExternal    Boolean    @default(false)
+  id           String     @id @default(uuid())
+  navigationId String
+  navigation   Navigation @relation(fields: [navigationId], references: [id], onDelete: Cascade)
+  parentId     String?
+  parent       NavItem?   @relation("NavChildren", fields: [parentId], references: [id])
+  children     NavItem[]  @relation("NavChildren")
+  label        String
+  href         String?
+  icon         String?
+  description  String?
+  sortOrder    Int        @default(0)
+  isExternal   Boolean    @default(false)
 
   @@index([navigationId])
   @@index([parentId])
@@ -337,14 +354,14 @@ model Testimonial {
 // ==================== Stats ====================
 
 model Stat {
-  id        String  @id @default(uuid())
-  key       String  @unique
+  id        String   @id @default(uuid())
+  key       String   @unique
   label     String
   value     String
   suffix    String?
   prefix    String?
-  sortOrder Int     @default(0)
-  isActive  Boolean @default(true)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
   @@map("stats")
@@ -353,12 +370,12 @@ model Stat {
 // ==================== Client Logos ====================
 
 model ClientLogo {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
   logo      String
   industry  String?
-  sortOrder Int     @default(0)
-  isActive  Boolean @default(true)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
   @@map("client_logos")
@@ -367,13 +384,13 @@ model ClientLogo {
 // ==================== WhyUs ====================
 
 model WhyUsTab {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   label     String
-  slug      String  @unique
+  slug      String   @unique
   icon      String?
-  metrics   Json?   @default("[]")
-  sortOrder Int     @default(0)
-  isActive  Boolean @default(true)
+  metrics   Json?    @default("[]")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
   @@map("why_us_tabs")
@@ -382,16 +399,16 @@ model WhyUsTab {
 // ==================== AI Family ====================
 
 model AiCard {
-  id          String  @id @default(uuid())
-  slug        String  @unique
+  id          String   @id @default(uuid())
+  slug        String   @unique
   name        String
   tagline     String
-  description String? @db.Text
+  description String?  @db.Text
   icon        String?
-  features    Json?   @default("[]")
+  features    Json?    @default("[]")
   color       String?
-  sortOrder   Int     @default(0)
-  isActive    Boolean @default(true)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 
   @@map("ai_cards")
@@ -411,24 +428,24 @@ model ResourceCategory {
 }
 
 model Resource {
-  id             String           @id @default(uuid())
-  categoryId     String
-  category       ResourceCategory @relation(fields: [categoryId], references: [id])
-  slug           String           @unique
-  title          String
-  description    String?          @db.Text
-  coverImage     String?
-  fileUrl        String?
-  type           ResourceType     @default(ARTICLE)
-  status         PostStatus       @default(DRAFT)
-  requiresLeadInfo Boolean        @default(false) // 下载前是否需要留资
-  viewCount      Int              @default(0)
-  downloadCount  Int              @default(0)
-  publishedAt    DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  deletedAt      DateTime?
-  downloads      DownloadRecord[]
+  id               String           @id @default(uuid())
+  categoryId       String
+  category         ResourceCategory @relation(fields: [categoryId], references: [id])
+  slug             String           @unique
+  title            String
+  description      String?          @db.Text
+  coverImage       String?
+  fileUrl          String?
+  type             ResourceType     @default(ARTICLE)
+  status           PostStatus       @default(DRAFT)
+  requiresLeadInfo Boolean          @default(false) // 下载前是否需要留资
+  viewCount        Int              @default(0)
+  downloadCount    Int              @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  downloads        DownloadRecord[]
 
   @@index([categoryId])
   @@index([status])
@@ -571,7 +588,7 @@ model Comment {
   parent      Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
   replies     Comment[]     @relation("CommentReplies")
   status      CommentStatus @default(PENDING)
-  aiRiskScore Float?        // AI 内容审核风险分数 0-1
+  aiRiskScore Float? // AI 内容审核风险分数 0-1
   aiFlags     String[]      @default([]) // AI 标记的标签 [spam, ad, offensive]
   workspaceId String?
   createdAt   DateTime      @default(now())
@@ -585,12 +602,12 @@ model Comment {
 }
 
 model SensitiveWord {
-  id        String   @id @default(uuid())
-  word      String   @unique
+  id        String                @id @default(uuid())
+  word      String                @unique
   category  SensitiveWordCategory @default(SPAM)
-  severity  Int      @default(1) // 1=low, 2=medium, 3=high
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  severity  Int                   @default(1) // 1=low, 2=medium, 3=high
+  isActive  Boolean               @default(true)
+  createdAt DateTime              @default(now())
 
   @@map("sensitive_words")
 }
@@ -598,16 +615,16 @@ model SensitiveWord {
 // ==================== Notifications ====================
 
 model Notification {
-  id          String   @id @default(uuid())
+  id          String           @id @default(uuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User             @relation(fields: [userId], references: [id])
   type        NotificationType
   title       String
   content     String
-  data        Json?    @default("{}")
-  isRead      Boolean  @default(false)
+  data        Json?            @default("{}")
+  isRead      Boolean          @default(false)
   workspaceId String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime         @default(now())
 
   @@index([userId, isRead])
   @@index([userId, createdAt])
@@ -618,24 +635,24 @@ model Notification {
 // ==================== Leads ====================
 
 model DemoBooking {
-  id          String     @id @default(uuid())
+  id          String           @id @default(uuid())
   name        String
   company     String
   phone       String
   email       String?
-  products    String[]   @default([])
+  products    String[]         @default([])
   scale       DemoBookingScale @default(SCALE_1_10)
   status      LeadStatus       @default(NEW)
   source      LeadSource       @default(WEBSITE)
   assignedTo  String?
-  assignee    User?      @relation("AssignedBookings", fields: [assignedTo], references: [id])
-  notes       String?    @db.Text
+  assignee    User?            @relation("AssignedBookings", fields: [assignedTo], references: [id])
+  notes       String?          @db.Text
   workspaceId String?
   followUps   FollowUp[]
   ipAddress   String?
   userAgent   String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@index([status, createdAt])
   @@index([workspaceId])
@@ -725,19 +742,19 @@ model UserActivity {
 // ==================== A/B Testing ====================
 
 model Experiment {
-  id          String   @id @default(uuid())
-  key         String   @unique
-  name        String
-  description String?
-  variantA    Json     @default("{}") // { name, config }
-  variantB    Json     @default("{}")
-  trafficSplit Float   @default(0.5) // B 组流量占比
-  status      ExperimentStatus @default(DRAFT)
-  winner      String?  // A | B | null
-  startAt     DateTime?
-  endAt       DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String           @id @default(uuid())
+  key          String           @unique
+  name         String
+  description  String?
+  variantA     Json             @default("{}") // { name, config }
+  variantB     Json             @default("{}")
+  trafficSplit Float            @default(0.5) // B 组流量占比
+  status       ExperimentStatus @default(DRAFT)
+  winner       String? // A | B | null
+  startAt      DateTime?
+  endAt        DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@map("experiments")
 }
@@ -745,8 +762,8 @@ model Experiment {
 model ExperimentEvent {
   id           String   @id @default(uuid())
   experimentId String
-  variant      String   // A | B
-  eventType    String   // impression, conversion, click
+  variant      String // A | B
+  eventType    String // impression, conversion, click
   userId       String?
   sessionId    String
   properties   Json?    @default("{}")
@@ -773,17 +790,17 @@ model Setting {
 }
 
 model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  action    String
-  resource  String
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  resource   String
   resourceId String?
-  oldValue  Json?
-  newValue  Json?
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
 
   @@index([resource, resourceId])
   @@index([userId, createdAt])
@@ -791,11 +808,11 @@ model AuditLog {
 }
 
 model EmailTemplate {
-  id      String @id @default(uuid())
-  key     String @unique
-  subject String
-  body    String @db.Text
-  html    String? @db.Text
+  id        String   @id @default(uuid())
+  key       String   @unique
+  subject   String
+  body      String   @db.Text
+  html      String?  @db.Text
   updatedAt DateTime @updatedAt
 
   @@map("email_templates")
@@ -817,29 +834,29 @@ model TokenBlacklist {
 // ==================== Case Studies ====================
 
 model CaseStudy {
-  id          String   @id @default(uuid())
-  slug        String   @unique
+  id          String            @id @default(uuid())
+  slug        String            @unique
   title       String
   subtitle    String?
   industry    String
   companyName String
   companyLogo String?
   coverImage  String?
-  excerpt     String   @db.Text
-  challenge   String   @db.Text
-  solution    String   @db.Text
-  results     String   @db.Text
-  quote       String?  @db.Text
+  excerpt     String            @db.Text
+  challenge   String            @db.Text
+  solution    String            @db.Text
+  results     String            @db.Text
+  quote       String?           @db.Text
   quoteAuthor String?
   quoteTitle  String?
-  featured    Boolean  @default(false)
-  status      PostStatus @default(DRAFT)
+  featured    Boolean           @default(false)
+  status      PostStatus        @default(DRAFT)
   publishedAt DateTime?
-  viewCount   Int      @default(0)
-  sortOrder   Int      @default(0)
+  viewCount   Int               @default(0)
+  sortOrder   Int               @default(0)
   workspaceId String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   deletedAt   DateTime?
   metrics     CaseStudyMetric[]
 
@@ -867,23 +884,23 @@ model CaseStudyMetric {
 // ==================== News ====================
 
 model News {
-  id          String   @id @default(uuid())
-  slug        String   @unique
-  title       String
-  summary     String?  @db.Text
-  content     String   @db.Text
-  coverImage  String?
-  category    String   @default("company") // company, product, event
-  author      String?
+  id           String     @id @default(uuid())
+  slug         String     @unique
+  title        String
+  summary      String?    @db.Text
+  content      String     @db.Text
+  coverImage   String?
+  category     String     @default("company") // company, product, event
+  author       String?
   authorAvatar String?
-  featured    Boolean  @default(false)
-  status      PostStatus @default(DRAFT)
-  publishedAt DateTime?
-  viewCount   Int      @default(0)
-  workspaceId String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  featured     Boolean    @default(false)
+  status       PostStatus @default(DRAFT)
+  publishedAt  DateTime?
+  viewCount    Int        @default(0)
+  workspaceId  String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
 
   @@index([category])
   @@index([featured])
@@ -896,27 +913,27 @@ model News {
 // ==================== Careers ====================
 
 model Job {
-  id            String   @id @default(uuid())
-  title         String
-  department    String
-  location      String
-  type          String   @default("social") // campus, social, intern
-  experience    String   @default("1-3年")
-  salaryMin     Int?
-  salaryMax     Int?
-  salaryCurrency String @default("CNY")
-  description   String   @db.Text
-  responsibilities String @db.Text
-  requirements  String   @db.Text
-  benefits      String?  @db.Text
-  tags          String[] @default([])
-  status        String   @default("open") // open, closed, paused
-  sortOrder     Int      @default(0)
-  workspaceId   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime?
-  applications  JobApplication[]
+  id               String           @id @default(uuid())
+  title            String
+  department       String
+  location         String
+  type             String           @default("social") // campus, social, intern
+  experience       String           @default("1-3年")
+  salaryMin        Int?
+  salaryMax        Int?
+  salaryCurrency   String           @default("CNY")
+  description      String           @db.Text
+  responsibilities String           @db.Text
+  requirements     String           @db.Text
+  benefits         String?          @db.Text
+  tags             String[]         @default([])
+  status           String           @default("open") // open, closed, paused
+  sortOrder        Int              @default(0)
+  workspaceId      String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  applications     JobApplication[]
 
   @@index([department])
   @@index([type])
@@ -926,19 +943,19 @@ model Job {
 }
 
 model JobApplication {
-  id          String   @id @default(uuid())
-  jobId       String
-  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  name        String
-  email       String
-  phone       String?
-  resumeUrl   String?
-  coverLetter String?  @db.Text
+  id           String   @id @default(uuid())
+  jobId        String
+  job          Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  name         String
+  email        String
+  phone        String?
+  resumeUrl    String?
+  coverLetter  String?  @db.Text
   portfolioUrl String?
-  status      String   @default("pending") // pending, reviewing, interview, offer, rejected
-  source      String   @default("website")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status       String   @default("pending") // pending, reviewing, interview, offer, rejected
+  source       String   @default("website")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([jobId])
   @@index([status])
@@ -948,20 +965,20 @@ model JobApplication {
 // ==================== About / Team ====================
 
 model TeamMember {
-  id          String   @id @default(uuid())
-  name        String
-  role        String
-  title       String
-  bio         String?  @db.Text
-  avatar      String?
-  email       String?
-  linkedin    String?
-  twitter     String?
-  sortOrder   Int      @default(0)
-  featured    Boolean  @default(false)
-  department  String   @default("leadership") // leadership, engineering, product, sales, marketing
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  role       String
+  title      String
+  bio        String?  @db.Text
+  avatar     String?
+  email      String?
+  linkedin   String?
+  twitter    String?
+  sortOrder  Int      @default(0)
+  featured   Boolean  @default(false)
+  department String   @default("leadership") // leadership, engineering, product, sales, marketing
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([department])
   @@index([featured])
@@ -1033,17 +1050,17 @@ enum PaymentProvider {
 }
 
 model AppCategory {
-  id          String   @id @default(uuid())
-  slug        String   @unique
+  id          String        @id @default(uuid())
+  slug        String        @unique
   name        String
   description String?
   icon        String?
-  sortOrder   Int      @default(0)
+  sortOrder   Int           @default(0)
   parentId    String?
-  parent      AppCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  parent      AppCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children    AppCategory[] @relation("CategoryHierarchy")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   apps        App[]
 
   @@index([parentId])
@@ -1052,60 +1069,60 @@ model AppCategory {
 }
 
 model AppVendor {
-  id          String   @id @default(uuid())
-  slug        String   @unique
-  name        String
-  logoUrl     String?
-  website     String?
-  description String?  @db.Text
-  contactEmail String
-  contactPhone String?
-  verified    Boolean  @default(false)
-  certifications String[] @default([])
-  revenueShareRate Float @default(0.70)
-  userId      String?
-  apps        App[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  id               String    @id @default(uuid())
+  slug             String    @unique
+  name             String
+  logoUrl          String?
+  website          String?
+  description      String?   @db.Text
+  contactEmail     String
+  contactPhone     String?
+  verified         Boolean   @default(false)
+  certifications   String[]  @default([])
+  revenueShareRate Float     @default(0.70)
+  userId           String?
+  apps             App[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
   @@map("app_vendors")
 }
 
 model App {
-  id          String   @id @default(uuid())
-  slug        String   @unique
-  name        String
-  tagline     String
-  description String   @db.Text
-  categoryId  String
-  category    AppCategory @relation(fields: [categoryId], references: [id])
-  tags        String[] @default([])
-  vendorId    String
-  vendor      AppVendor @relation(fields: [vendorId], references: [id])
-  iconUrl     String
-  coverImages String[] @default([])
-  demoVideoUrl String?
-  pricingModel PricingModel
-  pricingTiers Json?
-  status      AppStatus @default(DRAFT)
-  featured    Boolean  @default(false)
+  id                String         @id @default(uuid())
+  slug              String         @unique
+  name              String
+  tagline           String
+  description       String         @db.Text
+  categoryId        String
+  category          AppCategory    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags              String[]       @default([])
+  vendorId          String
+  vendor            AppVendor      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  iconUrl           String
+  coverImages       String[]       @default([])
+  demoVideoUrl      String?
+  pricingModel      PricingModel
+  pricingTiers      Json?
+  status            AppStatus      @default(DRAFT)
+  featured          Boolean        @default(false)
   featuredSortOrder Int?
-  installCount Int @default(0)
-  ratingAvg    Float @default(0)
-  ratingCount  Int @default(0)
-  version     String   @default("1.0.0")
-  compatibility String[] @default([])
-  integrationType String @default("oauth")
-  reviewNotes  String? @db.Text
-  reviewedBy   String?
-  reviewedAt   DateTime?
-  workspaceId  String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  deletedAt    DateTime?
-  reviews      AppReview[]
-  subscriptions Subscription[]
+  installCount      Int            @default(0)
+  ratingAvg         Float          @default(0)
+  ratingCount       Int            @default(0)
+  version           String         @default("1.0.0")
+  compatibility     String[]       @default([])
+  integrationType   String         @default("oauth")
+  reviewNotes       String?        @db.Text
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  workspaceId       String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deletedAt         DateTime?
+  reviews           AppReview[]
+  subscriptions     Subscription[]
 
   @@index([workspaceId])
   @@index([status])
@@ -1117,20 +1134,20 @@ model App {
 }
 
 model AppReview {
-  id        String @id @default(uuid())
-  appId     String
-  app       App @relation(fields: [appId], references: [id], onDelete: Cascade)
-  userId    String
-  workspaceId String?
-  rating    Int
-  title     String?
-  content   String @db.Text
-  replyContent String? @db.Text
+  id           String    @id @default(uuid())
+  appId        String
+  app          App       @relation(fields: [appId], references: [id], onDelete: Cascade)
+  userId       String
+  workspaceId  String?
+  rating       Int
+  title        String?
+  content      String    @db.Text
+  replyContent String?   @db.Text
   replyBy      String?
   replyAt      DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
   @@index([appId])
   @@index([userId])
@@ -1139,26 +1156,26 @@ model AppReview {
 }
 
 model Subscription {
-  id          String @id @default(uuid())
-  appId       String
-  app         App @relation(fields: [appId], references: [id], onDelete: Cascade)
-  workspaceId String
-  tierName    String
-  pricingModel PricingModel
-  amount      Float
-  currency    String @default("CNY")
-  interval    String @default("month")
-  status      SubscriptionStatus @default(TRIAL)
-  trialEndsAt DateTime?
-  currentPeriodStart DateTime @default(now())
-  currentPeriodEnd   DateTime @default(now())
-  cancelAtPeriodEnd Boolean @default(false)
-  cancelledAt       DateTime?
-  provider      PaymentProvider?
-  providerSubId String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  orders        Order[]
+  id                 String             @id @default(uuid())
+  appId              String
+  app                App                @relation(fields: [appId], references: [id], onDelete: Cascade)
+  workspaceId        String
+  tierName           String
+  pricingModel       PricingModel
+  amount             Float
+  currency           String             @default("CNY")
+  interval           String             @default("month")
+  status             SubscriptionStatus @default(TRIAL)
+  trialEndsAt        DateTime?
+  currentPeriodStart DateTime           @default(now())
+  currentPeriodEnd   DateTime           @default(now())
+  cancelAtPeriodEnd  Boolean            @default(false)
+  cancelledAt        DateTime?
+  provider           PaymentProvider?
+  providerSubId      String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  orders             Order[]
 
   @@index([appId])
   @@index([workspaceId])
@@ -1168,28 +1185,52 @@ model Subscription {
 }
 
 model Order {
-  id          String @id @default(uuid())
-  orderNo     String @unique
-  subscriptionId String?
-  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
-  workspaceId String
-  userId      String
-  subtotal    Float
-  discount    Float @default(0)
-  tax         Float @default(0)
-  total       Float
-  currency    String @default("CNY")
-  status      PaymentStatus @default(PENDING)
-  paidAt      DateTime?
-  provider    PaymentProvider?
+  id                String           @id @default(uuid())
+  orderNo           String           @unique
+  subscriptionId    String?
+  subscription      Subscription?    @relation(fields: [subscriptionId], references: [id])
+  workspaceId       String
+  userId            String
+  subtotal          Float
+  discount          Float            @default(0)
+  tax               Float            @default(0)
+  total             Float
+  currency          String           @default("CNY")
+  status            PaymentStatus    @default(PENDING)
+  paidAt            DateTime?
+  provider          PaymentProvider?
   providerPaymentId String?
-  invoiceRequested Boolean @default(false)
-  invoiceNo        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  invoiceRequested  Boolean          @default(false)
+  invoiceNo         String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   @@index([workspaceId])
   @@index([status])
   @@index([orderNo])
   @@map("orders")
+}
+
+// ==================== AI ChatBot ====================
+
+model ChatBotConfig {
+  id           String   @id @default(uuid())
+  key          String   @unique @default("default")
+  intents      Json     @default("[]")
+  quickReplies Json     @default("[]")
+  fallbackCopy String   @default("抱歉，我暂时无法理解您的问题，建议您预约演示或联系人工客服。")
+  updatedAt    DateTime @updatedAt
+
+  @@map("chatbot_configs")
+}
+
+model AiChatSession {
+  id        String   @id @default(uuid())
+  sessionId String   @unique
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sessionId])
+  @@map("ai_chat_sessions")
 }

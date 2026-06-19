@@ -17,11 +17,24 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('element-plus')) return 'vendor-element-plus';
+            if (id.includes('@element-plus/icons-vue')) return 'vendor-icons';
+            if (id.includes('element-plus')) {
+              const match = id.match(/element-plus\/es\/components\/([^/]+)/);
+              if (match) {
+                // 按组件首字母拆分为两个 chunk，避免单个 chunk 超过 500KB
+                const name = match[1];
+                return name.charCodeAt(0) <= 109
+                  ? 'vendor-element-plus-components-a-m'
+                  : 'vendor-element-plus-components-n-z';
+              }
+              return 'vendor-element-plus-core';
+            }
             if (id.includes('echarts') || id.includes('vue-echarts')) return 'vendor-echarts';
             if (id.includes('@tiptap')) return 'vendor-tiptap';
+            if (id.includes('prosemirror')) return 'vendor-prosemirror';
+            if (id.includes('axios')) return 'vendor-axios';
             if (id.includes('vue') || id.includes('vue-router') || id.includes('pinia')) return 'vendor-vue';
-            return 'vendor';
+            return 'vendor-common';
           }
         },
       },

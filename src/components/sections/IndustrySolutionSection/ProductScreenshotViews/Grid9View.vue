@@ -1,8 +1,8 @@
 <template>
   <div>
     <div :class="s.grid9Label">
-      <span>绩效表现 <Icon name="arrow-right" :size="12" /></span>
-      <span style="position:absolute;left:-20px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:10px;">潜力</span>
+      <span>{{ t('industry.performance') }} <Icon name="arrow-right" :size="12" /></span>
+      <span style="position:absolute;left:-20px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:10px;">{{ t('industry.potential') }}</span>
     </div>
     <div :class="s.grid9">
       <div
@@ -12,7 +12,7 @@
         :style="{ background: cell.bg }"
       >
         <div :class="s.grid9Name" :style="{ color: cell.color }">{{ cell.label }}</div>
-        <div :class="s.grid9Count" :style="{ color: cell.color }">{{ cell.count }}人</div>
+        <div :class="s.grid9Count" :style="{ color: cell.color }">{{ cell.count }}{{ t('units.people') }}</div>
       </div>
     </div>
   </div>
@@ -21,6 +21,8 @@
 <script setup>
 import s from '../ProductScreenshot.module.css';
 import Icon from '../../../ui/Icon/Icon.vue';
+
+const { t } = useI18n();
 
 defineProps({ data: { type: Object, required: true } });
 </script>

@@ -88,6 +88,7 @@ import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum.js';
 import { formatDate } from '@/utils/date.js';
+import { FORUM_CATEGORIES, FORUM_TOPICS } from '@/data/forum.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
@@ -106,9 +107,18 @@ const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopi
   { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
 );
 
-const topics = computed(() => topicsRes.value?.data || []);
-const total = computed(() => topicsRes.value?.meta?.total || 0);
+const fallbackTopics = computed(() => {
+  let list = FORUM_TOPICS;
+  if (activeCategory.value) {
+    list = list.filter((t) => t.category?.id === activeCategory.value);
+  }
+  return list;
+});
+const hasApiTopics = computed(() => Array.isArray(topicsRes.value?.data) && topicsRes.value.data.length > 0);
+const topics = computed(() => hasApiTopics.value ? topicsRes.value.data : fallbackTopics.value);
+const total = computed(() => hasApiTopics.value ? (topicsRes.value?.meta?.total || 0) : fallbackTopics.value.length);
 const error = computed(() => {
+  if (hasApiTopics.value || fallbackTopics.value.length > 0) return null;
   if (!fetchError.value) return null;
   return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
 });
@@ -116,9 +126,10 @@ const error = computed(() => {
 const { data: catRes } = useAsyncData(
   'forum-categories',
   () => forumApi.getCategories(),
-  { server: false, default: () => [] }
+  { server: false, default: () => ({ data: FORUM_CATEGORIES }) }
 );
-const categories = computed(() => catRes.value?.data || catRes.value || []);
+const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
+const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : FORUM_CATEGORIES);
 
 const setCategory = (id) => {
   activeCategory.value = activeCategory.value === id ? null : id;

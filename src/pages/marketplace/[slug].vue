@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <main :class="s.page">
       <div class="container">
         <Breadcrumb :items="[
@@ -39,12 +38,8 @@
             </div>
 
             <div :class="s.heroActions">
-              <button :class="s.ctaPrimary" @click="scrollToPricing">
-                {{ t('marketplace.subscribe') }}
-              </button>
-              <button :class="s.ctaSecondary" @click="modalStore.openModal()">
-                {{ t('marketplace.contactSales') }}
-              </button>
+              <button :class="s.ctaPrimary" @click="scrollToPricing">{{ t('marketplace.subscribe') }}</button>
+              <button :class="s.ctaSecondary" @click="modalStore.openModal()">{{ t('marketplace.contactSales') }}</button>
             </div>
           </div>
         </div>
@@ -64,73 +59,41 @@
           </div>
         </div>
 
-        <div v-if="app?.pricingTiers?.length" id="pricing" :class="s.section" class="reveal">
-          <h2 :class="s.sectionTitle">{{ t('marketplace.pricingPlans') }}</h2>
-          <div :class="s.pricingGrid">
-            <div
-              v-for="(tier, i) in app.pricingTiers"
-              :key="i"
-              :class="[s.pricingCard, selectedTier === i ? s.pricingCardHighlight : '']"
-              @click="selectedTier = i"
-            >
-              <h3 :class="s.pricingName">{{ tier.name }}</h3>
-              <div :class="s.pricingPrice">
-                <span v-if="tier.priceMonthly === 0" :class="s.priceFree">{{ t('marketplace.priceFree') }}</span>
-                <template v-else>
-                  <span :class="s.priceCurrency">¥</span>
-                  <span :class="s.priceValue">{{ tier.priceMonthly }}</span>
-                  <span :class="s.priceUnit">/ {{ t('marketplace.month') }}</span>
-                </template>
+        <div v-if="app?.screenshots?.length" :class="s.section" class="reveal">
+          <h2 :class="s.sectionTitle">{{ t('marketplace.screenshots') }}</h2>
+          <div :class="s.screenshots">
+            <div v-for="(shot, i) in app.screenshots" :key="i" :class="s.shot">
+              <div :class="s.shotSvg">
+                <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="320" height="180" rx="8" fill="var(--gray-100)" />
+                  <rect x="20" y="20" width="120" height="12" rx="4" fill="var(--gray-200)" />
+                  <rect x="20" y="42" width="80" height="8" rx="4" fill="var(--gray-200)" />
+                  <rect x="20" y="70" width="280" height="90" rx="6" fill="var(--primary-light)" opacity="0.4" />
+                  <text x="160" y="125" text-anchor="middle" fill="var(--primary)" font-size="14" font-weight="600">Screenshot {{ i + 1 }}</text>
+                </svg>
               </div>
-              <p :class="s.pricingDesc">{{ tier.desc }}</p>
-              <ul :class="s.pricingFeatures">
-                <li v-for="(feat, j) in tier.features" :key="j" :class="s.pricingFeature">
-                  ✓ {{ feat }}
-                </li>
-              </ul>
-              <button
-                v-if="tier.priceMonthly > 0"
-                :class="[s.pricingBtn, selectedTier === i ? s.pricingBtnPrimary : '']"
-                @click.stop="handleSubscribe(tier)"
-              >
-                {{ t('marketplace.subscribeNow') }}
-              </button>
-              <button
-                v-else
-                :class="[s.pricingBtn, s.pricingBtnPrimary]"
-                @click.stop="handleFreeInstall"
-              >
-                {{ t('marketplace.freeInstall') }}
-              </button>
-              <button
-                v-if="tier.priceMonthly > 0"
-                :class="s.pricingBtnSecondary"
-                @click.stop="handleAddToCart(tier)"
-              >
-                {{ t('marketplace.addToCart') }}
-              </button>
             </div>
           </div>
         </div>
 
+        <div v-if="app?.pricingTiers?.length" id="pricing" :class="s.section" class="reveal">
+          <h2 :class="s.sectionTitle">{{ t('marketplace.pricingPlans') }}</h2>
+          <AppPricing :tiers="app.pricingTiers" :selected="selectedTier" @select="selectedTier = $event" @subscribe="handleSubscribe" @addToCart="handleAddToCart" @freeInstall="handleFreeInstall" />
+        </div>
+
+        <AppReviews :app-slug="String(route.params.slug)" />
+
         <div v-if="app?.compatibility?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('marketplace.compatibility') }}</h2>
           <div :class="s.compatibilityList">
-            <span v-for="(c, i) in app.compatibility" :key="i" :class="s.compatibilityTag">
-              {{ c }}
-            </span>
+            <span v-for="(c, i) in app.compatibility" :key="i" :class="s.compatibilityTag">{{ c }}</span>
           </div>
         </div>
 
         <div v-if="relatedApps.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('marketplace.related') }}</h2>
           <div :class="s.relatedGrid">
-            <NuxtLink
-              v-for="ra in relatedApps"
-              :key="ra.slug"
-              :to="`/marketplace/${ra.slug}`"
-              :class="s.relatedCard"
-            >
+            <NuxtLink v-for="ra in relatedApps" :key="ra.slug" :to="`/marketplace/${ra.slug}`" :class="s.relatedCard">
               <div :class="s.relatedIcon">{{ ra.name.charAt(0) }}</div>
               <span :class="s.relatedName">{{ ra.name }}</span>
               <span :class="s.relatedTagline">{{ ra.tagline }}</span>
@@ -138,18 +101,17 @@
           </div>
         </div>
 
-        <div v-if="!app" :class="s.empty">
-          {{ t('marketplace.notFound') }}
-        </div>
+        <div v-if="!app" :class="s.empty">{{ t('marketplace.notFound') }}</div>
       </div>
     </main>
-
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
+import AppPricing from '@/components/sections/Marketplace/AppPricing.vue';
+import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
 import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
 import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace.js';
 import { showToast } from '@/utils/toast.js';
@@ -163,19 +125,6 @@ const route = useRoute();
 const modalStore = inject('modal', { openModal: () => {} });
 
 const app = computed(() => MARKETPLACE_APP_MAP[route.params.slug] || null);
-
-// 404 guard: if slug not found in static data, return 404
-if (!app.value && process.client) {
-  // Allow a brief moment for API data to load if implemented later
-  // For now, static map is the source of truth
-}
-
-// Throw 404 on server/initial load when app is not found
-onMounted(() => {
-  if (!app.value) {
-    throw createError({ statusCode: 404, statusMessage: 'App Not Found', fatal: true });
-  }
-});
 const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
@@ -198,11 +147,12 @@ useHead(() => {
 
 const formatPricing = (model) => {
   const map = {
-    free: t('marketplace.priceFree') || '免费',
-    subscription: t('marketplace.priceSubscription') || '订阅制',
-    one_time: t('marketplace.priceOneTime') || '一次性',
-    usage_based: t('marketplace.priceUsage') || '按量计费',
-    freemium: t('marketplace.priceFreemium') || '免费增值',
+    free: t('marketplace.priceFree'),
+    subscription: t('marketplace.priceSubscription'),
+    one_time: t('marketplace.priceOneTime'),
+    usage_based: t('marketplace.priceUsage'),
+    freemium: t('marketplace.priceFreemium'),
+    paid: t('marketplace.pricePaid'),
   };
   return map[model] || model;
 };
@@ -220,9 +170,9 @@ const scrollToPricing = () => {
 const handleFreeInstall = async () => {
   try {
     await marketplaceApi.installApp(route.params.slug);
-    showToast(t('marketplace.installSuccess') || '安装成功！', 'success');
+    showToast(t('marketplace.installSuccess'), 'success');
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.installError') || '安装失败，请登录后重试', 'error');
+    showToast(e.response?.data?.message || t('marketplace.installError'), 'error');
   }
 };
 
@@ -237,9 +187,9 @@ const handleAddToCart = async (tier) => {
       currency: 'CNY',
       quantity: 1,
     });
-    showToast(t('marketplace.addToCartSuccess') || '已加入购物车！', 'success');
+    showToast(t('marketplace.addToCartSuccess'), 'success');
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.addToCartError') || '加入购物车失败', 'error');
+    showToast(e.response?.data?.message || t('marketplace.addToCartError'), 'error');
   }
 };
 
@@ -253,26 +203,22 @@ const handleSubscribe = async (tier) => {
       provider: 'STRIPE',
     });
     const order = orderRes.data;
-
     const checkoutRes = await paymentApi.createStripeCheckout({
       orderId: order.id,
       successUrl: `${window.location.origin}/marketplace/payment/success?order_id=${order.id}`,
       cancelUrl: `${window.location.origin}/marketplace/payment/cancel?order_id=${order.id}`,
     });
-
     if (checkoutRes.data?.url) {
       window.location.href = checkoutRes.data.url;
     }
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.paymentError') || '支付初始化失败', 'error');
+    showToast(e.response?.data?.message || t('marketplace.paymentError'), 'error');
   }
 };
 
 const relatedApps = computed(() => {
   if (!app.value) return [];
-  return MARKETPLACE_APPS.filter(
-    (a) => a.category === app.value.category && a.slug !== app.value.slug
-  ).slice(0, 3);
+  return MARKETPLACE_APPS.filter((a) => a.category === app.value.category && a.slug !== app.value.slug).slice(0, 3);
 });
 
 onMounted(() => {
@@ -285,21 +231,11 @@ onMounted(() => {
         description: val.tagline,
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web',
-        offers: val.pricingTiers?.map((t) => ({
-          '@type': 'Offer',
-          name: t.name,
-          price: t.priceMonthly,
-          priceCurrency: 'CNY',
-        })) || [],
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: val.ratingAvg,
-          ratingCount: val.ratingCount,
-        },
+        offers: val.pricingTiers?.map((t) => ({ '@type': 'Offer', name: t.name, price: t.priceMonthly, priceCurrency: 'CNY' })) || [],
+        aggregateRating: { '@type': 'AggregateRating', ratingValue: val.ratingAvg, ratingCount: val.ratingCount },
       });
     }
   }, { immediate: true });
 });
-
 onUnmounted(removeJsonLd);
 </script>

@@ -60,10 +60,13 @@ export interface I18nStore {
   t: (key: string, vars?: Record<string, string | number>) => string;
 }
 
-/* ── Vue 环境变量 ── */
+/* ── Nuxt 3 runtimeConfig.public 类型（浏览器端公开变量）── */
 interface ImportMetaEnv {
-  readonly VITE_API_URL: string;
-  readonly VITE_SENTRY_DSN?: string;
+  readonly NUXT_PUBLIC_API_BASE_URL?: string;
+  readonly NUXT_PUBLIC_APP_ENV?: string;
+  readonly NUXT_PUBLIC_SENTRY_DSN?: string;
+  readonly NUXT_PUBLIC_RECAPTCHA_SITE_KEY?: string;
+  readonly NUXT_PUBLIC_ASSET_BASE_URL?: string;
 }
 
 interface ImportMeta {

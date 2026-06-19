@@ -23,6 +23,7 @@
         :columns="columns"
         :form-fields="formFields"
         :api-params="apiParams"
+        ai-assist="product"
       >
         <template #column-status="{ row }">
           <el-tag :type="statusType(row.status)">

@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
@@ -49,7 +50,7 @@ export class DownloadService {
 
   async findRecords(resourceId?: string, page = 1, pageSize = 20) {
     const skip = getSkip(page, pageSize);
-    const where: any = {};
+    const where: Prisma.DownloadRecordWhereInput = {};
     if (resourceId) where.resourceId = resourceId;
     const [data, total] = await Promise.all([
       this.prisma.downloadRecord.findMany({ skip, take: pageSize, where, orderBy: { createdAt: 'desc' } }),

@@ -1,19 +1,28 @@
 import { Controller, Get, Post, Body, Query, UseGuards, Req, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { AnalyticsService } from './analytics.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { TrackPageViewDto } from './dto/track-page-view.dto';
-import { TrackEventDto } from './dto/track-event.dto';
+
 import { TrackEventsBatchDto } from './dto/track-events-batch.dto';
 import { TrackWebVitalDto } from './dto/track-web-vital.dto';
 import { ReportClientErrorDto } from './dto/report-client-error.dto';
 import { LogUserActivityDto } from './dto/log-user-activity.dto';
 
 @ApiTags('数据分析')
+@Throttle({
+  default: { limit: 1000, ttl: 60000 },
+  strict: { limit: 100, ttl: 60000 },
+  auth: { limit: 500, ttl: 60000 },
+  search: { limit: 1000, ttl: 60000 },
+  lead: { limit: 100, ttl: 3600000 },
+})
 @Controller('analytics')
 export class AnalyticsController {
   private readonly logger: Logger;
@@ -31,7 +40,7 @@ export class AnalyticsController {
   ) {
     return this.analyticsService.trackPageView({
       ...dto,
-      ipAddress: (req as any).ip || req.headers['x-forwarded-for'] || req.socket?.remoteAddress,
+      ipAddress: req.ip || (req.headers['x-forwarded-for'] as string) || req.socket?.remoteAddress,
       userAgent: req.headers['user-agent'],
     });
   }
@@ -61,6 +70,7 @@ export class AnalyticsController {
 
   @Post('activities')
   @ApiBearerAuth()
+  @Permission('analytics:write')
   @ApiOperation({ summary: '记录用户行为' })
   logUserActivity(
     @CurrentUser('id') userId: string,

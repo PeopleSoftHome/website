@@ -922,8 +922,8 @@ talentpro-backend/apps/api/src/modules/
 | 维度 | 技术 | 版本 |
 |------|------|------|
 | 框架 | Vue | 3.5 |
-| 构建 | Vite | 8 |
-| UI 库 | Element Plus | 2.8 |
+| 构建 | Vite | 5.4.0 |
+| UI 库 | Element Plus | 2.8.0 |
 | 状态 | Pinia | 2.2 |
 | 路由 | Vue Router | 4.4 |
 | 图标 | @element-plus/icons-vue | 2.3 |
@@ -933,30 +933,58 @@ talentpro-backend/apps/api/src/modules/
 ```
 talentpro-admin/
 ├── src/
-│   ├── main.js              # createApp + Pinia + Router + ElementPlus
+│   ├── main.js                  # createApp + Pinia + Router + ElementPlus
 │   ├── App.vue
 │   ├── router/
-│   │   └── index.js         # 路由守卫（JWT 校验 + 权限拦截）
+│   │   └── index.js             # 路由守卫（JWT 校验 + 角色/权限拦截）
 │   ├── stores/
-│   │   ├── auth.js          # token + user + login/logout
-│   │   └── permission.js    # 权限点缓存
+│   │   └── auth.js              # token + user + login/logout + 权限判断
 │   ├── api/
-│   │   └── client.js        # Axios + Bearer 拦截器 + 401 处理
+│   │   └── client.js            # Axios + Bearer 拦截器 + 401 刷新/登出
+│   ├── components/
+│   │   ├── CmsTable.vue         # 通用 CMS CRUD 表格
+│   │   ├── ImageUpload.vue      # 图片上传组件（对接 /medias/upload）
+│   │   ├── RichEditor.vue       # TipTap 富文本编辑器
+│   │   ├── NotificationBell.vue # SSE 通知角标
+│   │   └── Picture.vue          # 图片预览
+│   ├── composables/
+│   │   ├── useList.js           # 列表分页逻辑
+│   │   └── useCrud.js           # 弹窗表单 CRUD 逻辑
 │   └── views/
 │       ├── LoginView.vue
-│       ├── LayoutView.vue       # 侧边栏 + 顶部栏 + 标签页
-│       ├── DashboardView.vue    # 数据仪表盘（图表库）
-│       ├── BlogManagerView.vue  # 博客文章管理（富文本编辑器）
-│       ├── ForumManagerView.vue # 论坛话题/回复管理
-│       ├── AnalyticsView.vue    # 数据分析/埋点报表
-│       ├── UsersView.vue        # 用户列表/角色分配
-│       ├── LeadsView.vue        # 线索管理/跟进记录
-│       ├── CmsManagerView.vue   # CMS 内容板块配置
-│       ├── WorkspaceView.vue    # Workspace 租户管理
-│       ├── SystemConfigView.vue # 系统参数/IP 黑白名单
-│       ├── RoleManagerView.vue  # 角色与权限管理
-│       ├── ExperimentView.vue   # A/B 实验管理
-│       └── NotificationView.vue # 通知发送/历史
+│       ├── LayoutView.vue           # 侧边栏 + 顶部栏 + 面包屑
+│       ├── DashboardView.vue        # 数据仪表盘（ECharts）
+│       ├── BlogManagerView.vue      # 博客文章管理
+│       ├── ForumManagerView.vue     # 论坛话题/回复管理
+│       ├── CommentModerationView.vue# 评论审核
+│       ├── AnalyticsView.vue        # 数据分析
+│       ├── UsersView.vue            # 用户管理
+│       ├── LeadsView.vue            # 线索管理
+│       ├── ContentsView.vue         # CMS 内容只读总览
+│       ├── ProductsView.vue         # 产品矩阵管理
+│       ├── IndustriesView.vue       # 行业方案管理
+│       ├── TestimonialsView.vue     # 客户证言管理
+│       ├── LogosView.vue            # Logo 墙管理
+│       ├── StatsView.vue            # 统计数据管理
+│       ├── PageConfigView.vue       # 首页板块配置
+│       ├── WorkspaceView.vue        # Workspace 租户管理
+│       ├── RolesView.vue            # 角色与权限管理
+│       ├── SettingsView.vue         # 系统参数
+│       ├── SensitiveWordView.vue    # 敏感词/IP 黑白名单
+│       ├── AuditLogView.vue         # 审计日志
+│       ├── EmailTemplateView.vue    # 邮件模板
+│       ├── MediaView.vue            # 媒体库
+│       ├── CaseManagerView.vue      # 客户案例管理
+│       ├── NewsManagerView.vue      # 新闻管理
+│       ├── JobManagerView.vue       # 招聘管理
+│       ├── AppManagerView.vue       # 应用广场管理
+│       ├── CategoryManagerView.vue  # 应用分类管理
+│       ├── VendorManagerView.vue    # 供应商管理
+│       ├── ReviewManagerView.vue    # 应用评价管理
+│       ├── DownloadRecordView.vue   # 下载记录
+│       └── ExperimentView.vue       # A/B 实验管理
+├── eslint.config.mjs          # Flat config ESLint
+└── vitest.config.js           # Vitest + happy-dom
 ```
 
 ### 12.3 权限模型
@@ -966,4 +994,4 @@ talentpro-admin/
 - API 请求：Axios 拦截器自动附加 `Authorization: Bearer ${token}`
 - 401 响应：自动 logout + 跳转登录页
 
-*架构师 Agent 产出 | 2026-03-15 | v3.0.0 更新 2026-05-28*
+*架构师 Agent 产出 | 2026-03-15 | v4.1.0 更新 2026-06-15*

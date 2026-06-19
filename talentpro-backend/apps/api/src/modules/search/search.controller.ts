@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { SearchService } from './search.service';
 import { Public } from '@/common/decorators/public.decorator';
 
@@ -10,6 +11,7 @@ export class SearchController {
 
   @Get()
   @Public()
+  @Throttle({ search: { limit: 60, ttl: 60000 } })
   @ApiOperation({ summary: '全文搜索' })
   @ApiQuery({ name: 'q', required: true })
   @ApiQuery({ name: 'type', required: false, description: 'post | product | industry | resource' })
@@ -28,6 +30,7 @@ export class SearchController {
 
   @Get('suggestions')
   @Public()
+  @Throttle({ search: { limit: 60, ttl: 60000 } })
   @ApiOperation({ summary: '搜索建议' })
   @ApiQuery({ name: 'q', required: true })
   async getSuggestions(@Query('q') q: string) {

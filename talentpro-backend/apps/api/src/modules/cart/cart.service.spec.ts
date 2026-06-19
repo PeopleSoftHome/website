@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CartService, CartItem } from './cart.service';
+import { CartService } from './cart.service';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 
 describe('CartService', () => {

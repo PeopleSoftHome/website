@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Query, Headers, RawBody } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Public } from '@/common/decorators/public.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { PaymentService } from './payment.service';
@@ -15,6 +16,7 @@ export class PaymentController {
 
   @Post('orders')
   @ApiBearerAuth()
+  @Permission('payment:manage')
   @ApiOperation({ summary: '创建订单' })
   createOrder(
     @CurrentUser('id') userId: string,
@@ -49,6 +51,7 @@ export class PaymentController {
 
   @Post('stripe/checkout')
   @ApiBearerAuth()
+  @Permission('payment:manage')
   @ApiOperation({ summary: '创建 Stripe Checkout' })
   createStripeCheckout(@Body() dto: CreateStripeCheckoutDto) {
     return this.paymentService.createStripeCheckout(dto.orderId, dto.successUrl, dto.cancelUrl);

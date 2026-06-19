@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <main :class="s.page">
       <div class="container">
         <Breadcrumb :items="[{ label: t('news.title'), to: '/news' }]" />
@@ -10,8 +9,17 @@
           <p :class="s.subtitle">{{ t('news.subtitle') }}</p>
         </div>
 
+        <div :class="s.filter" class="reveal reveal-delay-1">
+          <TabNav
+            :tabs="categoryTabs"
+            :active-index="activeCategoryIndex"
+            variant="segment"
+            @select="activeCategoryIndex = $event"
+          />
+        </div>
+
         <div v-if="loading" :class="s.loading">{{ t('common.loading') }}</div>
-        <div v-else-if="error && news.length === 0" :class="s.error">{{ error }}</div>
+        <div v-else-if="error && displayNews.length === 0" :class="s.error">{{ error }}</div>
 
         <div v-if="featuredNews" :class="s.featured" class="reveal">
           <NuxtLink :to="`/news/${featuredNews.slug}`" :class="s.featuredCard">
@@ -26,17 +34,22 @@
               </div>
               <h2 :class="s.featuredTitle">{{ featuredNews.title }}</h2>
               <p :class="s.featuredSummary">{{ featuredNews.summary }}</p>
+              <div :class="s.featuredAuthor">
+                <span :class="s.authorAvatar">{{ featuredNews.author?.charAt(0) || '' }}</span>
+                <span :class="s.authorName">{{ featuredNews.author }}</span>
+              </div>
               <span :class="s.featuredCta">{{ t('news.readMore') }} →</span>
             </div>
           </NuxtLink>
         </div>
 
-        <div :class="s.grid" class="reveal">
+        <div :class="s.grid">
           <NuxtLink
-            v-for="item in normalNews"
+            v-for="(item, idx) in normalNews"
             :key="item.id"
             :to="`/news/${item.slug}`"
             :class="s.card"
+            :style="{ '--stagger': idx }"
           >
             <div v-if="item.coverImage" :class="s.cardCover" :style="`background-image:url(${item.coverImage})`" />
             <div v-else :class="s.cardCoverPlaceholder">
@@ -49,25 +62,34 @@
               </div>
               <h3 :class="s.cardTitle">{{ item.title }}</h3>
               <p :class="s.cardSummary">{{ item.summary }}</p>
+              <div :class="s.cardAuthor">
+                <span :class="s.authorAvatarSmall">{{ item.author?.charAt(0) || '' }}</span>
+                <span :class="s.authorNameSmall">{{ item.author }}</span>
+              </div>
             </div>
           </NuxtLink>
         </div>
       </div>
     </main>
-
   </div>
 </template>
 
 <script setup>
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
+import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news.js';
+import { NEWS_FALLBACK, NEWS_CATEGORIES } from '@/data/news.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();
+const activeCategoryIndex = ref(0);
+
+const categoryTabs = computed(() => NEWS_CATEGORIES.map((c) => ({ id: c, label: c })));
+const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || NEWS_CATEGORIES[0]);
 
 const { data: newsRes, pending: loading, error: fetchError } = useAsyncData(
   'news-list',
@@ -76,19 +98,28 @@ const { data: newsRes, pending: loading, error: fetchError } = useAsyncData(
 );
 
 const news = computed(() => {
-  if (fetchError.value) return [];
-  return newsRes.value?.data || [];
+  if (fetchError.value) return NEWS_FALLBACK;
+  const apiData = newsRes.value?.data || [];
+  return apiData.length > 0 ? apiData : NEWS_FALLBACK;
 });
+
 const error = computed(() => {
   if (!fetchError.value) return null;
   return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
 });
 
-const featuredNews = computed(() => news.value.find((n) => n.featured) || news.value[0] || null);
-const normalNews = computed(() => {
-  if (!featuredNews.value) return news.value;
-  return news.value.filter((n) => n.id !== featuredNews.value.id);
+const filteredNews = computed(() => {
+  if (activeCategory.value === '全部') return news.value;
+  return news.value.filter((n) => n.category === activeCategory.value);
 });
+
+const featuredNews = computed(() => filteredNews.value.find((n) => n.featured) || filteredNews.value[0] || null);
+const normalNews = computed(() => {
+  if (!featuredNews.value) return filteredNews.value;
+  return filteredNews.value.filter((n) => n.id !== featuredNews.value.id);
+});
+
+const displayNews = computed(() => news.value);
 
 const formatDate = (d) => {
   if (!d) return '';

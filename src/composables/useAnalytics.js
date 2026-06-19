@@ -6,7 +6,6 @@
  */
 import { ref, readonly } from 'vue';
 import { apiClient } from '@/api/client.js';
-import { API_BASE_URL } from '@/api/baseUrl.js';
 
 function readConsent() {
   try {
@@ -80,8 +79,9 @@ export function useAnalytics() {
     window.addEventListener('beforeunload', () => {
       const queue = window.tp_analytics?._queue || [];
       if (queue.length === 0) return;
+      const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
       navigator.sendBeacon?.(
-        `${API_BASE_URL}/analytics/events`,
+        `${baseUrl}/analytics/events`,
         JSON.stringify({ events: queue.map((e) => ({ ...e, sessionId: e.sessionId || getSessionId() })) }),
       );
     });

@@ -1,5 +1,67 @@
 # Changelog
 
+## [Unreleased] - 2026-06-15 (技术债清零 + 高价值迭代)
+
+### 🐛 缺陷修复
+
+- **应用广场 500 / 空白**: 应用 `20260615000000_marketplace_align` migration 修复 `apps.tags` 等字段漂移；后端 Marketplace API 不再返回 500；列表与详情页均保留静态 fallback
+- **博客/论坛空白**: 新增 `src/data/blog.js`、`src/data/forum.js` 静态 fallback；`pages/blog/index.vue`、`pages/blog/[slug].vue`、`pages/forum/index.vue`、`pages/forum/topic/[id].vue` 在 API 空库/失败时自动降级展示示例内容
+- **案例详情缺时间线/产品**: `pages/cases/[slug].vue` 在拿到 API 数据后合并静态 `CASES` 的 `timeline`、`products`、`relatedCases` 等字段，保证详情页故事线完整
+- **关于我们子页面路由**: `about.vue` 改为只渲染 `<NuxtPage />`，原内容下沉到 `about/index.vue`，修复 `/about/contact`、`/about/team`、`/about/partners` 被错误渲染为「了解我们」页面的问题
+- **后端 lint**: 修复 `talentpro-backend` 46 个 `@typescript-eslint/no-unused-vars` errors
+- **Admin lint**: 新增 `talentpro-admin/eslint.config.mjs` flat config，修复 lint 脚本 "all files ignored" 错误
+- **ChatBot AI 对话**: `useChatBot.js` 从失效的 SSE `GET /ai/chat-stream` 改为 `POST /ai/chat`
+- **中文字体加载**: `src/styles/global.css` 补全 `Noto Sans SC` 字重；`nuxt.config.ts` 预加载 400/700 woff2
+- **ImageUpload 端点**: 修复 Admin 图片上传组件 URL（`/medias` → `/medias/upload`）
+- **首页 Hero 不显示**: 修复 `sectionRegistry.js` 中 `DEFAULT_ORDER` 使用 `|| 99` 导致 `order: 0` 被误判为 `99`，Hero 被排到最后的 bug（改为 `?? 99`）
+- **CORS 跨域**: 后端启动时设置 `APP_FRONTEND_URL=http://localhost:8080`，前端 dev 请求不再被拦截
+- **客户案例空白**: `pages/cases/index.vue` 在 API 返回空数组时也回退到 `CASES` 静态数据，避免页面无卡片
+- **限流 429**: `AnalyticsController` 添加 `@SkipThrottle()`，本地开发时 analytics 事件/热力点上报不再触发 `Too Many Requests`
+- **未登录 401**: `CartButton` / `NotificationBell` 仅在用户已登录时才调用 `/cart` 与 `/notifications`，未登录状态不再报 `未授权，请登录`
+- **控制台 i18n 警告**: `WhyUsSection` 改为回退静态 `WHY_US_TABS`/`SECURITY_CERTS`；`IndustrySolutionSection` 默认 key 改为 `mfg`；`src/i18n/keyMap.js` 增加 `manufacturing → mfg` 映射
+- **CMS home 404 日志**: `cmsApi.getPage` 增加 `{ silent: true }`，避免 CMS 首页配置未创建时前端控制台打印红色错误
+- **导航重构**: `src/data/navigation.js` 新增「关于我们」下拉菜单，纳入 应用广场 / 博客 / 社区 / 公司介绍 / 新闻 / 加入我们 / 联系我们；`NavBar.vue` / `MobileMenu.vue` 移除硬编码的博客/社区链接；footer「了解我们」同步补充
+- **Docker 开发环境**: 新增根目录 `docker-compose.dev.yml`，一键启动 PostgreSQL / Redis / Meilisearch / MinIO / API，并自动执行 `prisma migrate deploy` + `db:seed` + `db:seed:rich`；修复 `prisma/schema.prisma` 与历史 migrations 的 Marketplace 字段漂移，新增 `20260615000000_marketplace_align` migration
+- **tsconfig.json 不阻塞构建**: 调整 `include`/`exclude` 范围，仅包含 `src/types/**/*.ts`，避免 Nuxt 生产构建将根 tsconfig 误判为源码检查配置而失败
+- **后端 lint 收尾**: 移除 `workspace.service.spec.ts` 未使用的 `ConflictException`，当前 `npm run lint` 0 errors / 9 warnings
+
+### 🚀 高价值迭代
+
+- **Admin 构建优化**: `talentpro-admin/vite.config.js` 细粒度 `manualChunks`，消除 500KB+ chunk warning
+- **Admin 图片上传组件**: 新增 `ImageUpload.vue`；在博客/新闻表单中接入封面图上传；新增 6 个 Vitest 测试
+- **Admin 测试体系**: 新增 `vitest.config.js` + `happy-dom`，`npm run test` 可用
+- **后端类型安全**: `@typescript-eslint/no-explicit-any` 警告从 292 清零；新增 `common/types.ts` 统一 `UserContext`；修复 cms / export / payment / search / workspace 等模块的类型错误
+- **后端 E2E**: 扩展 `e2e-run.js` 至 15 个用例，覆盖 Health / Auth / Blog / Forum / Lead / CMS / News（Marketplace 因 migrations 与 schema 漂移暂时跳过）
+- **文档同步**: `docs/prd.md` / `docs/architecture.md` 升级至 v4.1.0，补充 Marketplace/Payment/Cart、Admin 视图清单
+- **国际化补全**: 提取 204 个用户可见中文到 i18n key，移除所有 `|| '中文'` fallback
+- **导航/页脚 CMS 化**: 新增 `useNavigation()` + `useSiteConfig()` + `src/api/system.js`；`NavBar`/`MobileMenu`/`Footer` 优先读取 `/cms/navigations/:key` 与 `/system/config/public`，失败时回退静态数据，运营无需发版即可调整导航、联系电话与版权信息
+- **功能开关体系**: 后端 `GET /system/config/public` 返回 `featureFlags`；前端新增 `useFeatureFlag(key)`，支持按 key 灰度开启/关闭模块
+- **AI 内容生成端点**: 后端 `POST /ai/generate` 支持 `blog`/`product`/`seo`/`translate`/`moderate` 类型；结果作为草稿返回，需运营确认后发布
+
+### ✅ 验证结果
+
+| 检查项 | 结果 |
+|--------|------|
+| 前端 `npm run lint` | ✅ 通过 |
+| 前端 `npm run test:run` | ✅ 27 套件 / 113 测试通过 |
+| 前端 `npm run build` | ✅ 25 条路由预渲染成功 |
+| Playwright E2E (chromium 57 用例) | ✅ 全部通过 |
+| Playwright E2E (5 浏览器 × 285 用例) | ✅ 284 passed；1 条 webkit 用例偶发 15s timeout，单独重跑通过 |
+| 后端 `npm run lint` | ✅ 0 errors / 9 warnings |
+| 后端 `npm run test` | ✅ 17 套件 / 131 测试通过 |
+| 后端 `npm run test:e2e` | 未在当前迭代重跑 |
+| Admin `npm run lint` | ✅ 通过 |
+| Admin `npm run test` | ✅ 1 套件 / 6 测试通过 |
+| Admin `npm run build` | ✅ 通过 |
+
+### 📝 文档同步
+
+- `AGENTS.md`: 更新 `useChatBot.js` 描述、补充 Noto Sans SC 预加载说明
+- `docs/prd.md`: 升级至 v4.1.0，新增 Marketplace / Payment / Cart 章节
+- `docs/architecture.md`: 升级 Admin 视图清单与技术栈版本
+
+---
+
 ## [v4.0.0] - 2026-05-30 (Nuxt 3 迁移完成)
 
 ### 🚀 Nuxt 3 全面迁移（6 个迭代，分支 `feat/nuxt3-infra`）

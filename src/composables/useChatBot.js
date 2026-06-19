@@ -1,4 +1,6 @@
-import { ref, computed, inject } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { apiClient } from '@/api/client.js';
+import { usePublicConfig } from '@/composables/usePublicConfig.js';
 import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData.js';
 import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils.js';
 
@@ -7,7 +9,21 @@ const LOCAL_ACTIONS = {
   human: ['人工', '客服', 'agent', 'human', 'service', '真人', '转人工'],
 };
 
+const STORAGE_KEY = 'tp-chat-session-id';
+
+function getSessionId() {
+  if (typeof window === 'undefined') return '';
+  let id = sessionStorage.getItem(STORAGE_KEY);
+  if (!id) {
+    id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    sessionStorage.setItem(STORAGE_KEY, id);
+  }
+  return id;
+}
+
 export function useChatBot({ emit, locale }) {
+  const { recaptchaSiteKey } = usePublicConfig();
+
   const messages = ref([]);
   const input = ref('');
   const isTyping = ref(false);
@@ -15,8 +31,28 @@ export function useChatBot({ emit, locale }) {
   const initialized = ref(false);
   const timers = ref([]);
   const abortController = ref(null);
+  const sessionId = ref(getSessionId());
+  const botConfig = ref({
+    intents: [],
+    quickReplies: [],
+    fallbackCopy: '',
+  });
 
   const { t } = useI18n();
+
+  onMounted(async () => {
+    try {
+      const res = await apiClient.get('/system/chatbot-config', { silent: true });
+      const data = res?.data || res || {};
+      botConfig.value = {
+        intents: Array.isArray(data.intents) ? data.intents : [],
+        quickReplies: Array.isArray(data.quickReplies) ? data.quickReplies : [],
+        fallbackCopy: data.fallbackCopy || '',
+      };
+    } catch {
+      // 后端未配置时使用本地静态 fallback
+    }
+  });
 
   const faqRules = computed(() => FAQ_RULES_META.map(meta => ({
     ...meta,
@@ -29,11 +65,24 @@ export function useChatBot({ emit, locale }) {
     { text: t('chatBot.welcome1'), quickReplies: [] },
     { text: t('chatBot.welcome2'), quickReplies: t('chatBot.welcomeQuickReplies') || [] },
   ]);
-  const quickRepliesDefault = computed(() => t('chatBot.quickRepliesDefault') || []);
+  const quickRepliesDefault = computed(() => {
+    const cms = botConfig.value.quickReplies || [];
+    return cms.length ? cms : (t('chatBot.quickRepliesDefault') || []);
+  });
 
   const clearAllTimers = () => {
     timers.value.forEach(id => clearTimeout(id));
     timers.value = [];
+  };
+
+  const matchIntent = (text) => {
+    const lower = text.toLowerCase();
+    for (const intent of botConfig.value.intents) {
+      if (Array.isArray(intent.keywords) && intent.keywords.some(k => lower.includes(k.toLowerCase()))) {
+        return intent;
+      }
+    }
+    return null;
   };
 
   const matchRule = (text) => {
@@ -66,6 +115,14 @@ export function useChatBot({ emit, locale }) {
     });
   };
 
+  const buildHistory = () => messages.value
+    .filter(m => m.from === 'user' || m.from === 'bot')
+    .slice(-10)
+    .map(m => ({
+      role: m.from === 'user' ? 'user' : 'assistant',
+      content: m.text,
+    }));
+
   const sendMessage = async (text) => {
     const trimmed = text.trim();
     if (!trimmed) return;
@@ -95,51 +152,55 @@ export function useChatBot({ emit, locale }) {
       return;
     }
 
+    const intent = matchIntent(trimmed);
+    if (intent?.reply) {
+      isTyping.value = false;
+      pushBotMessage(intent.reply, intent.quickReplies || []);
+      return;
+    }
+
     abortController.value = new AbortController();
 
     try {
-      const url = `${API_BASE_URL}/ai/chat-stream?message=${encodeURIComponent(trimmed)}`;
-      const es = new EventSource(url);
-      let replyText = '';
-      const botMsgId = Date.now() + '_stream';
-
-      es.onmessage = (event) => {
+      let recaptchaToken = '';
+      if (recaptchaSiteKey && typeof window !== 'undefined' && window.grecaptcha) {
         try {
-          const data = JSON.parse(event.data);
-          if (data.chunk) {
-            replyText += data.chunk;
-            const existing = messages.value.find(m => m.id === botMsgId);
-            if (existing) {
-              existing.text = replyText;
-            } else {
-              messages.value.push({ id: botMsgId, from: 'bot', text: replyText, time: nowTime(locale.value) });
-            }
-          }
-          if (data.done) {
-            es.close();
-            isTyping.value = false;
-            abortController.value = null;
-          }
-        } catch { /* ignore parse error */ }
-      };
-
-      es.onerror = () => {
-        es.close();
-        isTyping.value = false;
-        abortController.value = null;
-        if (!replyText) {
-          const matched = matchRule(trimmed);
-          pushBotMessage(matched.reply || t('chatBot.fallback1'), matched.quickReplies || []);
+          recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'chatbot' });
+        } catch {
+          // reCAPTCHA 未加载或失败，继续提交
         }
-      };
+      }
 
-      abortController.value = { abort: () => es.close() };
+      const result = await apiClient.post(
+        '/ai/chat',
+        {
+          message: trimmed,
+          history: buildHistory(),
+          recaptchaToken,
+          sessionId: sessionId.value,
+        },
+        { signal: abortController.value.signal },
+      );
+
+      const replyText = result?.content || '';
+      if (result?.sessionId && result.sessionId !== sessionId.value) {
+        sessionId.value = result.sessionId;
+      }
+      isTyping.value = false;
+      abortController.value = null;
+
+      if (replyText) {
+        pushBotMessage(replyText, []);
+      } else {
+        const matched = matchRule(trimmed);
+        pushBotMessage(matched.reply || botConfig.value.fallbackCopy || t('chatBot.fallback1'), matched.quickReplies || []);
+      }
     } catch (err) {
       if (import.meta.env.DEV) console.error('[ChatBot] API error:', err);
-      const matched = matchRule(trimmed);
       isTyping.value = false;
-      pushBotMessage(matched.reply || t('chatBot.fallback1'), matched.quickReplies || []);
       abortController.value = null;
+      const matched = matchRule(trimmed);
+      pushBotMessage(matched.reply || botConfig.value.fallbackCopy || t('chatBot.fallback1'), matched.quickReplies || []);
     }
   };
 

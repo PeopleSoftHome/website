@@ -33,6 +33,11 @@ async function main() {
     'user', 'role', 'page', 'product', 'industry', 'testimonial',
     'resource', 'blog_post', 'forum_topic', 'demo_booking', 'setting',
     'media', 'audit_log', 'email_template',
+    'workspace', 'lead', 'cart', 'payment', 'marketplace_app',
+    'marketplace_category', 'marketplace_vendor', 'marketplace_review',
+    'subscription', 'notification', 'download', 'case_study', 'news', 'job',
+    'forum_category', 'forum_post', 'comment', 'blog_category', 'blog_tag',
+    'ai', 'analytics', 'export', 'experiment', 'cms', 'sensitive_word', 'auth',
   ];
   const actions = ['create', 'read', 'update', 'delete'];
   for (const resource of resources) {
@@ -43,6 +48,24 @@ async function main() {
         create: { resource, action },
       });
     }
+  }
+
+  // Non-CRUD permissions used by specific controllers
+  const extraPermissions = [
+    { resource: 'cart', action: 'manage' },
+    { resource: 'payment', action: 'manage' },
+    { resource: 'export', action: 'run' },
+    { resource: 'analytics', action: 'write' },
+    { resource: 'ai', action: 'generate' },
+    { resource: 'auth', action: 'logout' },
+    { resource: 'workspace', action: 'invite' },
+  ];
+  for (const { resource, action } of extraPermissions) {
+    await prisma.permission.upsert({
+      where: { resource_action: { resource, action } },
+      update: {},
+      create: { resource, action },
+    });
   }
 
   // Assign all permissions to SUPER_ADMIN

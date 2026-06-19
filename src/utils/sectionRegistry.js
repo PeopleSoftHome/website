@@ -73,7 +73,7 @@ export function resolveSections(pageConfig) {
     // CMS 无配置时，使用所有已注册且未标记 required=false 的 Section
     return getAllSections()
       .filter((s) => s.component)
-      .sort((a, b) => (DEFAULT_ORDER[a.key] || 99) - (DEFAULT_ORDER[b.key] || 99));
+      .sort((a, b) => (DEFAULT_ORDER[a.key] ?? 99) - (DEFAULT_ORDER[b.key] ?? 99));
   }
 
   return sections
