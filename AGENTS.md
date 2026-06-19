@@ -136,13 +136,13 @@ talentpro-v2/
     │       ├── ContactModal/     # 联系方式卡片
     │       └── ChatBot/          # 智能客服（v2.3.1）
     │
-    ├── stores/                   # 全局状态（Pinia + 兼容层）
-    │   ├── auth.pinia.js         # Pinia auth store（SSR-safe，推荐）
-    │   ├── theme.js              # 暗色模式
-    │   ├── modal.js              # 预约弹窗状态
-    │   ├── videoModal.js         # 视频弹窗状态
-    │   ├── search.js             # 全局搜索开关
-    │   └── analytics.js          # 埋点队列
+    ├── stores/                   # 全局状态（Pinia）
+    │   ├── auth.pinia.js         # Pinia auth store（SSR-safe）
+    │   ├── theme.pinia.js        # 暗色模式
+    │   ├── modal.pinia.js        # 预约弹窗状态
+    │   ├── videoModal.pinia.js   # 视频弹窗状态
+    │   ├── search.pinia.js       # 全局搜索开关
+    │   └── analytics.pinia.js    # 埋点队列
     │
     ├── api/                      # 后端 API 封装
     │   ├── client.js             # Axios 实例（含 token 拦截器）
@@ -264,26 +264,18 @@ talentpro-v2/
 | SearchModal（搜索）| 2500 | Cmd+K / NavBar 搜索图标 |
 | VideoModal（视频演示）| 3000 | Hero「观看产品演示」按钮 |
 
-### 4.5 全局状态体系（Pinia + Provide 兼容层）
+### 4.5 全局状态体系（Pinia）
 
-**Pinia Store（推荐）**：
-- `useAuthStore`（`stores/auth.pinia.js`）— SSR-safe，通过 `@pinia/nuxt` 模块自动注册
+所有全局状态统一使用 Pinia Store，通过 `@pinia/nuxt` 模块自动注册：
 
-**Legacy Provide 兼容层（逐步迁移中）**：
-`App.vue` 仍通过 `provide()` 向下传递以下状态，子组件可通过 `inject()` 读取：
+- `useAuthStore`（`stores/auth.pinia.js`）— 用户认证（SSR-safe，无 localStorage token）
+- `useThemeStore`（`stores/theme.pinia.js`）— 暗色模式
+- `useModalStore`（`stores/modal.pinia.js`）— DemoModal（z-index 2000）
+- `useVideoModalStore`（`stores/videoModal.pinia.js`）— VideoModal（z-index 3000）
+- `useSearchStore`（`stores/search.pinia.js`）— 全局搜索（Cmd+K）
+- `useAnalyticsStore`（`stores/analytics.pinia.js`）— 埋点队列
 
-```
-theme        → 亮色 / 暗色主题
-search       → 全局搜索（Cmd+K）
-modal        → DemoModal（z-index 2000）
-videoModal   → VideoModal（z-index 3000）
-analytics    → 埋点队列
-auth         → 用户认证（login/register/logout）
-authModal    → 登录/注册弹窗
-abTest       → A/B 测试分流
-```
-
-**状态管理**：业务代码统一使用 Pinia Store 或 `provide/inject`。`@nuxtjs/i18n` 提供 `useI18n()` composable。
+**状态管理**：业务代码统一使用 Pinia Store。`@nuxtjs/i18n` 提供 `useI18n()` composable。
 
 ---
 
