@@ -1,29 +1,25 @@
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "strict": true,
     "noEmit": true,
-    "allowJs": true,
-    "checkJs": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "types": ["node"],
-    "ignoreDeprecations": "6.0",
-    "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./src/*"]
-    },
-    "baseUrl": "."
+    "types": ["node"]
   },
-  "include": ["src/types/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "src/shims-vue.d.ts",
+    "src/types/global.d.ts",
+    ".nuxt/nuxt.d.ts",
+    ".nuxt/imports.d.ts",
+    ".nuxt/components.d.ts"
+  ],
   "exclude": [
     "node_modules",
     ".output",
     "dist",
-    "e2e/**/*",
-    "talentpro-admin/**/*",
-    "talentpro-backend/**/*"
+    "e2e",
+    "talentpro-admin",
+    "talentpro-backend"
   ]
 }

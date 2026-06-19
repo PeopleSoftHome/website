@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'profile.menu.security', requiresAuth: true });
 import { ref } from 'vue';
 import { LOGIN_HISTORY } from '@/data/profile.js';

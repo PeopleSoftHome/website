@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject } from 'vue';
 import s from './RoiCalculatorSection.module.css';
 
@@ -38,7 +38,7 @@ const max = computed(() => Math.max(props.before, props.after, 1));
 const beforePct = computed(() => (props.before / max.value) * 100);
 const afterPct  = computed(() => (props.after  / max.value) * 100);
 
-function formatNum(v) {
+function formatNum(v: number) {
   if (v >= 10000) return (v / 10000).toFixed(1) + t('units.tenThousand');
   return v.toLocaleString();
 }

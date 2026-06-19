@@ -81,7 +81,7 @@
           <AppPricing :tiers="app.pricingTiers" :selected="selectedTier" @select="selectedTier = $event" @subscribe="handleSubscribe" @addToCart="handleAddToCart" @freeInstall="handleFreeInstall" />
         </div>
 
-        <AppReviews :app-slug="String(slug.value)" />
+        <AppReviews :app-slug="slugStr" />
 
         <div v-if="app?.compatibility?.length" :class="s.section" class="reveal">
           <h2 :class="s.sectionTitle">{{ t('marketplace.compatibility') }}</h2>
@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -124,15 +124,37 @@ definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle
 const { t } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 const modalStore = useModalStore();
 
-const app = computed(() => MARKETPLACE_APP_MAP[slug.value] || null);
+interface MarketplaceApp {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+  category: string;
+  vendor: string;
+  icon: string;
+  pricingModel: string;
+  pricingTiers: { name: string; priceMonthly: number; priceYearly: number; desc: string; features: string[] }[];
+  ratingAvg: number;
+  ratingCount: number;
+  installCount: number;
+  features: string[];
+  screenshots: string[];
+  compatibility: string[];
+  featured?: boolean;
+}
+
+const app = computed(() => (MARKETPLACE_APP_MAP as Record<string, MarketplaceApp>)[slugStr.value || ''] || null);
 const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
-  if (!app.value) return '';
-  const cat = MARKETPLACE_CATEGORIES.find((c) => c.id === app.value.category);
-  return cat?.label || app.value.category;
+  const current = app.value;
+  if (!current) return '';
+  const cat = MARKETPLACE_CATEGORIES.find((c) => c.id === current.category);
+  return cat?.label || current.category;
 });
 
 useHead(() => {
@@ -147,8 +169,8 @@ useHead(() => {
   };
 });
 
-const formatPricing = (model) => {
-  const map = {
+const formatPricing = (model: string) => {
+  const map: Record<string, string> = {
     free: t('marketplace.priceFree'),
     subscription: t('marketplace.priceSubscription'),
     one_time: t('marketplace.priceOneTime'),
@@ -159,7 +181,7 @@ const formatPricing = (model) => {
   return map[model] || model;
 };
 
-const formatInstallCount = (n) => {
+const formatInstallCount = (n: number) => {
   if (n >= 10000) return `${(n / 10000).toFixed(1)}w`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return String(n);
@@ -170,15 +192,18 @@ const scrollToPricing = () => {
 };
 
 const handleFreeInstall = async () => {
+  if (!app.value) return;
   try {
-    await marketplaceApi.installApp(slug.value);
+    await marketplaceApi.installApp(slugStr.value);
     showToast(t('marketplace.installSuccess'), 'success');
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.installError'), 'error');
+    const err = e as { response?: { data?: { message?: string } } };
+    showToast(err.response?.data?.message || t('marketplace.installError'), 'error');
   }
 };
 
-const handleAddToCart = async (tier) => {
+const handleAddToCart = async (tier: { name: string; priceMonthly: number }) => {
+  if (!app.value) return;
   try {
     await cartApi.addItem({
       appId: app.value.id,
@@ -191,11 +216,13 @@ const handleAddToCart = async (tier) => {
     });
     showToast(t('marketplace.addToCartSuccess'), 'success');
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.addToCartError'), 'error');
+    const err = e as { response?: { data?: { message?: string } } };
+    showToast(err.response?.data?.message || t('marketplace.addToCartError'), 'error');
   }
 };
 
-const handleSubscribe = async (tier) => {
+const handleSubscribe = async (tier: { name: string; priceMonthly: number }) => {
+  if (!app.value) return;
   try {
     const orderRes = await paymentApi.createOrder({
       appId: app.value.id,
@@ -214,13 +241,15 @@ const handleSubscribe = async (tier) => {
       window.location.href = checkoutRes.data.url;
     }
   } catch (e) {
-    showToast(e.response?.data?.message || t('marketplace.paymentError'), 'error');
+    const err = e as { response?: { data?: { message?: string } } };
+    showToast(err.response?.data?.message || t('marketplace.paymentError'), 'error');
   }
 };
 
 const relatedApps = computed(() => {
-  if (!app.value) return [];
-  return MARKETPLACE_APPS.filter((a) => a.category === app.value.category && a.slug !== app.value.slug).slice(0, 3);
+  const current = app.value;
+  if (!current) return [];
+  return MARKETPLACE_APPS.filter((a) => a.category === current.category && a.slug !== current.slug).slice(0, 3);
 });
 
 onMounted(() => {

@@ -30,7 +30,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { commentApi } from '@/api/comment.js';
@@ -43,11 +43,17 @@ const props = defineProps({
   entityId: { type: String, required: true },
 });
 
+interface Comment {
+  id: string;
+  replies?: Comment[];
+  [key: string]: unknown;
+}
+
 const { t } = useI18n();
 const auth = useAuthStore();
 const authOpen = useState('authOpen', () => false);
 
-const comments = ref([]);
+const comments = ref<Comment[]>([]);
 const loading = ref(false);
 const totalCount = computed(() => comments.value.length);
 
@@ -65,11 +71,11 @@ const fetchComments = async () => {
   loading.value = false;
 };
 
-const handleNewComment = (newComment) => {
+const handleNewComment = (newComment: Comment) => {
   comments.value.unshift(newComment);
 };
 
-const handleNewReply = ({ parentId, reply }) => {
+const handleNewReply = ({ parentId, reply }: { parentId: string; reply: Comment }) => {
   const parent = comments.value.find((c) => c.id === parentId);
   if (parent) {
     if (!parent.replies) parent.replies = [];

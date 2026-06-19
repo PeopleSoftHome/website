@@ -94,7 +94,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -106,7 +106,7 @@ import { cmsApi } from '@/api/cms.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import s from './[slug].vue.module.css';
 
-function mergeProduct(cms, fallback) {
+function mergeProduct(cms: any, fallback: any) {
   if (!cms && !fallback) return null;
   const base = fallback || {};
   return {
@@ -134,19 +134,22 @@ const { t } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const modalStore = useModalStore();
-const relatedRef = ref(null);
+const relatedRef = ref<HTMLElement | null>(null);
+
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 
 const { data: product } = useAsyncData(
-  () => `product-${slug.value}`,
+  () => `product-${slugStr.value}`,
   async () => {
-    const fallback = PRODUCT_MAP[slug.value] || null;
+    const key = slugStr.value || '';
+    const fallback = (PRODUCT_MAP as Record<string, any>)[key] || null;
     try {
-      const cms = await cmsApi.getProductBySlug(slug.value);
+      const cms = await cmsApi.getProductBySlug(key);
       const merged = mergeProduct(cms, fallback);
       if (merged) return merged;
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.warn(`[ProductDetail] CMS load failed for ${slug.value}, using fallback`, e.message);
+        console.warn(`[ProductDetail] CMS load failed for ${key}, using fallback`, (e as Error).message);
       }
     }
     if (!fallback) {
@@ -154,7 +157,7 @@ const { data: product } = useAsyncData(
     }
     return fallback;
   },
-  { server: false, default: () => null, watch: [slug] }
+  { server: false, default: () => null, watch: [slugStr] }
 );
 
 useHead(() => {
@@ -174,10 +177,10 @@ useHead(() => {
 
 const relatedProducts = computed(() => {
   if (!product.value?.related) return [];
-  return product.value.related.map((slug) => PRODUCT_MAP[slug]).filter(Boolean);
+  return product.value.related.map((s: string) => (PRODUCT_MAP as Record<string, any>)[s]).filter(Boolean);
 });
 
-const scrollRelated = (dir) => {
+const scrollRelated = (dir: number) => {
   if (!relatedRef.value) return;
   relatedRef.value.scrollBy({ left: dir * 280, behavior: 'smooth' });
 };

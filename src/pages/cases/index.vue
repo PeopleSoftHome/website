@@ -89,7 +89,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'cases.title', description: 'cases.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -110,8 +110,8 @@ const tabItems = computed(() => industries.value.map((ind) => ({
   label: ind || t('common.all'),
 })));
 const activeIndex = computed(() => industries.value.findIndex((ind) => ind === activeIndustry.value));
-function onSelectIndustry(index) {
-  activeIndustry.value = industries.value[index];
+function onSelectIndustry(index: number) {
+  activeIndustry.value = industries.value[index] || '';
   displayLimit.value = PAGE_SIZE;
 }
 
@@ -137,7 +137,8 @@ const cases = computed(() => {
 });
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const industries = ref(CASE_INDUSTRIES);

@@ -14,7 +14,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useModalStore } from '@/stores/modal.pinia.js';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './CtaBannerSection.module.css';

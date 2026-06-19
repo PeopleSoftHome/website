@@ -160,8 +160,9 @@ export default defineNuxtConfig({
   },
 
   // ── TypeScript ──
+  // Batch 10: typeCheck 已重新开启；tsconfig 继承 .nuxt/tsconfig.json 并保留 strict。
   typescript: {
-    strict: false,
+    strict: true,
     typeCheck: true,
   },
 

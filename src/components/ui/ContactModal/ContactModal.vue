@@ -68,7 +68,7 @@
   </BaseModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';

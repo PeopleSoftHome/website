@@ -42,8 +42,8 @@
   </section>
 </template>
 
-<script setup>
-import { ref, computed, onUnmounted, inject } from 'vue';
+<script setup lang="ts">
+import { ref, computed, onUnmounted, inject, type Ref } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
@@ -55,6 +55,19 @@ import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import TestimonialCard from './TestimonialCard.vue';
 import s from './TestimonialSection.module.css';
 
+interface TestimonialItem {
+  id: string;
+  industry: string;
+  product: string;
+  text: string;
+  name: string;
+  title: string;
+  avatar: string;
+  avatarGrad: string;
+  avatarChar: string;
+  isActive?: boolean;
+}
+
 const { t } = useI18n();
 
 const GRAD_PRESETS = [
@@ -65,11 +78,11 @@ const GRAD_PRESETS = [
   'linear-gradient(135deg, #0284C7, #1B5FEB)',
 ];
 
-const { displayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
+const { displayItems: rawDisplayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
   transform: transformTestimonials,
   fallbackKey: 'testimonials',
 });
-
+const displayItems = computed(() => rawDisplayItems.value as unknown as TestimonialItem[]);
 
 const itemCount = computed(() => displayItems.value.length);
 
@@ -81,9 +94,9 @@ const {
   bindPauseEvents,
   getColCount,
   getOffset,
-} = useCarousel(itemCount, { autoPlayInterval: 4500 });
+} = useCarousel(itemCount.value, { autoPlayInterval: 4500 });
 
-const wrapRef = ref(null);
+const wrapRef: Ref<HTMLElement | null> = ref(null);
 
 onMounted(() => {
   if (wrapRef.value) {

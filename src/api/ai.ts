@@ -1,0 +1,19 @@
+import { apiClient } from './client.js';
+import type { AxiosResponse } from 'axios';
+
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+export const aiApi = {
+  /**
+   * AI 对话（RAG）
+   * @param message 用户消息
+   * @param history 历史消息
+   * @returns AI 响应
+   */
+  chat(message: string, history: ChatMessage[] = []): Promise<AxiosResponse> {
+    return apiClient.post('/ai/chat', { message, history });
+  },
+};

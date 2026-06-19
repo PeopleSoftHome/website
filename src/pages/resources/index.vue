@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'resourcePage.title', description: 'resourcePage.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -127,13 +127,14 @@ const filteredResources = computed(() => {
   return list;
 });
 
-const formatDate = (d) => {
+const formatDate = (d: string | number | Date | undefined) => {
   if (!d) return '';
   return new Date(d).toLocaleDateString();
 };
 
-const typeStyle = (type) => {
-  const style = RESOURCE_TYPE_STYLES[type] || RESOURCE_TYPE_STYLES['article'];
+const typeStyle = (type: string) => {
+  const styles = RESOURCE_TYPE_STYLES as Record<string, { bg: string; color: string }>;
+  const style = (styles[type] || styles['article']) as { bg: string; color: string };
   return { background: style.bg, color: style.color };
 };
 

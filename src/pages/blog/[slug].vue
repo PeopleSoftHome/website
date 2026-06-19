@@ -33,7 +33,7 @@
 
         <div v-else-if="error" :class="s.errorBox">
           <p>{{ error }}</p>
-          <button :class="s.retryBtn" @click="fetchPost">{{ t('common.retry') }}</button>
+          <button :class="s.retryBtn" @click="() => fetchPost()">{{ t('common.retry') }}</button>
         </div>
 
         <CommentSection
@@ -47,7 +47,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog.js';
@@ -73,7 +73,7 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    const fallback = BLOG_POST_MAP[slug.value] || null;
+    const fallback = BLOG_POST_MAP[slug.value as string] || null;
     if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
     }
@@ -98,7 +98,8 @@ useHead(() => {
 
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 onMounted(() => {

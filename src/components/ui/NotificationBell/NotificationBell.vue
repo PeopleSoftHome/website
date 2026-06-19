@@ -32,20 +32,35 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { notificationApi } from '@/api/notification.js';
 import Icon from '../Icon/Icon.vue';
 import s from './NotificationBell.module.css';
 
+interface Notification {
+  id: string;
+  title: string;
+  content: string;
+  isRead: boolean;
+  createdAt: string;
+  [key: string]: unknown;
+}
+
 const { t } = useI18n();
 const auth = useAuthStore();
 
 const open = ref(false);
-const notifications = ref([]);
+const notifications = ref<Notification[]>([]);
 const unreadCount = ref(0);
-let es = null;
+interface EventSourceLike {
+  close: () => void;
+  onmessage: ((event: { data: string }) => void) | null;
+  onerror: (() => void) | null;
+}
+
+let es: EventSourceLike | null = null;
 
 const fetchNotifications = async () => {
   if (!auth.isLoggedIn) {
@@ -73,7 +88,7 @@ const markAllRead = async () => {
   }
 };
 
-const handleClick = async (n) => {
+const handleClick = async (n: Notification) => {
   if (!n.isRead) {
     try {
       await notificationApi.markAsRead(n.id);
@@ -87,15 +102,15 @@ const handleClick = async (n) => {
 };
 
 
-let reconnectTimer = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
 const connectSSE = () => {
   if (!auth.isLoggedIn) return;
   try {
-    es = notificationApi.createEventSource();
-    es.onmessage = (event) => {
+    es = notificationApi.createEventSource() as unknown as EventSourceLike;
+    es.onmessage = (event: { data: string }) => {
       try {
-        const notif = JSON.parse(event.data);
+        const notif = JSON.parse(event.data) as Notification;
         notifications.value.unshift(notif);
         unreadCount.value++;
       } catch {
@@ -103,7 +118,7 @@ const connectSSE = () => {
       }
     };
     es.onerror = () => {
-      es.close();
+      es?.close();
       reconnectTimer = setTimeout(connectSSE, 5000);
     };
   } catch {

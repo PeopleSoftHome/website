@@ -28,7 +28,7 @@
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
 import { useThemeStore } from '@/stores/theme.pinia.js';
 import { useModalStore } from '@/stores/modal.pinia.js';

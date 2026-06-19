@@ -67,15 +67,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import s from './SolutionCaseDeep.vue.module.css';
 
+interface RoiItem {
+  metric: string;
+  value: string;
+  desc: string;
+}
+
 const props = defineProps({
   caseStudy: { type: Object, default: null },
-  roi: { type: Array, default: () => [] },
+  roi: { type: Array as () => RoiItem[], default: () => [] },
 });
 
 const { t } = useI18n();

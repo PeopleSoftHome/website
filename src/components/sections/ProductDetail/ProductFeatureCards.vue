@@ -23,12 +23,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import s from './ProductFeatureCards.vue.module.css';
 
-defineProps({ features: { type: Array, default: () => [] } });
+interface ProductFeature {
+  title: string;
+  desc: string;
+  detail?: string;
+}
+
+defineProps({ features: { type: Array as () => ProductFeature[], default: () => [] } });
 const { t } = useI18n();
 const expandedIdx = ref(-1);
 </script>

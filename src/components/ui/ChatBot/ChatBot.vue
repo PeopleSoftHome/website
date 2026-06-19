@@ -58,8 +58,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import { useFocusTrap } from '@/composables/useFocusTrap.js';
 import { useChatBot } from '@/composables/useChatBot.js';
 import Icon from '../Icon/Icon.vue';
@@ -70,11 +70,11 @@ const emit = defineEmits(['close', 'openDemo']);
 
 const { t, locale } = useI18n();
 
-const windowRef = ref(null);
-const bottomRef = ref(null);
-const inputRef = ref(null);
+const windowRef = ref<HTMLElement | null>(null);
+const bottomRef = ref<HTMLElement | null>(null);
+const inputRef = ref<HTMLTextAreaElement | null>(null);
 
-useFocusTrap(() => props.isOpen, windowRef);
+useFocusTrap(computed(() => props.isOpen), windowRef);
 
 const {
   messages, input, isTyping, isHandoff, initialized,
@@ -82,7 +82,7 @@ const {
   welcomeMessages, quickRepliesDefault,
   sendMessage, handleQuickReply, handleKeyDown,
   formatMessage,
-} = useChatBot({ emit, locale });
+} = useChatBot({ emit: emit as (event: string, ...args: unknown[]) => void, locale });
 
 // 初始化欢迎语
 watch(() => props.isOpen, (open) => {
@@ -95,7 +95,7 @@ watch(() => props.isOpen, (open) => {
     initialized.value = true;
     let delay = 300;
     welcomeMessages.value.forEach((msg, i) => {
-      const id = setTimeout(() => {
+      const id = window.setTimeout(() => {
         messages.value.push({
           id: Date.now() + i,
           from: 'bot',
@@ -109,18 +109,18 @@ watch(() => props.isOpen, (open) => {
     });
   }
   if (open) {
-    timers.value.push(setTimeout(() => inputRef.value?.focus(), 100));
+    timers.value.push(window.setTimeout(() => inputRef.value?.focus(), 100));
   }
 });
 
 // 消息更新时滚动到底部
 watch([messages, isTyping], () => {
   clearAllTimers();
-  timers.value.push(setTimeout(() => bottomRef.value?.scrollIntoView({ behavior: 'smooth' }), 50));
+  timers.value.push(window.setTimeout(() => bottomRef.value?.scrollIntoView({ behavior: 'smooth' }), 50));
 });
 
 // Escape 关闭
-const onEsc = (e) => {
+const onEsc = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && props.isOpen) emit('close');
 };
 onMounted(() => document.addEventListener('keydown', onEsc));

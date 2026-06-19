@@ -28,8 +28,15 @@
   </div>
 </template>
 
-<script setup>
-defineProps({ tiers: { type: Array, required: true }, selected: { type: Number, default: 0 } });
+<script setup lang="ts">
+interface PricingTier {
+  name: string;
+  priceMonthly: number;
+  desc: string;
+  features: string[];
+}
+
+defineProps({ tiers: { type: Array as () => PricingTier[], required: true }, selected: { type: Number, default: 0 } });
 defineEmits(['select', 'subscribe', 'addToCart', 'freeInstall']);
 import s from './AppPricing.module.css';
 const { t } = useI18n();

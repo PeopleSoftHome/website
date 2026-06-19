@@ -83,7 +83,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
@@ -105,9 +105,9 @@ const iconMap = {
   performance: '🎯', learning: '📖', experience: '❤️', compliance: '🛡️', ai: '🤖', analytics: '📊',
 };
 
-const categoryIcon = (icon) => iconMap[icon] || '•';
+const categoryIcon = (icon?: string) => (icon ? iconMap[icon as keyof typeof iconMap] || '•' : '•');
 
-const categories = computed(() => [
+const categories = computed<Array<{ id: string; label: string; icon?: string }>>(() => [
   { id: 'all', label: t('common.all') },
   ...MARKETPLACE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, icon: c.icon })),
 ]);
@@ -135,7 +135,7 @@ const filteredApps = computed(() => {
 
 const featuredApps = computed(() => MARKETPLACE_APPS.filter((a) => a.featured).slice(0, 4));
 
-const formatPricing = (model) => {
+const formatPricing = (model: string) => {
   const map = {
     free: t('marketplace.priceFree'),
     subscription: t('marketplace.priceSubscription'),
@@ -144,10 +144,10 @@ const formatPricing = (model) => {
     freemium: t('marketplace.priceFreemium'),
     paid: t('marketplace.pricePaid'),
   };
-  return map[model] || model;
+  return map[model as keyof typeof map] || model;
 };
 
-const formatInstallCount = (n) => {
+const formatInstallCount = (n: number) => {
   if (n >= 10000) return `${(n / 10000).toFixed(1)}w`;
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return String(n);

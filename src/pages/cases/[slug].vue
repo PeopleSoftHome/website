@@ -43,8 +43,8 @@
             <h3 :class="s.productsTitle">{{ t('cases.usedProducts') }}</h3>
             <div :class="s.productsGrid">
               <NuxtLink v-for="slug in caseStudy.products" :key="slug" :to="`/products/${slug}`" :class="s.productCard">
-                <div :class="s.productIcon" :style="{ background: PRODUCT_MAP[slug]?.iconBg, color: PRODUCT_MAP[slug]?.iconColor }"><component :is="PRODUCT_MAP[slug]?.icon" v-if="PRODUCT_MAP[slug]?.icon" /></div>
-                <span :class="s.productName">{{ PRODUCT_MAP[slug]?.name || slug }}</span>
+                <div :class="s.productIcon" :style="{ background: productMap[slug]?.iconBg, color: productMap[slug]?.iconColor }"><component :is="productMap[slug]?.icon" v-if="productMap[slug]?.icon" /></div>
+                <span :class="s.productName">{{ productMap[slug]?.name || slug }}</span>
               </NuxtLink>
             </div>
           </div>
@@ -64,8 +64,8 @@
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, watch, type Component } from 'vue';
 import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -76,6 +76,15 @@ import { CASES } from '@/data/cases.js';
 import { PRODUCT_MAP } from '@/data/products.js';
 import s from './[slug].vue.module.css';
 
+interface ProductMapItem {
+  name?: string;
+  icon?: Component | string;
+  iconBg?: string;
+  iconColor?: string;
+}
+
+const productMap = PRODUCT_MAP as Record<string, ProductMapItem | undefined>;
+
 definePageMeta({ title: 'cases.detail', description: 'cases.subtitle' });
 
 const { t } = useI18n();
@@ -83,17 +92,38 @@ const route = useRoute();
 const slug = computed(() => route.params.slug);
 const videoModalStore = useVideoModalStore();
 
+interface CaseItem {
+  slug: string;
+  clientName: string;
+  title: string;
+  excerpt?: string;
+  metrics?: { id?: string; label: string; value: string }[];
+  timeline?: { phase: string; desc: string }[];
+  products?: string[];
+  relatedCases?: string[];
+  teamSize?: string;
+  projectDuration?: string;
+  coverImage?: string;
+  quote?: string;
+  author?: string;
+  authorTitle?: string;
+  videoUrl?: string;
+  industry?: string;
+  scale?: string;
+  [key: string]: unknown;
+}
+
 const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
   () => `case-${slug.value}`,
   async () => {
-    let data = null;
+    let data: CaseItem | null = null;
     try {
-      const res = await caseApi.getCase(slug.value);
-      data = res.data || null;
+      const res = await caseApi.getCase(slug.value as string);
+      data = (res.data || null) as CaseItem | null;
     } catch {
       // API 失败时使用静态 fallback
     }
-    const staticCase = CASES.find((c) => c.slug === slug.value) || null;
+    const staticCase = (CASES as CaseItem[]).find((c) => c.slug === slug.value) || null;
     if (!data && !staticCase) {
       throw createError({ statusCode: 404, statusMessage: 'Case Study Not Found', fatal: true });
     }
@@ -129,12 +159,16 @@ useHead(() => {
 
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
-const relatedCases = computed(() => {
+const relatedCases = computed<CaseItem[]>(() => {
   const slugs = caseStudy.value?.relatedCases || [];
-  return slugs.map((slug) => CASES.find((c) => c.slug === slug)).filter(Boolean).slice(0, 3);
+  return slugs
+    .map((slug) => (CASES as CaseItem[]).find((c) => c.slug === slug))
+    .filter((c): c is CaseItem => Boolean(c))
+    .slice(0, 3);
 });
 
 const handlePlayVideo = () => videoModalStore.openVideo();

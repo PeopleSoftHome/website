@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'careers.campusSubtitle', description: 'careers.subtitle' });
 import { computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -81,7 +81,8 @@ const jobs = computed(() => {
 });
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 onMounted(() => {

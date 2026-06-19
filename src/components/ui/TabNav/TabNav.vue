@@ -13,11 +13,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './TabNav.module.css';
 
+interface Tab {
+  id: string;
+  label: string;
+}
+
 defineProps({
-  tabs:        { type: Array, default: () => [] },
+  tabs:        { type: Array as () => Tab[], default: () => [] },
   activeIndex: { type: Number, default: 0 },
   variant:     { type: String, default: 'segment' },
   className:   { type: String, default: '' },

@@ -37,7 +37,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
 import { onMounted, onUnmounted, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -50,15 +50,16 @@ const { t } = useI18n();
 const { data: partners, pending: loading, error: asyncError } = useAsyncData(
   'about-partners',
   async () => {
-    const res = await aboutApi.getPartners();
+    const res = await aboutApi.getPartners({});
     return res.data || [];
   },
-  { server: false, default: () => [] }
+  { server: false, default: () => [] as any[] }
 );
 
 const error = computed(() => {
   if (!asyncError.value) return null;
-  return asyncError.value.response?.data?.message || asyncError.value.message || t('common.loadError');
+  const err = asyncError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 onMounted(() => {

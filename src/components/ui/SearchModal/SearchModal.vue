@@ -1,6 +1,6 @@
 <template>
   <BaseModal
-    :is-open="searchStore.isOpen.value"
+    :is-open="searchStore.isOpen"
     :aria-label="t('search.label')"
     :overlay-class-name="s.overlay"
     @close="searchStore.closeSearch()"
@@ -15,7 +15,7 @@
           :class="s.input"
           type="text"
           :value="query"
-          @input="handleQueryChange($event.target.value)"
+          @input="handleQueryChange(($event.target as HTMLInputElement).value)"
           @keydown="trackedHandleKeyDown"
           :placeholder="t('search.placeholder')"
           autocomplete="off"
@@ -32,8 +32,8 @@
 
       <div :class="s.body">
         <!-- 搜索建议 -->
-        <div v-if="hasQuery && suggestions.length > 0 && !hasResults" :class="s.suggestions">
-          <div v-for="sug in suggestions.slice(0, 6)" :key="sug" :class="s.suggestionItem" @click="handleQueryChange(sug)">
+        <div v-if="hasQuery && suggestionList.length > 0 && !hasResults" :class="s.suggestions">
+          <div v-for="sug in suggestionList.slice(0, 6)" :key="sug" :class="s.suggestionItem" @click="handleQueryChange(sug)">
             <Icon name="search" :size="14" />
             <span>{{ sug }}</span>
           </div>
@@ -53,7 +53,7 @@
         <div v-else-if="hasResults" :class="s.results">
           <div v-for="[type, items] in resultEntries" :key="type" :class="s.group">
             <div :class="s.groupHeader">
-              <span :class="s.groupLabel">{{ TYPE_LABELS[type] ?? type }}</span>
+              <span :class="s.groupLabel">{{ getTypeLabel(type) }}</span>
               <span :class="s.groupCount">{{ items.length }}</span>
             </div>
             <button
@@ -98,7 +98,7 @@
   </BaseModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, watch, onUnmounted } from 'vue';
 import { useSearchStore } from '@/stores/search.pinia.js';
 import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
@@ -124,18 +124,32 @@ const {
 } = useSearch(() => searchStore.closeSearch());
 
 const { hotTags: cmsHotTags } = useSiteConfig();
-const displayHotSearches = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : HOT_SEARCHES));
+const displayHotSearches = computed<string[]>(() =>
+  (cmsHotTags.value.length ? cmsHotTags.value : HOT_SEARCHES) as string[]
+);
+const suggestionList = computed<string[]>(() =>
+  (suggestions.value || []).map((s) => (typeof s === 'string' ? s : String(s)))
+);
 
-const trackedSelectItem = (item) => {
+interface SearchItem {
+  id: string;
+  type: string;
+  title: string;
+  desc: string;
+  icon: string;
+  section: string;
+}
+
+const trackedSelectItem = (item: SearchItem) => {
   analyticsStore.track('search_click', { id: item.id, type: item.type, query: query.value });
-  selectItem(item);
+  selectItem(item as unknown as Parameters<typeof selectItem>[0]);
 };
 
 // 搜索查询埋点（防抖，至少 2 个字符）
-let searchQueryTimer = null;
+let searchQueryTimer: ReturnType<typeof setTimeout> | null = null;
 watch(() => debouncedQuery.value, (q) => {
   if (q && q.length >= 2) {
-    clearTimeout(searchQueryTimer);
+    if (searchQueryTimer) clearTimeout(searchQueryTimer);
     searchQueryTimer = setTimeout(() => {
       analyticsStore.track('search_query', { query: q });
     }, 300);
@@ -143,32 +157,33 @@ watch(() => debouncedQuery.value, (q) => {
 });
 
 onUnmounted(() => {
-  clearTimeout(searchQueryTimer);
+  if (searchQueryTimer) clearTimeout(searchQueryTimer);
 });
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 const hasResults = computed(() => totalResults.value > 0);
 const resultEntries = computed(() => Object.entries(groupedResults.value));
+const getTypeLabel = (type: string) => (TYPE_LABELS as Record<string, string>)[type] ?? type;
 
 // 打开时自动聚焦
-watch(() => searchStore.isOpen.value, (open) => {
+watch(() => searchStore.isOpen, (open) => {
   if (open) focusInput();
 });
 
 // Enter 选择时也会触发 search_click（在 handleKeyDown 内部已调用 selectItem）
 // 为了埋点，需要包装 handleKeyDown
-const trackedHandleKeyDown = (e) => {
+const trackedHandleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && focusIdx.value >= 0) {
-    const item = flatResults.value[focusIdx.value];
+    const item = flatResults.value[focusIdx.value] as SearchItem | undefined;
     if (item) analyticsStore.track('search_click', { id: item.id, type: item.type, query: query.value });
   }
   handleKeyDown(e);
 };
 
 // 计算全局索引（用于 focusIdx 对照）
-const getGlobalIdx = (type, idx) => {
+const getGlobalIdx = (type: string, idx: number) => {
   let count = 0;
-  for (const [t, items] of Object.entries(groupedResults.value)) {
+  for (const [t, items] of Object.entries(groupedResults.value) as [string, SearchItem[]][]) {
     if (t === type) return count + idx;
     count += items.length;
   }

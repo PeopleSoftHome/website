@@ -93,7 +93,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
@@ -106,7 +106,10 @@ definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
 
 const { t } = useI18n();
 const route = useRoute();
-const slug = computed(() => route.params.slug);
+const slug = computed(() => {
+  const s = route.params.slug;
+  return Array.isArray(s) ? s[0] : s;
+});
 const showWxTip = ref(false);
 const subscribeEmail = ref('');
 const subscribeMsg = ref('');
@@ -121,10 +124,7 @@ const { data: item, isLoading: loading, error: fetchError } = useDetailPage({
   notFoundMessage: 'News Not Found',
 });
 
-const error = computed(() => {
-  if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
-});
+const error = computed(() => fetchError.value || null);
 
 useHead(() => {
   if (!item.value) return {};
@@ -146,9 +146,10 @@ const paragraphs = computed(() => {
 const allNews = computed(() => (item.value ? [item.value] : NEWS_FALLBACK));
 
 const relatedNews = computed(() => {
-  if (!item.value) return [];
+  const it = item.value;
+  if (!it) return [];
   return NEWS_FALLBACK.filter(
-    (n) => n.category === item.value.category && n.id !== item.value.id
+    (n) => n.category === it.category && n.id !== it.id
   ).slice(0, 3);
 });
 
@@ -165,7 +166,7 @@ const linkedinShareUrl = computed(() => {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl.value)}`;
 });
 
-const formatDate = (d) => {
+const formatDate = (d: string | number | Date | undefined) => {
   if (!d) return '';
   return new Date(d).toLocaleDateString();
 };

@@ -39,7 +39,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue';
 
 import { useModalStore } from '@/stores/modal.pinia.js';
@@ -55,29 +55,42 @@ import ProductScreenshot from './ProductScreenshot.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './IndustrySolutionSection.module.css';
 
+interface IndustryFeature {
+  badge: string;
+  title: string;
+  desc: string;
+}
+
+interface IndustryTab {
+  id: string;
+  label: string;
+  features?: IndustryFeature[];
+  screenshot?: Record<string, any>;
+}
+
 const { t } = useI18n();
 const modalStore = useModalStore();
 const analyticsStore = useAnalyticsStore();
 const { activeIndex, selectTab } = useTabs(0);
 
 const originalSelectTab = selectTab;
-const trackedSelectTab = (idx) => {
+const trackedSelectTab = (idx: number) => {
   originalSelectTab(idx);
   analyticsStore.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('industries', {
+const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('industries', {
   transform: transformIndustries,
   fallbackKey: 'industries',
 });
-
-
+const tabs = computed(() => rawTabs.value as unknown as IndustryTab[]);
 
 const panel = computed(() => tabs.value[activeIndex.value]);
-const indKey = computed(() => INDUSTRY_KEY_MAP[panel.value?.id] ?? panel.value?.id ?? '');
+const indKey = computed(() => (INDUSTRY_KEY_MAP as Record<string, string>)[panel.value?.id || ''] ?? panel.value?.id ?? '');
 
 const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
-  const key = INDUSTRY_KEY_MAP[tab.id] ?? tab.id;
+  const keyMap = INDUSTRY_KEY_MAP as Record<string, string>;
+  const key = keyMap[tab.id] ?? tab.id;
   const translated = t(`industry.tabs.${key}`);
   return {
     ...tab,
@@ -85,7 +98,7 @@ const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
   };
 }));
 
-const features = computed(() => {
+const features = computed<IndustryFeature[]>(() => {
   if (panel.value?.features && panel.value.features.length > 0) {
     return panel.value.features;
   }

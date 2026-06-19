@@ -30,15 +30,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import s from './profile.vue.module.css';
 
+interface UserProfile {
+  id: string;
+  name?: string;
+  email: string;
+  avatar?: string;
+}
+
 const route = useRoute();
 const auth = useAuthStore();
-const user = auth.user;
+const user = auth.user as UserProfile | null;
 
 const { t } = useI18n();
 

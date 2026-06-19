@@ -29,7 +29,7 @@
 
         <div v-else-if="error" :class="s.errorBox">
           <p>{{ error }}</p>
-          <button :class="s.retryBtn" @click="fetchTopics">{{ t('common.retry') }}</button>
+          <button :class="s.retryBtn" @click="() => fetchTopics()">{{ t('common.retry') }}</button>
         </div>
 
         <div v-else-if="topics.length" :class="s.topicList">
@@ -70,7 +70,7 @@
           :total="total"
           :page-size="pageSize"
           v-model="page"
-          @change="fetchTopics"
+          @change="() => fetchTopics()"
         />
       </div>
     </main>
@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'forum.pageTitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';
@@ -95,7 +95,7 @@ const { t } = useI18n();
 
 const page = ref(1);
 const pageSize = FORUM_PAGE_SIZE;
-const activeCategory = ref(null);
+const activeCategory = ref<string | number | null>(null);
 
 const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopics } = useAsyncData(
   'forum-topics',
@@ -116,11 +116,12 @@ const fallbackTopics = computed(() => {
 });
 const hasApiTopics = computed(() => Array.isArray(topicsRes.value?.data) && topicsRes.value.data.length > 0);
 const topics = computed(() => hasApiTopics.value ? topicsRes.value.data : fallbackTopics.value);
-const total = computed(() => hasApiTopics.value ? (topicsRes.value?.meta?.total || 0) : fallbackTopics.value.length);
+const total = computed(() => hasApiTopics.value ? ((topicsRes.value as any)?.meta?.total || 0) : fallbackTopics.value.length);
 const error = computed(() => {
   if (hasApiTopics.value || fallbackTopics.value.length > 0) return null;
   if (!fetchError.value) return null;
-  return fetchError.value?.response?.data?.message || fetchError.value?.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const { data: catRes } = useAsyncData(
@@ -131,13 +132,13 @@ const { data: catRes } = useAsyncData(
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
 const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : FORUM_CATEGORIES);
 
-const setCategory = (id) => {
+const setCategory = (id: string | number) => {
   activeCategory.value = activeCategory.value === id ? null : id;
   page.value = 1;
   fetchTopics();
 };
 
-const goToTopic = (id) => {
+const goToTopic = (id: string | number) => {
   navigateTo(`/forum/topic/${id}`);
 };
 

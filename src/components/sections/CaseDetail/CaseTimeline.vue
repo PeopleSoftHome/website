@@ -16,17 +16,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import s from './CaseTimeline.module.css';
+
+interface TimelineItem {
+  phase: string;
+  title?: string;
+  desc: string;
+}
 
 const props = defineProps({ caseStudy: { type: Object, default: null } });
 const { t } = useI18n();
 
-const items = computed(() => {
+const items = computed<TimelineItem[]>(() => {
   const c = props.caseStudy;
   if (!c) return [];
-  if (c.timeline?.length) return c.timeline;
+  if (c.timeline?.length) return c.timeline as TimelineItem[];
   return [
     { phase: t('cases.challenge'), title: t('cases.challenge'), desc: c.challenge },
     { phase: t('cases.solution'), title: t('cases.solution'), desc: c.solution },

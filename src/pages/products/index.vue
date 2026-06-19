@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
@@ -70,10 +70,23 @@ const modalStore = useModalStore();
 const tabs = [{ id: 'all', name: t('productPage.all') }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];
 const activeTab = ref('all');
 
-const allProducts = computed(() => {
-  const list = [];
-  PRODUCT_TABS.forEach((tab) => {
-    tab.products.forEach((p) => {
+interface ProductItem {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  desc?: string;
+  icon?: any;
+  iconBg?: string;
+  iconColor?: string;
+  tabId: string;
+  tabLabel: string;
+}
+
+const allProducts = computed<ProductItem[]>(() => {
+  const list: ProductItem[] = [];
+  PRODUCT_TABS.forEach((tab: any) => {
+    tab.products.forEach((p: any) => {
       list.push({ ...p, tabId: tab.id, tabLabel: tab.label, iconBg: tab.iconBg, iconColor: tab.iconColor });
     });
   });

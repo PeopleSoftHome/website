@@ -45,7 +45,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs.js';
 import { useCmsDataByKey } from '@/composables/useCmsData.js';
@@ -58,10 +58,29 @@ import MetricCard from './MetricCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './WhyUsSection.module.css';
 
+interface WhyUsMetric {
+  label: string;
+  num: string;
+  desc: string;
+}
+
+interface WhyUsTab {
+  id: string;
+  label: string;
+  metrics?: WhyUsMetric[];
+}
+
+interface StatsBarItem {
+  target: number;
+  suffix: string;
+  label: string;
+}
+
 const { t } = useI18n();
 const { activeIndex, selectTab } = useTabs(0);
 
-const { displayItems: apiTabs } = useCmsDataByKey('why-us', { transform: transformWhyUsTabs, fallbackKey: 'why-us' });
+const { displayItems: rawApiTabs } = useCmsDataByKey('why-us', { transform: transformWhyUsTabs, fallbackKey: 'why-us' });
+const apiTabs = computed(() => rawApiTabs.value as unknown as WhyUsTab[]);
 
 const staticTabs = [
   { id: 'product', label: t('whyUs.tabs.product') },
@@ -69,28 +88,28 @@ const staticTabs = [
   { id: 'success', label: t('whyUs.tabs.success') },
 ];
 
-const tabs = computed(() => ((apiTabs.value || []).length > 0 ? apiTabs.value.map((t) => ({ id: t.id, label: t.label })) : staticTabs));
+const tabs = computed(() => ((apiTabs.value || []).length > 0 ? apiTabs.value.map((tab) => ({ id: tab.id, label: tab.label })) : staticTabs));
 const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'product');
 
-const currentMetrics = computed(() => {
+const currentMetrics = computed<WhyUsMetric[]>(() => {
   const apiTab = apiTabs.value[activeIndex.value];
   if (apiTab?.metrics?.length) return apiTab.metrics;
   const staticTab = WHY_US_TABS.find((tab) => tab.id === currentTabId.value);
-  return staticTab?.metrics || [];
+  return (staticTab?.metrics || []) as WhyUsMetric[];
 });
 
-const barRefs = [];
+const barRefs: (Element | null)[] = [];
 onMounted(() => {
-  STATS_BAR.forEach((item, i) => {
+  STATS_BAR.forEach((item: StatsBarItem, i) => {
     const el = barRefs[i];
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !el.dataset.done) {
-          el.dataset.done = '1';
+        if (!entry || !entry.isIntersecting || (el as HTMLElement).dataset.done) return;
+          (el as HTMLElement).dataset.done = '1';
           const start = performance.now();
           const duration = 1800;
-          const tick = (now) => {
+          const tick = (now: number) => {
             const progress = Math.min((now - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             const current = Math.floor(eased * item.target);
@@ -99,7 +118,6 @@ onMounted(() => {
             else el.textContent = item.target.toLocaleString();
           };
           requestAnimationFrame(tick);
-        }
       },
       { threshold: 0.5 }
     );
@@ -107,6 +125,6 @@ onMounted(() => {
   });
 });
 
-const certLabel = (i) => SECURITY_CERTS[i]?.label || '';
-const certDesc = (i) => SECURITY_CERTS[i]?.desc || '';
+const certLabel = (i: number) => SECURITY_CERTS[i]?.label || '';
+const certDesc = (i: number) => SECURITY_CERTS[i]?.desc || '';
 </script>

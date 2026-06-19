@@ -98,7 +98,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onUnmounted } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -122,7 +122,7 @@ useHead(() => {
 const { data: job, pending: loading, error: fetchError } = useAsyncData(
   () => `career-${id.value}`,
   async () => {
-    const res = await careersApi.getJob(id.value);
+    const res = await careersApi.getJob(id.value as string);
     const data = res.data || null;
     if (!data) {
       throw createError({ statusCode: 404, statusMessage: 'Job Not Found', fatal: true });
@@ -134,7 +134,8 @@ const { data: job, pending: loading, error: fetchError } = useAsyncData(
 
 const error = computed(() => {
   if (!fetchError.value) return null;
-  return fetchError.value.response?.data?.message || fetchError.value.message || t('common.loadError');
+  const err = fetchError.value as any;
+  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const descriptionParagraphs = computed(() => {
@@ -145,13 +146,13 @@ const descriptionParagraphs = computed(() => {
 const requirementsList = computed(() => {
   const r = job.value?.requirements || '';
   if (!r) return [];
-  return r.split('\n').filter((l) => l.trim()).map((l) => l.replace(/^[\s\-•]+/, '').trim());
+  return r.split('\n').filter((l: string) => l.trim()).map((l: string) => l.replace(/^[\s\-•]+/, '').trim());
 });
 
 const responsibilitiesList = computed(() => {
   const r = job.value?.responsibilities || '';
   if (!r) return [];
-  return r.split('\n').filter((l) => l.trim()).map((l) => l.replace(/^[\s\-•]+/, '').trim());
+  return r.split('\n').filter((l: string) => l.trim()).map((l: string) => l.replace(/^[\s\-•]+/, '').trim());
 });
 
 const processSteps = [

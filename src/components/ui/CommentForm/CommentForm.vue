@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { commentApi } from '@/api/comment.js';
@@ -45,15 +45,16 @@ const submit = async () => {
     const res = await commentApi.createComment({
       entityType: props.entityType,
       entityId: props.entityId,
-      authorId: auth.user?.id || 'guest',
+      authorId: (auth.user as { id?: string } | null)?.id || 'guest',
       content: text,
       parentId: props.parentId || undefined,
     });
     const newComment = (res.data || res)?.data || res.data || res;
-    emit('submit', newComment);
+    emit('submit', newComment as Record<string, unknown>);
     content.value = '';
   } catch (e) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(e.response?.data?.message || t('comment.submitError'), 'error'));
+    const err = e as { response?: { data?: { message?: string } } };
+    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
   }
   submitting.value = false;
 };

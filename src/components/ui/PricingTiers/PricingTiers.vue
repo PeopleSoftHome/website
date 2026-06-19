@@ -44,12 +44,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import s from './PricingTiers.module.css';
 
+interface PricingTier {
+  name: string;
+  desc?: string;
+  priceMonthly: number;
+  priceYearly: number;
+  features: string[];
+  highlight?: boolean;
+  cta?: string;
+}
+
 const props = defineProps({
-  tiers: { type: Array, required: true },
+  tiers: { type: Array as () => PricingTier[], required: true },
 });
 
 const emit = defineEmits(['select']);
@@ -62,7 +72,7 @@ const hasYearlyDiscount = computed(() => {
   return props.tiers.some((t) => t.priceYearly && t.priceMonthly && t.priceYearly < t.priceMonthly * 12 * 0.85);
 });
 
-function priceText(tier) {
+function priceText(tier: PricingTier) {
   const price = billing.value === 'monthly' ? tier.priceMonthly : tier.priceYearly;
   if (price === 0) return t('marketplace.free');
   return `¥${price.toLocaleString()}`;

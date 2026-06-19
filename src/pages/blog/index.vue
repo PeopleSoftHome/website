@@ -28,7 +28,7 @@
 
         <div v-else-if="error" :class="s.errorBox">
           <p>{{ error }}</p>
-          <button :class="s.retryBtn" @click="fetchPosts">{{ t('common.retry') }}</button>
+          <button :class="s.retryBtn" @click="() => fetchPosts()">{{ t('common.retry') }}</button>
         </div>
 
         <div v-else-if="posts.length" :class="s.blogGrid">
@@ -62,7 +62,7 @@
           :total="total"
           :page-size="pageSize"
           v-model="page"
-          @change="fetchPosts"
+          @change="() => fetchPosts()"
         />
       </div>
     </main>
@@ -70,7 +70,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({ title: 'blog.pageTitle' });
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
@@ -85,7 +85,7 @@ import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog.js';
 const { t } = useI18n();
 
 const page = ref(1);
-const activeCategory = ref(null);
+const activeCategory = ref<string | null>(null);
 const pageSize = BLOG_PAGE_SIZE;
 
 const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyncData(
@@ -108,7 +108,7 @@ const fallbackPosts = computed(() => {
 });
 const hasApiPosts = computed(() => Array.isArray(postsRes.value?.data) && postsRes.value.data.length > 0);
 const posts = computed(() => hasApiPosts.value ? postsRes.value.data : fallbackPosts.value);
-const total = computed(() => hasApiPosts.value ? (postsRes.value?.meta?.total || 0) : fallbackPosts.value.length);
+const total = computed(() => hasApiPosts.value ? ((postsRes.value as any)?.meta?.total || 0) : fallbackPosts.value.length);
 
 const { data: catRes } = useAsyncData(
   'blog-categories',
@@ -118,17 +118,17 @@ const { data: catRes } = useAsyncData(
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
 const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : BLOG_CATEGORIES);
 
-const setCategory = (slug) => {
+const setCategory = (slug: string) => {
   activeCategory.value = activeCategory.value === slug ? null : slug;
   page.value = 1;
   fetchPosts();
 };
 
-const goToPost = (slug) => {
+const goToPost = (slug: string) => {
   navigateTo(`/blog/${slug}`);
 };
 
-const truncate = (text, len) => {
+const truncate = (text: string, len: number): string => {
   if (!text) return '';
   return text.length > len ? text.slice(0, len) + '...' : text;
 };

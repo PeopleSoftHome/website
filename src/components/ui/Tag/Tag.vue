@@ -2,7 +2,7 @@
   <span :class="[s.tag, s[variant], className]"><slot /></span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './Tag.module.css';
 
 defineProps({

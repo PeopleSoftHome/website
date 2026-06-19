@@ -133,7 +133,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
@@ -183,8 +183,9 @@ useHead(() => {
 });
 
 const relatedResources = computed(() => {
-  if (!resource.value) return [];
-  return RESOURCES.filter((r) => r.type === resource.value.type && r.id !== resource.value.id).slice(0, 3);
+  const current = resource.value;
+  if (!current) return [];
+  return RESOURCES.filter((r) => r.type === current.type && r.id !== current.id).slice(0, 3);
 });
 
 const pageUrl = computed(() => {
@@ -201,17 +202,18 @@ const linkedinShareUrl = computed(() => {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl.value)}`;
 });
 
-const formatDate = (d) => {
+const formatDate = (d: string | number | Date | undefined) => {
   if (!d) return '';
   return new Date(d).toLocaleDateString();
 };
 
-const typeStyle = (type) => {
-  const style = RESOURCE_TYPE_STYLES[type] || RESOURCE_TYPE_STYLES['article'];
+const typeStyle = (type: string) => {
+  const styles = RESOURCE_TYPE_STYLES as Record<string, { bg: string; color: string }>;
+  const style = (styles[type] || styles['article']) as { bg: string; color: string };
   return { background: style.bg, color: style.color };
 };
 
-const scrollToSection = (id) => {
+const scrollToSection = (id: string) => {
   const el = document.getElementById(`section-${id}`);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
@@ -233,7 +235,7 @@ const submitForm = () => {
   if (resource.value?.url) window.open(resource.value.url, '_blank');
 };
 
-const handleFeedback = (type) => {
+const handleFeedback = (type: string) => {
   feedbackMsg.value = type === 'up' ? t('resourcePage.feedbackUp') : t('resourcePage.feedbackDown');
   setTimeout(() => { feedbackMsg.value = ''; }, 3000);
 };
