@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { User, Workspace } from '@prisma/client';
+import { User, Workspace, WorkspaceInvite } from '@prisma/client';
 import { WorkspaceService } from './workspace.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
@@ -128,7 +128,7 @@ describe('WorkspaceService', () => {
         id: 'i1',
         token: 'token',
         expiresAt: new Date(),
-      } as unknown as any);
+      } as unknown as WorkspaceInvite);
 
       const result = await service.inviteMember('u1', 'ws1', 'pending@example.com');
 

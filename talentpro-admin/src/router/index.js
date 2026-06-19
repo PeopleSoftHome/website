@@ -25,7 +25,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.meta.roles && auth.user) {
-    if (!to.meta.roles.includes(auth.user.role)) {
+    if (!to.meta.roles.includes(auth.role)) {
       next('/dashboard');
       return;
     }

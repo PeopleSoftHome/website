@@ -11,6 +11,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { LoggerModule } from 'nestjs-pino';
 import { randomUUID } from 'crypto';
 import { join } from 'path';
+import { IncomingMessage, IncomingHttpHeaders } from 'http';
 
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
@@ -111,7 +112,7 @@ import { IpFilterGuard } from './common/guards/ip-filter.guard';
             config.get<string>('app.env') !== 'production'
               ? { target: 'pino-pretty', options: { singleLine: true, colorize: true } }
               : undefined,
-          genReqId: (req: any) =>
+          genReqId: (req: IncomingMessage & { requestId?: string; headers: IncomingHttpHeaders & { 'x-request-id'?: string } }) =>
             req.headers['x-request-id'] || req.requestId || randomUUID(),
         },
       }),

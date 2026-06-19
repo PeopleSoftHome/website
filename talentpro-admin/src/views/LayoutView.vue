@@ -117,7 +117,7 @@ const drawerVisible = ref(false);
  * 根据当前用户角色过滤可见菜单
  */
 const visibleMenu = computed(() => {
-  const userRole = auth.user?.role;
+  const userRole = auth.role;
   return menuConfig.filter((item) => {
     if (!hasMenuPermission(item, userRole, auth)) return false;
     if (item.children) {

@@ -3,7 +3,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthUserService } from './auth-user.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { Role, User } from '@prisma/client';
+import { Role, User, WorkspaceInvite } from '@prisma/client';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),
@@ -153,7 +153,7 @@ describe('AuthUserService', () => {
       };
 
       jest.spyOn(prisma.user, 'findFirst').mockResolvedValue(null);
-      jest.spyOn(prisma.workspaceInvite, 'findUnique').mockResolvedValue(mockInvite as any);
+      jest.spyOn(prisma.workspaceInvite, 'findUnique').mockResolvedValue(mockInvite as unknown as WorkspaceInvite);
       jest.spyOn(prisma.role, 'findUnique').mockResolvedValue(mockRole as unknown as Role);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
