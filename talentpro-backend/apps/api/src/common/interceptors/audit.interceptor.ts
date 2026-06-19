@@ -7,6 +7,10 @@ import {
 import { Observable, tap } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
 
+type PrismaModelDelegate = {
+  findUnique?: (args: { where: Record<string, unknown> }) => Promise<unknown>;
+};
+
 /**
  * 路由前缀 → Prisma 模型名映射
  * 用于审计前获取资源快照。未覆盖的动态路由（如 /cms/content/:type）将跳过 oldValue。
@@ -123,7 +127,8 @@ export class AuditInterceptor implements NestInterceptor<unknown, unknown> {
     // 变更前快照：更新/删除时获取当前记录
     if (resourceId && modelName && ['PATCH', 'PUT', 'DELETE'].includes(method)) {
       try {
-        const model = (this.prisma as any)[modelName];
+        const prismaModels = this.prisma as unknown as Record<string, PrismaModelDelegate | undefined>;
+        const model = prismaModels[modelName];
         const record = await model?.findUnique?.({ where: { id: resourceId } });
         if (record) oldValue = sanitize(record);
       } catch {

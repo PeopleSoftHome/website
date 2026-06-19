@@ -44,7 +44,7 @@ describe('AiService', () => {
   });
 
   it('should generate fallback blog content', async () => {
-    const result: any = await service.generateContent({ type: 'blog', prompt: 'AI 招聘' });
+    const result = await service.generateContent({ type: 'blog', prompt: 'AI 招聘' }) as Record<string, unknown>;
 
     expect(result.type).toBe('blog');
     expect(result.title).toContain('AI 招聘');
@@ -53,7 +53,7 @@ describe('AiService', () => {
   });
 
   it('should generate fallback product content', async () => {
-    const result: any = await service.generateContent({ type: 'product', prompt: '智能薪酬' });
+    const result = await service.generateContent({ type: 'product', prompt: '智能薪酬' }) as Record<string, unknown>;
 
     expect(result.type).toBe('product');
     expect(result.features).toBeInstanceOf(Array);
@@ -61,21 +61,21 @@ describe('AiService', () => {
   });
 
   it('should generate fallback seo content', async () => {
-    const result: any = await service.generateContent({ type: 'seo', prompt: 'HR 数字化' });
+    const result = await service.generateContent({ type: 'seo', prompt: 'HR 数字化' }) as Record<string, unknown>;
 
     expect(result.type).toBe('seo');
     expect(result.keywords).toBeInstanceOf(Array);
   });
 
   it('should generate fallback translation', async () => {
-    const result: any = await service.generateContent({ type: 'translate', content: 'Hello' });
+    const result = await service.generateContent({ type: 'translate', content: 'Hello' }) as Record<string, unknown>;
 
     expect(result.type).toBe('translate');
     expect(result.translation).toBeDefined();
   });
 
   it('should generate fallback moderation', async () => {
-    const result: any = await service.generateContent({ type: 'moderate', content: '正常内容' });
+    const result = await service.generateContent({ type: 'moderate', content: '正常内容' }) as Record<string, unknown>;
 
     expect(result.type).toBe('moderate');
     expect(result.moderated).toBe(true);

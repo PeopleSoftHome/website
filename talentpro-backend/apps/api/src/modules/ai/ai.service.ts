@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Observable, Subject } from 'rxjs';
 import { ChatMessage, StreamEvent, LlmProvider } from './ai.types';
 import { AiRagService } from './ai-rag.service';
@@ -96,8 +97,8 @@ export class AiService {
       messages.push({ role, content });
       await this.prisma.aiChatSession.upsert({
         where: { sessionId },
-        update: { messages: messages as any },
-        create: { sessionId, messages: messages as any },
+        update: { messages: messages as unknown as Prisma.InputJsonValue },
+        create: { sessionId, messages: messages as unknown as Prisma.InputJsonValue },
       });
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
