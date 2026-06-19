@@ -99,6 +99,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news.js';
 import { NEWS_FALLBACK } from '@/data/news.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { useDetailPage } from '@/composables/useDetailPage.js';
 import s from './[slug].vue.module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
@@ -110,22 +111,14 @@ const showWxTip = ref(false);
 const subscribeEmail = ref('');
 const subscribeMsg = ref('');
 
-const { data: apiItem, pending: loading, error: fetchError } = useAsyncData(
-  () => `news-${slug.value}`,
-  async () => {
-    try {
-      const res = await newsApi.getNewsItem(slug.value);
-      return res.data || null;
-    } catch (e) {
-      return null;
-    }
-  },
-  { server: false, default: () => null, watch: [slug] }
-);
+const NEWS_FALLBACK_MAP = Object.fromEntries(NEWS_FALLBACK.map((n) => [n.slug, n]));
 
-const item = computed(() => {
-  if (apiItem.value) return apiItem.value;
-  return NEWS_FALLBACK.find((n) => n.slug === route.params.slug) || null;
+const { data: item, isLoading: loading, error: fetchError } = useDetailPage({
+  keyFn: () => `news-${slug.value}`,
+  fetchFn: (value) => newsApi.getNewsItem(value).then((res) => res.data || null),
+  param: slug,
+  fallbackMap: NEWS_FALLBACK_MAP,
+  notFoundMessage: 'News Not Found',
 });
 
 const error = computed(() => {
@@ -150,10 +143,7 @@ const paragraphs = computed(() => {
   return item.value.content.split('\n').filter((p) => p.trim());
 });
 
-const allNews = computed(() => {
-  const apiData = apiItem.value ? [apiItem.value] : [];
-  return apiData.length > 0 ? apiData : NEWS_FALLBACK;
-});
+const allNews = computed(() => (item.value ? [item.value] : NEWS_FALLBACK));
 
 const relatedNews = computed(() => {
   if (!item.value) return [];
