@@ -34,3 +34,13 @@ coverage/
 
 # Runtime PID files
 *.pid
+
+# Root-level screenshots (Playwright/manual captures, not source assets)
+/*.png
+
+# Backend temporary/debug files
+talentpro-backend/*lint*.txt
+talentpro-backend/tmp_*.json
+
+# One-off admin fix scripts with hardcoded credentials
+talentpro-backend/scripts/fix-admin.js
