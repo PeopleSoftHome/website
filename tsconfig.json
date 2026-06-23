@@ -19,6 +19,8 @@
     ".output",
     "dist",
     "e2e",
+    "src/**/*.test.ts",
+    "src/test/**/*.ts",
     "talentpro-admin",
     "talentpro-backend"
   ]

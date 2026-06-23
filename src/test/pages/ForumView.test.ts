@@ -4,6 +4,8 @@ import { h } from 'vue';
 import ForumView from '@/pages/forum/index.vue';
 import { forumApi } from '@/api/forum';
 
+const mockedForumApi = vi.mocked(forumApi);
+
 vi.mock('@/api/forum', () => ({
   forumApi: {
     getTopics: vi.fn(),
@@ -29,7 +31,7 @@ vi.mock('@/components/ui/Pagination/Pagination.vue', () => ({
   default: { name: 'Pagination', props: ['total', 'pageSize'], render: () => h('div') },
 }));
 
-vi.mock('@/data/forum.ts', () => ({
+vi.mock('@/data/forum', () => ({
   FORUM_CATEGORIES: [],
   FORUM_TOPICS: [],
 }));
@@ -72,8 +74,8 @@ describe('ForumView', () => {
   });
 
   it('should render loading state initially', async () => {
-    forumApi.getTopics.mockImplementation(() => new Promise(() => {}));
-    forumApi.getCategories.mockImplementation(() => new Promise(() => {}));
+    mockedForumApi.getTopics.mockImplementation(() => new Promise(() => {}));
+    mockedForumApi.getCategories.mockImplementation(() => new Promise(() => {}));
 
     const wrapper = mountWithI18n(ForumView);
     await flushPromises();
@@ -82,8 +84,8 @@ describe('ForumView', () => {
   });
 
   it('should render topics after loading', async () => {
-    forumApi.getTopics.mockResolvedValue({ data: mockTopics, meta: { total: 1 } });
-    forumApi.getCategories.mockResolvedValue({ data: mockCategories });
+    mockedForumApi.getTopics.mockResolvedValue({ data: mockTopics, meta: { total: 1 } } as never);
+    mockedForumApi.getCategories.mockResolvedValue({ data: mockCategories } as never);
 
     const wrapper = mountWithI18n(ForumView);
     await flushPromises();
@@ -93,8 +95,8 @@ describe('ForumView', () => {
   });
 
   it('should render error state on API failure', async () => {
-    forumApi.getTopics.mockRejectedValue({ response: { data: { message: 'Server error' } } });
-    forumApi.getCategories.mockResolvedValue({ data: mockCategories });
+    mockedForumApi.getTopics.mockRejectedValue({ response: { data: { message: 'Server error' } } });
+    mockedForumApi.getCategories.mockResolvedValue({ data: mockCategories } as never);
 
     const wrapper = mountWithI18n(ForumView);
     await flushPromises();
@@ -103,8 +105,8 @@ describe('ForumView', () => {
   });
 
   it('should render empty state when no topics', async () => {
-    forumApi.getTopics.mockResolvedValue({ data: [], meta: { total: 0 } });
-    forumApi.getCategories.mockResolvedValue({ data: mockCategories });
+    mockedForumApi.getTopics.mockResolvedValue({ data: [], meta: { total: 0 } });
+    mockedForumApi.getCategories.mockResolvedValue({ data: mockCategories } as never);
 
     const wrapper = mountWithI18n(ForumView);
     await flushPromises();
@@ -114,8 +116,8 @@ describe('ForumView', () => {
 
   it('should render pinned and locked tags', async () => {
     const pinnedTopic = { ...mockTopics[0], isPinned: true, isLocked: true };
-    forumApi.getTopics.mockResolvedValue({ data: [pinnedTopic], meta: { total: 1 } });
-    forumApi.getCategories.mockResolvedValue({ data: mockCategories });
+    mockedForumApi.getTopics.mockResolvedValue({ data: [pinnedTopic], meta: { total: 1 } });
+    mockedForumApi.getCategories.mockResolvedValue({ data: mockCategories } as never);
 
     const wrapper = mountWithI18n(ForumView);
     await flushPromises();

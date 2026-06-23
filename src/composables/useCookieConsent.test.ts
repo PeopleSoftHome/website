@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useCookieConsent } from './useCookieConsent.ts';
+import { useCookieConsent } from './useCookieConsent';
 
 const STORAGE_KEY = 'tp-cookie-consent';
 

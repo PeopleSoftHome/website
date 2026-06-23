@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ref, nextTick } from 'vue';
-import { useTabs } from './useTabs.ts';
+import { useTabs } from './useTabs';
 
 describe('useTabs', () => {
   it('defaults to index 0', () => {

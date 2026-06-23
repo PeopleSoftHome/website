@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { useVideoModal } from './useVideoModal.ts';
+import { useVideoModal } from './useVideoModal';
 
 describe('useVideoModal', () => {
   it('starts closed', () => {
