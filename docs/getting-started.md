@@ -25,7 +25,7 @@ TalentPro 是一体化 HR SaaS 平台的完整解决方案，包含三个子项�
 
 | 子项目 | 技术栈 | 端口 | 说明 |
 |--------|--------|------|------|
-| **营销门户** | Vue 3.5 + Vite 8 | 3000 | 面向客户的营销官网（SPA） |
+| **营销门户** | Nuxt 3.4.6 + Vue 3.5 + Vite 7.3.5 | 8080 | 面向客户的营销官网（SSG/SPA） |
 | **后端 API** | NestJS 11 + Prisma 6 | 4000 | RESTful API + Swagger 文档 |
 | **管理后台** | Vue 3 + Vite | 3457 | 管理员运营后台 |
 
@@ -107,20 +107,20 @@ npm install
 ### 4.1 启动基础设施（Docker）
 
 ```bash
-cd talentpro-backend
-npm run docker:up
+# 在项目根目录
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
 这会启动：PostgreSQL 16、Redis 7、Meilisearch、MinIO。
 
 验证服务状态：
 ```bash
-docker-compose -f docker/docker-compose.yml ps
+docker-compose -f docker-compose.dev.yml ps
 ```
 
 停止基础设施：
 ```bash
-npm run docker:down
+docker-compose -f docker-compose.dev.yml down
 ```
 
 ### 4.2 配置后端环境变量
@@ -184,7 +184,7 @@ cd talentpro-v2
 npm run dev
 ```
 
-前端地址：`http://localhost:3000`
+前端地址：`http://localhost:8080`
 
 ### 4.6 启动 Admin 后台
 
@@ -202,7 +202,7 @@ Admin 地址：`http://localhost:3457`
 npm run dev:all
 ```
 
-这会同时启动前端（3000）、后端（4000）、Admin（3457）。
+这会同时启动前端（8080）、后端（4000）、Admin（3457）。
 
 ---
 
@@ -318,8 +318,8 @@ npx prisma migrate reset
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
 | `APP_PORT` | `4000` | 后端服务端口 |
-| `APP_FRONTEND_URL` | `http://localhost:3000` | 前端地址（CORS） |
-| `APP_CORS_ORIGINS` | `http://localhost:3000,http://localhost:3457` | CORS 白名单 |
+| `APP_FRONTEND_URL` | `http://localhost:8080` | 前端地址（CORS） |
+| `APP_CORS_ORIGINS` | `http://localhost:8080,http://localhost:3457` | CORS 白名单 |
 
 ### 7.5 邮件（SMTP）
 
@@ -468,16 +468,15 @@ curl https://api.talentpro.cn/api/v1/health
 
 ## 十、常见问题
 
-### Q1: 前端构建报错 `manualChunks is not a function`
+### Q1: 前端构建产物路径与旧版不一致
 
-**原因**：Vite 8 使用 Rolldown 引擎，不再支持 `manualChunks` 的对象语法。
+**原因**：Nuxt 3 生产构建输出到 `.output/public/`，而非旧版 `dist/`。
 
-**解决**：在 `vite.config.js` 中将对象形式改为函数形式：
-```js
-manualChunks(id) {
-  if (id.includes('node_modules/vue') || id.includes('node_modules/vue-router')) {
-    return 'vendor';
-  }
+**解决**：部署时 Nginx / CDN 的 root 路径应指向 `.output/public/`：
+```nginx
+location / {
+  root /path/to/project/.output/public;
+  try_files $uri $uri/ /index.html;
 }
 ```
 

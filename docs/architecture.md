@@ -1,6 +1,6 @@
 # TalentPro HR Portal — 系统架构文档
 
-> **版本**：v4.1.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
+> **版本**：v4.2.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
 > **最后更新**：2026-06-09
 > **输入依据**：`AGENTS.md` + 实际代码库
 
@@ -29,7 +29,7 @@
 |------|------|------|
 | **框架** | Nuxt 3.4.6 | 基于 Vue 3.5 SFC + `<script setup>`，文件路由 + 自动导入 + Nitro 引擎 |
 | **构建工具** | Vite 8.0.14（Nuxt 内置）| 冷启动 < 500ms，HMR 毫秒级，Rolldown 引擎，Nuxt 统一封装 |
-| **语言** | JavaScript | 营销门户无复杂类型需求；TypeScript 后续可渐进迁移 |
+| **语言** | TypeScript | 营销门户已全量迁移至 TypeScript（.ts + .vue） |
 | **样式方案** | CSS Modules + CSS 自定义属性 | 零运行时开销，原生支持 Design Token，与现有变量体系无缝迁移 |
 | **动效** | CSS Keyframes + IntersectionObserver（原生）| 无需引入动效库，视觉还原度最高 |
 | **状态管理** | Pinia 3.x + `provide/inject` 兼容层 | `@pinia/nuxt` 模块自动注册，`useAuthStore` 替代 legacy `createAuth()` |
@@ -66,7 +66,7 @@
 │  │  │                                                       │  │
 │  │  ├── NavBar                    [SEC-01] 固定顶部导航       │  │
 │  │  ├── <NuxtPage>                                            │  │
-│  │  │   ├── HomePage           [SEC-02~14] 15 个 Section     │  │
+│  │  │   ├── HomePage           [SEC-02~14] 18+ 个 Section     │  │
 │  │  │   ├── ProductListView    产品列表（Tab 筛选）            │  │
 │  │  │   ├── ProductDetailView  产品详情（功能/场景/证言/规格） │  │
 │  │  │   ├── SolutionListView   解决方案列表（行业卡片）        │  │
@@ -273,22 +273,22 @@ talentpro/
 │   │   └── ...
 │   │
 │   ├── stores/
-│   │   ├── auth.pinia.js           # Pinia auth store（SSR-safe，推荐）
-│   │   ├── theme.js                # 暗色模式（localStorage + prefers-color-scheme）
-│   │   ├── modal.js                # DemoModal 状态
-│   │   ├── videoModal.js           # VideoModal 状态
-│   │   ├── search.js               # 全局搜索开关
-│   │   └── analytics.js            # 埋点队列
+│   │   ├── auth.pinia.ts           # Pinia auth store（SSR-safe，推荐）
+│   │   ├── theme.pinia.ts                # 暗色模式（localStorage + prefers-color-scheme）
+│   │   ├── modal.pinia.ts                # DemoModal 状态
+│   │   ├── videoModal.pinia.ts           # VideoModal 状态
+│   │   ├── search.pinia.ts               # 全局搜索开关
+│   │   └── analytics.pinia.ts            # 埋点队列
 │   │
 │   ├── api/
-│   │   ├── client.js               # Axios 实例（含 token 拦截器 + 401 自动刷新）
-│   │   ├── index.js                # Barrel 导出（所有 API 模块聚合）
-│   │   ├── blog.js / forum.js / case.js / news.js / about.js / careers.js
-│   │   ├── cms.js / lead.js / search.js / ai.js
-│   │   └── marketplace.js          # marketplaceApi + paymentApi + cartApi
+│   │   ├── client.ts               # Axios 实例（含 token 拦截器 + 401 自动刷新）
+│   │   ├── index.ts                # Barrel 导出（所有 API 模块聚合）
+│   │   ├── blog.ts / forum.ts / case.ts / news.ts / about.ts / careers.ts
+│   │   ├── cms.ts / lead.ts / search.pinia.ts / ai.ts
+│   │   └── marketplace.ts          # marketplaceApi + paymentApi + cartApi
 │   │
 │   ├── tokens/
-│   │   └── index.js                # ⭐ Design Token JS 常量（唯一真相来源）
+│   │   └── index.ts                # ⭐ Design Token TS 常量（唯一真相来源）
 │   │
 │   ├── styles/
 │   │   ├── global.css              # :root CSS 变量 + Reset + body + 暗色覆盖
@@ -296,30 +296,30 @@ talentpro/
 │   │   └── reveal.css              # .reveal / .is-visible / .reveal-delay-N
 │   │
 │   ├── composables/                # 自动全局导入（unplugin-auto-import）
-│   │   ├── useNavScroll.js         # 导航滚动状态
-│   │   ├── useScrollReveal.js      # IntersectionObserver → is-visible
-│   │   ├── useCountUp.js           # 数字递增动画
-│   │   ├── useCarousel.js          # 轮播（resize 修复 + 悬停暂停）
-│   │   ├── useTabs.js              # Tab 切换
-│   │   ├── useModal.js             # 弹窗状态机（ESC + body overflow）
-│   │   ├── useTheme.js             # 主题切换（data-theme + localStorage）
-│   │   ├── useSearch.js            # 搜索算法 + 防抖 + 键盘导航
-│   │   ├── useApiData.js           # API 数据加载（loading/error/retry）
+│   │   ├── useNavScroll.ts         # 导航滚动状态
+│   │   ├── useScrollReveal.ts      # IntersectionObserver → is-visible
+│   │   ├── useCountUp.ts           # 数字递增动画
+│   │   ├── useCarousel.ts          # 轮播（resize 修复 + 悬停暂停）
+│   │   ├── useTabs.ts              # Tab 切换
+│   │   ├── useModal.ts             # 弹窗状态机（ESC + body overflow）
+│   │   ├── useTheme.ts             # 主题切换（data-theme + localStorage）
+│   │   ├── useSearch.ts            # 搜索算法 + 防抖 + 键盘导航
+│   │   ├── useApiData.ts           # API 数据加载（loading/error/retry）
 │   │   └── ...                     # 共 22 个 composables
 │   │
 │   ├── data/
-│   │   ├── navigation.js           # NAV_LINKS + FOOTER_LINKS（导航与页脚）
-│   │   ├── stats.js                # STATS_DATA（统计数字）
-│   │   ├── products.js             # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
-│   │   ├── aiFamily.js             # AI_CARDS（AI 专区卡片）
-│   │   ├── industries.js           # INDUSTRY_TABS（5 行业方案）+ INDUSTRY_MAP
-│   │   ├── cases.js                # CASES（8 客户案例）+ CASE_INDUSTRIES
-│   │   ├── testimonials.js         # TESTIMONIALS（客户证言 4 条）
-│   │   ├── logos.js                # LOGO_ITEMS + LOGO_FILTERS
-│   │   ├── whyUs.js                # WHY_US_TABS + STATS_BAR
-│   │   ├── resources.js            # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
-│   │   ├── security.js             # 安全认证数据
-│   │   └── searchIndex.js          # 50 条搜索索引
+│   │   ├── navigation.ts           # NAV_LINKS + FOOTER_LINKS（导航与页脚）
+│   │   ├── stats.ts                # STATS_DATA（统计数字）
+│   │   ├── products.ts             # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
+│   │   ├── aiFamily.ts             # AI_CARDS（AI 专区卡片）
+│   │   ├── industries.ts           # INDUSTRY_TABS（5 行业方案）+ INDUSTRY_MAP
+│   │   ├── cases.ts                # CASES（8 客户案例）+ CASE_INDUSTRIES
+│   │   ├── testimonials.ts         # TESTIMONIALS（客户证言 4 条）
+│   │   ├── logos.ts                # LOGO_ITEMS + LOGO_FILTERS
+│   │   ├── whyUs.ts                # WHY_US_TABS + STATS_BAR
+│   │   ├── resources.ts            # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
+│   │   ├── security.ts             # 安全认证数据
+│   │   └── searchIndex.ts          # 50 条搜索索引
 │   │
 │   ├── components/
 │   │   ├── layout/
@@ -597,10 +597,10 @@ export function useModal() {
 
 ## 6. 数据层架构
 
-所有静态内容以纯 JS 常量存于 `src/data/`，与组件完全解耦，支持后续接入 CMS / API。
+所有静态内容以纯 TS 常量存于 `src/data/`，与组件完全解耦，支持后续接入 CMS / API。
 
 ```js
-// 示例 src/data/products.js
+// 示例 src/data/products.ts
 export const PRODUCT_TABS = [
   {
     id: 'hr-saas',
@@ -621,17 +621,17 @@ export const PRODUCT_TABS = [
 
 | 数据文件 | 导出 | 消费组件 |
 |---------|------|---------|
-| `navigation.js` | `NAV_LINKS`, `FOOTER_LINKS` | NavBar, MobileMenu, Footer |
-| `stats.js` | `STATS_DATA` | StatsSection |
-| `products.js` | `PRODUCT_TABS`, `PRODUCT_MAP` | ProductMatrixSection, ProductListView, ProductDetailView |
-| `aiFamily.js` | `AI_CARDS` | AiFamilySection |
-| `industries.js` | `INDUSTRY_TABS`, `INDUSTRY_MAP` | IndustrySolutionSection, SolutionListView, SolutionDetailView |
-| `cases.js` | `CASES`, `CASE_INDUSTRIES` | CaseListView, CaseDetailView |
-| `testimonials.js` | `TESTIMONIALS` | TestimonialSection |
-| `logos.js` | `LOGO_ITEMS`, `LOGO_FILTERS` | LogoWallSection |
-| `whyUs.js` | `WHY_US_TABS`, `STATS_BAR` | WhyUsSection |
-| `resources.js` | `RESOURCES`, `RESOURCE_TYPES` | ResourceSection, ResourceListView, ResourceDetailView |
-| `searchIndex.js` | `SEARCH_INDEX` | SearchModal |
+| `navigation.ts` | `NAV_LINKS`, `FOOTER_LINKS` | NavBar, MobileMenu, Footer |
+| `stats.ts` | `STATS_DATA` | StatsSection |
+| `products.ts` | `PRODUCT_TABS`, `PRODUCT_MAP` | ProductMatrixSection, ProductListView, ProductDetailView |
+| `aiFamily.ts` | `AI_CARDS` | AiFamilySection |
+| `industries.ts` | `INDUSTRY_TABS`, `INDUSTRY_MAP` | IndustrySolutionSection, SolutionListView, SolutionDetailView |
+| `cases.ts` | `CASES`, `CASE_INDUSTRIES` | CaseListView, CaseDetailView |
+| `testimonials.ts` | `TESTIMONIALS` | TestimonialSection |
+| `logos.ts` | `LOGO_ITEMS`, `LOGO_FILTERS` | LogoWallSection |
+| `whyUs.ts` | `WHY_US_TABS`, `STATS_BAR` | WhyUsSection |
+| `resources.ts` | `RESOURCES`, `RESOURCE_TYPES` | ResourceSection, ResourceListView, ResourceDetailView |
+| `searchIndex.ts` | `SEARCH_INDEX` | SearchModal |
 
 ---
 
@@ -640,7 +640,7 @@ export const PRODUCT_TABS = [
 ### 7.1 CSS 变量注入策略
 
 ```
-tokens/index.js（JS 常量，唯一真相来源）
+tokens/index.ts（TS 常量，唯一真相来源）
          ↓ 手动同步
 styles/global.css（:root { --primary: #1B5FEB; ... }）
          ↓ 被所有 *.module.css 通过 var(--token) 引用
@@ -793,7 +793,7 @@ export default defineNuxtConfig({
 
 > 📌 **确认项**：
 > 1. 技术栈：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + Pinia + @nuxtjs/i18n + CSS Modules（无 TypeScript，无 UI 库）
-> 2. 数据策略：营销门户纯静态 JS 常量；博客/论坛/认证接入后端 NestJS API
+> 2. 数据策略：营销门户纯静态 TS 常量；博客/论坛/认证接入后端 NestJS API
 > 3. 部署平台：Vercel / Nginx / OSS+CDN（产物路径 `.output/public/`）
 
 ---

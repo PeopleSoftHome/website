@@ -1,13 +1,13 @@
 # AGENTS.md — TalentPro HR Portal
 
 > 本文件面向 AI 编程助手。如果你在阅读本文件，说明你即将参与 TalentPro HR Portal 项目的开发或维护。
-> **当前版本**：v4.2.0（文档版本；各 package.json 仍为 3.0.0） | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> **当前版本**：v4.2.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
 ## 1. 项目概览
 
-TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营销门户。它是一个单页静态应用（SPA），以「预约演示」为核心转化目标，由 15 个页面 Section 组成。
+TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营销门户。它是一个单页静态应用（SPA），以「预约演示」为核心转化目标，由 18+ 个页面 Section 组成。
 
 - **产品定位**：B2B 企业级营销门户（Marketing Portal）
 - **核心页面**：Hero → 品牌滚动 → 统计 → 产品矩阵 → AI Family → 行业方案 → 客户证言 → Logo 墙 → 为什么选我们 → 资源中心 → CTA 通栏 → 页脚
@@ -30,7 +30,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 | i18n | @nuxtjs/i18n | 10.4.0 | 自动路由前缀 + SEO hreflang |
 | 图片优化 | @nuxt/image | 2.0.0 | 自动 WebP + 响应式尺寸 |
 | 样式 | CSS Modules | 原生 | 零运行时开销 |
-| 语言 | JavaScript | ES Module | 无 TypeScript（后续可渐进迁移） |
+| 语言 | TypeScript | ES Module | 已全量迁移至 TypeScript（.ts + .vue） |
 
 **不引入 UI 组件库**（antd / MUI 等）。所有原子组件自行封装，原因：品牌视觉高度定制（渐变、玻璃态、AI 专区深色），通用库无法复用；且会显著增加包体积。
 
@@ -137,69 +137,69 @@ talentpro-v2/
     │       └── ChatBot/          # 智能客服（v2.3.1）
     │
     ├── stores/                   # 全局状态（Pinia）
-    │   ├── auth.pinia.js         # Pinia auth store（SSR-safe）
-    │   ├── theme.pinia.js        # 暗色模式
-    │   ├── modal.pinia.js        # 预约弹窗状态
-    │   ├── videoModal.pinia.js   # 视频弹窗状态
-    │   ├── search.pinia.js       # 全局搜索开关
-    │   └── analytics.pinia.js    # 埋点队列
+    │   ├── auth.pinia.ts         # Pinia auth store（SSR-safe）
+    │   ├── theme.pinia.ts        # 暗色模式
+    │   ├── modal.pinia.ts        # 预约弹窗状态
+    │   ├── videoModal.pinia.ts   # 视频弹窗状态
+    │   ├── search.pinia.ts       # 全局搜索开关
+    │   └── analytics.pinia.ts    # 埋点队列
     │
     ├── api/                      # 后端 API 封装
-    │   ├── client.js             # Axios 实例（含 token 拦截器）
-    │   ├── blog.js               # 博客 API
-    │   ├── forum.js              # 论坛 API
-    │   ├── case.js               # 客户案例 API
-    │   ├── news.js               # 新闻 API
-    │   ├── careers.js            # 招聘 API
-    │   └── about.js              # 关于我们 API
+    │   ├── client.ts             # Axios 实例（含 token 拦截器）
+    │   ├── blog.ts               # 博客 API
+    │   ├── forum.ts              # 论坛 API
+    │   ├── case.ts               # 客户案例 API
+    │   ├── news.ts               # 新闻 API
+    │   ├── careers.ts            # 招聘 API
+    │   └── about.ts              # 关于我们 API
     │
     ├── composables/              # 自定义 Composables（22 个）
-    │   ├── useModal.js           # 弹窗状态机（含 ESC + body overflow）
-    │   ├── useVideoModal.js
-    │   ├── useTheme.js           # 主题切换（localStorage + prefers-color-scheme）
-    │   ├── useSearch.js          # 搜索算法 + 防抖 + 键盘导航
-    │   ├── useCarousel.js        # 轮播（resize 修复 + 悬停暂停）
-    │   ├── useCountUp.js         # 数字递增动画（IntersectionObserver 驱动）
-    │   ├── useNavScroll.js       # 导航滚动状态
-    │   ├── useScrollReveal.js    # 单元素滚动入场
-    │   ├── useTabs.js            # Tab 切换
-    │   ├── useApiData.js         # API 数据加载（loading/error/retry）
-    │   ├── useCmsData.js         # CMS 配置驱动数据加载（含 fallback）
-    │   ├── useAnalytics.js       # 埋点队列 + 热力图 + 滚动深度
-    │   ├── useChatBot.js         # ChatBot 状态 + POST 非流式对话（端点 /ai/chat）
-    │   ├── useCookieConsent.js   # Cookie 同意横幅
-    │   ├── useFocusTrap.js       # 焦点陷阱（弹窗无障碍）
-    │   ├── useLazyImage.js       # 图片懒加载
-    │   ├── useRoiCalculator.js   # ROI 计算器逻辑
-    │   ├── useScrollDepth.js     # 滚动深度追踪
-    │   ├── useScrollLock.js      # body scroll lock
-    │   ├── useAbTest.js          # A/B 测试分流
-    │   └── useHeatmap.js         # 点击热力图追踪
+    │   ├── useModal.ts           # 弹窗状态机（含 ESC + body overflow）
+    │   ├── useVideoModal.ts
+    │   ├── useTheme.ts           # 主题切换（localStorage + prefers-color-scheme）
+    │   ├── useSearch.ts          # 搜索算法 + 防抖 + 键盘导航
+    │   ├── useCarousel.ts        # 轮播（resize 修复 + 悬停暂停）
+    │   ├── useCountUp.ts         # 数字递增动画（IntersectionObserver 驱动）
+    │   ├── useNavScroll.ts       # 导航滚动状态
+    │   ├── useScrollReveal.ts    # 单元素滚动入场
+    │   ├── useTabs.ts            # Tab 切换
+    │   ├── useApiData.ts         # API 数据加载（loading/error/retry）
+    │   ├── useCmsData.ts         # CMS 配置驱动数据加载（含 fallback）
+    │   ├── useAnalytics.ts       # 埋点队列 + 热力图 + 滚动深度
+    │   ├── useChatBot.ts         # ChatBot 状态 + POST 非流式对话（端点 /ai/chat）
+    │   ├── useCookieConsent.ts   # Cookie 同意横幅
+    │   ├── useFocusTrap.ts       # 焦点陷阱（弹窗无障碍）
+    │   ├── useLazyImage.ts       # 图片懒加载
+    │   ├── useRoiCalculator.ts   # ROI 计算器逻辑
+    │   ├── useScrollDepth.ts     # 滚动深度追踪
+    │   ├── useScrollLock.ts      # body scroll lock
+    │   ├── useAbTest.ts          # A/B 测试分流
+    │   └── useHeatmap.ts         # 点击热力图追踪
     │
     ├── data/                     # 静态业务数据（12 个纯 JS 文件）
-    │   ├── navigation.js         # NAV_LINKS + FOOTER_LINKS
-    │   ├── products.js           # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
-    │   ├── aiFamily.js           # AI_CARDS
-    │   ├── industries.js         # INDUSTRY_TABS（5 行业）+ INDUSTRY_MAP
-    │   ├── cases.js              # CASES（8 客户案例）+ CASE_INDUSTRIES
-    │   ├── testimonials.js       # TESTIMONIALS
-    │   ├── logos.js              # LOGO_ITEMS + LOGO_FILTERS
-    │   ├── whyUs.js              # WHY_US_TABS + STATS_BAR
-    │   ├── resources.js          # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
-    │   ├── stats.js              # STATS_DATA
-    │   ├── security.js           # 安全认证数据
-    │   └── searchIndex.js        # 50 条搜索索引
+    │   ├── navigation.ts         # NAV_LINKS + FOOTER_LINKS
+    │   ├── products.ts           # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
+    │   ├── aiFamily.ts           # AI_CARDS
+    │   ├── industries.ts         # INDUSTRY_TABS（5 行业）+ INDUSTRY_MAP
+    │   ├── cases.ts              # CASES（8 客户案例）+ CASE_INDUSTRIES
+    │   ├── testimonials.ts       # TESTIMONIALS
+    │   ├── logos.ts              # LOGO_ITEMS + LOGO_FILTERS
+    │   ├── whyUs.ts              # WHY_US_TABS + STATS_BAR
+    │   ├── resources.ts          # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
+    │   ├── stats.ts              # STATS_DATA
+    │   ├── security.ts           # 安全认证数据
+    │   └── searchIndex.ts        # 50 条搜索索引
     │
     ├── i18n/                     # 多语言系统（v2.3.0）
-    │   ├── interpolate.js        # {var} 插值
-    │   ├── keyMap.js             # ID → i18n key 映射
+    │   ├── interpolate.ts        # {var} 插值
+    │   ├── keyMap.ts             # ID → i18n key 映射
     │   └── locales/
     │       ├── zh-CN.json        # ~772 keys
     │       ├── en.json
     │       └── zh-TW.json
     │
     ├── tokens/
-    │   └── index.js              # Design Token JS 常量（唯一真相来源）
+    │   └── index.ts              # Design Token TS 常量（唯一真相来源）
     │
     └── styles/
         ├── global.css            # :root CSS 变量 + Reset + body + 暗色覆盖
@@ -251,7 +251,7 @@ talentpro-v2/
 | `animations.css` | 全部 `@keyframes` 定义 | 具体 class |
 | `reveal.css` | `.reveal` / `.is-visible` / `.reveal-delay-N` | 其他样式 |
 
-**CSS 变量同步规则**：`src/tokens/index.js` 是 Design Token 的「唯一真相来源」，任何颜色修改必须从此文件发起，并手动同步到 `global.css` 的 `:root`。
+**CSS 变量同步规则**：`src/tokens/index.ts` 是 Design Token 的「唯一真相来源」，任何颜色修改必须从此文件发起，并手动同步到 `global.css` 的 `:root`。
 
 ### 4.4 弹窗 z-index 层级（硬性规定，不可冲突）
 
@@ -268,12 +268,12 @@ talentpro-v2/
 
 所有全局状态统一使用 Pinia Store，通过 `@pinia/nuxt` 模块自动注册：
 
-- `useAuthStore`（`stores/auth.pinia.js`）— 用户认证（SSR-safe，无 localStorage token）
-- `useThemeStore`（`stores/theme.pinia.js`）— 暗色模式
-- `useModalStore`（`stores/modal.pinia.js`）— DemoModal（z-index 2000）
-- `useVideoModalStore`（`stores/videoModal.pinia.js`）— VideoModal（z-index 3000）
-- `useSearchStore`（`stores/search.pinia.js`）— 全局搜索（Cmd+K）
-- `useAnalyticsStore`（`stores/analytics.pinia.js`）— 埋点队列
+- `useAuthStore`（`stores/auth.pinia.ts`）— 用户认证（SSR-safe，无 localStorage token）
+- `useThemeStore`（`stores/theme.pinia.ts`）— 暗色模式
+- `useModalStore`（`stores/modal.pinia.ts`）— DemoModal（z-index 2000）
+- `useVideoModalStore`（`stores/videoModal.pinia.ts`）— VideoModal（z-index 3000）
+- `useSearchStore`（`stores/search.pinia.ts`）— 全局搜索（Cmd+K）
+- `useAnalyticsStore`（`stores/analytics.pinia.ts`）— 埋点队列
 
 **状态管理**：业务代码统一使用 Pinia Store。`@nuxtjs/i18n` 提供 `useI18n()` composable。
 
@@ -312,7 +312,7 @@ talentpro-v2/
 ### 5.4 全局搜索（v2.3.0）
 
 - `Cmd+K` / `Ctrl+K` 全局触发
-- 前端本地检索 `src/data/searchIndex.js`（50 条索引）
+- 前端本地检索 `src/data/searchIndex.ts`（50 条索引）
 - 加权评分：标题命中 > tags 命中 > 描述命中
 - 150ms 防抖，↑↓ 键盘导航，Enter 跳转，关键词高亮
 
@@ -593,7 +593,7 @@ npm run dev
   - 模型：`App`, `AppCategory`, `AppVendor`, `AppReview`, `Subscription`
 - **Admin 后台**：`talentpro-admin/src/views/AppManagerView.vue` / `CategoryManagerView.vue` / `ReviewManagerView.vue` / `VendorManagerView.vue`
 - **前端**：`src/pages/marketplace/index.vue`（列表）+ `src/pages/marketplace/[slug].vue`（详情）
-- **静态 fallback**：`src/data/marketplace.js` — `MARKETPLACE_APPS`, `MARKETPLACE_APP_MAP`, `MARKETPLACE_CATEGORIES`
+- **静态 fallback**：`src/data/marketplace.ts` — `MARKETPLACE_APPS`, `MARKETPLACE_APP_MAP`, `MARKETPLACE_CATEGORIES`
 
 ### Payment 模块
 - **后端**：`talentpro-backend/apps/api/src/modules/payment/`
@@ -620,7 +620,7 @@ npm run dev
 
 ### 认证与 JWT
 
-- **前端不再存储 JWT**：`src/api/client.js` 统一启用 `withCredentials: true`，`src/stores/auth.pinia.js` 不再读写 `localStorage` 中的 `tp_access_token` / `tp_refresh_token`。
+- **前端不再存储 JWT**：`src/api/client.ts` 统一启用 `withCredentials: true`，`src/stores/auth.pinia.ts` 不再读写 `localStorage` 中的 `tp_access_token` / `tp_refresh_token`。
 - **后端 JWT 同时支持 Cookie 与 Bearer**：`JwtStrategy` 优先从 `tp_access_token` httpOnly Cookie 提取，再回退到 `Authorization: Bearer`；兼容 Admin 独立系统等仍使用 bearer 的场景。
 - **Refresh / Logout 读 Cookie**：`auth.controller.ts` 的 `refresh` 与 `logout` 优先从请求 Cookie 读取 token，同时兼容 body 传值。
 - **Cookie 安全属性**：`secure: true`（仅生产）、`sameSite: 'lax'`、`httpOnly: true`；`TokenBlacklist` 记录已注销 token。
@@ -649,7 +649,7 @@ npm run dev
 - **`process.env` 收敛**：`PaymentService`、`PrismaService`、`main.ts` 统一使用 `ConfigService`，禁止直接读取 `process.env`。
 - **公开配置 API**：`GET /system/config/public` 白名单返回 `recaptchaSiteKey`、`sentryDsn`、`featureFlags`、`sitePhone`、`copyright` 等；前端通过 `usePublicConfig()` 消费。
 - **前端 env 统一**：`nuxt.config.ts` 使用 `runtimeConfig.public.apiBaseUrl`；构建/运行时使用 `NUXT_PUBLIC_API_BASE_URL`。
-- **导航/页脚 CMS 化**：`NavBar.vue`、`MobileMenu.vue`、`Footer.vue` 通过 `useNavigation()` 优先读取 `GET /cms/navigations/:key`；CMS 为空或失败时自动回退到 `src/data/navigation.js`，实现运营可配且不影响现有渲染。
+- **导航/页脚 CMS 化**：`NavBar.vue`、`MobileMenu.vue`、`Footer.vue` 通过 `useNavigation()` 优先读取 `GET /cms/navigations/:key`；CMS 为空或失败时自动回退到 `src/data/navigation.ts`，实现运营可配且不影响现有渲染。
 - **功能开关**：后端 `GET /system/config/public` 返回 `featureFlags`；前端 `useFeatureFlag(key)` 按 key 读取布尔开关，未配置默认关闭。
 
 ### Admin 与 CMS
@@ -657,11 +657,11 @@ npm run dev
 - **AI 内容生成**：后端新增 `POST /api/v1/ai/generate`（`ADMIN`/`SUPER_ADMIN`），支持 `blog`/`product`/`seo`/`translate`/`moderate` 等类型；Admin 可在各内容管理页通过 `AiAssistButton` 调用（已接入 Blog/News/Case/EmailTemplate/Products/Industries/Job/AppManager）。
 - **CMS 通用 CRUD**：`/cms/content/:type` 暴露完整 `POST/PATCH/DELETE`，统一走 `CmsGenericService`。
 - **翻译后端化**：前端 `useCmsTranslations()` 在 i18n 初始化后调用 `GET /cms/translations?locale=xx` 合并 CMS 覆盖层；Admin 新增 `/cms/translations` 翻译管理页，后端提供 `GET /cms/translations/list`、`POST /cms/translations`、`PATCH /cms/translations/:id`、`DELETE /cms/translations/:id`。
-- **ChatBot 配置与历史持久化**：后端新增 `ChatBotConfig` / `AiChatSession` 模型；公开 `GET /system/chatbot-config` 返回 intents / quickReplies / fallbackCopy；`POST /ai/chat` 与 `/ai/chat-stream` 接收 `sessionId` 并持久化多轮对话；前端 `useChatBot.js` 加载后端配置并维护 `sessionStorage` 会话 ID。
+- **ChatBot 配置与历史持久化**：后端新增 `ChatBotConfig` / `AiChatSession` 模型；公开 `GET /system/chatbot-config` 返回 intents / quickReplies / fallbackCopy；`POST /ai/chat` 与 `/ai/chat-stream` 接收 `sessionId` 并持久化多轮对话；前端 `useChatBot.ts` 加载后端配置并维护 `sessionStorage` 会话 ID。
 - **站点配置全面后端化**：`GET /system/config/public` 白名单扩展至 `sitePhone`、`copyright`、`featureFlags`、`hotTags`、`socialLinks`、`siteTitle`、`siteDescription`；`useSiteConfig()` 统一消费；Footer / SearchModal 热门标签与社交链接、App.vue 默认 title/description 均支持后端热更新。
 - **Admin 功能开关**：新增 `/system/feature-flags` 管理页，可视化增删改 `featureFlags` JSON 开关。
 - **Admin 移动端响应式**：新增 `src/styles/responsive.css` 并全局引入；768px 以下自动适配表格横向滚动、弹窗宽度、表单标签、按钮组换行等细节。
-- **TypeScript 迁移启动**：Admin 已新增 `tsconfig.json` + `src/env.d.ts`，入口 `main.ts` 已迁移；其余 `.js` 文件按季度规划逐步推进。
+- **前端 TypeScript 迁移完成**：营销门户前端已全量迁移至 TypeScript（`.ts` + `.vue`）；Admin 已新增 `tsconfig.json` + `src/env.d.ts`，入口 `main.ts` 已迁移，其余 `.js` 文件按季度规划逐步推进。
 
 ---
 
@@ -674,8 +674,8 @@ npm run dev
 - **Redis 缓存隔离**：`CACHE_KEY_PREFIX` 控制所有 `@Cacheable` 缓存键前缀；非 `development` 环境默认使用 `APP_ENV:` 前缀；`Cache-Control` 拦截器改用精确正则匹配，避免 `path.includes` 误命中私有路径。
 - **AI 内容审核**：`CommentModerationService` 在规则引擎基础上叠加 OpenAI Moderation API，输出 `aiRiskScore` / `aiFlags`。
 - **LLM 多提供商抽象**：新增 `LlmProvider` 接口与 `LlmProviderConfig`；`AiOpenAiService` 实现该接口；模型参数（`OPENAI_MODEL`、`OPENAI_TEMPERATURE`、`OPENAI_MAX_TOKENS`、`OPENAI_BASE_URL`）由环境变量驱动，便于后续接入 Azure/Anthropic/OpenRouter。
-- **依赖漏洞治理**：前端/后端 `npm audit` 均为 0；`package.json` 使用 `overrides` 锁定安全版本（如 `esbuild`、`form-data`、`js-yaml`、`launch-editor`、`tar`、`vite-plugin-checker`）。
-- **渐进 TypeScript 迁移**：新增根目录 `tsconfig.json` 作为迁移起点；完整文件迁移按季度规划推进。
+- **依赖漏洞治理**：前端/后端 `npm audit` 均为 0；`package.json` 使用 `overrides` 锁定安全版本（如 `esbuild`、`form-data`、`js-yaml`、`launch-editor`、`tar`）。
+- **TypeScript 迁移状态**：营销门户前端已完成全量迁移；Admin 与后端按模块持续迁移中。
 
 ---
 

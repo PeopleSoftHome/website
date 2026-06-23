@@ -1,8 +1,8 @@
 # TalentPro HR Portal
 
 > 面向中大型企业的一体化 HR SaaS 平台官方营销门户 + 管理后台 + NestJS 后端
-> **当前版本**：v4.1.0
-> **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + PostgreSQL + Redis
+> **当前版本**：v4.2.0
+> **技术栈**：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + Vite 7.3.5 + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + PostgreSQL + Redis
 
 ---
 
@@ -11,7 +11,7 @@
 ```
 talentpro-v2/
 ├── nuxt.config.ts                  # Nuxt 3 主配置（模块、SSR、Nitro、i18n、PWA）
-├── package.json                    # Nuxt 3.4.6 + Vue 3.5 + Vite 8
+├── package.json                    # Nuxt 3.4.6 + Vue 3.5 + Vite 7.3.5
 ├── src/                            # 前端营销门户（Nuxt 自动挂载）
 │   ├── app.vue                     # 根组件：Provider + NuxtLayout + NuxtPage
 │   ├── api/                        # 后端 API 封装（Axios + 统一响应拦截器）
@@ -48,7 +48,7 @@ talentpro-v2/
 ```bash
 cd talentpro-v2
 npm install
-npm run dev      # → http://localhost:3000（SPA 开发模式）
+npm run dev      # → http://localhost:8080（SPA 开发模式）
 npm run build    # → .output/public/（SSG 静态生成）
 npm run test:run # Vitest 单元测试
 npx playwright test  # E2E 测试
@@ -76,8 +76,8 @@ npm run dev      # → http://localhost:3457
 ### Docker 一键部署
 
 ```bash
-cd talentpro-backend/docker
-docker-compose up -d   # 拉起 postgres + redis + meilisearch + minio + api
+docker-compose -f docker-compose.dev.yml up -d
+# 拉起 postgres + redis + meilisearch + minio + api
 ```
 
 **环境要求**：Node.js ≥ 18，npm ≥ 9，PostgreSQL ≥ 16，Redis ≥ 7
@@ -89,7 +89,6 @@ docker-compose up -d   # 拉起 postgres + redis + meilisearch + minio + api
 | 文档 | 路径 | 说明 |
 |------|------|------|
 | **使用教程** | `docs/getting-started.md` | **完整部署指南、环境配置、权限设置** |
-| 修复报告 | `docs/v3.0.0-fix-report.md` | v3.0.0 全维度修复报告 |
 | 产品需求文档 | `docs/prd.md` | 完整 PRD，含用户故事 |
 | 项目规格 | `docs/project-spec.md` | 技术规格与验收标准 |
 | 技术架构 | `docs/architecture.md` | 组件树、数据流、Composables 设计 |
@@ -102,4 +101,4 @@ docker-compose up -d   # 拉起 postgres + redis + meilisearch + minio + api
 
 ---
 
-*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.1.0*
+*TalentPro HR Portal · Nuxt 3.4.6 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.2.0*
