@@ -152,7 +152,7 @@ export default defineNuxtConfig({
   vite: {
     build: {
       sourcemap: process.env.SOURCE_MAP === 'true',
-      chunkSizeWarningLimit: 500,
+      chunkSizeWarningLimit: 150,
     },
     optimizeDeps: {
       include: [

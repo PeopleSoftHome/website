@@ -39,7 +39,7 @@ export function useWindowEvent(
 
   onUnmounted(() => {
     if (typeof window === 'undefined') return;
-    window.removeEventListener(event, onEvent, options);
+    window.removeEventListener(event, onEvent);
   });
 
   return { schedule };

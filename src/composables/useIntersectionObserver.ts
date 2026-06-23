@@ -33,7 +33,7 @@ export function useIntersectionObserver(
       onIntersect(entries, observer!);
       if (once) {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && observer) {
+          if (entry.isIntersecting && observer && typeof observer.unobserve === 'function') {
             observer.unobserve(entry.target);
           }
         });

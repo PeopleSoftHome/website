@@ -13,6 +13,7 @@ export interface DemoFormData {
   code: string;
   products: string[];
   scale: string;
+  [key: string]: unknown;
 }
 
 const INITIAL_FORM_DATA: DemoFormData = {

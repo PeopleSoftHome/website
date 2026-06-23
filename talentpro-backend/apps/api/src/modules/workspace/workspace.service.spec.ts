@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User, Workspace, WorkspaceInvite } from '@prisma/client';
 import { WorkspaceService } from './workspace.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { NotFoundException } from '@nestjs/common';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -60,10 +59,13 @@ describe('WorkspaceService', () => {
       expect(result.role).toBe('OWNER');
     });
 
-    it('should throw NotFoundException when user has no workspace', async () => {
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue({ id: 'u1', workspace: null } as unknown as User);
+    it('should return null workspace when user has no workspace', async () => {
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue({ id: 'u1', workspace: null, workspaceRole: null } as unknown as User);
 
-      await expect(service.findMine('u1')).rejects.toThrow(NotFoundException);
+      const result = await service.findMine('u1');
+
+      expect(result.workspace).toBeNull();
+      expect(result.role).toBeNull();
     });
   });
 

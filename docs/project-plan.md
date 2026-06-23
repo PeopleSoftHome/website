@@ -752,10 +752,10 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | **v2.5.0** | | | | | | |
 | SEO-01 | 🆕 新增 | 🟡 P1 | 动态 title / meta（Blog/Forum 详情页手动更新）| v2.5.0 | S15 | ✅ |
 | SEO-02 | 🆕 新增 | 🟡 P1 | 构建时语义化 HTML 预渲染（prerender.js）| v2.5.0 | S15 | ✅ |
-| SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ⏳ |
+| SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ✅ |
 | ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 + 热力图/滚动深度 | v2.5.0 | S15 | ✅ |
 | PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 defineAsyncComponent 代码分割 | v2.5.0 | S16 | ✅ |
-| PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ⏳ |
+| PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ✅ |
 | PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker + Manifest | v2.5.0 | S16 | ✅ |
 | **v3.0.0** | | | | | | |
 | CMS-01 | 🆕 新增 | 🔴 P0 | CMS 动态化（首页板块配置）| v3.0.0 | S19 | ✅ |
