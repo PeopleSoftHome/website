@@ -100,7 +100,7 @@ import { newsApi } from '@/api/news.js';
 import { NEWS_FALLBACK } from '@/data/news.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import { useDetailPage } from '@/composables/useDetailPage.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
 

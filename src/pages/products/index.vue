@@ -62,7 +62,7 @@ import { useModalStore } from '@/stores/modal.pinia.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { PRODUCT_TABS } from '@/data/products.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 const modalStore = useModalStore();

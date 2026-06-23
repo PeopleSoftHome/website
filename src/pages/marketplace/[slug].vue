@@ -117,7 +117,7 @@ import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@
 import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace.js';
 import { showToast } from '@/utils/toast.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });
 

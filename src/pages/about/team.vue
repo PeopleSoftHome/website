@@ -43,7 +43,7 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { aboutApi } from '@/api/about.js';
 import { TEAM_CATEGORIES, TEAM_FALLBACK } from '@/data/team.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './team.vue.module.css';
+import s from './team.module.css';
 
 const { t } = useI18n();
 const activeCategoryIndex = ref(0);

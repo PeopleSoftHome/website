@@ -43,7 +43,7 @@ import { onMounted, onUnmounted, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './partners.vue.module.css';
+import s from './partners.module.css';
 
 const { t } = useI18n();
 

@@ -78,7 +78,7 @@ import { ACTIVITIES } from '@/data/profile.js';
 import { notificationApi } from '@/api/notification.js';
 import { marketplaceApi } from '@/api/marketplace.js';
 import { paymentApi } from '@/api/marketplace.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 interface UserProfile {
   id: string;

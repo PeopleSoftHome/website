@@ -71,7 +71,7 @@
 definePageMeta({ title: 'profile.menu.security', requiresAuth: true });
 import { ref } from 'vue';
 import { LOGIN_HISTORY } from '@/data/profile.js';
-import s from './security.vue.module.css';
+import s from './security.module.css';
 
 const { t } = useI18n();
 

@@ -141,7 +141,7 @@ import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import { useScrollProgress } from '@/composables/useScrollProgress.js';
 import { useSpyScroll } from '@/composables/useSpyScroll.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 definePageMeta({ title: 'resourcePage.detail', description: 'resourcePage.subtitle' });
 

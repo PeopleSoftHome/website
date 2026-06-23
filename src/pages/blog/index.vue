@@ -78,7 +78,7 @@ import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination.js';
 import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog.js';
 

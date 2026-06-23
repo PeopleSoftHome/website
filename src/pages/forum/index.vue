@@ -89,7 +89,7 @@ import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum.js';
 import { formatDate } from '@/utils/date.js';
 import { FORUM_CATEGORIES, FORUM_TOPICS } from '@/data/forum.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 

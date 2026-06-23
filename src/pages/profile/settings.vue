@@ -82,7 +82,7 @@ definePageMeta({ title: 'profile.menu.settings', requiresAuth: true });
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import { userApi } from '@/api/user.js';
-import s from './settings.vue.module.css';
+import s from './settings.module.css';
 
 const { t } = useI18n();
 const auth = useAuthStore();

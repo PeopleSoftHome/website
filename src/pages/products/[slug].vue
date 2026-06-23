@@ -104,7 +104,7 @@ import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScen
 import { PRODUCT_MAP } from '@/data/products.js';
 import { cmsApi } from '@/api/cms.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 function mergeProduct(cms: any, fallback: any) {
   if (!cms && !fallback) return null;

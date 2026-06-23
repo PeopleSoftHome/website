@@ -101,7 +101,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 

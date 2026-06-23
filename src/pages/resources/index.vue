@@ -92,7 +92,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { RESOURCES, RESOURCE_TYPES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 const activeTabIndex = ref(0);

@@ -55,7 +55,7 @@ import { renderMarkdown } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import { BLOG_POST_MAP } from '@/data/blog.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
 

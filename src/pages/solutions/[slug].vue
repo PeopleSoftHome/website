@@ -76,7 +76,7 @@ import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPa
 import SolutionCaseDeep from '@/components/sections/SolutionDetail/SolutionCaseDeep.vue';
 import { INDUSTRY_MAP } from '@/data/industries.js';
 import { cmsApi } from '@/api/cms.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 interface RoadmapItem {
   phase: string;

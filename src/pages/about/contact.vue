@@ -85,7 +85,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { CONTACT_FAQ } from '@/data/contact.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './contact.vue.module.css';
+import s from './contact.module.css';
 
 const { t } = useI18n();
 const openFaq = ref(-1);

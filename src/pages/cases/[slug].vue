@@ -75,7 +75,7 @@ import { caseApi } from '@/api/case.js';
 import { CASES } from '@/data/cases.js';
 import { PRODUCT_MAP } from '@/data/products.js';
 import { coverStyle } from '@/utils/coverStyle.js';
-import s from './[slug].vue.module.css';
+import s from './[slug].module.css';
 
 interface ProductMapItem {
   name?: string;

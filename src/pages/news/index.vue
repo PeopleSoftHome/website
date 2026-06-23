@@ -84,7 +84,7 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news.js';
 import { NEWS_FALLBACK, NEWS_CATEGORIES } from '@/data/news.js';
 import { useListPage } from '@/composables/useListPage.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 const activeCategoryIndex = ref(0);

@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import s from './cancel.vue.module.css';
+import s from './cancel.module.css';
 
 definePageMeta({ title: 'marketplace.paymentCancelled', description: 'marketplace.subtitle' });
 

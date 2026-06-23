@@ -74,7 +74,7 @@ import { forumApi } from '@/api/forum.js';
 import { renderMarkdown, renderMentions } from '@/utils/markdown.js';
 import { formatDate } from '@/utils/date.js';
 import { FORUM_TOPIC_MAP } from '@/data/forum.js';
-import s from './[id].vue.module.css';
+import s from './[id].module.css';
 
 definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
 

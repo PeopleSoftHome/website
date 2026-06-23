@@ -116,7 +116,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { TIMELINE } from '@/data/timeline.js';
 import { CERTIFICATIONS, PARTNER_LOGOS } from '@/data/contact.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 

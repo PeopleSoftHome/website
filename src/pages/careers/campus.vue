@@ -65,7 +65,7 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import s from './campus.vue.module.css';
+import s from './campus.module.css';
 
 const { t } = useI18n();
 

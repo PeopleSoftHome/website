@@ -34,7 +34,7 @@
 definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { useAuthStore } from '@/stores/auth.pinia.js';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
-import s from './profile.vue.module.css';
+import s from './profile.module.css';
 
 interface UserProfile {
   id: string;

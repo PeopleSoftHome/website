@@ -103,7 +103,7 @@ import { computed, onUnmounted } from 'vue';
 import { removeJsonLd } from '@/utils/jsonld.js';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers.js';
-import s from './[id].vue.module.css';
+import s from './[id].module.css';
 
 definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
 

@@ -63,9 +63,9 @@ import { computed, markRaw } from 'vue';
 import { useNavigation } from '@/composables/useNavigation.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
 import { HOT_TAGS } from '@/data/navigation.js';
-import QrPlaceholder from '@/components/icons/QrPlaceholder.vue';
-import ZhihuIcon from '@/components/icons/ZhihuIcon.vue';
-import WeiboIcon from '@/components/icons/WeiboIcon.vue';
+import QrPlaceholder from '@/components/ui/Icon/QrPlaceholder.vue';
+import ZhihuIcon from '@/components/ui/Icon/ZhihuIcon.vue';
+import WeiboIcon from '@/components/ui/Icon/WeiboIcon.vue';
 import s from './Footer.module.css';
 
 const { t } = useI18n();

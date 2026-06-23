@@ -2,7 +2,7 @@
 /**
  * Token 双源同步校验脚本
  * ─────────────────────────
- * 检查 src/tokens/index.js 中的 Design Token 是否与 src/styles/global.css 中的
+ * 检查 src/tokens/index.ts 中的 Design Token 是否与 src/styles/global.css 中的
  * CSS 自定义属性保持同步。在 CI 构建前运行，防止视觉回归。
  *
  * 使用方式：
@@ -193,7 +193,7 @@ console.log(`   Tokens 文件: ${tokenMap.size} 个颜色 token`);
 console.log(`   CSS 文件:   ${cssVarMap.size} 个颜色变量\n`);
 
 if (mismatches.length === 0 && missingInCss.length === 0 && missingInTokens.length === 0) {
-  console.log('✅ 校验通过：src/tokens/index.js 与 src/styles/global.css 颜色定义完全一致。\n');
+  console.log('✅ 校验通过：src/tokens/index.ts 与 src/styles/global.css 颜色定义完全一致。\n');
 } else {
   exitCode = 1;
   if (mismatches.length) {

@@ -97,7 +97,7 @@ import { caseApi } from '@/api/case.js';
 import { CASES, CASE_INDUSTRIES } from '@/data/cases.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
 import { coverStyle } from '@/utils/coverStyle.js';
-import s from './index.vue.module.css';
+import s from './index.module.css';
 
 const { t } = useI18n();
 
