@@ -1,0 +1,22 @@
+export const APP_COMPLIANCE_GUARD = {
+  id: 'app-006',
+  slug: 'compliance-guard',
+  name: '合规卫士',
+  tagline: '自动追踪法规变化，降低用工风险',
+  description: '实时追踪全国劳动法规、个税政策、社保基数变化，自动推送影响分析与应对建议。内置合同到期、资质到期、试用期到期等 20+ 预警规则。与 TalentPro 组织人事系统联动，预警直接触发工作流。',
+  category: 'compliance',
+  vendor: 'LegalTech HR',
+  icon: 'compliance-guard',
+  pricingModel: 'paid',
+  pricingTiers: [
+    { name: '标准版', priceMonthly: 699, priceYearly: 6990, desc: '基础法规追踪', features: ['法规追踪', '政策推送', '基础预警'] },
+    { name: '企业版', priceMonthly: 1699, priceYearly: 16990, desc: '全功能', features: ['全法规覆盖', '智能预警', '专家咨询', '定制报告', '集成对接'] },
+  ],
+  ratingAvg: 4.4,
+  ratingCount: 98,
+  installCount: 3890,
+  features: ['法规追踪', '政策推送', '智能预警', '风险评估', '专家咨询', '定制报告'],
+  screenshots: ['compliance-1', 'compliance-2'],
+  compatibility: ['org', 'payroll'],
+  featured: false,
+};

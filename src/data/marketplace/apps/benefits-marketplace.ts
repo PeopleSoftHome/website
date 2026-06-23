@@ -1,0 +1,23 @@
+export const APP_BENEFITS_MARKETPLACE = {
+  id: 'app-010',
+  slug: 'benefits-marketplace',
+  name: '弹性福利商城',
+  tagline: '员工自选福利，企业成本可控',
+  description: '集成保险、体检、健身、餐饮、旅游等 1000+ 福利商品，员工用积分自选兑换。企业可设置预算上限与商品白名单，实现福利成本精准管控。与 TalentPro 薪酬系统联动，积分自动发放与扣减。',
+  category: 'compensation',
+  vendor: 'FlexBenefit',
+  icon: 'benefits-marketplace',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: ' Starter', priceMonthly: 299, priceYearly: 2990, desc: '最多 100 人', features: ['基础商城', '积分管理', '标准商品'] },
+    { name: '成长版', priceMonthly: 699, priceYearly: 6990, desc: '最多 500 人', features: ['定制商城', '预算管控', '数据分析', 'API 接入'] },
+    { name: '企业版', priceMonthly: 1999, priceYearly: 19990, desc: '不限人数', features: ['不限人数', '定制商品', '私有化部署', '专属运营'] },
+  ],
+  ratingAvg: 4.3,
+  ratingCount: 134,
+  installCount: 4780,
+  features: ['福利商城', '积分管理', '预算管控', '员工自选', '数据分析', '移动端支持'],
+  screenshots: ['benefits-1', 'benefits-2'],
+  compatibility: ['payroll', 'org'],
+  featured: false,
+};

@@ -1,0 +1,23 @@
+export const APP_EMPLOYEE_PULSE = {
+  id: 'app-005',
+  slug: 'employee-pulse',
+  name: '员工心声洞察',
+  tagline: '实时感知员工情绪，主动干预留存',
+  description: '通过匿名问卷、情绪分析、离职预警等多维数据，实时洞察员工满意度与敬业度。AI 自动识别风险团队并推送干预建议。与 TalentPro 组织人事系统联动，入离职数据自动关联分析。',
+  category: 'experience',
+  vendor: 'PeopleSense',
+  icon: 'employee-pulse',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '调研版', priceMonthly: 399, priceYearly: 3990, desc: '每月 1 次调研', features: ['问卷模板', '基础分析', '匿名反馈'] },
+    { name: '洞察版', priceMonthly: 899, priceYearly: 8990, desc: '不限次数调研', features: ['情绪分析', '离职预警', '团队对比', '行动计划'] },
+    { name: '战略版', priceMonthly: 2499, priceYearly: 24990, desc: '全功能', features: ['定制模型', '顾问服务', '集成对接', '年度白皮书'] },
+  ],
+  ratingAvg: 4.9,
+  ratingCount: 156,
+  installCount: 5420,
+  features: ['匿名调研', '情绪分析', '离职预警', '团队对比', '行动建议', '数据导出'],
+  screenshots: ['pulse-1', 'pulse-2', 'pulse-3'],
+  compatibility: ['org', 'analytics'],
+  featured: true,
+};

@@ -1,0 +1,23 @@
+export const APP_SMART_RESUME_SCREEN = {
+  id: 'app-001',
+  slug: 'smart-resume-screen',
+  name: '智能简历筛选 Pro',
+  tagline: 'AI 驱动的简历解析与智能匹配',
+  description: '基于深度学习的简历解析引擎，支持 50+ 格式自动识别，智能提取关键信息并与岗位画像精准匹配。集成 TalentPro 招聘系统，一键完成初筛，减少 80% 重复工作。支持多语言简历处理与跨境人才评估。',
+  category: 'recruitment',
+  vendor: 'TalentAI Lab',
+  icon: 'smart-resume-screen',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '基础版', priceMonthly: 299, priceYearly: 2990, desc: '每月 500 份简历解析', features: ['简历解析', '基础匹配', '中文支持'] },
+    { name: '专业版', priceMonthly: 799, priceYearly: 7990, desc: '每月 3000 份简历解析', features: ['简历解析', 'AI 匹配评分', '多语言支持', 'API 接入', '团队协作'] },
+    { name: '企业版', priceMonthly: 1999, priceYearly: 19990, desc: '不限量解析', features: ['不限量解析', '定制模型训练', '私有化部署', '专属顾问', 'SLA 保障'] },
+  ],
+  ratingAvg: 4.8,
+  ratingCount: 342,
+  installCount: 12580,
+  features: ['AI 简历解析', '岗位画像匹配', '多语言支持', '批量处理', 'API 集成', '数据看板'],
+  screenshots: ['resume-screen-1', 'resume-screen-2', 'resume-screen-3'],
+  compatibility: ['recruit', 'ai-recruit'],
+  featured: true,
+};

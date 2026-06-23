@@ -4,7 +4,6 @@ import { ref, provide, h } from 'vue';
 import BlogListView from '@/pages/blog/index.vue';
 import { blogApi } from '@/api/blog';
 
-// Mock dependencies
 vi.mock('@/api/blog', () => ({
   blogApi: {
     getPosts: vi.fn(),
@@ -39,15 +38,15 @@ const mockPosts = [
     excerpt: 'Test excerpt',
     content: 'Test content',
     coverImage: null,
-    category: { name: 'Tech' },
+    category: { id: 'cat-1', name: 'Tech', slug: 'tech' },
     tags: [{ id: '1', name: 'Vue' }],
     createdAt: new Date().toISOString(),
   },
 ];
 
 const mockCategories = [
-  { id: '1', name: 'Tech' },
-  { id: '2', name: 'HR' },
+  { id: 'cat-1', name: 'Tech', slug: 'tech' },
+  { id: 'cat-2', name: 'HR', slug: 'hr' },
 ];
 
 function mountWithI18n(component, options = {}) {
@@ -117,5 +116,36 @@ describe('BlogListView', () => {
 
     const buttons = wrapper.findAll('[class*="catBtn"]');
     expect(buttons.length).toBe(mockCategories.length);
+  });
+
+  it('should toggle active category on click', async () => {
+    blogApi.getPosts.mockResolvedValue({ data: mockPosts, meta: { total: 1 } });
+    blogApi.getCategories.mockResolvedValue({ data: mockCategories });
+
+    const wrapper = mountWithI18n(BlogListView);
+    await flushPromises();
+
+    const buttons = wrapper.findAll('[class*="catBtn"]');
+    await buttons[0].trigger('click');
+    await flushPromises();
+    expect(blogApi.getPosts).toHaveBeenCalledWith(expect.objectContaining({ category: 'tech' }));
+
+    await buttons[0].trigger('click');
+    await flushPromises();
+    expect(blogApi.getPosts).toHaveBeenLastCalledWith(expect.objectContaining({ category: undefined }));
+  });
+
+  it('should navigate to post detail on card click', async () => {
+    const navigateTo = vi.fn();
+    vi.stubGlobal('navigateTo', navigateTo);
+    blogApi.getPosts.mockResolvedValue({ data: mockPosts, meta: { total: 1 } });
+    blogApi.getCategories.mockResolvedValue({ data: mockCategories });
+
+    const wrapper = mountWithI18n(BlogListView);
+    await flushPromises();
+
+    const card = wrapper.find('[class*="blogCard"]');
+    await card.trigger('click');
+    expect(navigateTo).toHaveBeenCalledWith('/blog/test-post');
   });
 });

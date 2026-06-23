@@ -1,0 +1,23 @@
+export const APP_LMS_MICROLEARNING = {
+  id: 'app-004',
+  slug: 'lms-microlearning',
+  name: '微课学习平台',
+  tagline: '碎片化学习，体系化成长',
+  description: '支持微课、直播、考试、证书全链路学习管理。AI 推荐个性化学习路径，让员工在碎片时间完成能力提升。与 TalentPro 学习系统深度集成，学习记录自动同步。',
+  category: 'learning',
+  vendor: 'EduCloud',
+  icon: 'lms-microlearning',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '成长版', priceMonthly: 499, priceYearly: 4990, desc: '最多 100 人', features: ['微课管理', '考试系统', '学习记录'] },
+    { name: '专业版', priceMonthly: 1199, priceYearly: 11990, desc: '最多 500 人', features: ['直播课堂', 'AI 推荐', '证书管理', '数据分析'] },
+    { name: '学院版', priceMonthly: 2999, priceYearly: 29990, desc: '不限人数', features: ['不限人数', '定制开发', '内容共创', '私有化部署'] },
+  ],
+  ratingAvg: 4.5,
+  ratingCount: 189,
+  installCount: 7650,
+  features: ['微课制作', '直播课堂', 'AI 推荐', '考试认证', '学习地图', '数据报表'],
+  screenshots: ['lms-1', 'lms-2'],
+  compatibility: ['learning', 'ai-course'],
+  featured: false,
+};

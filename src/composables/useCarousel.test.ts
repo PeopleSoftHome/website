@@ -50,11 +50,49 @@ describe('useCarousel', () => {
     expect(wrapper.vm.c.getColCount()).toBeGreaterThanOrEqual(1);
   });
 
-  it('bindPauseEvents returns cleanup function', () => {
-    const wrapper = mountCarousel();
+  it('bindPauseEvents pauses and resumes auto play on hover', () => {
+    const wrapper = mountCarousel(5);
     const el = document.createElement('div');
-    const cleanup = wrapper.vm.c.bindPauseEvents(el);
-    expect(typeof cleanup).toBe('function');
-    cleanup();
+    wrapper.vm.c.bindPauseEvents(el);
+
+    el.dispatchEvent(new MouseEvent('mouseenter'));
+    const idx = wrapper.vm.c.currentIdx.value;
+    vi.advanceTimersByTime(5000);
+    expect(wrapper.vm.c.currentIdx.value).toBe(idx);
+
+    el.dispatchEvent(new MouseEvent('mouseleave'));
+    vi.advanceTimersByTime(4600);
+    expect(wrapper.vm.c.currentIdx.value).not.toBe(idx);
+  });
+
+  it('getOffset returns 0 when trackRef is not set', () => {
+    const wrapper = mountCarousel(5);
+    expect(wrapper.vm.c.getOffset()).toBe(0);
+  });
+
+  it('getOffset calculates offset based on col count', () => {
+    const wrapper = mountCarousel(5);
+    const track = document.createElement('div');
+    const parent = document.createElement('div');
+    parent.style.width = '1200px';
+    parent.appendChild(track);
+    wrapper.vm.c.trackRef.value = track as unknown as HTMLElement;
+    wrapper.vm.c.currentIdx.value = 1;
+    expect(wrapper.vm.c.getOffset()).toBeGreaterThan(0);
+  });
+
+  it('handles resize by clamping index', () => {
+    const wrapper = mountCarousel(5);
+    wrapper.vm.c.currentIdx.value = 4;
+    window.dispatchEvent(new Event('resize'));
+    vi.advanceTimersByTime(250);
+    expect(wrapper.vm.c.currentIdx.value).toBeLessThanOrEqual(4);
+  });
+
+  it('wraps index to 0 when auto play reaches max', () => {
+    const wrapper = mountCarousel(3);
+    wrapper.vm.c.currentIdx.value = 2;
+    vi.advanceTimersByTime(4600);
+    expect(wrapper.vm.c.currentIdx.value).toBe(0);
   });
 });

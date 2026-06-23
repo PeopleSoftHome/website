@@ -1,0 +1,23 @@
+export const APP_AI_INTERVIEW_BOT = {
+  id: 'app-007',
+  slug: 'ai-interview-bot',
+  name: 'AI 面试机器人',
+  tagline: '7×24 自动面试，精准评估潜力',
+  description: '基于大语言模型的智能面试官，支持结构化、行为化、情景化多种面试模式。自动评估候选人能力、潜力与文化匹配度，生成详细面试报告。与 TalentPro AI 面试官深度集成，支持视频、语音、文字多种交互方式。',
+  category: 'ai',
+  vendor: 'TalentAI Lab',
+  icon: 'ai-interview-bot',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '试用版', priceMonthly: 0, priceYearly: 0, desc: '每月 50 次面试', features: ['文字面试', '基础报告', '中文支持'] },
+    { name: '专业版', priceMonthly: 999, priceYearly: 9990, desc: '每月 1000 次面试', features: ['视频面试', '语音面试', '潜力评估', '定制题库', 'API 接入'] },
+    { name: '企业版', priceMonthly: 2999, priceYearly: 29990, desc: '不限次数', features: ['不限次数', '私有化模型', '定制评估维度', '专属顾问'] },
+  ],
+  ratingAvg: 4.9,
+  ratingCount: 512,
+  installCount: 18760,
+  features: ['视频面试', '语音面试', '潜力评估', '定制题库', '多语言支持', '数据看板'],
+  screenshots: ['ai-interview-1', 'ai-interview-2', 'ai-interview-3'],
+  compatibility: ['ai-interview', 'recruit'],
+  featured: true,
+};

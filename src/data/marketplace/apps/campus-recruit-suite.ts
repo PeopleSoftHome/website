@@ -1,0 +1,23 @@
+export const APP_CAMPUS_RECRUIT_SUITE = {
+  id: 'app-009',
+  slug: 'campus-recruit-suite',
+  name: '校园招聘套件',
+  tagline: '从宣讲到 Offer，校招全流程数字化',
+  description: '覆盖校招宣讲、简历收集、AI 初筛、在线测评、面试安排、Offer 发放全链路。支持高校地图、宣讲会管理、内推追踪等特色功能。与 TalentPro 招聘系统深度集成，校招周期平均缩短 40%。',
+  category: 'recruitment',
+  vendor: 'CampusHire',
+  icon: 'campus-recruit-suite',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '校招季', priceMonthly: 1299, priceYearly: 12990, desc: '单季度使用', features: ['简历收集', '宣讲管理', '在线测评', '面试安排'] },
+    { name: '年度版', priceMonthly: 799, priceYearly: 7990, desc: '全年使用', features: ['全功能', 'AI 初筛', '内推追踪', '高校地图', '数据看板'] },
+    { name: '集团版', priceMonthly: 2499, priceYearly: 24990, desc: '多品牌校招', features: ['多品牌管理', '定制开发', '私有化部署', '专属顾问'] },
+  ],
+  ratingAvg: 4.5,
+  ratingCount: 178,
+  installCount: 6540,
+  features: ['宣讲管理', '简历收集', 'AI 初筛', '在线测评', 'Offer 管理', '数据看板'],
+  screenshots: ['campus-1', 'campus-2'],
+  compatibility: ['recruit'],
+  featured: false,
+};

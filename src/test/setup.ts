@@ -37,7 +37,9 @@ vi.stubGlobal('useAsyncData', vi.fn((key: string, fetcher: () => unknown) => {
   const data = ref<unknown>(null);
   const pending = ref(true);
   const error = ref<Error | null>(null);
-  Promise.resolve().then(async () => {
+  const execute = async () => {
+    pending.value = true;
+    error.value = null;
     try {
       data.value = await fetcher();
     } catch (e) {
@@ -45,8 +47,9 @@ vi.stubGlobal('useAsyncData', vi.fn((key: string, fetcher: () => unknown) => {
     } finally {
       pending.value = false;
     }
-  });
-  return { data, pending, error, refresh: vi.fn() };
+  };
+  Promise.resolve().then(execute);
+  return { data, pending, error, refresh: execute };
 }));
 
 vi.stubGlobal('useRoute', vi.fn(() => ref({ params: {}, query: {}, meta: {} })));

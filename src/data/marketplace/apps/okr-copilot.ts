@@ -1,0 +1,23 @@
+export const APP_OKR_COPILOT = {
+  id: 'app-003',
+  slug: 'okr-copilot',
+  name: 'OKR 协同助手',
+  tagline: '目标对齐，执行落地',
+  description: '从目标制定到执行复盘的全流程 OKR 管理工具。支持 O-KR 层层拆解，进度自动同步，与绩效结果自动关联。内置行业标杆模板，帮助团队快速上手。与 TalentPro 绩效系统无缝对接。',
+  category: 'performance',
+  vendor: 'GoalForge',
+  icon: 'okr-copilot',
+  pricingModel: 'free',
+  pricingTiers: [
+    { name: '免费版', priceMonthly: 0, priceYearly: 0, desc: '最多 10 人', features: ['目标创建', '进度追踪', '基础报表'] },
+    { name: '团队版', priceMonthly: 399, priceYearly: 3990, desc: '最多 50 人', features: ['目标对齐', '自动同步', '高级报表', '集成对接'] },
+    { name: '企业版', priceMonthly: 999, priceYearly: 9990, desc: '不限人数', features: ['不限人数', '自定义流程', 'API 开放', '专属支持'] },
+  ],
+  ratingAvg: 4.7,
+  ratingCount: 428,
+  installCount: 23100,
+  features: ['O-KR 拆解', '进度自动同步', '绩效关联', '模板库', '数据看板', '移动端支持'],
+  screenshots: ['okr-1', 'okr-2', 'okr-3'],
+  compatibility: ['performance'],
+  featured: true,
+};

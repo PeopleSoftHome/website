@@ -1,21 +1,21 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useAnalytics } from './useAnalytics';
 
-const mockPost = vi.fn();
+const { mockPost } = vi.hoisted(() => ({ mockPost: vi.fn().mockResolvedValue({}) }));
 
 vi.mock('@/api/client', () => ({
   apiClient: {
-    post: (...args) => mockPost(...args),
+    post: (...args: unknown[]) => mockPost(...args),
+    defaults: { baseURL: 'http://localhost:4000/api/v1' },
   },
 }));
 
 describe('useAnalytics', () => {
   beforeEach(() => {
     localStorage.clear();
-    mockPost.mockReset();
-    // 模拟同意 analytics
+    mockPost.mockClear();
+    mockPost.mockResolvedValue({});
     localStorage.setItem('tp-cookie-consent', JSON.stringify({ analytics: true }));
-    // 重置全局队列
     window.tp_analytics = { push: vi.fn(), _queue: [] };
   });
 
@@ -69,5 +69,47 @@ describe('useAnalytics', () => {
     expect(evt.properties.ts).toBeDefined();
     expect(typeof evt.properties.ts).toBe('number');
     expect(evt.properties.url).toBeDefined();
+  });
+
+  it('respects queue size limit by shifting old events', () => {
+    const analytics = useAnalytics();
+    for (let i = 0; i < 105; i += 1) {
+      analytics.track(`event_${i}`);
+    }
+    expect(window.tp_analytics._queue.length).toBeLessThanOrEqual(100);
+  });
+
+  it('flushes queue after schedule delay', () => {
+    vi.useFakeTimers();
+    const analytics = useAnalytics();
+    analytics.track('flush_event');
+
+    vi.advanceTimersByTime(6000);
+    expect(mockPost).toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it('sendBeacon on beforeunload when queue not empty', () => {
+    const sendBeacon = vi.fn();
+    vi.stubGlobal('navigator', { sendBeacon });
+
+    const analytics = useAnalytics();
+    analytics.track('beacon_event');
+
+    window.dispatchEvent(new Event('beforeunload'));
+    expect(sendBeacon).toHaveBeenCalled();
+  });
+
+  it('updates enabled on storage change for cookie consent', () => {
+    const analytics = useAnalytics();
+    expect(analytics.enabled.value).toBe(true);
+
+    localStorage.setItem('tp-cookie-consent', JSON.stringify({ analytics: false }));
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'tp-cookie-consent',
+      newValue: JSON.stringify({ analytics: false }),
+    }));
+
+    expect(analytics.enabled.value).toBe(false);
   });
 });

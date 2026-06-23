@@ -1,0 +1,22 @@
+export const APP_TALENT_MAP_360 = {
+  id: 'app-011',
+  slug: 'talent-map-360',
+  name: '人才地图 360',
+  tagline: '可视化人才分布，精准决策继任',
+  description: '基于九宫格、能力模型、绩效数据自动生成企业人才地图。支持多维度筛选与对比，快速识别高潜人才与继任缺口。与 TalentPro 盘点发展系统联动，盘点结果自动同步更新地图。',
+  category: 'analytics',
+  vendor: 'TalentGraph',
+  icon: 'talent-map-360',
+  pricingModel: 'paid',
+  pricingTiers: [
+    { name: '团队版', priceMonthly: 599, priceYearly: 5990, desc: '单部门', features: ['人才地图', '九宫格', '基础对比'] },
+    { name: '企业版', priceMonthly: 1499, priceYearly: 14990, desc: '全公司', features: ['全公司地图', '继任规划', '模拟推演', '集成对接'] },
+  ],
+  ratingAvg: 4.6,
+  ratingCount: 203,
+  installCount: 7120,
+  features: ['人才地图', '九宫格', '继任规划', '模拟推演', '数据下钻', '导出报告'],
+  screenshots: ['talentmap-1', 'talentmap-2'],
+  compatibility: ['talent', 'performance', 'analytics'],
+  featured: false,
+};
