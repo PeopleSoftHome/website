@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref, nextTick, computed } from 'vue';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h } from 'vue';
-import { useListPage } from './useListPage.js';
+import { useListPage } from './useListPage.ts';
 
 vi.mock('#app', () => ({
   useAsyncData: (key, fetchFn, options) => {

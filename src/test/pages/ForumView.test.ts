@@ -29,7 +29,7 @@ vi.mock('@/components/ui/Pagination/Pagination.vue', () => ({
   default: { name: 'Pagination', props: ['total', 'pageSize'], render: () => h('div') },
 }));
 
-vi.mock('@/data/forum.js', () => ({
+vi.mock('@/data/forum.ts', () => ({
   FORUM_CATEGORIES: [],
   FORUM_TOPICS: [],
 }));

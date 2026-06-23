@@ -26,7 +26,7 @@ vi.mock('@/components/ui/Pagination/Pagination.vue', () => ({
   default: { name: 'Pagination', props: ['total', 'pageSize'], render: () => h('div') },
 }));
 
-vi.mock('@/data/blog.js', () => ({
+vi.mock('@/data/blog.ts', () => ({
   BLOG_POSTS: [],
   BLOG_CATEGORIES: [],
 }));

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h, ref, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useCountUp } from './useCountUp.js';
+import { useCountUp } from './useCountUp.ts';
 
 function mountCountUp(target, opts = {}) {
   const comp = defineComponent({

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useAnalytics } from './useAnalytics.js';
+import { useAnalytics } from './useAnalytics.ts';
 
 const mockPost = vi.fn();
 
-vi.mock('@/api/client.js', () => ({
+vi.mock('@/api/client.ts', () => ({
   apiClient: {
     post: (...args) => mockPost(...args),
   },

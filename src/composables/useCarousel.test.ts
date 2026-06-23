@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h, ref } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useCarousel } from './useCarousel.js';
+import { useCarousel } from './useCarousel.ts';
 
 function mountCarousel(itemCount = 5) {
   const comp = defineComponent({

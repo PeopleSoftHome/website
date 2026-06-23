@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import { useVideoModalStore } from './videoModal.pinia.js';
+import { useVideoModalStore } from './videoModal.pinia.ts';
 
 describe('useVideoModalStore', () => {
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { defineComponent, h, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useTheme } from './useTheme.js';
+import { useTheme } from './useTheme.ts';
 
 function mountTheme() {
   const comp = defineComponent({

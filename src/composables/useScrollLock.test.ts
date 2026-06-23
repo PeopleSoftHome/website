@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h, ref } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useScrollLock, __resetScrollLockState } from './useScrollLock.js';
+import { useScrollLock, __resetScrollLockState } from './useScrollLock.ts';
 
 describe('useScrollLock', () => {
   beforeEach(() => {

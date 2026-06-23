@@ -14,18 +14,18 @@ const i18n = createI18n({
     en: {},
     'zh-TW': {},
   },
-  missing: (locale, key) => key,
+  missing: (locale: string, key: string) => key,
 });
 
 // 为 @vue/test-utils 的 mount 全局注入 i18n 插件
 config.global.plugins = [i18n];
 
 // Mock localStorage
-const store = new Map();
+const store = new Map<string, string>();
 vi.stubGlobal('localStorage', {
-  getItem: vi.fn((key) => store.get(key) ?? null),
-  setItem: vi.fn((key, val) => store.set(key, val)),
-  removeItem: vi.fn((key) => store.delete(key)),
+  getItem: vi.fn((key: string) => store.get(key) ?? null),
+  setItem: vi.fn((key: string, val: string) => store.set(key, val)),
+  removeItem: vi.fn((key: string) => store.delete(key)),
   clear: vi.fn(() => store.clear()),
 });
 
@@ -33,15 +33,15 @@ vi.stubGlobal('localStorage', {
 vi.stubGlobal('definePageMeta', vi.fn());
 
 // Mock Nuxt composables
-vi.stubGlobal('useAsyncData', vi.fn((key, fetcher) => {
-  const data = ref(null);
+vi.stubGlobal('useAsyncData', vi.fn((key: string, fetcher: () => unknown) => {
+  const data = ref<unknown>(null);
   const pending = ref(true);
-  const error = ref(null);
+  const error = ref<Error | null>(null);
   Promise.resolve().then(async () => {
     try {
       data.value = await fetcher();
     } catch (e) {
-      error.value = e;
+      error.value = e as Error;
     } finally {
       pending.value = false;
     }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useScrollReveal } from './useScrollReveal.js';
+import { useScrollReveal } from './useScrollReveal.ts';
 
 describe('useScrollReveal', () => {
   beforeEach(() => {

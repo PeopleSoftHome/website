@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { defineComponent, h, ref } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useFocusTrap } from './useFocusTrap.js';
+import { useFocusTrap } from './useFocusTrap.ts';
 
 describe('useFocusTrap', () => {
   it('does not throw when container is null', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h, ref } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useSearch } from './useSearch.js';
+import { useSearch } from './useSearch.ts';
 
 describe('useSearch', () => {
   beforeEach(() => { vi.useFakeTimers(); });

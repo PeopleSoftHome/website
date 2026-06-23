@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ref, nextTick, watch } from 'vue';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h } from 'vue';
-import { useDetailPage } from './useDetailPage.js';
+import { useDetailPage } from './useDetailPage.ts';
 
 vi.stubGlobal('createError', (opts) => new Error(`404:${opts.statusMessage}`));
 

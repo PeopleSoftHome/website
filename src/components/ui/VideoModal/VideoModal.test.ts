@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ref } from 'vue';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
+import { useVideoModalStore } from '@/stores/videoModal.pinia.ts';
 import VideoModal from './VideoModal.vue';
 
 describe('VideoModal', () => {

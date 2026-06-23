@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
-import { useSearchStore } from './search.pinia.js';
+import { useSearchStore } from './search.pinia.ts';
 
 describe('useSearchStore', () => {
   beforeEach(() => {
