@@ -4,6 +4,7 @@ import { usePublicConfig } from '@/composables/usePublicConfig';
 import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData';
 import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { ENDPOINTS } from '@/constants/endpoints';
 
 const LOCAL_ACTIONS = {
   demo: ['演示', '预约', 'demo', 'book', 'trial', '试用', '体验'],

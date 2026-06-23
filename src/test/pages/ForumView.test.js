@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { h } from 'vue';
-import ForumView from './forum/index.vue';
-import { forumApi } from '@/api/forum.js';
+import ForumView from '@/pages/forum/index.vue';
+import { forumApi } from '@/api/forum';
 
-vi.mock('@/api/forum.js', () => ({
+vi.mock('@/api/forum', () => ({
   forumApi: {
     getTopics: vi.fn(),
     getCategories: vi.fn(),

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { ref, provide, h } from 'vue';
-import BlogListView from './blog/index.vue';
-import { blogApi } from '@/api/blog.js';
+import BlogListView from '@/pages/blog/index.vue';
+import { blogApi } from '@/api/blog';
 
 // Mock dependencies
-vi.mock('@/api/blog.js', () => ({
+vi.mock('@/api/blog', () => ({
   blogApi: {
     getPosts: vi.fn(),
     getCategories: vi.fn(),
