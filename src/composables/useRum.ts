@@ -16,6 +16,7 @@ import type { Metric } from 'web-vitals';
 import { apiClient } from '@/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
+import { getOrCreateSessionId } from '@/composables/useSessionId';
 
 const SESSION_KEY = STORAGE_KEYS.RUM_SESSION_ID;
 
@@ -25,12 +26,7 @@ function getRumEndpoint() {
 }
 
 function getSessionId() {
-  let sid = sessionStorage.getItem(SESSION_KEY);
-  if (!sid) {
-    sid = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    sessionStorage.setItem(SESSION_KEY, sid);
-  }
-  return sid;
+  return getOrCreateSessionId(SESSION_KEY, 'sessionStorage');
 }
 
 function sendToAnalytics(metric: Metric) {

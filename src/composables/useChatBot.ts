@@ -5,6 +5,7 @@ import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/cha
 import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
+import { getOrCreateSessionId } from '@/composables/useSessionId';
 
 const LOCAL_ACTIONS = {
   demo: ['演示', '预约', 'demo', 'book', 'trial', '试用', '体验'],
@@ -39,13 +40,7 @@ interface UseChatBotOptions {
 }
 
 function getSessionId(): string {
-  if (typeof window === 'undefined') return '';
-  let id = sessionStorage.getItem(STORAGE_KEY);
-  if (!id) {
-    id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    sessionStorage.setItem(STORAGE_KEY, id);
-  }
-  return id;
+  return getOrCreateSessionId(STORAGE_KEY, 'sessionStorage');
 }
 
 export function useChatBot({ emit, locale }: UseChatBotOptions) {

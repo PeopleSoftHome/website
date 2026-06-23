@@ -1,4 +1,5 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useWindowEvent } from '@/composables/useRafThrottle';
 
 /**
  * 页面顶部滚动进度条
@@ -13,13 +14,10 @@ export function useScrollProgress() {
     progress.value = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
   };
 
+  useWindowEvent('scroll', updateProgress, { passive: true });
+
   onMounted(() => {
     updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('scroll', updateProgress);
   });
 
   const progressStyle = computed(() => ({ width: `${progress.value}%` }));

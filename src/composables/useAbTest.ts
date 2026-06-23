@@ -2,6 +2,7 @@ import { ref, onMounted } from 'vue';
 import { apiClient } from '@/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
+import { getOrCreateSessionId } from '@/composables/useSessionId';
 
 interface Experiment {
   id: string | number;
@@ -14,12 +15,7 @@ const variants = ref<Record<string, 'A' | 'B'>>({});
 const sessionId = ref('');
 
 function getSessionId() {
-  let sid = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID);
-  if (!sid) {
-    sid = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    sessionStorage.setItem(STORAGE_KEYS.SESSION_ID, sid);
-  }
-  return sid;
+  return getOrCreateSessionId(STORAGE_KEYS.SESSION_ID, 'sessionStorage');
 }
 
 function hashString(str: string) {

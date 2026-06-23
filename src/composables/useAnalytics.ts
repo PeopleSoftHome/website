@@ -8,6 +8,7 @@ import { ref, readonly } from 'vue';
 import { apiClient } from '@/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
+import { getOrCreateSessionId } from '@/composables/useSessionId';
 
 interface AnalyticsPayload {
   event: string;
@@ -33,12 +34,7 @@ function readConsent() {
 
 function getSessionId() {
   if (typeof window === 'undefined') return 'server';
-  let sid = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
-  if (!sid) {
-    sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem(STORAGE_KEYS.SESSION_ID, sid);
-  }
-  return sid;
+  return getOrCreateSessionId(STORAGE_KEYS.SESSION_ID, 'localStorage');
 }
 
 function flushQueue() {

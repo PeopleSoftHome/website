@@ -5,32 +5,21 @@
  * @param {number} threshold - 触发阈值（默认 0.1 = 进入 10%）
  * @returns {{ ref: Ref<HTMLElement|null> }}
  */
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { useIntersectionObserver } from '@/composables/useIntersectionObserver';
 
 export function useScrollReveal(threshold = 0.1) {
   const elRef: Ref<HTMLElement | null> = ref(null);
-  let obs: IntersectionObserver | null = null;
 
-  onMounted(() => {
-    const el = elRef.value;
-    if (!el) return;
-
-    obs = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry || !entry.isIntersecting) return;
-        el.classList.add('is-visible');
-        if (obs) obs.disconnect(); // 只触发一次
-      },
-      { threshold }
-    );
-
-    if (obs) obs.observe(el);
-  });
-
-  onUnmounted(() => {
-    if (obs) obs.disconnect();
-  });
+  useIntersectionObserver(
+    () => elRef.value,
+    ([entry]) => {
+      if (!entry || !entry.isIntersecting || !elRef.value) return;
+      elRef.value.classList.add('is-visible');
+    },
+    { threshold, once: true },
+  );
 
   return { ref: elRef };
 }

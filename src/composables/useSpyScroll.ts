@@ -1,4 +1,5 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useIntersectionObserver } from '@/composables/useIntersectionObserver';
 
 /**
  * Sticky TOC Scroll Spy
@@ -8,29 +9,23 @@ import { ref, onMounted, onUnmounted } from 'vue';
  */
 export function useSpyScroll(selector = '[data-section]') {
   const activeId = ref('');
-  let observer: IntersectionObserver | null = null;
+  const sectionsRef = ref<Element[]>([]);
 
   onMounted(() => {
-    const sections = document.querySelectorAll(selector);
-    if (!sections.length) return;
-
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            activeId.value = entry.target.getAttribute('data-section') || '';
-          }
-        });
-      },
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
-    );
-
-    sections.forEach((section) => { if (observer) observer.observe(section); });
+    sectionsRef.value = Array.from(document.querySelectorAll(selector));
   });
 
-  onUnmounted(() => {
-    if (observer) observer.disconnect();
-  });
+  useIntersectionObserver(
+    () => sectionsRef.value,
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeId.value = entry.target.getAttribute('data-section') || '';
+        }
+      });
+    },
+    { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
+  );
 
   return { activeId };
 }
