@@ -6,7 +6,7 @@ describe('RolesGuard', () => {
   let guard: RolesGuard;
   let reflector: Reflector;
 
-  const createContext = (handlerMeta?: string[], classMeta?: string[], user?: any) =>
+  const createContext = (handlerMeta?: string[], classMeta?: string[], user?: Record<string, unknown>) =>
     ({
       getHandler: () => ({}),
       getClass: () => ({}),

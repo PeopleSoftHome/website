@@ -74,7 +74,7 @@ describe('Common decorators', () => {
   });
 
   describe('CurrentUser', () => {
-    const createCtx = (user: any) =>
+    const createCtx = (user: Record<string, unknown>) =>
       ({
         switchToHttp: () => ({
           getRequest: () => ({ user }),

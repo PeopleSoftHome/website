@@ -6,7 +6,7 @@ describe('PermissionGuard', () => {
   let guard: PermissionGuard;
   let reflector: Reflector;
 
-  const createContext = (metadata: any, user?: any) =>
+  const createContext = (metadata: unknown, user?: Record<string, unknown>) =>
     ({
       getHandler: () => ({}),
       getClass: () => ({}),

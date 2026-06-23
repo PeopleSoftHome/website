@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { AuthUserService } from './auth-user.service';
 import { AuthTokenService } from './auth-token.service';
+import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -52,7 +54,7 @@ describe('AuthService', () => {
       const user = { id: 'u1', email: 'a@b.com', workspaceId: 'w1' };
       (userService.login as jest.Mock).mockResolvedValue({ user });
 
-      const result = await service.login({ email: 'a@b.com', password: 'pwd' } as any);
+      const result = await service.login({ email: 'a@b.com', password: 'pwd' } as LoginDto);
       expect(result).toEqual({ user, accessToken: 'at', refreshToken: 'rt' });
       expect(tokenService.saveRefreshToken).toHaveBeenCalledWith('u1', 'rt');
     });
@@ -98,7 +100,7 @@ describe('AuthService', () => {
     it('should delegate to userService', async () => {
       const user = { id: 'u1', name: 'New' };
       (userService.updateProfile as jest.Mock).mockResolvedValue(user);
-      const result = await service.updateProfile('u1', { name: 'New' } as any);
+      const result = await service.updateProfile('u1', { name: 'New' } as UpdateProfileDto);
       expect(result).toEqual(user);
     });
   });

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { HttpExceptionFilter } from './http-exception.filter';
 
 describe('HttpExceptionFilter', () => {
@@ -9,13 +9,13 @@ describe('HttpExceptionFilter', () => {
     jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
   });
 
-  const createHost = (responseMock: any, requestMock: any) =>
+  const createHost = (responseMock: Record<string, unknown>, requestMock: Record<string, unknown>): ArgumentsHost =>
     ({
       switchToHttp: () => ({
         getResponse: () => responseMock,
         getRequest: () => requestMock,
       }),
-    }) as any;
+    }) as unknown as ArgumentsHost;
 
   it('should handle HttpException with object response', () => {
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
