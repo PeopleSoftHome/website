@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h } from 'vue';
 import { createPinia, setActivePinia } from 'pinia';
-import { useModalStore } from './modal.pinia.js';
+import { useModalStore } from './modal.pinia';
 
-vi.mock('@/api/lead.js', () => ({
+vi.mock('@/api/lead', () => ({
   leadApi: { createBooking: vi.fn(() => Promise.resolve({ id: 1 })) },
 }));
 
-vi.mock('@/composables/usePublicConfig.js', () => ({
+vi.mock('@/composables/usePublicConfig', () => ({
   usePublicConfig: () => ({ recaptchaSiteKey: '' }),
 }));
 

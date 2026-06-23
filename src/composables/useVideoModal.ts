@@ -1,6 +1,6 @@
 /**
  * useVideoModal — 视频弹窗状态管理
- * 与 useModal 同模式，但更简单（无 step / isSuccess）
+ * 与 useStepModal 同模式，但更简单（无 step / isSuccess）
  */
 import { ref } from 'vue';
 

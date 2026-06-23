@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { defineComponent, h, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
-import { useModal } from './useModal.js';
+import { useDemoBooking } from './useDemoBooking';
 
-vi.mock('@/api/lead.js', () => ({
+vi.mock('@/api/lead', () => ({
   leadApi: { createBooking: vi.fn(() => Promise.resolve({ id: 1 })) },
 }));
 
 function mountModal() {
   const comp = defineComponent({
     setup() {
-      const modal = useModal();
+      const modal = useDemoBooking();
       return { modal };
     },
     render() { return h('div'); },
@@ -18,7 +18,7 @@ function mountModal() {
   return mount(comp);
 }
 
-describe('useModal', () => {
+describe('useDemoBooking', () => {
   beforeEach(() => { vi.useFakeTimers(); });
   afterEach(() => { vi.useRealTimers(); });
 
