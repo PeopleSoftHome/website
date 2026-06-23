@@ -186,11 +186,14 @@ export class PaymentService {
   // ─── Helpers ───
 
   private async confirmOrderPayment(orderId: string, provider: PaymentProvider, providerPaymentId: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { subscription: true },
+    });
     if (!order || order.status === PaymentStatus.COMPLETED) return;
 
     const updateSubscriptionOps = [];
-    if (order.subscriptionId) {
+    if (order.subscriptionId && order.subscription) {
       updateSubscriptionOps.push(
         this.prisma.subscription.update({
           where: { id: order.subscriptionId },
@@ -199,7 +202,7 @@ export class PaymentService {
             provider,
             providerSubId: providerPaymentId,
             currentPeriodStart: new Date(),
-            currentPeriodEnd: this.calculatePeriodEnd(order.interval || 'month'),
+            currentPeriodEnd: this.calculatePeriodEnd(order.subscription.interval || 'month'),
           },
         }),
       );

@@ -14,9 +14,10 @@ jest.mock('nodemailer', () => ({
 describe('MailService', () => {
   let service: MailService;
   let prisma: PrismaService;
+  let module: TestingModule;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         MailService,
         {
@@ -47,6 +48,10 @@ describe('MailService', () => {
 
     service = module.get<MailService>(MailService);
     prisma = module.get<PrismaService>(PrismaService);
+  });
+
+  afterAll(async () => {
+    await module.close();
   });
 
   afterEach(() => {

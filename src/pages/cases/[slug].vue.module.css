@@ -49,7 +49,7 @@
 .relatedGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .relatedCard { display: flex; flex-direction: column; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); overflow: hidden; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
 .relatedCard:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.relatedCover { width: 100%; height: 140px; object-fit: cover; }
+.relatedCover { width: 100%; height: 140px; background-size: cover; background-position: center; }
 .relatedInfo { padding: 16px; }
 .relatedClient { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 6px; display: block; }
 .relatedTitle2 { font-size: 14px; font-weight: 600; color: var(--gray-900); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

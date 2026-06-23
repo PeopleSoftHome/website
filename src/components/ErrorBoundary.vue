@@ -20,13 +20,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onErrorCaptured } from 'vue';
+import { ref, onErrorCaptured, inject } from 'vue';
 
 import s from './ErrorBoundary.module.css';
 
 const { t } = useI18n();
 
 const router = useRouter();
+const reportError = inject<(type: string, message: unknown, stack?: unknown) => void | undefined>('reportError');
 const hasError = ref(false);
 const errorMessage = ref('');
 const errorInfo = ref('');
@@ -38,8 +39,8 @@ onErrorCaptured((err, instance, info) => {
   errorInfo.value = `${err?.stack || ''}\n\n组件: ${instance?.$options?.name || 'unknown'}\n信息: ${info}`;
 
   // 上报错误（生产环境）
-  if (!isDev && window.reportError) {
-    window.reportError(err);
+  if (!isDev && reportError) {
+    reportError('vue', err?.message, err?.stack);
   }
 
   // 阻止错误继续传播

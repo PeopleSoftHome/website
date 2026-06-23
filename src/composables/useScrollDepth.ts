@@ -8,17 +8,23 @@ export function useScrollDepth(track: TrackFn) {
   const initScrollDepth = () => {
     if (typeof window === 'undefined') return;
     const checkpoints = [25, 50, 75, 90];
-    const reached = new Set();
+    const reached = new Set<number>();
+    let ticking = false;
     const handler = () => {
-      const scrollPercent = Math.round(
-        (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
-      );
-      for (const cp of checkpoints) {
-        if (scrollPercent >= cp && !reached.has(cp)) {
-          reached.add(cp);
-          track('scroll_depth', { percent: cp });
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        if (docHeight <= 0) return;
+        const scrollPercent = Math.round((window.scrollY / docHeight) * 100);
+        for (const cp of checkpoints) {
+          if (scrollPercent >= cp && !reached.has(cp)) {
+            reached.add(cp);
+            track('scroll_depth', { percent: cp });
+          }
         }
-      }
+      });
     };
     window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);

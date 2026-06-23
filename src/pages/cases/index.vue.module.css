@@ -56,7 +56,7 @@
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .cardEnter { animation: cardIn 0.4s var(--ease-out) both; animation-delay: calc(var(--stagger, 0) * 60ms); }
 @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.cardCover { width: 100%; height: 180px; object-fit: cover; display: block; }
+.cardCover { width: 100%; height: 180px; background-size: cover; background-position: center; display: block; }
 .cardBody { padding: 24px; display: flex; flex-direction: column; flex: 1; }
 .cardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .cardIndustry { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 3px 10px; border-radius: 999px; }

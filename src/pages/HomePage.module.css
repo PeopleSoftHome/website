@@ -12,7 +12,7 @@
 
 .placeholder {
   padding: 80px 0;
-  background: white;
+  background: var(--white);
 }
 
 .placeholderAlt {

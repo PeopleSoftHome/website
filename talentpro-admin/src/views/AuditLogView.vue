@@ -40,7 +40,7 @@ const loading = ref(false);
 const fetchLogs = async () => {
   loading.value = true;
   try {
-    const res = await client.get(`/settings/audit-logs?page=${page.value}&pageSize=${pageSize.value}`);
+    const res = await client.get(`/system/audit-logs?page=${page.value}&pageSize=${pageSize.value}`);
     logs.value = res.data || [];
     total.value = res.meta?.total || 0;
   } catch (e) {

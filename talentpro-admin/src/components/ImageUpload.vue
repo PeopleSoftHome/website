@@ -130,8 +130,8 @@ const handlePreview = () => {
 .upload-mask {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  background: var(--admin-mask);
+  color: var(--admin-white);
   display: flex;
   flex-direction: column;
   align-items: center;

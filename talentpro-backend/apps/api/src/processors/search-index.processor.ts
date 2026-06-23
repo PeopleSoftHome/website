@@ -41,6 +41,16 @@ export class SearchIndexProcessor extends WorkerHost {
   onFailed(job: Job, err: Error) {
     this.logger.error(
       `Search index job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`,
+      {
+        deadLetter: {
+          queue: 'search-index',
+          jobId: job.id,
+          name: job.name,
+          data: job.data,
+          error: err.message,
+          stack: err.stack,
+        },
+      },
     );
   }
 }

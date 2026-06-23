@@ -26,7 +26,7 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--gray-600);
-  background: white;
+  background: var(--white);
   border: 1px solid var(--gray-200);
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
@@ -39,7 +39,7 @@
 
 .filterActive {
   background: var(--primary) !important;
-  color: white !important;
+  color: var(--white) !important;
   border-color: var(--primary) !important;
 }
 
@@ -52,7 +52,7 @@
 
 /* ── 单个 Logo 项 ── */
 .item {
-  background: white;
+  background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-md);
   padding: 16px;

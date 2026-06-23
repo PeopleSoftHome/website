@@ -46,8 +46,19 @@ export class NotificationProcessor extends WorkerHost {
 
   @OnWorkerEvent('failed')
   onFailed(job: Job, err: Error) {
-    this.logger.error(`Job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`);
-    // 可在此写入死信表或发送告警
+    this.logger.error(
+      `Job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`,
+      {
+        deadLetter: {
+          queue: 'notification',
+          jobId: job.id,
+          name: job.name,
+          data: job.data,
+          error: err.message,
+          stack: err.stack,
+        },
+      },
+    );
   }
 
   private async handleCreate(data: NotificationJobData) {

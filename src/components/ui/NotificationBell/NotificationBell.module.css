@@ -23,7 +23,7 @@
   padding: 0 4px;
   border-radius: 8px;
   background: var(--error);
-  color: white;
+  color: var(--white);
   font-size: 10px;
   font-weight: 700;
   display: flex;

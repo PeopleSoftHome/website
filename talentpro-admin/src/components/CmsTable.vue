@@ -300,6 +300,6 @@ defineExpose({ setParams, params, fetch: crud.fetch, refresh: crud.refresh });
   white-space: nowrap;
   font-family: monospace;
   font-size: 12px;
-  color: #606266;
+  color: var(--admin-text-regular);
 }
 </style>

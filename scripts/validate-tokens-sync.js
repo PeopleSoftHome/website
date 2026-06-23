@@ -21,7 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
 /* ── 1. 从 tokens/index.js 提取颜色 Token ── */
-const tokensPath = join(root, 'src', 'tokens', 'index.js');
+const tokensPath = join(root, 'src', 'tokens', 'index.ts');
 const tokensSrc = readFileSync(tokensPath, 'utf-8');
 
 const tokenMap = new Map();

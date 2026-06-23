@@ -1,5 +1,5 @@
 .section {
-  background: white;
+  background: var(--white);
 }
 
 .grid {

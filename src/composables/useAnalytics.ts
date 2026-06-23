@@ -51,16 +51,43 @@ function flushQueue() {
   } as Window['tp_analytics'];
 }
 
-// 批量上报到后端（防抖）
+const MAX_QUEUE_SIZE = 100;
+
+// 批量上报到后端（防抖 + 空闲调度 + 队列上限）
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
+function doFlush() {
+  if (typeof window === 'undefined') return;
+  const analytics = window.tp_analytics as AnalyticsQueue;
+  const queue = analytics?._queue || [];
+  if (queue.length === 0) return;
+  analytics._queue = [];
+  apiClient.post('/analytics/events', { events: queue }).catch(() => {});
+}
 function scheduleFlush() {
   if (flushTimer) clearTimeout(flushTimer);
   flushTimer = setTimeout(() => {
-    const queue = (window.tp_analytics as AnalyticsQueue)?._queue || [];
-    if (queue.length === 0) return;
-    (window.tp_analytics as AnalyticsQueue)._queue = [];
-    apiClient.post('/analytics/events', { events: queue }).catch(() => {});
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      window.requestIdleCallback(doFlush, { timeout: 3000 });
+    } else {
+      doFlush();
+    }
   }, 5000);
+}
+
+function enqueue(payload: AnalyticsPayload) {
+  if (typeof window === 'undefined') return;
+  const analytics = window.tp_analytics as AnalyticsQueue;
+  if (!analytics._queue) analytics._queue = [];
+  (analytics?.push)?.(payload);
+  // 兼容外部 push 被 mock/no-op 的场景：确保队列中至少包含当前事件。
+  const last = analytics._queue[analytics._queue.length - 1];
+  if (last !== payload) {
+    analytics._queue.push(payload);
+  }
+  if (analytics._queue.length > MAX_QUEUE_SIZE) {
+    analytics._queue.shift();
+  }
+  scheduleFlush();
 }
 
 export function useAnalytics() {
@@ -73,13 +100,7 @@ export function useAnalytics() {
       properties: { ...props, ts: Date.now(), url: location.href },
       sessionId: getSessionId(),
     };
-    if (typeof window !== 'undefined') {
-      (window.tp_analytics as AnalyticsQueue)?.push?.(payload);
-      const analytics = window.tp_analytics as AnalyticsQueue;
-      if (!analytics._queue) analytics._queue = [];
-      analytics._queue.push(payload);
-      scheduleFlush();
-    }
+    enqueue(payload);
   };
 
   const refreshConsent = () => {

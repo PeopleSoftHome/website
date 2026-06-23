@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { randomUUID } from 'crypto';
 import { TokenType } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
@@ -14,7 +15,8 @@ export class AuthTokenService {
   ) {}
 
   async generateTokens(userId: string, email: string, workspaceId?: string | null) {
-    const payload = { sub: userId, email, workspaceId };
+    // 添加唯一 jti，避免同一秒内重复登录产生相同 token 导致唯一索引冲突
+    const payload = { sub: userId, email, workspaceId, jti: randomUUID() };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION', '15m'),

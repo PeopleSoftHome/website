@@ -1,8 +1,8 @@
 # TalentPro HR Portal — 设计系统文档
 
-> **版本**：v1.0.0 | **负责角色**：前端设计师 Agent | **状态**：✅ 完成，待 PO 确认
-> **最后更新**：2026-03-15
-> **来源基线**：`TalentPro_PRD_v1_0_0.md §3` + `TalentPro_demo_v1_2_0.html`（CSS 变量提炼）
+> **版本**：v4.2.0 | **负责角色**：前端设计师 Agent | **状态**：✅ 已对齐当前实现
+> **最后更新**：2026-06-19
+> **来源基线**：`src/tokens/index.ts` + `src/styles/global.css`（唯一真相来源）
 
 ---
 
@@ -75,6 +75,32 @@
 | `--grad-ai` | `linear-gradient(135deg, #1A0533 0%, #2D1B69 50%, #1B4FA8 100%)` | AI 专区背景 |
 | `--grad-cta` | `linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%)` | 底部 CTA 通栏 |
 | `--grad-text` | `linear-gradient(135deg, #60A5FA, #A78BFA)` | Logo 渐变字、Hero 关键词渐变 |
+| `--grad-primary-light` | `linear-gradient(135deg, #1B5FEB 0%, #818CF8 100%)` | 轻量渐变头像 / 指标卡 |
+| `--grad-warning` | `linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)` | 警告态渐变 |
+| `--grad-error` | `linear-gradient(135deg, #EF4444 0%, #F87171 100%)` | 错误态渐变 |
+| `--grad-success` | `linear-gradient(135deg, #22C55E 0%, #4ADE80 100%)` | 成功态渐变 |
+
+### 1.4 扩展 Token
+
+| Token | 值 | 用途 |
+|-------|------|------|
+| `--white` | `#ffffff` | 纯白文字 / 背景 |
+| `--black` | `#000000` | 纯黑遮罩 / 渐变端点 |
+| `--video-bg` | `#000` | 视频播放器背景 |
+| `--tag-blue-bg` | `#EFF6FF` | 蓝色 Tag 背景 |
+| `--tag-blue-text` | `#3B82F6` | 蓝色 Tag 文字 |
+| `--status-pending-bg` / `--status-pending-text` | `#fff7e6` / `#fa8c16` | 待处理状态 |
+| `--status-completed-bg` / `--status-completed-text` | `#f6ffed` / `#52c41a` | 已完成状态 |
+| `--status-refunded-bg` / `--status-refunded-text` | `#fff1f0` / `#f5222d` | 已退款状态 |
+
+Alpha Token 统一以 `*-alpha-{透明度}` 命名，如 `--primary-alpha-12`、`--black-alpha-12`、`--white-alpha-25`，完整列表见 `src/styles/global.css`。
+
+### 1.5 色值使用禁令
+
+- **CSS Modules 与组件 inline style 中禁止硬编码 `#fff` / `#000` / `#1B5FEB` 等色值**。
+- 必须使用 `var(--token)` 引用 `src/tokens/index.ts` 中定义的语义化变量。
+- 静态数据文件（如 `cases.ts`）中的渐变封面应使用 `src/utils/coverStyle.ts` 渲染，而不是内联 SVG data URI。
+- 新增 UI 前若找不到合适 Token，先在 `src/tokens/index.ts` 与 `global.css :root` 中成对新增，再使用变量。
 
 ---
 
@@ -289,10 +315,10 @@ Google Fonts 引入：`Noto Sans SC:wght@400;500;600;700;900`
 
 | Variant | 背景 | 文字 | 边框 | 用途 |
 |---------|------|------|------|------|
-| `primary` | `--primary` | white | — | 主 CTA |
-| `ghost` | `rgba(255,255,255,0.12)` | white | `rgba(255,255,255,0.3)` | 深色背景次级 |
+| `primary` | `--primary` | `--white` | — | 主 CTA |
+| `ghost` | `var(--white-alpha-12)` | `--white` | `var(--white-alpha-30)` | 深色背景次级 |
 | `outline` | transparent | `--primary` | `--primary` | 浅色背景次级 |
-| `white` | white | `--primary` | — | 蓝色背景上的 CTA |
+| `white` | `--white` | `--primary` | — | 蓝色背景上的 CTA |
 
 **尺寸规范：**
 
@@ -306,7 +332,7 @@ Google Fonts 引入：`Noto Sans SC:wght@400;500;600;700;900`
 
 **Hover 状态：**
 - `primary`：`background: --primary-dark`，`translateY(-1px)`，`box-shadow: 0 4px 12px --primary-glow`
-- `ghost`：`background: rgba(255,255,255,0.2)`
+- `ghost`：`background: var(--white-alpha-20)`
 - `outline`：`background: --primary-light`
 
 ### 7.2 Tag / SectionTag 组件
@@ -331,7 +357,7 @@ dark variant（深色区块，AI 专区）：
 ```
 HOT Badge：
   background: --error (#EF4444)
-  color: white
+  color: var(--white)
   font-size: 11px, font-weight: 700
   padding: 2px 8px
   border-radius: --radius-pill
@@ -350,7 +376,7 @@ HOT Badge：
   border: 1px solid --gray-200
   border-radius: --radius-md
   padding: 20px
-  background: white
+  background: var(--white)
   transition: all 300ms --ease-out
 
 图标区：
@@ -374,13 +400,13 @@ hover 态：
 
 ```
 容器：
-  background: rgba(255,255,255,0.07)
+  background: var(--white-alpha-6)
   backdrop-filter: blur(12px)
-  border: 1px solid rgba(255,255,255,0.12)
+  border: 1px solid var(--white-alpha-12)
   border-radius: --radius-lg
 
 hover 态：
-  border-color: rgba(124,58,237,0.6)
+  border-color: rgba(124, 58, 237, 0.6)
   transform: translateY(-4px)
 
 HOT 徽章：绝对定位右上角
@@ -396,8 +422,8 @@ H2 下间距：margin-bottom: 12px
 Subtitle：max-width: 560px, margin: 0 auto, color: --gray-600
 
 dark variant（深色 Section）：
-  H2: color: white
-  Subtitle: color: rgba(255,255,255,0.6)
+  H2: color: var(--white)
+  Subtitle: color: var(--text-on-dark-secondary)
 ```
 
 ### 7.7 TabNav 组件
@@ -407,14 +433,14 @@ dark variant（深色 Section）：
 ```
 未激活：
   border: 1px solid --gray-200
-  background: white
+  background: var(--white)
   color: --gray-700
   border-radius: --radius-pill
   padding: 8px 20px
 
 激活：
   background: --primary
-  color: white
+  color: var(--white)
   border-color: --primary
 ```
 
@@ -429,7 +455,7 @@ dark variant（深色 Section）：
 
 ```
 遮罩：
-  background: rgba(0,0,0,0.55)
+  background: var(--black-alpha-50)
   backdrop-filter: blur(4px)
 
 弹窗容器：
@@ -499,7 +525,7 @@ dark variant（深色 Section）：
 
 | 要求 | 实现方式 |
 |------|---------|
-| 颜色对比度 | 主色 `#1B5FEB` on white：WCAG AA ✓（4.7:1）|
+| 颜色对比度 | 主色 `#1B5FEB` on `#ffffff`：WCAG AA ✓（4.7:1）|
 | 焦点可见 | 所有交互元素有 `:focus-visible` outline |
 | 键盘导航 | Tab 可遍历导航链接、按钮、表单；ESC 关闭弹窗 |
 | 语义 HTML | `<nav>`, `<main>`, `<section>`, `<footer>`, `<button>` 正确使用 |
@@ -508,13 +534,13 @@ dark variant（深色 Section）：
 
 ---
 
-## 10. Design Tokens JS 文件
+## 10. Design Tokens TS 文件
 
-> 对应文件：`src/tokens/index.js`
+> 对应文件：`src/tokens/index.ts`
 > **这是唯一真相来源**，`global.css :root` 中的 CSS 变量必须与本文件保持同步
 
-```js
-// src/tokens/index.js
+```ts
+// src/tokens/index.ts
 
 export const colors = {
   // 主色
@@ -534,8 +560,10 @@ export const colors = {
   gray200: '#E2E8F0',
   gray300: '#CBD5E1',
   gray400: '#94A3B8',
+  gray500: '#6B7280',
   gray600: '#475569',
   gray700: '#334155',
+  gray800: '#1E293B',
   gray900: '#0F172A',
 
   // 功能色
@@ -546,6 +574,11 @@ export const colors = {
   warning:     '#D97706',
   orange:      '#EA580C',
   greenText:   '#16A34A',
+
+  // 黑白与状态
+  white: '#ffffff',
+  black: '#000000',
+  videoBg: '#000',
 };
 
 export const gradients = {
@@ -553,6 +586,10 @@ export const gradients = {
   ai:      'linear-gradient(135deg, #1A0533 0%, #2D1B69 50%, #1B4FA8 100%)',
   cta:     'linear-gradient(90deg, #1B5FEB 0%, #0D3BB8 100%)',
   text:    'linear-gradient(135deg, #60A5FA, #A78BFA)',
+  primaryLight: 'linear-gradient(135deg, #1B5FEB 0%, #818CF8 100%)',
+  warning: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+  error:   'linear-gradient(135deg, #EF4444 0%, #F87171 100%)',
+  success: 'linear-gradient(135deg, #22C55E 0%, #4ADE80 100%)',
 };
 
 export const radii = {

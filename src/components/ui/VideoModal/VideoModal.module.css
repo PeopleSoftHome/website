@@ -53,7 +53,7 @@
 }
 
 .closeBtn:hover {
-  color: white;
+  color: var(--white);
   transform: rotate(90deg);
   background: var(--border-on-dark-subtle);
 }

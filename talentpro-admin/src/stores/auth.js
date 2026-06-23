@@ -62,6 +62,17 @@ export const useAuthStore = defineStore('auth', () => {
     return res;
   };
 
+  const devLogin = async () => {
+    const res = await client.post('/auth/dev-login', {});
+    const data = res.data || res;
+    token.value = data.accessToken;
+    refreshToken.value = data.refreshToken;
+    localStorage.setItem('tp_admin_token', token.value);
+    localStorage.setItem('tp_admin_refresh_token', refreshToken.value);
+    await fetchProfile();
+    return res;
+  };
+
   const fetchProfile = async () => {
     try {
       const res = await client.get('/auth/me');
@@ -84,5 +95,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('tp_admin_refresh_token');
   };
 
-  return { token, refreshToken, user, isLoggedIn, role, permissions, hasPermission, hasAnyPermission, hasAllPermissions, setToken, setRefreshToken, login, logout, fetchProfile };
+  return { token, refreshToken, user, isLoggedIn, role, permissions, hasPermission, hasAnyPermission, hasAllPermissions, setToken, setRefreshToken, login, devLogin, logout, fetchProfile };
 });

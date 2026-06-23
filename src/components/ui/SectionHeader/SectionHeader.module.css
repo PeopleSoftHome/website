@@ -22,5 +22,5 @@
 .light .subtitle { color: var(--gray-600); }
 
 /* ── dark variant ── */
-.dark .title    { color: white; }
+.dark .title    { color: var(--white); }
 .dark .subtitle { color: var(--text-on-dark-secondary); }

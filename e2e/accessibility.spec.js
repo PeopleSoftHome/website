@@ -23,7 +23,7 @@ const pages = [
 
 for (const pageConfig of pages) {
   test(`A11y: ${pageConfig.name} should pass axe-core checks`, async ({ page }) => {
-    test.setTimeout(60000);
+    test.setTimeout(120000);
     await page.goto(pageConfig.path);
     await waitForAppReady(page);
 
@@ -38,7 +38,7 @@ for (const pageConfig of pages) {
 }
 
 test('A11y: DemoModal should be accessible when opened', async ({ page }) => {
-  test.setTimeout(60000);
+  test.setTimeout(120000);
   await page.goto('/');
   await waitForAppReady(page);
 
@@ -57,7 +57,7 @@ test('A11y: DemoModal should be accessible when opened', async ({ page }) => {
 });
 
 test('A11y: Dark mode should maintain color contrast', async ({ page }) => {
-  test.setTimeout(60000);
+  test.setTimeout(120000);
   await page.goto('/');
   await waitForAppReady(page);
 

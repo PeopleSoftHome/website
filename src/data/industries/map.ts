@@ -1,12 +1,14 @@
-import { INDUSTRY_TABS } from './tabs.js';
+import { INDUSTRY_TABS } from './list.js';
+import { INDUSTRY_DETAILS } from './detail.js';
 
 /**
  * 行业 slug → 行业详情 快速查找表
+ * 由 lightweight 列表数据与 heavy 详情数据合并而成，保持旧消费者兼容。
  */
-export const INDUSTRY_MAP: Record<string, typeof INDUSTRY_TABS[number]> = (() => {
-  const map: Record<string, typeof INDUSTRY_TABS[number]> = {};
+export const INDUSTRY_MAP: Record<string, any> = (() => {
+  const map: Record<string, any> = {};
   INDUSTRY_TABS.forEach((ind) => {
-    map[ind.slug] = ind;
+    map[ind.slug] = { ...ind, ...(INDUSTRY_DETAILS as Record<string, any>)[ind.slug] };
   });
   return map;
 })();

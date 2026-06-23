@@ -3,7 +3,7 @@
     <h2 style="margin-bottom: 20px">客户案例管理</h2>
     <el-card shadow="hover">
       <CmsTable
-        api-url="/case-studies"
+        api-url="/cms/content/case-studies"
         :columns="columns"
         :form-fields="formFields"
         ai-assist="case-study"
@@ -42,6 +42,9 @@ const formFields = [
   { prop: 'industry', label: '行业', type: 'input' },
   { prop: 'companyName', label: '客户公司', type: 'input' },
   { prop: 'excerpt', label: '摘要', type: 'textarea', rows: 3 },
+  { prop: 'challenge', label: '客户挑战', type: 'textarea', rows: 4 },
+  { prop: 'solution', label: '解决方案', type: 'textarea', rows: 4 },
+  { prop: 'results', label: '项目成果', type: 'textarea', rows: 4 },
   { prop: 'status', label: '状态', type: 'input' },
   { prop: 'featured', label: '精选', type: 'switch' },
   { prop: 'sortOrder', label: '排序', type: 'number' },

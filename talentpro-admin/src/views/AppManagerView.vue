@@ -39,7 +39,7 @@
           </el-tag>
         </template>
         <template #column-ratingAvg="{ row }">
-          <span style="color: #f59e0b; font-weight: 600">★ {{ row.ratingAvg || '-' }}</span>
+          <span style="color: var(--admin-color-warning); font-weight: 600">★ {{ row.ratingAvg || '-' }}</span>
         </template>
         <template #actions="{ row }">
           <el-button link type="primary" @click="openStatusDialog(row)">审核</el-button>

@@ -14,6 +14,12 @@ const HEADER_HREF_TO_ID: Record<string, string> = {
   '/resources': 'resources',
   '/about': 'about',
   '/ai-family': 'ai-family',
+  '#products': 'products',
+  '#solutions': 'solutions',
+  '#cases': 'cases',
+  '#resources': 'resources',
+  '#about': 'about',
+  '#ai-family': 'ai-family',
 };
 
 interface CmsNavChild {

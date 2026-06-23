@@ -13,7 +13,7 @@
             <el-tag v-for="perm in row.permissions" :key="perm.id" size="small" style="margin-right:6px;margin-bottom:4px">
               {{ perm.resource }}:{{ perm.action }}
             </el-tag>
-            <span v-if="!row.permissions?.length" style="color:#999">无权限</span>
+            <span v-if="!row.permissions?.length" style="color:var(--admin-text-secondary)">无权限</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">

@@ -177,6 +177,79 @@ export class AuthUserService {
     };
   }
 
+  /**
+   * 开发环境一键登录：按邮箱查找用户，未指定邮箱则取第一个活跃用户；
+   * 如果数据库为空，自动创建一个 dev 用户和默认工作空间。
+   */
+  async devLogin(email?: string, roleName?: string) {
+    let user = email
+      ? await this.prisma.user.findFirst({
+          where: { email },
+          include: { role: true, workspace: true },
+        })
+      : await this.prisma.user.findFirst({
+          where: { status: 'ACTIVE' },
+          orderBy: { createdAt: 'asc' },
+          include: { role: true, workspace: true },
+        });
+
+    if (!user) {
+      const role = await this.prisma.role.findUnique({
+        where: { name: roleName || 'USER' },
+      });
+      if (!role) {
+        throw new BadRequestException('默认角色不存在，请先运行 seed');
+      }
+
+      const devEmail = email || 'dev@talentpro.com';
+      const hashedPassword = await bcrypt.hash(randomUUID(), 12);
+      const baseName = 'dev-workspace';
+      const slug = await this.generateUniqueSlug(baseName);
+
+      user = await this.prisma.$transaction(async (tx) => {
+        const created = await tx.user.create({
+          data: {
+            email: devEmail,
+            password: hashedPassword,
+            name: 'Dev User',
+            roleId: role.id,
+            status: 'ACTIVE',
+          },
+          include: { role: true },
+        });
+
+        const workspace = await tx.workspace.create({
+          data: {
+            name: baseName,
+            slug,
+            ownerId: created.id,
+          },
+        });
+
+        return tx.user.update({
+          where: { id: created.id },
+          data: {
+            workspaceId: workspace.id,
+            workspaceRole: 'OWNER',
+          },
+          include: { role: true, workspace: true },
+        });
+      });
+    }
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role.name,
+        workspaceId: user.workspaceId,
+        workspaceRole: user.workspaceRole,
+        workspaceName: user.workspace?.name,
+      },
+    };
+  }
+
   async getMe(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },

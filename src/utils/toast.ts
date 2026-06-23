@@ -7,9 +7,9 @@ export function showToast(message: string, type: string = 'info', duration = 300
   const el = document.createElement('div');
   const colors: Record<string, string> = {
     info: 'var(--primary)',
-    success: '#10b981',
-    error: '#ef4444',
-    warning: '#f59e0b',
+    success: 'var(--success)',
+    error: 'var(--error)',
+    warning: 'var(--warning)',
   };
   el.style.cssText = `
     position: fixed;
@@ -17,7 +17,7 @@ export function showToast(message: string, type: string = 'info', duration = 300
     left: 50%;
     transform: translateX(-50%) translateY(-20px);
     background: ${colors[type] || colors.info};
-    color: #fff;
+    color: var(--white);
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 14px;
@@ -26,7 +26,7 @@ export function showToast(message: string, type: string = 'info', duration = 300
     opacity: 0;
     transition: all 0.3s ease;
     pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px var(--black-alpha-12);
     max-width: 90vw;
     word-break: break-word;
   `;

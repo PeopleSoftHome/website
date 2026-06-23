@@ -1,5 +1,5 @@
 .section {
-  background: white;
+  background: var(--white);
   padding: 20px 0;
   border-top: 1px solid var(--gray-200);
   border-bottom: 1px solid var(--gray-200);
@@ -22,15 +22,15 @@
   mask-image: linear-gradient(
     to right,
     transparent 0%,
-    black 8%,
-    black 92%,
+    var(--black) 8%,
+    var(--black) 92%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
-    black 8%,
-    black 92%,
+    var(--black) 8%,
+    var(--black) 92%,
     transparent 100%
   );
 }

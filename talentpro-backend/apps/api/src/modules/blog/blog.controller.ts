@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { BlogService } from './blog.service';
-import { PostStatus, CommentStatus } from '@prisma/client';
+import { PostStatus } from '@prisma/client';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { UserContext } from '@/common/types';
-import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { CreateBlogCategoryDto } from './dto/create-blog-category.dto';
@@ -17,6 +16,7 @@ import { CreateBlogTagDto } from './dto/create-blog-tag.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ModerateCommentDto } from './dto/moderate-comment.dto';
 import { BatchModerateCommentsDto } from './dto/batch-moderate-comments.dto';
+import { FindAdminCommentsDto } from './dto/find-admin-comments.dto';
 
 @ApiTags('博客管理')
 @Controller('blogs')
@@ -205,16 +205,12 @@ export class BlogController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Admin 评论列表（支持按状态过滤）' })
-  findCommentsForAdmin(
-    @Query() pagination: PaginationDto,
-    @Query('status') status?: CommentStatus,
-    @Query('entityType') entityType?: string,
-  ) {
+  findCommentsForAdmin(@Query() query: FindAdminCommentsDto) {
     return this.blogService.findCommentsForAdmin({
-      status,
-      entityType,
-      page: pagination.page,
-      pageSize: pagination.pageSize,
+      status: query.status,
+      entityType: query.entityType,
+      page: query.page,
+      pageSize: query.pageSize,
     });
   }
 

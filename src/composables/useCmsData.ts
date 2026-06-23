@@ -104,9 +104,15 @@ export function useCmsData(
   };
 
   onMounted(() => {
-    // 同时预加载 fallback 数据和 API 数据
-    if (options.fallbackKey) loadFallback();
-    if (options.immediate !== false) load();
+    if (options.immediate === false) {
+      if (options.fallbackKey) loadFallback();
+      return;
+    }
+    // API 优先：先请求 CMS，若返回为空/失败再加载本地 fallback，
+    // 避免每次同时下载/解析 fallback 静态数据块，降低首屏网络开销。
+    load().finally(() => {
+      if (options.fallbackKey && items.value.length === 0) loadFallback();
+    });
   });
 
   const displayItems = computed(() =>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, ForbiddenException } from '@nestjs/common';
 import { WorkspaceStatus } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '@/common/prisma/prisma.service';
@@ -13,7 +13,8 @@ export class WorkspaceService {
       include: { workspace: true },
     });
     if (!user?.workspace) {
-      throw new NotFoundException('您尚未加入任何工作空间');
+      // Admin 工作空间页面把「未加入」视为空状态，返回 200 避免 404 报错
+      return { workspace: null, role: user?.workspaceRole || null };
     }
     return { workspace: user.workspace, role: user.workspaceRole };
   }

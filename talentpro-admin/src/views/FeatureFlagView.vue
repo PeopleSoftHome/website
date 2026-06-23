@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 style="margin-top: 0">功能开关</h2>
-    <p style="color: #666; margin-bottom: 16px">
+    <p style="color: var(--admin-text-secondary); margin-bottom: 16px">
       管理灰度发布与模块启停。开关以 JSON 对象形式存储在 <code>featureFlags</code> 设置项中。
     </p>
 

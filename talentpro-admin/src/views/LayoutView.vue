@@ -3,10 +3,10 @@
     <!-- 桌面端侧边栏 -->
     <el-aside width="220px" class="aside desktop-aside">
       <div class="logo">
-        <el-icon :size="28" color="#1B5FEB"><Management /></el-icon>
+        <el-icon :size="28" color="var(--admin-color-primary)"><Management /></el-icon>
         <span>TalentPro</span>
       </div>
-      <el-menu :default-active="$route.path" router class="menu" background-color="#001529" text-color="#bfcbd9" active-text-color="#fff">
+      <el-menu :default-active="$route.path" router class="menu" background-color="var(--admin-sidebar-bg)" text-color="var(--admin-sidebar-text)" active-text-color="var(--admin-white)">
         <template v-for="item in visibleMenu" :key="item.path || item.label">
           <el-sub-menu v-if="item.children" :index="item.label">
             <template #title>
@@ -73,10 +73,10 @@
     class="mobile-drawer"
   >
     <div class="logo">
-      <el-icon :size="28" color="#1B5FEB"><Management /></el-icon>
+      <el-icon :size="28" color="var(--admin-color-primary)"><Management /></el-icon>
       <span>TalentPro</span>
     </div>
-    <el-menu :default-active="$route.path" router class="menu" background-color="#001529" text-color="#bfcbd9" active-text-color="#fff" @select="drawerVisible = false">
+    <el-menu :default-active="$route.path" router class="menu" background-color="var(--admin-sidebar-bg)" text-color="var(--admin-sidebar-text)" active-text-color="var(--admin-white)" @select="drawerVisible = false">
       <template v-for="item in visibleMenu" :key="item.path || item.label">
         <el-sub-menu v-if="item.children" :index="item.label">
           <template #title>
@@ -173,25 +173,25 @@ const handleCommand = (cmd) => {
 
 <style scoped>
 .layout { height: 100vh; }
-.aside { background: #001529; }
+.aside { background: var(--admin-sidebar-bg); }
 .logo {
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #fff;
+  color: var(--admin-white);
   font-size: 18px;
   font-weight: 700;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid var(--admin-white-alpha-10);
 }
 .menu { border-right: none; }
 .header {
-  background: #fff;
+  background: var(--admin-white);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px var(--admin-black-alpha-8);
 }
 .header-left {
   display: flex;
@@ -211,7 +211,7 @@ const handleCommand = (cmd) => {
   font-size: 14px;
 }
 .main {
-  background: #f0f2f5;
+  background: var(--admin-bg-page);
   padding: 20px;
   overflow-x: auto;
 }
@@ -248,9 +248,9 @@ const handleCommand = (cmd) => {
 /* 移动端抽屉样式 */
 :deep(.mobile-drawer .el-drawer__body) {
   padding: 0;
-  background: #001529;
+  background: var(--admin-sidebar-bg);
 }
 :deep(.mobile-drawer .el-drawer__body .logo) {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid var(--admin-white-alpha-10);
 }
 </style>

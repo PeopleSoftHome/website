@@ -102,7 +102,9 @@ export default defineNuxtConfig({
   },
 
   // ── PWA ──
+  // 开发模式禁用 Service Worker，避免 SW 安装/更新与缓存清理带来的额外开销。
   pwa: {
+    disable: process.env.NODE_ENV !== 'production',
     registerType: 'autoUpdate',
     manifest: {
       name: 'TalentPro HR Portal',
@@ -152,6 +154,17 @@ export default defineNuxtConfig({
       sourcemap: process.env.SOURCE_MAP === 'true',
       chunkSizeWarningLimit: 500,
     },
+    optimizeDeps: {
+      include: [
+        'axios',
+        'vue',
+        'vue-router',
+        'pinia',
+        '@sentry/vue',
+        'dompurify',
+        'marked',
+      ],
+    },
   },
 
   // ── 开发服务器 ──
@@ -160,10 +173,10 @@ export default defineNuxtConfig({
   },
 
   // ── TypeScript ──
-  // Batch 10: typeCheck 已重新开启；tsconfig 继承 .nuxt/tsconfig.json 并保留 strict。
+  // 生产构建保留类型检查；开发模式关闭 typeCheck，避免 vue-tsc 拖慢 HMR 与启动。
   typescript: {
     strict: true,
-    typeCheck: true,
+    typeCheck: process.env.NODE_ENV === 'production',
   },
 
   // ── 应用配置 ──
@@ -176,6 +189,10 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案' },
+        {
+          'http-equiv': 'Content-Security-Policy',
+          content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 https://*.sentry.io; frame-src 'none'; object-src 'none'; base-uri 'self';",
+        },
       ],
       link: [
         { rel: 'icon', type: 'image/png', href: '/icon-192x192.png' },

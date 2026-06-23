@@ -7,7 +7,7 @@
         <div v-else-if="error && !caseStudy" :class="s.error">{{ error }}</div>
         <div v-else-if="caseStudy" :class="s.case">
           <div :class="s.hero" class="reveal">
-            <div :class="s.heroBg" :style="{ backgroundImage: `url(${caseStudy.coverImage})` }">
+            <div :class="s.heroBg" :style="coverStyle(caseStudy.coverImage)">
               <div :class="s.heroOverlay" />
               <div :class="s.heroContent">
                 <span :class="s.heroIndustry">{{ caseStudy.industry }}</span>
@@ -52,7 +52,7 @@
             <h3 :class="s.relatedTitle">{{ t('cases.title') }}</h3>
             <div :class="s.relatedGrid">
               <NuxtLink v-for="c in relatedCases" :key="c.slug" :to="`/cases/${c.slug}`" :class="s.relatedCard">
-                <img :src="c.coverImage" :alt="c.clientName" :class="s.relatedCover" />
+                <div :class="s.relatedCover" :style="coverStyle(c.coverImage)" />
                 <div :class="s.relatedInfo"><span :class="s.relatedClient">{{ c.clientName }}</span><p :class="s.relatedTitle2">{{ c.title }}</p></div>
               </NuxtLink>
             </div>
@@ -74,6 +74,7 @@ import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';
 import { caseApi } from '@/api/case.js';
 import { CASES } from '@/data/cases.js';
 import { PRODUCT_MAP } from '@/data/products.js';
+import { coverStyle } from '@/utils/coverStyle.js';
 import s from './[slug].vue.module.css';
 
 interface ProductMapItem {

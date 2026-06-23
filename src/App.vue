@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
+import { ref, onMounted, onUnmounted, defineAsyncComponent, provide } from 'vue';
 import { useThemeStore } from '@/stores/theme.pinia.js';
 import { useModalStore } from '@/stores/modal.pinia.js';
 import { useSearchStore } from '@/stores/search.pinia.js';
@@ -43,6 +43,7 @@ import { useCmsTranslations } from '@/composables/useCmsTranslations.js';
 import { useSiteConfig } from '@/composables/useSiteConfig.js';
 import { useGlobalErrorReporter } from '@/composables/useGlobalErrorReporter.js';
 import { usePageMetaSync } from '@/composables/usePageMetaSync.js';
+import { usePrefetchModals } from '@/composables/usePrefetchModals.js';
 import { useLifecycleAnalytics } from '@/composables/useLifecycleAnalytics.js';
 import { useGlobalRevealObserver } from '@/composables/useGlobalRevealObserver.js';
 
@@ -83,7 +84,9 @@ const onAuthRefresh = () => {
 useCmsTranslations();
 useAbTest();
 useRum();
-useGlobalErrorReporter();
+const { reportError } = useGlobalErrorReporter();
+provide('reportError', reportError);
+usePrefetchModals();
 
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();
@@ -129,7 +132,7 @@ onUnmounted(() => {
   top: -40px;
   left: 0;
   background: var(--primary);
-  color: white;
+  color: var(--white);
   padding: 8px 16px;
   z-index: 10000;
   font-size: 14px;

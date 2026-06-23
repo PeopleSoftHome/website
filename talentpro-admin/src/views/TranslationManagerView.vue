@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 style="margin-top: 0">翻译管理</h2>
-    <p style="color: #666; margin-bottom: 16px">
+    <p style="color: var(--admin-text-secondary); margin-bottom: 16px">
       管理 CMS 多语言文案覆盖层。同一 key 在后端会覆盖前端 i18n JSON 的默认值。
     </p>
 

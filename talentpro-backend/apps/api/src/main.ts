@@ -34,13 +34,14 @@ async function bootstrap() {
   // Cookie parser（支持 signed cookies）
   app.use(cookieParser(configService.get<string>('JWT_SECRET')));
 
-  // Helmet 安全响应头（显式 CSP，生产环境可进一步收紧）
+  // Helmet 安全响应头（显式 CSP，生产环境收紧 script-src）
+  const isProduction = configService.get<string>('app.env') === 'production';
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          scriptSrc: isProduction ? ["'self'"] : ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'blob:'],
           fontSrc: ["'self'"],
@@ -49,6 +50,7 @@ async function bootstrap() {
           frameAncestors: ["'none'"],
           baseUri: ["'self'"],
           formAction: ["'self'"],
+          ...(isProduction ? { upgradeInsecureRequests: [] } : {}),
         },
       },
       crossOriginEmbedderPolicy: false,

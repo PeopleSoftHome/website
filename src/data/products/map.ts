@@ -1,16 +1,15 @@
-import { PRODUCT_TABS } from './tabs.js';
+import { PRODUCT_TABS } from './list.js';
+import { PRODUCT_DETAILS } from './detail.js';
 
 /**
  * 产品 slug → 产品详情 快速查找表
+ * 由 lightweight 列表数据与 heavy 详情数据合并而成，保持旧消费者兼容。
  */
-type ProductTab = typeof PRODUCT_TABS[number];
-type ProductItem = ProductTab['products'][number];
-
-export const PRODUCT_MAP: Record<string, ProductItem & { tabId: string; tabLabel: string }> = (() => {
-  const map: Record<string, ProductItem & { tabId: string; tabLabel: string }> = {};
+export const PRODUCT_MAP: Record<string, any> = (() => {
+  const map: Record<string, any> = {};
   PRODUCT_TABS.forEach((tab) => {
     tab.products.forEach((p) => {
-      map[p.slug] = { ...p, tabId: tab.id, tabLabel: tab.label };
+      map[p.slug] = { ...p, tabId: tab.id, tabLabel: tab.label, ...(PRODUCT_DETAILS as Record<string, any>)[p.slug] };
     });
   });
   return map;

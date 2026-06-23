@@ -64,7 +64,7 @@ const { t } = useI18n();
   padding: 0 32px;
   border-radius: var(--radius-pill);
   background: var(--primary);
-  color: #fff;
+  color: var(--white);
   font-size: 15px;
   font-weight: 600;
   transition: background 0.2s, transform 0.2s;

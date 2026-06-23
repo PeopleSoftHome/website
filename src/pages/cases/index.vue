@@ -25,7 +25,7 @@
           <NuxtLink :to="`/cases/${featuredCase.slug}`" :class="s.featuredCard">
             <div
               :class="s.featuredBg"
-              :style="{ backgroundImage: `url(${featuredCase.coverImage})` }"
+              :style="coverStyle(featuredCase.coverImage)"
             />
             <div :class="s.featuredOverlay" />
             <div :class="s.featuredContent">
@@ -53,11 +53,10 @@
             :class="[s.card, s.cardEnter]"
             :style="{ '--stagger': idx }"
           >
-            <img
+            <div
               v-if="c.coverImage"
-              :src="c.coverImage"
-              :alt="c.clientName"
               :class="s.cardCover"
+              :style="coverStyle(c.coverImage)"
             />
             <div :class="s.cardBody">
               <div :class="s.cardHeader">
@@ -97,6 +96,7 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { caseApi } from '@/api/case.js';
 import { CASES, CASE_INDUSTRIES } from '@/data/cases.js';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { coverStyle } from '@/utils/coverStyle.js';
 import s from './index.vue.module.css';
 
 const { t } = useI18n();

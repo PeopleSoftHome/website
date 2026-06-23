@@ -62,6 +62,11 @@ export class CmsController {
     resourceCategory: 'resourceCategory',
     resources: 'resource',
     resource: 'resource',
+    'case-studies': 'caseStudy',
+    'case-study': 'caseStudy',
+    caseStudy: 'caseStudy',
+    jobs: 'job',
+    job: 'job',
   };
 
   private resolveContentType(type: string): string {

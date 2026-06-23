@@ -37,7 +37,7 @@
 .title {
   font-size: clamp(28px, 3.5vw, 44px);
   font-weight: 700;
-  color: white;
+  color: var(--white);
   margin-bottom: 10px;
   line-height: 1.25;
 }
@@ -85,7 +85,7 @@
 .bannerTitle {
   font-size: 17px;
   font-weight: 700;
-  color: white;
+  color: var(--white);
   margin-bottom: 6px;
   line-height: 1.4;
 }
@@ -97,7 +97,7 @@
 
 .bannerCta {
   flex-shrink: 0;
-  background: white;
+  background: var(--white);
   color: var(--primary);
   font-size: 13px;
   font-weight: 600;

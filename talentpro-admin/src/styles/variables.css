@@ -1,0 +1,48 @@
+/**
+ * Admin 后台语义化 Design Tokens
+ * 仅用于 talentpro-admin，避免在 Vue template/style 中硬编码色值。
+ */
+
+:root {
+  /* 主色（与 Element Plus --el-color-primary 保持一致） */
+  --admin-color-primary: var(--el-color-primary, #1b5feb);
+  --admin-color-primary-light-1: var(--el-color-primary-light-9, #ecf5ff);
+  --admin-color-primary-light-2: var(--el-color-primary-light-8, #d9ecff);
+
+  /* 功能色 */
+  --admin-color-success: #10b981;
+  --admin-color-warning: #f59e0b;
+  --admin-color-danger: #f56c6c;
+  --admin-color-info: #909399;
+
+  /* 文字 */
+  --admin-text-primary: #303133;
+  --admin-text-regular: #606266;
+  --admin-text-secondary: #909399;
+  --admin-text-placeholder: #a8abb2;
+  --admin-text-disabled: #c0c4cc;
+
+  /* 边框 */
+  --admin-border-base: #dcdfe6;
+  --admin-border-light: #e4e7ed;
+  --admin-border-lighter: #ebeef5;
+
+  /* 背景 */
+  --admin-bg-base: #f5f7fa;
+  --admin-bg-page: #f0f2f5;
+  --admin-bg-overlay: #fafafa;
+
+  /* 纯白 / 纯黑 */
+  --admin-white: #ffffff;
+  --admin-black: #000000;
+
+  /* 侧边栏深色主题 */
+  --admin-sidebar-bg: #001529;
+  --admin-sidebar-text: #bfcbd9;
+
+  /* 遮罩与 Alpha */
+  --admin-mask: rgba(0, 0, 0, 0.5);
+  --admin-black-alpha-8: rgba(0, 0, 0, 0.08);
+  --admin-black-alpha-10: rgba(0, 0, 0, 0.1);
+  --admin-white-alpha-10: rgba(255, 255, 255, 0.1);
+}

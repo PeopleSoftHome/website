@@ -3,7 +3,7 @@
     <h2 style="margin-bottom: 20px">招聘管理</h2>
     <el-card shadow="hover">
       <CmsTable
-        api-url="/jobs"
+        api-url="/cms/content/jobs"
         :columns="columns"
         :form-fields="formFields"
         ai-assist="job"
@@ -52,7 +52,9 @@ const formFields = [
   { prop: 'type', label: '类型', type: 'input' },
   { prop: 'experience', label: '经验要求', type: 'input' },
   { prop: 'description', label: '职位描述', type: 'textarea', rows: 3 },
+  { prop: 'responsibilities', label: '岗位职责', type: 'textarea', rows: 3 },
   { prop: 'requirements', label: '任职要求', type: 'textarea', rows: 3 },
+  { prop: 'benefits', label: '福利待遇', type: 'textarea', rows: 3 },
   { prop: 'status', label: '状态', type: 'input' },
   { prop: 'sortOrder', label: '排序', type: 'number' },
 ]

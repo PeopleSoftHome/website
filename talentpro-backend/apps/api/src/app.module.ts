@@ -133,18 +133,19 @@ import { IpFilterGuard } from './common/guards/ip-filter.guard';
           {
             name: 'default',
             ttl: config.get<number>('THROTTLE_TTL', 60000),
-            limit: config.get<number>('THROTTLE_LIMIT', 500),
+            limit: config.get<number>('THROTTLE_LIMIT', 100),
           },
           {
             name: 'strict',
             ttl: config.get<number>('THROTTLE_STRICT_TTL', 60000),
-            limit: config.get<number>('THROTTLE_STRICT_LIMIT', 100),
+            limit: config.get<number>('THROTTLE_STRICT_LIMIT', 50),
           },
           {
             name: 'auth',
             ttl: config.get<number>('THROTTLE_AUTH_TTL', 60000),
-            // 全局 auth 兜底较宽松，具体认证端点由 @Throttle 单独收紧
-            limit: config.get<number>('THROTTLE_AUTH_LIMIT', 500),
+            // auth 全局兜底放宽：Admin 页面导航会触发大量 GET 请求，不能全局 10 次/分
+            // 登录/注册等敏感接口仍通过 @Throttle({ auth: ... }) 单独收紧
+            limit: config.get<number>('THROTTLE_AUTH_LIMIT', 10000),
           },
           {
             name: 'search',
@@ -154,7 +155,8 @@ import { IpFilterGuard } from './common/guards/ip-filter.guard';
           {
             name: 'lead',
             ttl: config.get<number>('THROTTLE_LEAD_TTL', 3600000),
-            limit: config.get<number>('THROTTLE_LEAD_LIMIT', 5),
+            // lead 全局兜底放宽：仅 /demo-bookings POST 需要严格限流，已单独配置 @Throttle
+            limit: config.get<number>('THROTTLE_LEAD_LIMIT', 10000),
           },
         ],
       }),
@@ -175,8 +177,24 @@ import { IpFilterGuard } from './common/guards/ip-filter.guard';
     RedisModule,
     QueueModule,
     BullModule.registerQueue(
-      { name: 'notification' },
-      { name: 'search-index' },
+      {
+        name: 'notification',
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 2000 },
+          removeOnComplete: 100,
+          removeOnFail: 50,
+        },
+      },
+      {
+        name: 'search-index',
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 2000 },
+          removeOnComplete: 100,
+          removeOnFail: 50,
+        },
+      },
     ),
     MeilisearchModule,
     PrismaModule,

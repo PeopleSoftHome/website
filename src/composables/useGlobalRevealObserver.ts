@@ -46,7 +46,7 @@ export function useGlobalRevealObserver({ analyticsStore }: UseGlobalRevealObser
     let scanTimer: ReturnType<typeof setTimeout> | undefined;
     const debouncedScan = () => {
       clearTimeout(scanTimer);
-      scanTimer = setTimeout(scan, 150);
+      scanTimer = setTimeout(scan, 250);
     };
 
     const mo = new MutationObserver(debouncedScan);
@@ -56,7 +56,7 @@ export function useGlobalRevealObserver({ analyticsStore }: UseGlobalRevealObser
     const router = useRouter();
     const stopAfterEach = router.afterEach(() => {
       clearTimeout(scanTimer);
-      scanTimer = setTimeout(scan, 100);
+      scanTimer = setTimeout(scan, 200);
     });
 
     onUnmounted(() => {

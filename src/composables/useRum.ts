@@ -74,6 +74,13 @@ interface UseRumOptions {
  * @param {boolean} options.reportAllChanges - 是否报告每次变化（默认 false，仅报告最终值）
  */
 export function useRum(options: UseRumOptions = {}) {
+  // RUM 仅在生产环境采集，避免开发模式产生额外网络开销与日志干扰。
+  const isProd = typeof window !== 'undefined'
+    && (import.meta.env?.PROD || process.env.NODE_ENV === 'production');
+  if (!isProd) {
+    return;
+  }
+
   const { reportAllChanges = false } = options;
 
   const opts = { reportAllChanges };

@@ -24,6 +24,26 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', '.nuxt'],
     setupFiles: ['./src/test/setup.js'],
     maxWorkers: 2,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      exclude: [
+        'node_modules',
+        'dist',
+        '.nuxt',
+        'src/test/**',
+        '**/*.test.js',
+        '**/*.module.css',
+      ],
+      thresholds: {
+        global: {
+          statements: 60,
+          branches: 40,
+          functions: 50,
+          lines: 65,
+        },
+      },
+    },
   },
   resolve: {
     alias: {

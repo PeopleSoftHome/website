@@ -83,7 +83,7 @@
             <div v-if="result.issues" style="margin-bottom: 12px">
               <strong>审核结果：</strong>
               <el-tag :type="result.moderated ? 'success' : 'warning'">{{ result.moderated ? '通过' : '需处理' }}</el-tag>
-              <div v-if="result.suggestion" style="margin-top: 8px; color: #666">{{ result.suggestion }}</div>
+              <div v-if="result.suggestion" style="margin-top: 8px; color: var(--admin-text-secondary)">{{ result.suggestion }}</div>
             </div>
           </div>
         </el-card>

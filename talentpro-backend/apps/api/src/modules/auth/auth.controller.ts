@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus, Headers, Res, Req, UnauthorizedException } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { Controller, Post, Body, Get, Patch, UseGuards, HttpCode, HttpStatus, Headers, Res, Req, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthTokenService } from './auth-token.service';
@@ -8,6 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { DevLoginDto } from './dto/dev-login.dto';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
@@ -19,6 +21,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private tokenService: AuthTokenService,
+    private configService: ConfigService,
   ) {}
 
   @Public()
@@ -37,6 +40,33 @@ export class AuthController {
   @ApiOperation({ summary: '用户登录' })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.login(dto);
+    this.tokenService.setAuthCookies(res, {
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+    return result;
+  }
+
+  /**
+   * 开发环境一键登录
+   * 仅在 APP_ENV=development 或 NODE_ENV=development 时可用，生产环境强制禁用。
+   */
+  @Public()
+  @SkipThrottle({ default: true, strict: true, auth: true, search: true, lead: true })
+  @Post('dev-login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: '开发环境一键登录（仅开发）' })
+  async devLogin(
+    @Body() dto: DevLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const appEnv = this.configService.get('APP_ENV');
+    const nodeEnv = this.configService.get('NODE_ENV');
+    if (appEnv !== 'development' && nodeEnv !== 'development') {
+      throw new ForbiddenException('开发登录仅在 development 环境可用');
+    }
+
+    const result = await this.authService.devLogin(dto.email, dto.roleName);
     this.tokenService.setAuthCookies(res, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,

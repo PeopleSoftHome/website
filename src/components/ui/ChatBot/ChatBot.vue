@@ -3,7 +3,7 @@
     <div ref="windowRef" :class="s.window">
       <div :class="s.header">
         <div :class="s.headerLeft">
-          <div :class="s.avatar"><Icon name="message-circle" :size="20" color="#fff" /></div>
+          <div :class="s.avatar"><Icon name="message-circle" :size="20" color="var(--white)" /></div>
           <div>
             <div :class="s.botName">{{ t('chatBot.botName') }}</div>
             <div :class="s.status">
@@ -20,7 +20,7 @@
 
       <div :class="s.messages" aria-live="polite" aria-atomic="false">
         <div v-for="msg in messages" :key="msg.id" :class="[s.msgRow, msg.from === 'bot' ? s.botRow : s.userRow]">
-          <span v-if="msg.from === 'bot'" :class="s.msgAvatar"><Icon name="message-circle" :size="16" color="#fff" /></span>
+          <span v-if="msg.from === 'bot'" :class="s.msgAvatar"><Icon name="message-circle" :size="16" color="var(--white)" /></span>
           <div :class="s.msgGroup">
             <div :class="[s.bubble, msg.from === 'bot' ? s.botBubble : s.userBubble]">
               <span v-html="formatMessage(msg.text)" />
@@ -33,7 +33,7 @@
         </div>
 
         <div v-if="isTyping" :class="s.typingRow" aria-hidden="true">
-          <span :class="s.typingAvatar"><Icon name="message-circle" :size="16" color="#fff" /></span>
+          <span :class="s.typingAvatar"><Icon name="message-circle" :size="16" color="var(--white)" /></span>
           <div :class="s.typingBubble"><span :class="s.dot" /><span :class="s.dot" /><span :class="s.dot" /></div>
         </div>
 

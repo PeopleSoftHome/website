@@ -80,7 +80,7 @@
               :type="item.type === 'call' ? 'primary' : 'info'"
             >
               <p style="margin:0;font-weight:500">{{ item.type }}</p>
-              <p style="margin:4px 0 0;color:#666;font-size:13px">{{ item.content }}</p>
+              <p style="margin:4px 0 0;color:var(--admin-text-secondary);font-size:13px">{{ item.content }}</p>
             </el-timeline-item>
           </el-timeline>
           <el-empty v-else description="暂无跟进记录" :image-size="80" />

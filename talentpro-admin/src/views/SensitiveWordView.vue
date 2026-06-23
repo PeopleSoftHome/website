@@ -64,7 +64,7 @@
             <div style="margin-bottom:8px">
               <span style="font-weight:600">标记标签：</span>
               <el-tag v-for="flag in testResult.flags" :key="flag" size="small" type="info" style="margin-right:4px">{{ flag }}</el-tag>
-              <span v-if="!testResult.flags.length" style="color:#888">无</span>
+              <span v-if="!testResult.flags.length" style="color:var(--admin-text-placeholder)">无</span>
             </div>
             <div>
               <span style="font-weight:600">自动审批：</span>

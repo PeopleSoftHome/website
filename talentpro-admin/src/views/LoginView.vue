@@ -2,7 +2,7 @@
   <div class="login-page">
     <el-card class="login-card" shadow="hover">
       <template #header>
-        <h2 style="margin:0;text-align:center;color:#1B5FEB">TalentPro 管理后台</h2>
+        <h2 style="margin:0;text-align:center;color:var(--admin-color-primary)">TalentPro 管理后台</h2>
       </template>
       <el-form :model="form" :rules="rules" ref="formRef" @keyup.enter="handleLogin">
         <el-form-item prop="email">
@@ -13,6 +13,11 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="handleLogin" style="width:100%">登录</el-button>
+        </el-form-item>
+        <el-form-item v-if="isDev">
+          <el-button :loading="devLoading" @click="handleDevLogin" style="width:100%">
+            ⚡ 开发环境一键登录
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -29,6 +34,8 @@ const router = useRouter();
 const auth = useAuthStore();
 const formRef = ref(null);
 const loading = ref(false);
+const devLoading = ref(false);
+const isDev = import.meta.env.DEV;
 
 const form = reactive({ email: '', password: '' });
 const rules = {
@@ -49,6 +56,19 @@ const handleLogin = async () => {
     loading.value = false;
   }
 };
+
+const handleDevLogin = async () => {
+  try {
+    devLoading.value = true;
+    await auth.devLogin();
+    ElMessage.success('开发登录成功');
+    router.push('/dashboard');
+  } catch (e) {
+    ElMessage.error(e.response?.data?.message || e.message || '开发登录失败');
+  } finally {
+    devLoading.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -57,7 +77,7 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  background: linear-gradient(135deg, var(--admin-bg-base) 0%, var(--admin-border-light) 100%);
 }
 .login-card {
   width: 400px;

@@ -14,7 +14,7 @@
         :form-fields="formFields"
       >
         <template #column-rating="{ row }">
-          <span style="color: #f59e0b; font-weight: 600">{{ '★'.repeat(row.rating) }}{{ '☆'.repeat(5 - row.rating) }}</span>
+          <span style="color: var(--admin-color-warning); font-weight: 600">{{ '★'.repeat(row.rating) }}{{ '☆'.repeat(5 - row.rating) }}</span>
         </template>
         <template #column-content="{ row }">
           <el-tooltip placement="top" :content="row.content">

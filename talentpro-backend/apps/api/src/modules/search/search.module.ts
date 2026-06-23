@@ -7,7 +7,17 @@ import { SearchPrismaService } from './search-prisma.service';
 import { SearchIndexService } from './search-index.service';
 
 @Module({
-  imports: [BullModule.registerQueue({ name: 'search-index' })],
+  imports: [
+    BullModule.registerQueue({
+      name: 'search-index',
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 2000 },
+        removeOnComplete: 100,
+        removeOnFail: 50,
+      },
+    }),
+  ],
   providers: [
     SearchService,
     SearchMeilisearchService,
