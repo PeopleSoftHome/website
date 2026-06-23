@@ -1,1 +1,1 @@
-export * from './searchIndex/index.js';
+export * from './searchIndex/index';

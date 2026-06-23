@@ -1,5 +1,5 @@
-import { INDUSTRY_TABS } from './list.js';
-import { INDUSTRY_DETAILS } from './detail.js';
+import { INDUSTRY_TABS } from './list';
+import { INDUSTRY_DETAILS } from './detail';
 
 /**
  * 行业 slug → 行业详情 快速查找表

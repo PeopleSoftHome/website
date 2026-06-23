@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
 
-import { API_BASE_URL } from './baseUrl.js';
+import { API_BASE_URL } from './baseUrl';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -57,7 +58,7 @@ apiClient.interceptors.response.use(
       } catch {
         // Refresh failed, clear auth state and continue with original error
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('tp_user');
+          localStorage.removeItem(STORAGE_KEYS.USER);
         }
       }
     }

@@ -2,7 +2,7 @@ import {
   PRODUCT_ICONS,
   ICON_COLORS,
   ICON_BG_COLORS,
-} from '@/components/ui/ProductIcons/index.js';
+} from '@/components/ui/ProductIcons/index';
 
 /* ─── Product Matrix ─── */
 interface ProductTab {

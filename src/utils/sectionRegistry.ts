@@ -11,7 +11,7 @@ import type { Component } from 'vue';
  * 4. 新增板块只需注册插件 + 配置即可，无需修改 HomePage
  *
  * 使用方式：
- *   import { sectionRegistry, resolveSections } from '@/utils/sectionRegistry.js';
+ *   import { sectionRegistry, resolveSections } from '@/utils/sectionRegistry';
  *
  *   // HomePage.vue
  *   const sections = resolveSections(cmsPageConfig);

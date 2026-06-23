@@ -50,11 +50,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
-import { blogApi } from '@/api/blog.js';
-import { renderMarkdown } from '@/utils/markdown.js';
-import { formatDate } from '@/utils/date.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import { BLOG_POST_MAP } from '@/data/blog.js';
+import { blogApi } from '@/api/blog';
+import { renderMarkdown } from '@/utils/markdown';
+import { formatDate } from '@/utils/date';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { BLOG_POST_MAP } from '@/data/blog';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });

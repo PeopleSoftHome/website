@@ -1,2 +1,2 @@
-export { INDUSTRY_TABS } from './list.js';
-export { INDUSTRY_MAP } from './map.js';
+export { INDUSTRY_TABS } from './list';
+export { INDUSTRY_MAP } from './map';

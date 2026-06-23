@@ -18,7 +18,7 @@
 <script setup lang="ts">
 definePageMeta({ title: 'pageTitle', description: 'pageDesc' });
 import { onMounted, onUnmounted, inject } from 'vue';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 
 // Section 骨架屏默认高度映射

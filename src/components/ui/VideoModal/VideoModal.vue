@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
-import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './VideoModal.module.css';

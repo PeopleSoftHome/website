@@ -109,14 +109,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import AppPricing from '@/components/sections/Marketplace/AppPricing.vue';
 import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
-import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
-import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace.js';
-import { showToast } from '@/utils/toast.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace';
+import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace';
+import { showToast } from '@/utils/toast';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });

@@ -1,15 +1,16 @@
 import { ref, computed, onMounted, type Ref } from 'vue';
-import { apiClient } from '@/api/client.js';
-import { usePublicConfig } from '@/composables/usePublicConfig.js';
-import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData.js';
-import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils.js';
+import { apiClient } from '@/api/client';
+import { usePublicConfig } from '@/composables/usePublicConfig';
+import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData';
+import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 const LOCAL_ACTIONS = {
   demo: ['演示', '预约', 'demo', 'book', 'trial', '试用', '体验'],
   human: ['人工', '客服', 'agent', 'human', 'service', '真人', '转人工'],
 };
 
-const STORAGE_KEY = 'tp-chat-session-id';
+const STORAGE_KEY = STORAGE_KEYS.CHAT_SESSION_ID;
 
 interface ChatMessage {
   id: number;
@@ -197,7 +198,7 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
       }
 
       const result = (await apiClient.post(
-        '/ai/chat',
+        ENDPOINTS.AI_CHAT,
         {
           message: trimmed,
           history: buildHistory(),

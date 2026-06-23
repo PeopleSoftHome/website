@@ -13,13 +13,15 @@
 import { onMounted, onUnmounted } from 'vue';
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from 'web-vitals';
 import type { Metric } from 'web-vitals';
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
+import { STORAGE_KEYS } from '@/constants/storage';
+import { ENDPOINTS } from '@/constants/endpoints';
 
-const SESSION_KEY = 'tp-rum-session';
+const SESSION_KEY = STORAGE_KEYS.RUM_SESSION_ID;
 
 function getRumEndpoint() {
   const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
-  return `${baseUrl}/analytics/web-vitals`;
+  return `${baseUrl}${ENDPOINTS.ANALYTICS_WEB_VITALS}`;
 }
 
 function getSessionId() {

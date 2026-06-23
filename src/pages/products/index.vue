@@ -58,10 +58,10 @@
 <script setup lang="ts">
 definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { PRODUCT_TABS } from '@/data/products.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { PRODUCT_TABS } from '@/data/products';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t } = useI18n();

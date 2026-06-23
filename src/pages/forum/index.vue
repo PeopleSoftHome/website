@@ -81,14 +81,14 @@
 <script setup lang="ts">
 definePageMeta({ title: 'forum.pageTitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { FORUM_PAGE_SIZE } from '@/constants/pagination.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { FORUM_PAGE_SIZE } from '@/constants/pagination';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
-import { forumApi } from '@/api/forum.js';
-import { formatDate } from '@/utils/date.js';
-import { FORUM_CATEGORIES, FORUM_TOPICS } from '@/data/forum.js';
+import { forumApi } from '@/api/forum';
+import { formatDate } from '@/utils/date';
+import { FORUM_CATEGORIES, FORUM_TOPICS } from '@/data/forum';
 import s from './index.module.css';
 
 const { t } = useI18n();

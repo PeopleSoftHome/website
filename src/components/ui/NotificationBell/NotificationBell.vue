@@ -34,8 +34,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { notificationApi } from '@/api/notification.js';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { notificationApi } from '@/api/notification';
 import Icon from '../Icon/Icon.vue';
 import s from './NotificationBell.module.css';
 

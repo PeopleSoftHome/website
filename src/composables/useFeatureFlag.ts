@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import { useSiteConfig } from './useSiteConfig.js';
+import { useSiteConfig } from './useSiteConfig';
 
 /**
  * 功能开关 Composable

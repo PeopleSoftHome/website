@@ -40,9 +40,9 @@ definePageMeta({ title: 'team.title', description: 'team.subtitle' });
 import { onMounted, onUnmounted, computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
-import { aboutApi } from '@/api/about.js';
-import { TEAM_CATEGORIES, TEAM_FALLBACK } from '@/data/team.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { aboutApi } from '@/api/about';
+import { TEAM_CATEGORIES, TEAM_FALLBACK } from '@/data/team';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './team.module.css';
 
 const { t } = useI18n();

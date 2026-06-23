@@ -96,10 +96,10 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { newsApi } from '@/api/news.js';
-import { NEWS_FALLBACK } from '@/data/news.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import { useDetailPage } from '@/composables/useDetailPage.js';
+import { newsApi } from '@/api/news';
+import { NEWS_FALLBACK } from '@/data/news';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useDetailPage } from '@/composables/useDetailPage';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });

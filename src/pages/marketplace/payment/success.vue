@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { paymentApi } from '@/api/marketplace.js';
+import { paymentApi } from '@/api/marketplace';
 import s from './success.module.css';
 
 definePageMeta({ title: 'marketplace.paymentSuccess', description: 'marketplace.subtitle' });

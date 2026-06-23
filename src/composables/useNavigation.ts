@@ -1,7 +1,7 @@
 import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
-import { cmsApi } from '@/api/cms.js';
-import { NAV_LINKS, FOOTER_LINKS } from '@/data/navigation.js';
+import { cmsApi } from '@/api/cms';
+import { NAV_LINKS, FOOTER_LINKS } from '@/data/navigation';
 
 /**
  * 将 CMS Navigation 的 href 映射到前端 i18n key。

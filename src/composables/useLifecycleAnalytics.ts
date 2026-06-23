@@ -53,10 +53,10 @@ export function useLifecycleAnalytics({
     let cleanupHeatmap: (() => void) | undefined = undefined;
     let cleanupScroll: (() => void) | undefined = undefined;
 
-    import('@/composables/useHeatmap.js').then(({ useHeatmap }) => {
+    import('@/composables/useHeatmap').then(({ useHeatmap }) => {
       cleanupHeatmap = useHeatmap(analyticsStore.track).initHeatmap();
     });
-    import('@/composables/useScrollDepth.js').then(({ useScrollDepth }) => {
+    import('@/composables/useScrollDepth').then(({ useScrollDepth }) => {
       cleanupScroll = useScrollDepth(analyticsStore.track).initScrollDepth();
     });
 

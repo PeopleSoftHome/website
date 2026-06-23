@@ -66,15 +66,15 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch, type Component } from 'vue';
-import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';
-import { caseApi } from '@/api/case.js';
-import { CASES } from '@/data/cases.js';
-import { PRODUCT_MAP } from '@/data/products.js';
-import { coverStyle } from '@/utils/coverStyle.js';
+import { caseApi } from '@/api/case';
+import { CASES } from '@/data/cases';
+import { PRODUCT_MAP } from '@/data/products';
+import { coverStyle } from '@/utils/coverStyle';
 import s from './[slug].module.css';
 
 interface ProductMapItem {

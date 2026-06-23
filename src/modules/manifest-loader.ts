@@ -1,5 +1,5 @@
-import { registerSection } from '@/utils/sectionRegistry.js';
-import { registerCmsFetcher, registerFallbackModule } from '@/composables/useCmsData.js';
+import { registerSection } from '@/utils/sectionRegistry';
+import { registerCmsFetcher, registerFallbackModule } from '@/composables/useCmsData';
 import type { Router, RouteRecordRaw } from 'vue-router';
 import type { Component } from 'vue';
 

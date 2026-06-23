@@ -39,8 +39,8 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
-import { LOGO_FILTERS } from '@/data/logos.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
+import { LOGO_FILTERS } from '@/data/logos';
+import { useCmsDataByKey } from '@/composables/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';

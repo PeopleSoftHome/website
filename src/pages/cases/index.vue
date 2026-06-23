@@ -93,10 +93,10 @@ definePageMeta({ title: 'cases.title', description: 'cases.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
-import { caseApi } from '@/api/case.js';
-import { CASES, CASE_INDUSTRIES } from '@/data/cases.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import { coverStyle } from '@/utils/coverStyle.js';
+import { caseApi } from '@/api/case';
+import { CASES, CASE_INDUSTRIES } from '@/data/cases';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { coverStyle } from '@/utils/coverStyle';
 import s from './index.module.css';
 
 const { t } = useI18n();

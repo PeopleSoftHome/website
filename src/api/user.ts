@@ -1,4 +1,4 @@
-import { apiClient } from './client.js';
+import { apiClient } from './client';
 import type { AxiosResponse } from 'axios';
 
 export type ProfileData = Record<string, unknown>;

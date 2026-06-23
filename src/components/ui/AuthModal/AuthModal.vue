@@ -92,10 +92,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
-import { usePublicConfig } from '@/composables/usePublicConfig.js';
+import { usePublicConfig } from '@/composables/usePublicConfig';
 import s from './AuthModal.module.css';
 
 const props = defineProps({

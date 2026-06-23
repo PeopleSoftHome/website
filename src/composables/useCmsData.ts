@@ -1,5 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
-import { cmsApi } from '@/api/cms.js';
+import { cmsApi } from '@/api/cms';
 
 /**
  * Fallback 数据异步加载注册表
@@ -7,14 +7,14 @@ import { cmsApi } from '@/api/cms.js';
  * 避免首屏 bundle 强制打包全部 data 文件。
  */
 const FALLBACK_MODULES: Record<string, () => Promise<unknown[]>> = {
-  products: () => import('@/data/products.js').then((m) => m.PRODUCT_TABS as unknown[]),
-  industries: () => import('@/data/industries.js').then((m) => m.INDUSTRY_TABS as unknown[]),
-  testimonials: () => import('@/data/testimonials.js').then((m) => m.TESTIMONIALS as unknown[]),
-  stats: () => import('@/data/stats.js').then((m) => m.STATS_DATA as unknown[]),
-  logos: () => import('@/data/logos.js').then((m) => m.LOGO_ITEMS as unknown[]),
-  'ai-cards': () => import('@/data/aiFamily.js').then((m) => m.AI_CARDS as unknown[]),
-  resources: () => import('@/data/resources.js').then((m) => m.RESOURCES as unknown[]),
-  'why-us': () => import('@/data/whyUs.js').then((m) => m.WHY_US_TABS as unknown[]),
+  products: () => import('@/data/products').then((m) => m.PRODUCT_TABS as unknown[]),
+  industries: () => import('@/data/industries').then((m) => m.INDUSTRY_TABS as unknown[]),
+  testimonials: () => import('@/data/testimonials').then((m) => m.TESTIMONIALS as unknown[]),
+  stats: () => import('@/data/stats').then((m) => m.STATS_DATA as unknown[]),
+  logos: () => import('@/data/logos').then((m) => m.LOGO_ITEMS as unknown[]),
+  'ai-cards': () => import('@/data/aiFamily').then((m) => m.AI_CARDS as unknown[]),
+  resources: () => import('@/data/resources').then((m) => m.RESOURCES as unknown[]),
+  'why-us': () => import('@/data/whyUs').then((m) => m.WHY_US_TABS as unknown[]),
 };
 
 export function registerFallbackModule(key: string, loader: () => Promise<unknown[]>) {

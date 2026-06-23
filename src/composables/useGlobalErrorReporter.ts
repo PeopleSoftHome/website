@@ -4,7 +4,8 @@
  */
 import { onErrorCaptured, onMounted, onUnmounted } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
+import { ENDPOINTS } from '@/constants/endpoints';
 
 export function useGlobalErrorReporter() {
   const reportError = (type: string, message: unknown, stack?: unknown) => {
@@ -24,9 +25,9 @@ export function useGlobalErrorReporter() {
       };
       const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(`${baseUrl}/analytics/client-errors`, JSON.stringify(payload));
+        navigator.sendBeacon(`${baseUrl}${ENDPOINTS.ANALYTICS_CLIENT_ERRORS}`, JSON.stringify(payload));
       } else {
-        fetch(`${baseUrl}/analytics/client-errors`, {
+        fetch(`${baseUrl}${ENDPOINTS.ANALYTICS_CLIENT_ERRORS}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),

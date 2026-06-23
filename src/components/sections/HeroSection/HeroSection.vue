@@ -76,8 +76,8 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
 import s from './HeroSection.module.css';
 
 const { t } = useI18n();

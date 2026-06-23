@@ -1,5 +1,7 @@
 import { ref, onMounted } from 'vue';
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
+import { STORAGE_KEYS } from '@/constants/storage';
+import { ENDPOINTS } from '@/constants/endpoints';
 
 interface Experiment {
   id: string | number;
@@ -12,10 +14,10 @@ const variants = ref<Record<string, 'A' | 'B'>>({});
 const sessionId = ref('');
 
 function getSessionId() {
-  let sid = sessionStorage.getItem('tp-session-id');
+  let sid = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID);
   if (!sid) {
     sid = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    sessionStorage.setItem('tp-session-id', sid);
+    sessionStorage.setItem(STORAGE_KEYS.SESSION_ID, sid);
   }
   return sid;
 }
@@ -40,7 +42,7 @@ export function useAbTest() {
 
   const loadExperiments = async () => {
     try {
-      const res = await apiClient.get('/experiments/running');
+      const res = await apiClient.get(ENDPOINTS.EXPERIMENTS_RUNNING);
       experiments.value = (res.data?.data || []) as Experiment[];
       for (const exp of experiments.value) {
         variants.value[exp.key] = assignVariant(exp, sessionId.value);

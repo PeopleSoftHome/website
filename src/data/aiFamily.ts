@@ -1,6 +1,6 @@
 import {
   IconAIRecruit, IconAIInterview, IconAICoach, IconAICourse,
-} from '../components/ui/ProductIcons/index.js';
+} from '../components/ui/ProductIcons/index';
 
 /**
  * AI Family 专区数据（SEC-06 AiFamilySection）

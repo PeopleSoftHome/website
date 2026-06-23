@@ -4,9 +4,11 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
+import { STORAGE_KEYS } from '@/constants/storage';
+import { ENDPOINTS } from '@/constants/endpoints';
 
-const USER_KEY = 'tp_user';
+const USER_KEY = STORAGE_KEYS.USER;
 
 export interface UserInfo {
   id: string;
@@ -47,7 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const login = async (email: string, password: string): Promise<UserInfo> => {
-    const res = await apiClient.post('/auth/login', { email, password });
+    const res = await apiClient.post(ENDPOINTS.AUTH_LOGIN, { email, password });
     const data = (res.data || res) as { user?: UserInfo };
     if (data.user) {
       setUser(data.user);
@@ -57,12 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const register = async (data: Record<string, unknown>): Promise<unknown> => {
-    const res = await apiClient.post('/auth/register', data);
+    const res = await apiClient.post(ENDPOINTS.AUTH_REGISTER, data);
     return res.data || res;
   };
 
   const fetchProfile = async (): Promise<UserInfo> => {
-    const res = await apiClient.get('/auth/me');
+    const res = await apiClient.get(ENDPOINTS.AUTH_ME);
     const u = (res.data || res) as UserInfo;
     setUser(u);
     return u;
@@ -70,7 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     try {
-      await apiClient.post('/auth/logout', {});
+      await apiClient.post(ENDPOINTS.AUTH_LOGOUT, {});
     } catch {
       // 后端 logout 失败仍继续清理本地状态
     }
@@ -78,7 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const refreshToken = async (): Promise<UserInfo> => {
-    const res = await apiClient.post('/auth/refresh', {});
+    const res = await apiClient.post(ENDPOINTS.AUTH_REFRESH, {});
     const data = (res.data || res) as { user?: UserInfo };
     if (data.user) {
       setUser(data.user);

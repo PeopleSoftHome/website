@@ -49,10 +49,10 @@
 <script setup lang="ts">
 definePageMeta({ title: 'solutions.title', description: 'solutions.subtitle' });
 import { onUnmounted } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { INDUSTRY_TABS } from '@/data/industries.js';
-import { removeJsonLd } from '@/utils/jsonld.js';
+import { INDUSTRY_TABS } from '@/data/industries';
+import { removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t } = useI18n();

@@ -10,9 +10,9 @@
  */
 import { ref, computed, onUnmounted, watch } from 'vue';
 import type { Ref } from 'vue';
-import { SEARCH_INDEX, TYPE_LABELS } from '@/data/searchIndex.js';
-import { searchApi } from '@/api/search.js';
-import { transformSearchResults } from '@/api/transforms.js';
+import { SEARCH_INDEX, TYPE_LABELS } from '@/data/searchIndex';
+import { searchApi } from '@/api/search';
+import { transformSearchResults } from '@/api/transforms';
 
 interface SearchItem {
   id: string;

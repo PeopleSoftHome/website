@@ -84,7 +84,8 @@
 <script setup lang="ts">
 import { ref, reactive, onUnmounted, h, watch, computed, onMounted } from 'vue';
 import type { SetupContext } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { STORAGE_KEYS } from '@/constants/storage';
 import s from './DemoModal.module.css';
 
 const PHONE_REG = /^1[3-9]\d{9}$/;
@@ -186,7 +187,7 @@ const autoFillPhone = async () => {
     // 静默失败
   }
   // Fallback：尝试读取已保存的表单数据
-  const savedPhone = sessionStorage.getItem('tp_last_phone');
+  const savedPhone = sessionStorage.getItem(STORAGE_KEYS.DEMO_LAST_PHONE);
   if (savedPhone && PHONE_REG.test(savedPhone)) {
     fields.phone = savedPhone;
     clearError('phone');
@@ -229,7 +230,7 @@ const handleNext = () => {
   }
   Object.keys(errors).forEach(k => delete errors[k as keyof FormErrors]);
   // 保存手机号供下次自动填入
-  sessionStorage.setItem('tp_last_phone', fields.phone);
+  sessionStorage.setItem(STORAGE_KEYS.DEMO_LAST_PHONE, fields.phone);
   emit('next');
 };
 

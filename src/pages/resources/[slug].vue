@@ -135,12 +135,12 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
-import { useScrollProgress } from '@/composables/useScrollProgress.js';
-import { useSpyScroll } from '@/composables/useSpyScroll.js';
+import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useScrollProgress } from '@/composables/useScrollProgress';
+import { useSpyScroll } from '@/composables/useSpyScroll';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'resourcePage.detail', description: 'resourcePage.subtitle' });

@@ -210,7 +210,7 @@ export function IconSecurity() {
 
 /**
  * PRODUCT_ICONS — 产品 ID → 图标组件映射
- * 供 products.js / aiFamily.js 通过 id 引用
+ * 供 products.ts / aiFamily.js 通过 id 引用
  */
 export const PRODUCT_ICONS = {
   // HR SaaS（蓝）

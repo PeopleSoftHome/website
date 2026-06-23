@@ -39,10 +39,10 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformResources } from '@/api/transforms.js';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformResources } from '@/api/transforms';
 
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import ResourceCard from './ResourceCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';

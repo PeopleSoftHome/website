@@ -42,12 +42,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
-import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
-import { useTabs } from '@/composables/useTabs.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformIndustries } from '@/api/transforms.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap';
+import { useTabs } from '@/composables/useTabs';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformIndustries } from '@/api/transforms';
 
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';

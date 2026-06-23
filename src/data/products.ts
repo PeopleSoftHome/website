@@ -1,2 +1,2 @@
-export { PRODUCT_TABS } from './products/list.js';
-export { PRODUCT_MAP } from './products/map.js';
+export { PRODUCT_TABS } from './products/list';
+export { PRODUCT_MAP } from './products/map';

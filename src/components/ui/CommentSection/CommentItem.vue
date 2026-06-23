@@ -52,7 +52,7 @@ defineProps({
 });
 
 const emit = defineEmits(['reply']);
-import { renderMentions } from '@/utils/markdown.js';
+import { renderMentions } from '@/utils/markdown';
 
 const { t } = useI18n();
 

@@ -1,5 +1,5 @@
 /**
- * searchIndex.js — 全局搜索索引（Sprint 12 / v2.3.0）
+ * searchIndex.ts — 全局搜索索引（Sprint 12 / v2.3.0）
  *
  * 结构：每条记录包含
  *   id:      唯一 ID

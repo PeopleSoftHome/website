@@ -1,6 +1,6 @@
 import { watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { cmsApi } from '@/api/cms.js';
+import { cmsApi } from '@/api/cms';
 
 /**
  * 将 CMS 翻译覆盖层合并到 vue-i18n

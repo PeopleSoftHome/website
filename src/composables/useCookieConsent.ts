@@ -6,8 +6,9 @@
  * Tracks: necessary (always true), analytics (optional), marketing (optional)
  */
 import { ref, readonly } from 'vue';
+import { STORAGE_KEYS } from '@/constants/storage';
 
-const STORAGE_KEY = 'tp-cookie-consent';
+const STORAGE_KEY = STORAGE_KEYS.COOKIE_CONSENT;
 
 interface ConsentPrefs {
   analytics?: boolean;

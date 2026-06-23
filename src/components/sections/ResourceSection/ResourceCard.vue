@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
-import { RESOURCE_TYPE_STYLES } from '@/data/resources.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { RESOURCE_TYPE_STYLES } from '@/data/resources';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './ResourceCard.module.css';
 

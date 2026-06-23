@@ -75,12 +75,12 @@ definePageMeta({ title: 'blog.pageTitle' });
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
-import { blogApi } from '@/api/blog.js';
-import { formatDate } from '@/utils/date.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { blogApi } from '@/api/blog';
+import { formatDate } from '@/utils/date';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
-import { BLOG_PAGE_SIZE } from '@/constants/pagination.js';
-import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog.js';
+import { BLOG_PAGE_SIZE } from '@/constants/pagination';
+import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog';
 
 const { t } = useI18n();
 

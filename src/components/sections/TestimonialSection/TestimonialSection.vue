@@ -45,9 +45,9 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted, inject, type Ref } from 'vue';
 
-import { useCarousel } from '@/composables/useCarousel.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformTestimonials } from '@/api/transforms.js';
+import { useCarousel } from '@/composables/useCarousel';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformTestimonials } from '@/api/transforms';
 
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';

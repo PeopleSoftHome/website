@@ -1,5 +1,5 @@
 /**
- * marketplace.js — 应用广场静态 fallback 数据
+ * marketplace.ts — 应用广场静态 fallback 数据
  */
 
 export const MARKETPLACE_CATEGORIES = [

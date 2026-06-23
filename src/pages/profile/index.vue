@@ -71,13 +71,13 @@
 <script setup lang="ts">
 definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { computed } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
-import { formatDate } from '@/utils/date.js';
-import { ACTIVITIES } from '@/data/profile.js';
-import { notificationApi } from '@/api/notification.js';
-import { marketplaceApi } from '@/api/marketplace.js';
-import { paymentApi } from '@/api/marketplace.js';
+import { formatDate } from '@/utils/date';
+import { ACTIVITIES } from '@/data/profile';
+import { notificationApi } from '@/api/notification';
+import { marketplaceApi } from '@/api/marketplace';
+import { paymentApi } from '@/api/marketplace';
 import s from './index.module.css';
 
 interface UserProfile {

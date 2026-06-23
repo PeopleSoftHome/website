@@ -16,8 +16,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { commentApi } from '@/api/comment.js';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { commentApi } from '@/api/comment';
 import MarkdownEditor from '../MarkdownEditor/MarkdownEditor.vue';
 import s from './CommentForm.module.css';
 
@@ -54,7 +54,7 @@ const submit = async () => {
     content.value = '';
   } catch (e) {
     const err = e as { response?: { data?: { message?: string } } };
-    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
+    import('@/utils/toast').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
   }
   submitting.value = false;
 };

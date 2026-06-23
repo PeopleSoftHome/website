@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useScrollReveal } from '@/composables/useScrollReveal.js';
+import { useScrollReveal } from '@/composables/useScrollReveal';
 
 const props = defineProps({
   delay:     { type: Number, default: 0 },

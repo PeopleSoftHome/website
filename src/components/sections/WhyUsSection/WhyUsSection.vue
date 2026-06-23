@@ -47,11 +47,11 @@
 
 <script setup lang="ts">
 import { ref, computed, inject, onMounted } from 'vue';
-import { useTabs } from '@/composables/useTabs.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformWhyUsTabs } from '@/api/transforms.js';
-import { STATS_BAR, WHY_US_TABS } from '@/data/whyUs.js';
-import { SECURITY_CERTS } from '@/data/security.js';
+import { useTabs } from '@/composables/useTabs';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformWhyUsTabs } from '@/api/transforms';
+import { STATS_BAR, WHY_US_TABS } from '@/data/whyUs';
+import { SECURITY_CERTS } from '@/data/security';
 import Icon from '../../ui/Icon/Icon.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import MetricCard from './MetricCard.vue';

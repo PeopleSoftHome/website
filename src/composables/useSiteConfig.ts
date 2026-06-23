@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import type { Ref } from 'vue';
-import { systemApi } from '@/api/system.js';
+import { systemApi } from '@/api/system';
 
 export interface SocialLink {
   icon?: string;

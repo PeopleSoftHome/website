@@ -83,8 +83,8 @@
 definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle' });
 import { ref, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { CONTACT_FAQ } from '@/data/contact.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { CONTACT_FAQ } from '@/data/contact';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './contact.module.css';
 
 const { t } = useI18n();
@@ -126,7 +126,7 @@ onUnmounted(removeJsonLd);
 const handleSubmit = async () => {
   submitting.value = true;
   await new Promise((r) => setTimeout(r, 1000));
-  import('@/utils/toast.js').then(({ showToast }) => showToast(t('contactPage.sent'), 'success'));
+  import('@/utils/toast').then(({ showToast }) => showToast(t('contactPage.sent'), 'success'));
   form.value = { name: '', email: '', company: '', inquiryType: '', message: '' };
   submitting.value = false;
 };

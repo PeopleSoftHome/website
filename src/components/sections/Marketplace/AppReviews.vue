@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { REVIEWS } from '@/data/marketplace.js';
+import { REVIEWS } from '@/data/marketplace';
 import s from './AppReviews.module.css';
 
 const props = defineProps({ appSlug: { type: String, default: '' } });

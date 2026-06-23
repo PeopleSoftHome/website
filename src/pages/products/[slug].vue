@@ -96,14 +96,14 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeatureCards.vue';
 import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScenarioTabs.vue';
-import { PRODUCT_MAP } from '@/data/products.js';
-import { cmsApi } from '@/api/cms.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { PRODUCT_MAP } from '@/data/products';
+import { cmsApi } from '@/api/cms';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 function mergeProduct(cms: any, fallback: any) {

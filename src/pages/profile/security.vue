@@ -70,7 +70,7 @@
 <script setup lang="ts">
 definePageMeta({ title: 'profile.menu.security', requiresAuth: true });
 import { ref } from 'vue';
-import { LOGIN_HISTORY } from '@/data/profile.js';
+import { LOGIN_HISTORY } from '@/data/profile';
 import s from './security.module.css';
 
 const { t } = useI18n();
@@ -83,16 +83,16 @@ const loginHistory = LOGIN_HISTORY;
 
 const handleChangePassword = async () => {
   if (!pwd.value.current || !pwd.value.new || !pwd.value.confirm) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(t('profile.fillAll'), 'warning'));
+    import('@/utils/toast').then(({ showToast }) => showToast(t('profile.fillAll'), 'warning'));
     return;
   }
   if (pwd.value.new !== pwd.value.confirm) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(t('profile.passwordMismatch'), 'error'));
+    import('@/utils/toast').then(({ showToast }) => showToast(t('profile.passwordMismatch'), 'error'));
     return;
   }
   pwdSaving.value = true;
   await new Promise((r) => setTimeout(r, 800));
-  import('@/utils/toast.js').then(({ showToast }) => showToast(t('profile.passwordUpdated'), 'success'));
+  import('@/utils/toast').then(({ showToast }) => showToast(t('profile.passwordUpdated'), 'success'));
   pwd.value = { current: '', new: '', confirm: '' };
   pwdSaving.value = false;
 };

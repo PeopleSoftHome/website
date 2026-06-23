@@ -30,22 +30,22 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineAsyncComponent, provide } from 'vue';
-import { useThemeStore } from '@/stores/theme.pinia.js';
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useSearchStore } from '@/stores/search.pinia.js';
-import { useVideoModalStore } from '@/stores/videoModal.pinia.js';
-import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { useAbTest } from '@/composables/useAbTest.js';
-import { useRum } from '@/composables/useRum.js';
-import { useCookieConsent } from '@/composables/useCookieConsent.js';
-import { useCmsTranslations } from '@/composables/useCmsTranslations.js';
-import { useSiteConfig } from '@/composables/useSiteConfig.js';
-import { useGlobalErrorReporter } from '@/composables/useGlobalErrorReporter.js';
-import { usePageMetaSync } from '@/composables/usePageMetaSync.js';
-import { usePrefetchModals } from '@/composables/usePrefetchModals.js';
-import { useLifecycleAnalytics } from '@/composables/useLifecycleAnalytics.js';
-import { useGlobalRevealObserver } from '@/composables/useGlobalRevealObserver.js';
+import { useThemeStore } from '@/stores/theme.pinia';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useSearchStore } from '@/stores/search.pinia';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { useAbTest } from '@/composables/useAbTest';
+import { useRum } from '@/composables/useRum';
+import { useCookieConsent } from '@/composables/useCookieConsent';
+import { useCmsTranslations } from '@/composables/useCmsTranslations';
+import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useGlobalErrorReporter } from '@/composables/useGlobalErrorReporter';
+import { usePageMetaSync } from '@/composables/usePageMetaSync';
+import { usePrefetchModals } from '@/composables/usePrefetchModals';
+import { useLifecycleAnalytics } from '@/composables/useLifecycleAnalytics';
+import { useGlobalRevealObserver } from '@/composables/useGlobalRevealObserver';
 
 import ErrorBoundary from '@/components/ErrorBoundary.vue';
 import IconSprite from '@/components/ui/Icon/IconSprite.vue';

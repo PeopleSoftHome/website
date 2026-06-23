@@ -5,7 +5,9 @@
  * 开发模式打印日志，生产模式写入 window.tp_analytics 队列。
  */
 import { ref, readonly } from 'vue';
-import { apiClient } from '@/api/client.js';
+import { apiClient } from '@/api/client';
+import { STORAGE_KEYS } from '@/constants/storage';
+import { ENDPOINTS } from '@/constants/endpoints';
 
 interface AnalyticsPayload {
   event: string;
@@ -23,7 +25,7 @@ interface AnalyticsQueue {
 
 function readConsent() {
   try {
-    const raw = localStorage.getItem('tp-cookie-consent');
+    const raw = localStorage.getItem(STORAGE_KEYS.COOKIE_CONSENT);
     if (raw) return JSON.parse(raw).analytics === true;
   } catch { /* ignore */ }
   return false;
@@ -31,10 +33,10 @@ function readConsent() {
 
 function getSessionId() {
   if (typeof window === 'undefined') return 'server';
-  let sid = localStorage.getItem('tp-session-id');
+  let sid = localStorage.getItem(STORAGE_KEYS.SESSION_ID);
   if (!sid) {
     sid = Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem('tp-session-id', sid);
+    localStorage.setItem(STORAGE_KEYS.SESSION_ID, sid);
   }
   return sid;
 }
@@ -61,7 +63,7 @@ function doFlush() {
   const queue = analytics?._queue || [];
   if (queue.length === 0) return;
   analytics._queue = [];
-  apiClient.post('/analytics/events', { events: queue }).catch(() => {});
+  apiClient.post(ENDPOINTS.ANALYTICS_EVENTS, { events: queue }).catch(() => {});
 }
 function scheduleFlush() {
   if (flushTimer) clearTimeout(flushTimer);
@@ -110,7 +112,7 @@ export function useAnalytics() {
   // 自动刷新 consent（Cookie 横幅可能稍后设置）
   if (typeof window !== 'undefined') {
     window.addEventListener('storage', (e) => {
-      if (e.key === 'tp-cookie-consent') refreshConsent();
+      if (e.key === STORAGE_KEYS.COOKIE_CONSENT) refreshConsent();
     });
     // 页面卸载前立即上报
     window.addEventListener('beforeunload', () => {
@@ -118,7 +120,7 @@ export function useAnalytics() {
       if (queue.length === 0) return;
       const baseUrl = (apiClient.defaults.baseURL || '').replace(/\/$/, '');
       navigator.sendBeacon?.(
-        `${baseUrl}/analytics/events`,
+        `${baseUrl}${ENDPOINTS.ANALYTICS_EVENTS}`,
         JSON.stringify({ events: queue.map((e) => ({ ...e, sessionId: e.sessionId || getSessionId() })) }),
       );
     });

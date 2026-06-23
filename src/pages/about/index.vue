@@ -113,9 +113,9 @@
 definePageMeta({ title: 'about.title', description: 'about.subtitle' });
 import { onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { TIMELINE } from '@/data/timeline.js';
-import { CERTIFICATIONS, PARTNER_LOGOS } from '@/data/contact.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { TIMELINE } from '@/data/timeline';
+import { CERTIFICATIONS, PARTNER_LOGOS } from '@/data/contact';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t } = useI18n();

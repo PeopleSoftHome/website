@@ -48,10 +48,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia';
 import Icon from '@/components/ui/Icon/Icon.vue';
-import { cartApi } from '@/api/marketplace.js';
-import { showToast } from '@/utils/toast.js';
+import { cartApi } from '@/api/marketplace';
+import { showToast } from '@/utils/toast';
 import s from './CartButton.module.css';
 
 interface CartItem {

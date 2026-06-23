@@ -5,6 +5,7 @@
  * 切换后自动同步 <html data-theme> + localStorage
  */
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 export function useTheme() {
   const theme = ref('light');
@@ -13,7 +14,7 @@ export function useTheme() {
   onMounted(() => {
     // 初始化：localStorage → prefers-color-scheme → light
     if (typeof localStorage !== 'undefined') {
-      const stored = localStorage.getItem('tp-theme');
+      const stored = localStorage.getItem(STORAGE_KEYS.THEME);
       if (stored === 'dark' || stored === 'light') {
         theme.value = stored;
         return;
@@ -30,14 +31,14 @@ export function useTheme() {
       document.documentElement.setAttribute('data-theme', t);
     }
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('tp-theme', t);
+      localStorage.setItem(STORAGE_KEYS.THEME, t);
     }
   });
 
   // 监听系统主题变化（用户未手动设置时跟随系统）
   onMounted(() => {
     if (typeof localStorage === 'undefined') return;
-    const stored = localStorage.getItem('tp-theme');
+    const stored = localStorage.getItem(STORAGE_KEYS.THEME);
     if (stored) return; // 已手动设置，不跟随系统
 
     if (typeof window === 'undefined') return;

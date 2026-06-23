@@ -1,5 +1,5 @@
-import { PRODUCT_TABS } from './list.js';
-import { PRODUCT_DETAILS } from './detail.js';
+import { PRODUCT_TABS } from './list';
+import { PRODUCT_DETAILS } from './detail';
 
 /**
  * 产品 slug → 产品详情 快速查找表

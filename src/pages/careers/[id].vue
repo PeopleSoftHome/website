@@ -100,9 +100,9 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted } from 'vue';
-import { removeJsonLd } from '@/utils/jsonld.js';
+import { removeJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { careersApi } from '@/api/careers.js';
+import { careersApi } from '@/api/careers';
 import s from './[id].module.css';
 
 definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
@@ -163,7 +163,7 @@ const processSteps = [
 ];
 
 const handleApply = () => {
-  import('@/utils/toast.js').then(({ showToast }) => showToast(t('careers.applyPrompt'), 'success'));
+  import('@/utils/toast').then(({ showToast }) => showToast(t('careers.applyPrompt'), 'success'));
 };
 
 onUnmounted(removeJsonLd);

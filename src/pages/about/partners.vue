@@ -41,8 +41,8 @@
 definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
 import { onMounted, onUnmounted, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { aboutApi } from '@/api/about.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { aboutApi } from '@/api/about';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './partners.module.css';
 
 const { t } = useI18n();

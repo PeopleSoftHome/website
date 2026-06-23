@@ -163,13 +163,13 @@ interface UserInfo {
   email?: string;
 }
 
-import { useNavScroll } from '@/composables/useNavScroll.js';
-import { useNavigation } from '@/composables/useNavigation.js';
-import { useSiteConfig } from '@/composables/useSiteConfig.js';
-import { useThemeStore } from '@/stores/theme.pinia.js';
-import { useSearchStore } from '@/stores/search.pinia.js';
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useAuthStore } from '@/stores/auth.pinia.js';
+import { useNavScroll } from '@/composables/useNavScroll';
+import { useNavigation } from '@/composables/useNavigation';
+import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useThemeStore } from '@/stores/theme.pinia';
+import { useSearchStore } from '@/stores/search.pinia';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAuthStore } from '@/stores/auth.pinia';
 const localeOptions = computed(() => [
   { key: 'zh', label: t('nav.lang.zh') },
   { key: 'en', label: t('nav.lang.en') },

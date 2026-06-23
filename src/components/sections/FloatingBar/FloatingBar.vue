@@ -35,8 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useNavScroll } from '@/composables/useNavScroll.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useNavScroll } from '@/composables/useNavScroll';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './FloatingBar.module.css';
 import FloatBtn from './FloatBtn.vue';

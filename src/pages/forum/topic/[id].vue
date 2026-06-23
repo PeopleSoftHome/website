@@ -67,13 +67,13 @@
 
 <script setup lang="ts">
 import { computed, ref, onUnmounted, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { removeJsonLd } from '@/utils/jsonld.js';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { removeJsonLd } from '@/utils/jsonld';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
-import { forumApi } from '@/api/forum.js';
-import { renderMarkdown, renderMentions } from '@/utils/markdown.js';
-import { formatDate } from '@/utils/date.js';
-import { FORUM_TOPIC_MAP } from '@/data/forum.js';
+import { forumApi } from '@/api/forum';
+import { renderMarkdown, renderMentions } from '@/utils/markdown';
+import { formatDate } from '@/utils/date';
+import { FORUM_TOPIC_MAP } from '@/data/forum';
 import s from './[id].module.css';
 
 definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
@@ -152,7 +152,7 @@ const submitReply = async () => {
     replyContent.value = '';
   } catch (e) {
     const err = e as { response?: { data?: { message?: string } } };
-    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
+    import('@/utils/toast').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
   }
   replySubmitting.value = false;
 };

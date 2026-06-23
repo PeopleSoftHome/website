@@ -56,8 +56,8 @@
 <script setup lang="ts">
 definePageMeta({ title: 'profile.menu.orders', requiresAuth: true });
 import { ref, computed } from 'vue';
-import { paymentApi } from '@/api/marketplace.js';
-import { ORDER_STATUSES, ORDER_FALLBACK } from '@/data/profile.js';
+import { paymentApi } from '@/api/marketplace';
+import { ORDER_STATUSES, ORDER_FALLBACK } from '@/data/profile';
 import s from './orders.module.css';
 
 interface Order {

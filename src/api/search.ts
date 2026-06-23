@@ -1,5 +1,5 @@
-import { apiClient } from './client.js';
-import { SEARCH_LIMIT } from '@/constants/pagination.js';
+import { apiClient } from './client';
+import { SEARCH_LIMIT } from '@/constants/pagination';
 import type { AxiosResponse } from 'axios';
 
 export const searchApi = {

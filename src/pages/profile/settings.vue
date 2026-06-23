@@ -80,8 +80,8 @@
 <script setup lang="ts">
 definePageMeta({ title: 'profile.menu.settings', requiresAuth: true });
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { userApi } from '@/api/user.js';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { userApi } from '@/api/user';
 import s from './settings.module.css';
 
 const { t } = useI18n();
@@ -112,10 +112,10 @@ const handleSave = async () => {
     });
     const updated = (res.data || res)?.user || res.data || res;
     auth.setUser(updated);
-    import('@/utils/toast.js').then(({ showToast }) => showToast(t('profile.saveSuccess'), 'success'));
+    import('@/utils/toast').then(({ showToast }) => showToast(t('profile.saveSuccess'), 'success'));
   } catch (e) {
     const err = e as { response?: { data?: { message?: string } } };
-    import('@/utils/toast.js').then(({ showToast }) => showToast(err.response?.data?.message || t('profile.saveError'), 'error'));
+    import('@/utils/toast').then(({ showToast }) => showToast(err.response?.data?.message || t('profile.saveError'), 'error'));
   }
   saving.value = false;
 };

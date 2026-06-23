@@ -3,8 +3,8 @@
  * 状态：关闭 → Step0（联系信息）→ Step1（产品选择）→ Step2（企业规模）→ 成功 → 自动关闭
  */
 import { ref, onUnmounted } from 'vue';
-import { leadApi } from '@/api/lead.js';
-import { usePublicConfig } from '@/composables/usePublicConfig.js';
+import { leadApi } from '@/api/lead';
+import { usePublicConfig } from '@/composables/usePublicConfig';
 
 interface DemoFormData {
   name: string;

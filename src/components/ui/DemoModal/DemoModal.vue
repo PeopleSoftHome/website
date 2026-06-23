@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import ModalStep1 from './ModalStep1.vue';

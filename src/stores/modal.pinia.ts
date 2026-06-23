@@ -3,6 +3,6 @@
  * 包装 useModal composable 为全局单例 Store
  */
 import { defineStore } from 'pinia';
-import { useModal } from '@/composables/useModal.js';
+import { useModal } from '@/composables/useModal';
 
 export const useModalStore = defineStore('modal', () => useModal());

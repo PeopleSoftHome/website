@@ -86,10 +86,10 @@
 <script setup lang="ts">
 definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
+import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { MARKETPLACE_APPS, MARKETPLACE_CATEGORIES } from '@/data/marketplace.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { MARKETPLACE_APPS, MARKETPLACE_CATEGORIES } from '@/data/marketplace';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t } = useI18n();
@@ -157,7 +157,7 @@ onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: t('marketplace.jsonLdName'),
+    name: t('marketplace.tsonLdName'),
     itemListElement: MARKETPLACE_APPS.slice(0, 8).map((app, i) => ({
       '@type': 'ListItem', position: i + 1, name: app.name, description: app.tagline,
     })),

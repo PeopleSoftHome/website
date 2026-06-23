@@ -60,8 +60,8 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
-import { useFocusTrap } from '@/composables/useFocusTrap.js';
-import { useChatBot } from '@/composables/useChatBot.js';
+import { useFocusTrap } from '@/composables/useFocusTrap';
+import { useChatBot } from '@/composables/useChatBot';
 import Icon from '../Icon/Icon.vue';
 import s from './ChatBot.module.css';
 

@@ -4,7 +4,7 @@ import {
   IconAIRecruit, IconAIInterview, IconAICoach, IconAICourse,
   IconAssessRecruit, IconAssess360, IconAssessExam, IconAssessModel,
   IconLowCode, IconAPI, IconEco, IconSecurity,
-} from '../../components/ui/ProductIcons/index.js';
+} from '../../components/ui/ProductIcons/index';
 
 export const PRODUCT_TABS = [
   {

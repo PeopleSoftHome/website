@@ -36,11 +36,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
-import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
-import { useTabs } from '@/composables/useTabs.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformProductTabs } from '@/api/transforms.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap';
+import { useTabs } from '@/composables/useTabs';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformProductTabs } from '@/api/transforms';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';

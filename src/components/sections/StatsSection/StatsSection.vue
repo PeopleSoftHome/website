@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
+import { useCmsDataByKey } from '@/composables/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';

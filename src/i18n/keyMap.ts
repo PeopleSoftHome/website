@@ -1,6 +1,6 @@
 /**
  * 产品 ID → i18n key 映射
- * 用于 products.js 中连字符 ID 到 JSON camelCase key 的转换
+ * 用于 products.ts 中连字符 ID 到 JSON camelCase key 的转换
  */
 export const PRODUCT_KEY_MAP = {
   'recruit':        'recruit',

@@ -1,4 +1,4 @@
-import { apiClient as client } from './client.js';
+import { apiClient as client } from './client';
 import type { AxiosResponse } from 'axios';
 
 export type TopicListParams = Record<string, unknown>;

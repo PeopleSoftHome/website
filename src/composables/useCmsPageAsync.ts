@@ -3,8 +3,8 @@
  * 替代原 onMounted + cmsApi.getPage + sectionRegistry.resolve 模式
  * @param {string} pageKey — CMS 页面标识，如 'home'
  */
-import { cmsApi } from '@/api/cms.js';
-import { sectionRegistry } from '@/utils/sectionRegistry.js';
+import { cmsApi } from '@/api/cms';
+import { sectionRegistry } from '@/utils/sectionRegistry';
 
 export function useCmsPageAsync(pageKey: string) {
   const { data: sections, pending, error, refresh } = useAsyncData(

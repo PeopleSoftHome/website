@@ -48,8 +48,8 @@
 
 <script setup lang="ts">
 import { ref, inject, onUnmounted } from 'vue';
-import { userApi } from '@/api/user.js';
-import { renderMarkdown } from '@/utils/markdown.js';
+import { userApi } from '@/api/user';
+import { renderMarkdown } from '@/utils/markdown';
 import Avatar from '../Avatar/Avatar.vue';
 import s from './MarkdownEditor.module.css';
 

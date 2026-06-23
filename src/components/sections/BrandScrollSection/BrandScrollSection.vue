@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { inject } from 'vue';
-import { BRAND_LOGOS } from '@/data/stats.js';
+import { BRAND_LOGOS } from '@/data/stats';
 import s from './BrandScrollSection.module.css';
 
 const { t } = useI18n();

@@ -32,8 +32,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth.pinia.js';
-import { commentApi } from '@/api/comment.js';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { commentApi } from '@/api/comment';
 import CommentForm from '../CommentForm/CommentForm.vue';
 import CommentItem from './CommentItem.vue';
 import s from './CommentSection.module.css';

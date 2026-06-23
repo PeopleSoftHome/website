@@ -1,4 +1,5 @@
-import { apiClient } from './client.js';
+import { apiClient } from './client';
+import { ENDPOINTS } from '@/constants/endpoints';
 import type { AxiosResponse } from 'axios';
 
 export interface ChatMessage {
@@ -14,6 +15,6 @@ export const aiApi = {
    * @returns AI 响应
    */
   chat(message: string, history: ChatMessage[] = []): Promise<AxiosResponse> {
-    return apiClient.post('/ai/chat', { message, history });
+    return apiClient.post(ENDPOINTS.AI_CHAT, { message, history });
   },
 };

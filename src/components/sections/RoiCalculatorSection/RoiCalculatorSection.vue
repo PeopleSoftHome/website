@@ -98,9 +98,9 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { useAnalyticsStore } from '@/stores/analytics.pinia.js';
-import { useRoiCalculator } from '@/composables/useRoiCalculator.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { useRoiCalculator } from '@/composables/useRoiCalculator';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AnimatedNumber from './AnimatedNumber.vue';

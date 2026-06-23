@@ -68,14 +68,14 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue';
-import { useModalStore } from '@/stores/modal.pinia.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPainCompare.vue';
 import SolutionCaseDeep from '@/components/sections/SolutionDetail/SolutionCaseDeep.vue';
-import { INDUSTRY_MAP } from '@/data/industries.js';
-import { cmsApi } from '@/api/cms.js';
+import { INDUSTRY_MAP } from '@/data/industries';
+import { cmsApi } from '@/api/cms';
 import s from './[slug].module.css';
 
 interface RoadmapItem {

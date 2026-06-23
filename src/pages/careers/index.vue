@@ -98,9 +98,9 @@
 definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { careersApi } from '@/api/careers.js';
-import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers.js';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld.js';
+import { careersApi } from '@/api/careers';
+import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t } = useI18n();

@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'profile.title', requiresAuth: true });
-import { useAuthStore } from '@/stores/auth.pinia.js';
+import { useAuthStore } from '@/stores/auth.pinia';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import s from './profile.module.css';
 
