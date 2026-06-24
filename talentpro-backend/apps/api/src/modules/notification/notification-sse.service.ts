@@ -48,7 +48,7 @@ export class NotificationSseService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  async broadcast(userId: string, data: any): Promise<void> {
+  async broadcast(userId: string, data: unknown): Promise<void> {
     try {
       await this.redis.publish(
         `sse:notifications:${userId}`,

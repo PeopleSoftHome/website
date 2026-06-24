@@ -17,9 +17,10 @@
   </div>
 </template>
 
-<script setup>
-import { computed, inject } from 'vue';
-import { RESOURCE_TYPE_STYLES } from '@/data/resources.js';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { RESOURCE_TYPE_STYLES } from '@/data/resources';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './ResourceCard.module.css';
 
@@ -36,12 +37,13 @@ const props = defineProps({
 });
 
 const delayClass = computed(() => props.delay > 0 ? `reveal-delay-${props.delay}` : '');
-const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type] ?? RESOURCE_TYPE_STYLES.article);
+type ResourceType = keyof typeof RESOURCE_TYPE_STYLES;
+const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type as ResourceType] ?? RESOURCE_TYPE_STYLES.article);
 
-const analytics = inject('analytics', { track: () => {} });
+const analyticsStore = useAnalyticsStore();
 const emit = defineEmits(['download']);
 const handleClick = () => {
-  analytics.track('resource_download', { title: props.title, type: props.type });
+  analyticsStore.track('resource_download', { title: props.title, type: props.type });
   emit('download', { title: props.title, type: props.type });
 };
 </script>

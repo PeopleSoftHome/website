@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ExperimentStatus } from '@prisma/client';
+import { Prisma, ExperimentStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -25,12 +25,12 @@ export class ExperimentService {
     key: string;
     name: string;
     description?: string;
-    variantA: any;
-    variantB: any;
+    variantA: Record<string, unknown>;
+    variantB: Record<string, unknown>;
     trafficSplit?: number;
   }) {
     return this.prisma.experiment.create({
-      data: { ...data, status: ExperimentStatus.DRAFT },
+      data: { ...data, status: ExperimentStatus.DRAFT, variantA: data.variantA as Prisma.InputJsonValue, variantB: data.variantB as Prisma.InputJsonValue },
     });
   }
 
@@ -47,9 +47,9 @@ export class ExperimentService {
     eventType: string;
     userId?: string;
     sessionId: string;
-    properties?: any;
+    properties?: Record<string, unknown>;
   }) {
-    return this.prisma.experimentEvent.create({ data });
+    return this.prisma.experimentEvent.create({ data: { ...data, properties: data.properties as Prisma.InputJsonValue } });
   }
 
   async getStats(experimentId: string) {

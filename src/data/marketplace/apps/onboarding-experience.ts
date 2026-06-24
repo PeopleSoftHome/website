@@ -1,0 +1,23 @@
+export const APP_ONBOARDING_EXPERIENCE = {
+  id: 'app-012',
+  slug: 'onboarding-experience',
+  name: '入职体验管家',
+  tagline: '让新人第一天就感受到归属',
+  description: '从 Offer 接受到转正的全周期入职管理。自动推送入职任务、导师匹配、文化融入课程。支持电子签约、设备申领、工位预约等一站式办理。与 TalentPro 组织人事系统深度集成，入职数据自动同步。',
+  category: 'experience',
+  vendor: 'FirstDay',
+  icon: 'onboarding-experience',
+  pricingModel: 'free',
+  pricingTiers: [
+    { name: '免费版', priceMonthly: 0, priceYearly: 0, desc: '最多 20 人/月', features: ['入职任务', '电子签约', '基础报表'] },
+    { name: '专业版', priceMonthly: 499, priceYearly: 4990, desc: '最多 100 人/月', features: ['导师匹配', '文化课程', '体验评分', '数据看板'] },
+    { name: '企业版', priceMonthly: 1299, priceYearly: 12990, desc: '不限人数', features: ['不限人数', '定制流程', '集成对接', '专属顾问'] },
+  ],
+  ratingAvg: 4.8,
+  ratingCount: 312,
+  installCount: 15680,
+  features: ['入职任务', '电子签约', '导师匹配', '文化课程', '体验评分', '数据看板'],
+  screenshots: ['onboarding-1', 'onboarding-2'],
+  compatibility: ['org', 'learning'],
+  featured: true,
+};

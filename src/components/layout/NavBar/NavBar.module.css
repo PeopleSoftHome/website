@@ -155,7 +155,7 @@
   height: 26px;
   border-radius: 50%;
   background: var(--primary);
-  color: white;
+  color: var(--white);
   font-size: 12px;
   font-weight: 700;
   display: flex;
@@ -335,9 +335,9 @@
   box-shadow: 0 1px 0 var(--gray-200), 0 4px 20px var(--black-alpha-30);
 }
 .dark .item        { color: var(--text-on-dark-primary); }
-.dark .item:hover  { background: var(--surface-on-dark-hover); color: white; }
+.dark .item:hover  { background: var(--surface-on-dark-hover); color: var(--white); }
 .dark.scrolled .item        { color: var(--gray-300); }
-.dark.scrolled .item:hover  { background: var(--surface-on-dark-subtle); color: white; }
+.dark.scrolled .item:hover  { background: var(--surface-on-dark-subtle); color: var(--white); }
 .dark .phone       { color: var(--text-on-dark-secondary); }
 .dark.scrolled .phone       { color: var(--gray-400); }
 .dark .hamburger span { background: var(--text-on-dark-primary); }
@@ -402,7 +402,7 @@
   font-size: 13px;
   font-family: inherit;
   background: transparent;
-  color: white;
+  color: var(--white);
   padding: 0;
   overflow: hidden;
   transition: max-width 0.3s var(--ease-out), padding 0.3s, opacity 0.3s;
@@ -421,7 +421,7 @@
 /* 展开态容器样式 */
 .searchExpanded .searchIconBtn {
   background: var(--surface-on-dark-elevated);
-  color: white;
+  color: var(--white);
 }
 .scrolled.searchExpanded .searchIconBtn {
   background: var(--primary-light);
@@ -463,7 +463,7 @@
   flex-shrink: 0;
   transition: all 0.15s;
 }
-.searchClose:hover { background: var(--white-alpha-35); color: white; }
+.searchClose:hover { background: var(--white-alpha-35); color: var(--white); }
 .scrolled .searchClose { background: var(--gray-200); color: var(--gray-600); }
 .scrolled .searchClose:hover { background: var(--gray-300); }
 .searchExpanded .searchClose { display: flex; }

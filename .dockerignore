@@ -45,3 +45,8 @@ docker-compose*.yml
 # Playwright
 test-results/
 playwright-report/
+
+# Multi-package exclusions (frontend build context)
+talentpro-backend/
+talentpro-admin/
+src/server/

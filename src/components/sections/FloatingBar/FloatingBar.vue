@@ -34,9 +34,9 @@
   </div>
 </template>
 
-<script setup>
-import { inject } from 'vue';
-import { useNavScroll } from '@/composables/useNavScroll.js';
+<script setup lang="ts">
+import { useModalStore } from '@/stores/modal.pinia';
+import { useNavScroll } from '@/composables/useNavScroll';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './FloatingBar.module.css';
 import FloatBtn from './FloatBtn.vue';
@@ -44,8 +44,8 @@ import FloatBtn from './FloatBtn.vue';
 const emit = defineEmits(['openChat', 'openContact']);
 
 const { showBackTop } = useNavScroll();
-const modalStore = inject('modal', { openModal: () => {} });
-const { t } = inject('i18n', { t: (k) => k });
+const modalStore = useModalStore();
+const { t } = useI18n();
 
 const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 </script>

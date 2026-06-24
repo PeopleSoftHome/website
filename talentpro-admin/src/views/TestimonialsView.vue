@@ -3,9 +3,10 @@
     <h2 style="margin-bottom: 20px">客户证言管理</h2>
     <el-card shadow="hover">
       <CmsTable
-        api-url="/cms/testimonials"
+        api-url="/cms/content/testimonial"
         :columns="columns"
         :form-fields="formFields"
+        :api-params="{ status: 'all' }"
       />
     </el-card>
   </div>

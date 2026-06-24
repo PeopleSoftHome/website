@@ -39,25 +39,25 @@
             <div style="font-weight:600">{{ selectedExp.name }} — 实验数据</div>
           </template>
           <div style="margin-bottom:12px">
-            <div style="font-size:12px;color:#888;margin-bottom:4px">Variant A 曝光</div>
+            <div style="font-size:12px;color:var(--admin-text-placeholder);margin-bottom:4px">Variant A 曝光</div>
             <div style="font-size:20px;font-weight:600">{{ stats.impressions.find(i => i.variant === 'A')?._count?.variant || 0 }}</div>
           </div>
           <div style="margin-bottom:12px">
-            <div style="font-size:12px;color:#888;margin-bottom:4px">Variant B 曝光</div>
+            <div style="font-size:12px;color:var(--admin-text-placeholder);margin-bottom:4px">Variant B 曝光</div>
             <div style="font-size:20px;font-weight:600">{{ stats.impressions.find(i => i.variant === 'B')?._count?.variant || 0 }}</div>
           </div>
           <el-divider />
           <div style="margin-bottom:12px">
-            <div style="font-size:12px;color:#888;margin-bottom:4px">Variant A 转化</div>
-            <div style="font-size:20px;font-weight:600;color:#10b981">{{ stats.conversions.find(i => i.variant === 'A')?._count?.variant || 0 }}</div>
+            <div style="font-size:12px;color:var(--admin-text-placeholder);margin-bottom:4px">Variant A 转化</div>
+            <div style="font-size:20px;font-weight:600;color:var(--admin-color-success)">{{ stats.conversions.find(i => i.variant === 'A')?._count?.variant || 0 }}</div>
           </div>
           <div>
-            <div style="font-size:12px;color:#888;margin-bottom:4px">Variant B 转化</div>
-            <div style="font-size:20px;font-weight:600;color:#10b981">{{ stats.conversions.find(i => i.variant === 'B')?._count?.variant || 0 }}</div>
+            <div style="font-size:12px;color:var(--admin-text-placeholder);margin-bottom:4px">Variant B 转化</div>
+            <div style="font-size:20px;font-weight:600;color:var(--admin-color-success)">{{ stats.conversions.find(i => i.variant === 'B')?._count?.variant || 0 }}</div>
           </div>
         </el-card>
         <el-card v-else shadow="hover">
-          <div style="text-align:center;color:#888;padding:40px 0">点击实验行的「数据」查看转化统计</div>
+          <div style="text-align:center;color:var(--admin-text-placeholder);padding:40px 0">点击实验行的「数据」查看转化统计</div>
         </el-card>
       </el-col>
     </el-row>
@@ -76,7 +76,7 @@
         </el-form-item>
         <el-form-item label="B组流量">
           <el-slider v-model="form.trafficSplit" :min="0.05" :max="0.95" :step="0.05" show-stops />
-          <div style="font-size:12px;color:#888">B 组占 {{ (form.trafficSplit * 100).toFixed(0) }}%</div>
+          <div style="font-size:12px;color:var(--admin-text-placeholder)">B 组占 {{ (form.trafficSplit * 100).toFixed(0) }}%</div>
         </el-form-item>
         <el-form-item label="A组配置">
           <el-input v-model="variantAJson" type="textarea" :rows="3" placeholder='{ "name": "对照组", "ctaText": "预约演示" }' />

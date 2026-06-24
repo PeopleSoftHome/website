@@ -1,19 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Prisma $extends query callbacks are inherently dynamic: args/query shapes vary per model.
 import { Prisma } from '@prisma/client';
 import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
-const KEY_LENGTH = 32;
 const IV_LENGTH = 16;
-const AUTH_TAG_LENGTH = 16;
 const PREFIX = 'enc:';
 
 /**
  * PII 字段级加密配置
  * 模型名 -> 需要加密的字段列表
+ *
+ * 注意：被用于 where 等式查询的字段（如 User.email、WorkspaceInvite.email）
+ * 目前未列入，因为当前实现使用随机 IV 加密，无法直接支持等值查询。
+ * 后续如需加密这些字段，应引入确定性加密或增加 hash 查询列。
  */
-const ENCRYPTED_FIELDS: Record<string, string[]> = {
-  User: ['phone', 'email'],
+export const ENCRYPTED_FIELDS: Record<string, string[]> = {
+  User: ['phone'],
   DemoBooking: ['phone', 'email'],
+  DownloadRecord: ['email', 'phone'],
+  JobApplication: ['email', 'phone', 'resumeUrl'],
+  AppVendor: ['contactEmail', 'contactPhone'],
+  TeamMember: ['email'],
 };
 
 function deriveKey(secret: string): Buffer {
@@ -44,74 +52,23 @@ function isEncrypted(value: unknown): boolean {
   return typeof value === 'string' && value.startsWith(PREFIX);
 }
 
-function shouldEncryptField(model: string, field: string): boolean {
-  return ENCRYPTED_FIELDS[model]?.includes(field) ?? false;
-}
-
 /**
- * Prisma Client 字段级加密扩展
+ * Prisma Client 字段级加密扩展（query 扩展版）
  *
- * 使用方式：
- * 1. 设置 PII_ENCRYPTION_KEY 环境变量（32+ 字符）
- * 2. 在 PrismaService 中通过 $extends 应用此扩展
+ * 使用 query 扩展而非 model 扩展，确保与 workspace/soft-delete 扩展组合时
+ * 加解密逻辑仍然生效，且不会被后续扩展的 `query` 回调绕过。
  *
  * 自动行为：
- * - create / update / upsert 时加密配置字段
+ * - create / createMany / update / updateMany / upsert 时加密配置字段
  * - findUnique / findFirst / findMany 时解密配置字段
- * - 已加密值不会重复加密
+ * - 已加密值不会重复加密；解密失败时返回原值以兼容历史数据
  */
 export function fieldEncryptionExtension(secret: string) {
   const key = deriveKey(secret);
 
-  return Prisma.defineExtension({
-    name: 'fieldEncryption',
-    model: {
-      $allModels: {
-        async create({ model, operation, args, query }: any) {
-          const encryptedArgs = encryptArgs(model, args, key);
-          const result = await query(encryptedArgs);
-          return decryptResult(model, result, key);
-        },
-        async createMany({ model, operation, args, query }: any) {
-          const encryptedArgs = encryptManyArgs(model, args, key);
-          return query(encryptedArgs);
-        },
-        async update({ model, operation, args, query }: any) {
-          const encryptedArgs = encryptArgs(model, args, key);
-          const result = await query(encryptedArgs);
-          return decryptResult(model, result, key);
-        },
-        async updateMany({ model, operation, args, query }: any) {
-          const encryptedArgs = encryptArgs(model, args, key);
-          return query(encryptedArgs);
-        },
-        async upsert({ model, operation, args, query }: any) {
-          const encryptedArgs = encryptUpsertArgs(model, args, key);
-          const result = await query(encryptedArgs);
-          return decryptResult(model, result, key);
-        },
-        async findUnique({ model, operation, args, query }: any) {
-          const result = await query(args);
-          return decryptResult(model, result, key);
-        },
-        async findFirst({ model, operation, args, query }: any) {
-          const result = await query(args);
-          return decryptResult(model, result, key);
-        },
-        async findMany({ model, operation, args, query }: any) {
-          const results = await query(args);
-          if (Array.isArray(results)) {
-            return results.map((r) => decryptResult(model, r, key));
-          }
-          return results;
-        },
-      },
-    },
-  });
-
   function encryptValue(value: unknown): unknown {
     if (typeof value !== 'string' || !value) return value;
-    if (isEncrypted(value)) return value; // 避免重复加密
+    if (isEncrypted(value)) return value;
     return encrypt(value, key);
   }
 
@@ -121,41 +78,40 @@ export function fieldEncryptionExtension(secret: string) {
     try {
       return decrypt(value, key);
     } catch {
-      return value; // 解密失败返回原值（兼容历史数据）
+      return value;
     }
   }
 
-  function encryptArgs(model: string, args: any, _key: Buffer): any {
-    if (!args?.data) return args;
+  function encryptData(model: string, data: any): any {
     const fields = ENCRYPTED_FIELDS[model];
-    if (!fields) return args;
+    if (!fields || !data || typeof data !== 'object') return data;
 
-    const encryptedData = { ...args.data };
+    const encrypted = { ...data };
     for (const field of fields) {
-      if (field in encryptedData && encryptedData[field] != null) {
-        encryptedData[field] = encryptValue(encryptedData[field]);
+      if (field in encrypted && encrypted[field] != null) {
+        encrypted[field] = encryptValue(encrypted[field]);
       }
     }
-    return { ...args, data: encryptedData };
-  }
-
-  function encryptManyArgs(model: string, args: any, _key: Buffer): any {
-    if (!args?.data) return args;
-    if (!Array.isArray(args.data)) return encryptArgs(model, args, _key);
-    return { ...args, data: args.data.map((d: any) => encryptArgs(model, { data: d }, _key).data) };
-  }
-
-  function encryptUpsertArgs(model: string, args: any, _key: Buffer): any {
-    const encrypted = { ...args };
-    if (args.create) encrypted.create = encryptArgs(model, { data: args.create }, _key).data;
-    if (args.update) encrypted.update = encryptArgs(model, { data: args.update }, _key).data;
     return encrypted;
   }
 
-  function decryptResult(model: string, result: any, _key: Buffer): any {
-    if (!result || typeof result !== 'object') return result;
+  function encryptArgs(model: string, args: any): any {
+    if (!args || typeof args !== 'object') return args;
+    if (args.data) {
+      if (Array.isArray(args.data)) {
+        args = { ...args, data: args.data.map((d: any) => encryptData(model, d)) };
+      } else {
+        args = { ...args, data: encryptData(model, args.data) };
+      }
+    }
+    if (args.create) args = { ...args, create: encryptData(model, args.create) };
+    if (args.update) args = { ...args, update: encryptData(model, args.update) };
+    return args;
+  }
+
+  function decryptResult(model: string, result: any): any {
     const fields = ENCRYPTED_FIELDS[model];
-    if (!fields) return result;
+    if (!fields || !result || typeof result !== 'object') return result;
 
     const decrypted = { ...result };
     for (const field of fields) {
@@ -165,4 +121,45 @@ export function fieldEncryptionExtension(secret: string) {
     }
     return decrypted;
   }
+
+  return Prisma.defineExtension({
+    name: 'fieldEncryption',
+    query: {
+      $allModels: {
+        async create({ model, args, query }: any) {
+          return decryptResult(model, await query(encryptArgs(model, args)));
+        },
+        async createMany({ model, args, query }: any) {
+          return query(encryptArgs(model, args));
+        },
+        async createManyAndReturn({ model, args, query }: any) {
+          const result = await query(encryptArgs(model, args));
+          if (Array.isArray(result)) return result.map((r) => decryptResult(model, r));
+          return decryptResult(model, result);
+        },
+        async update({ model, args, query }: any) {
+          return decryptResult(model, await query(encryptArgs(model, args)));
+        },
+        async updateMany({ model, args, query }: any) {
+          const result = await query(encryptArgs(model, args));
+          if (Array.isArray(result)) return result.map((r) => decryptResult(model, r));
+          return result;
+        },
+        async upsert({ model, args, query }: any) {
+          return decryptResult(model, await query(encryptArgs(model, args)));
+        },
+        async findUnique({ model, args, query }: any) {
+          return decryptResult(model, await query(args));
+        },
+        async findFirst({ model, args, query }: any) {
+          return decryptResult(model, await query(args));
+        },
+        async findMany({ model, args, query }: any) {
+          const results = await query(args);
+          if (Array.isArray(results)) return results.map((r) => decryptResult(model, r));
+          return results;
+        },
+      },
+    },
+  });
 }

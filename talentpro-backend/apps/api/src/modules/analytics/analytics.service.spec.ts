@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AnalyticsService } from './analytics.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { PageView, EventTrack } from '@prisma/client';
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
@@ -50,7 +51,7 @@ describe('AnalyticsService', () => {
     it('should create page view record', async () => {
       const data = { path: '/', sessionId: 's1' };
       const mockResult = { id: 'pv1', ...data };
-      jest.spyOn(prisma.pageView, 'create').mockResolvedValue(mockResult as any);
+      jest.spyOn(prisma.pageView, 'create').mockResolvedValue(mockResult as unknown as PageView);
 
       const result = await service.trackPageView(data);
 
@@ -63,7 +64,7 @@ describe('AnalyticsService', () => {
     it('should create event track record', async () => {
       const data = { event: 'demo_modal_open', sessionId: 's1' };
       const mockResult = { id: 'et1', ...data, properties: {} };
-      jest.spyOn(prisma.eventTrack, 'create').mockResolvedValue(mockResult as any);
+      jest.spyOn(prisma.eventTrack, 'create').mockResolvedValue(mockResult as unknown as EventTrack);
 
       const result = await service.trackEvent(data);
 

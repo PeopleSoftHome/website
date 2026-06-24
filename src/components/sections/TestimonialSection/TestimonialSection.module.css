@@ -1,5 +1,5 @@
 .section {
-  background: white;
+  background: var(--white);
 }
 
 /* ── 轮播外框 ── */
@@ -37,7 +37,7 @@
   height: 40px;
   border-radius: 50%;
   border: 1px solid var(--gray-200);
-  background: white;
+  background: var(--white);
   color: var(--gray-600);
   font-size: 18px;
   display: flex;

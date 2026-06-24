@@ -5,6 +5,18 @@ import { PrismaService } from '../common/prisma/prisma.service';
 import { NotificationService } from '../modules/notification/notification.service';
 import { NotificationSseService } from '../modules/notification/notification-sse.service';
 
+interface NotificationJobData {
+  type: 'COMMENT_REPLY' | 'MENTION' | string;
+  parentId?: string;
+  authorId?: string;
+  authorName?: string;
+  commentId?: string;
+  entityType?: string;
+  entityId?: string;
+  mentionedName?: string;
+  [key: string]: unknown;
+}
+
 @Processor('notification')
 export class NotificationProcessor extends WorkerHost {
   private readonly logger = new Logger(NotificationProcessor.name);
@@ -34,11 +46,22 @@ export class NotificationProcessor extends WorkerHost {
 
   @OnWorkerEvent('failed')
   onFailed(job: Job, err: Error) {
-    this.logger.error(`Job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`);
-    // 可在此写入死信表或发送告警
+    this.logger.error(
+      `Job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`,
+      {
+        deadLetter: {
+          queue: 'notification',
+          jobId: job.id,
+          name: job.name,
+          data: job.data,
+          error: err.message,
+          stack: err.stack,
+        },
+      },
+    );
   }
 
-  private async handleCreate(data: any) {
+  private async handleCreate(data: NotificationJobData) {
     if (data.type === 'COMMENT_REPLY' && data.parentId) {
       const parent = await this.prisma.comment.findUnique({
         where: { id: data.parentId },

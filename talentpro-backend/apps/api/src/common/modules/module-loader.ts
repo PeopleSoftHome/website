@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from 'fs';
+import { readdirSync } from 'fs';
 import { join } from 'path';
 import { Type } from '@nestjs/common';
 
@@ -14,10 +14,10 @@ import { Type } from '@nestjs/common';
 export async function loadModulesFromDirectory(
   relativeDir: string,
   filePattern: RegExp,
-): Promise<Type<any>[]> {
+): Promise<Type<unknown>[]> {
   const basePath = join(__dirname, '..', '..', relativeDir);
   const entries = readdirSync(basePath, { withFileTypes: true });
-  const result: Type<any>[] = [];
+  const result: Type<unknown>[] = [];
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
@@ -30,10 +30,10 @@ export async function loadModulesFromDirectory(
 
       const filePath = join(dirPath, file);
       try {
-        const mod = await import(filePath);
+        const mod = await import(filePath) as Record<string, unknown>;
         // NestJS 模块/服务/监听器通常只有一个命名导出
         const exported = Object.values(mod).find(
-          (v): v is Type<any> => typeof v === 'function',
+          (v): v is Type<unknown> => typeof v === 'function',
         );
         if (exported) {
           result.push(exported);

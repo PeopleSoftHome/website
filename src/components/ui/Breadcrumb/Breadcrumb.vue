@@ -13,13 +13,17 @@
   </nav>
 </template>
 
-<script setup>
-import { inject } from 'vue';
+<script setup lang="ts">
 import s from './Breadcrumb.module.css';
 
+interface BreadcrumbItem {
+  label: string;
+  to?: string;
+}
+
 defineProps({
-  items: { type: Array, default: () => [] },
+  items: { type: Array as () => BreadcrumbItem[], default: () => [] },
 });
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 </script>

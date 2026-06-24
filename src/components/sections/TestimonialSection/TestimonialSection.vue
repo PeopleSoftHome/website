@@ -42,19 +42,33 @@
   </section>
 </template>
 
-<script setup>
-import { ref, computed, onUnmounted, inject } from 'vue';
+<script setup lang="ts">
+import { ref, computed, onUnmounted, inject, type Ref } from 'vue';
 
-import { useCarousel } from '@/composables/useCarousel.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useCarousel } from '@/composables/useCarousel';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformTestimonials } from '@/api/transforms';
+
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import TestimonialCard from './TestimonialCard.vue';
 import s from './TestimonialSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+interface TestimonialItem {
+  id: string;
+  industry: string;
+  product: string;
+  text: string;
+  name: string;
+  title: string;
+  avatar: string;
+  avatarGrad: string;
+  avatarChar: string;
+  isActive?: boolean;
+}
+
+const { t } = useI18n();
 
 const GRAD_PRESETS = [
   'linear-gradient(135deg, #1B5FEB, #7C3AED)',
@@ -64,22 +78,11 @@ const GRAD_PRESETS = [
   'linear-gradient(135deg, #0284C7, #1B5FEB)',
 ];
 
-const { displayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
-  transform: (active) => (active || []).map((item, i) => ({
-    id: item.name
-      ? item.name.toLowerCase().replace(/\s+/g, '-')
-      : `testimonial-${i}`,
-    industry: item.industry || '',
-    product: item.product || '',
-    text: item.text || '',
-    name: item.name || '',
-    title: item.title || '',
-    avatarGrad: GRAD_PRESETS[i % GRAD_PRESETS.length],
-    avatarChar: item.name ? item.name.charAt(0) : '?',
-  })),
+const { displayItems: rawDisplayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
+  transform: transformTestimonials,
   fallbackKey: 'testimonials',
 });
-
+const displayItems = computed(() => rawDisplayItems.value as unknown as TestimonialItem[]);
 
 const itemCount = computed(() => displayItems.value.length);
 
@@ -91,9 +94,9 @@ const {
   bindPauseEvents,
   getColCount,
   getOffset,
-} = useCarousel(itemCount, { autoPlayInterval: 4500 });
+} = useCarousel(itemCount.value, { autoPlayInterval: 4500 });
 
-const wrapRef = ref(null);
+const wrapRef: Ref<HTMLElement | null> = ref(null);
 
 onMounted(() => {
   if (wrapRef.value) {

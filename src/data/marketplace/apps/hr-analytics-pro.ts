@@ -1,0 +1,23 @@
+export const APP_HR_ANALYTICS_PRO = {
+  id: 'app-008',
+  slug: 'hr-analytics-pro',
+  name: 'HR 数据洞察 Pro',
+  tagline: '400+ 指标，一键生成高管报表',
+  description: '预置 400+ HR 行业指标与高管驾驶舱模板，支持拖拽式自定义报表。自动关联 TalentPro 全模块数据，实现从招聘漏斗到离职分析的全链路数据洞察。支持预测性分析，提前识别人才风险。',
+  category: 'analytics',
+  vendor: 'DataVibe',
+  icon: 'hr-analytics-pro',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '分析版', priceMonthly: 799, priceYearly: 7990, desc: '标准报表', features: ['预置报表', '基础拖拽', '数据导出'] },
+    { name: '专业版', priceMonthly: 1999, priceYearly: 19990, desc: '自定义分析', features: ['自定义报表', '预测分析', '高管驾驶舱', '数据下钻'] },
+    { name: '平台版', priceMonthly: 4999, priceYearly: 49990, desc: '数据中台', features: ['数据仓库', 'ETL 工具', '定制开发', '专属架构师'] },
+  ],
+  ratingAvg: 4.7,
+  ratingCount: 267,
+  installCount: 9340,
+  features: ['400+ 指标', '拖拽报表', '预测分析', '高管驾驶舱', '数据下钻', '自动推送'],
+  screenshots: ['analytics-1', 'analytics-2', 'analytics-3'],
+  compatibility: ['analytics', 'recruit', 'performance', 'payroll'],
+  featured: true,
+};

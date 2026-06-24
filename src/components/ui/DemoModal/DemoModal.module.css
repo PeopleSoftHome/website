@@ -22,7 +22,7 @@
 
 /* ── 弹窗容器 ── */
 .modal {
-  background: white;
+  background: var(--white);
   border-radius: var(--radius-xl);
   width: 100%;
   max-width: 500px;
@@ -178,7 +178,7 @@
 
 .verifyBtn:hover:not(:disabled) {
   background: var(--primary);
-  color: white;
+  color: var(--white);
 }
 
 .verifyBtn:disabled {
@@ -194,7 +194,7 @@
   width: 100%;
   height: 48px;
   background: var(--primary);
-  color: white;
+  color: var(--white);
   border: none;
   border-radius: var(--radius-md);
   font-size: 15px;
@@ -224,7 +224,7 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
-  background: white;
+  background: var(--white);
   color: var(--gray-700);
   font-family: inherit;
 }
@@ -236,7 +236,7 @@
 
 .pillSelected {
   background: var(--primary);
-  color: white;
+  color: var(--white);
   border-color: var(--primary);
 }
 
@@ -277,7 +277,7 @@
 
 .recChip:hover {
   background: var(--primary);
-  color: white;
+  color: var(--white);
   border-color: var(--primary);
 }
 
@@ -294,7 +294,7 @@
 
 [data-theme="dark"] .recChip:hover {
   background: var(--primary);
-  color: white;
+  color: var(--white);
 }
 
 /* ── 成功态 ── */

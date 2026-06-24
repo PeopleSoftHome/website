@@ -9,11 +9,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue';
-import { BRAND_LOGOS } from '@/data/stats.js';
+import { BRAND_LOGOS } from '@/data/stats';
 import s from './BrandScrollSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 const logos = [...BRAND_LOGOS, ...BRAND_LOGOS];
 </script>

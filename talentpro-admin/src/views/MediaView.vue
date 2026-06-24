@@ -15,12 +15,12 @@
           :show-file-list="false"
           accept="image/*,video/mp4,application/pdf"
         >
-          <el-icon :size="48" color="#999"><Upload /></el-icon>
-          <div style="margin-top: 8px; color: #666">
-            拖拽文件到此处，或 <em style="color: #1B5FEB">点击上传</em>
+          <el-icon :size="48" color="var(--admin-text-secondary)"><Upload /></el-icon>
+          <div style="margin-top: 8px; color: var(--admin-text-secondary)">
+            拖拽文件到此处，或 <em style="color: var(--admin-color-primary)">点击上传</em>
           </div>
           <template #tip>
-            <div style="font-size: 12px; color: #999; margin-top: 8px">
+            <div style="font-size: 12px; color: var(--admin-text-secondary); margin-top: 8px">
               支持 JPG/PNG/GIF/WebP/MP4/PDF，单文件不超过 10MB
             </div>
           </template>
@@ -31,7 +31,7 @@
           <template #header><span>存储统计</span></template>
           <div v-if="stats" style="display: flex; flex-direction: column; gap: 12px">
             <div style="display: flex; justify-content: space-between">
-              <span style="color: #666">总文件数</span>
+              <span style="color: var(--admin-text-secondary)">总文件数</span>
               <span style="font-weight: 600">{{ stats.total }}</span>
             </div>
             <div
@@ -39,7 +39,7 @@
               :key="item.mimeType"
               style="display: flex; justify-content: space-between"
             >
-              <span style="color: #666">{{ item.mimeType }}</span>
+              <span style="color: var(--admin-text-secondary)">{{ item.mimeType }}</span>
               <span>{{ item._count.mimeType }} 个</span>
             </div>
           </div>
@@ -82,7 +82,7 @@ import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/CmsTable.vue';
 import Picture from '@/components/Picture.vue';
 import client from '@/api/client.js';
-import { useAuthStore } from '@/stores/auth.store.js';
+import { useAuthStore } from '@/stores/auth.js';
 
 const auth = useAuthStore();
 const uploadRef = ref(null);

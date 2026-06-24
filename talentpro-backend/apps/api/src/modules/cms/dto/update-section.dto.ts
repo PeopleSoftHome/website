@@ -11,7 +11,7 @@ export class UpdateSectionDto {
 
   @IsOptional()
   @IsObject()
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 
   @IsOptional()
   @IsBoolean()

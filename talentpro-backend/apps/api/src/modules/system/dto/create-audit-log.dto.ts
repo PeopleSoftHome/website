@@ -16,10 +16,10 @@ export class CreateAuditLogDto {
   resourceId?: string;
 
   @IsOptional()
-  oldValue?: any;
+  oldValue?: Record<string, unknown>;
 
   @IsOptional()
-  newValue?: any;
+  newValue?: Record<string, unknown>;
 
   @IsOptional()
   @IsString()

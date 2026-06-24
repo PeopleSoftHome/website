@@ -8,7 +8,7 @@
     <p :class="s.text">{{ text }}</p>
     <div :class="s.author">
       <div v-if="avatar" :class="s.avatarImgWrap" aria-hidden="true">
-        <img :src="avatar" :alt="name" :class="s.avatarImg" loading="lazy" />
+        <NuxtImg :src="avatar" :alt="name" :class="s.avatarImg" loading="lazy" placeholder />
       </div>
       <div v-else :class="s.avatar" :style="{ background: avatarGrad }" aria-hidden="true">
         {{ avatarChar }}
@@ -21,7 +21,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './TestimonialCard.module.css';
 
 defineProps({

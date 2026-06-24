@@ -16,7 +16,7 @@
 .logo {
   font-size: 22px;
   font-weight: 900;
-  color: white;
+  color: var(--white);
   margin-bottom: 14px;
   /* 渐变文字 */
   background: var(--grad-text);
@@ -38,7 +38,7 @@
   font-size: 13px;
 }
 .contact strong {
-  color: white;
+  color: var(--white);
   font-weight: 600;
 }
 
@@ -68,7 +68,7 @@
   transition: all 0.2s;
 }
 .hotTag:hover {
-  color: white;
+  color: var(--white);
   border-color: var(--text-on-dark-tertiary);
 }
 
@@ -76,7 +76,7 @@
 .colTitle {
   font-size: 14px;
   font-weight: 700;
-  color: white;
+  color: var(--white);
   margin-bottom: 16px;
 }
 
@@ -91,7 +91,7 @@
   color: var(--text-on-dark-muted);
   transition: color 0.2s;
 }
-.link:hover { color: white; }
+.link:hover { color: var(--white); }
 
 /* ── 底部版权行 ── */
 .bottom {
@@ -158,7 +158,7 @@
 
 .socialIcon:hover {
   background: var(--primary);
-  color: white;
+  color: var(--white);
 }
 
 /* ── 响应式 ── */
@@ -174,4 +174,4 @@
 
 /* ── v2.3.0 暗色模式（Footer 本身已是深色，暗色下略加深）── */
 [data-theme="dark"] .footer { background: var(--ink-900); }
-[data-theme="dark"] .hotTag:hover { color: white; }
+[data-theme="dark"] .hotTag:hover { color: var(--white); }

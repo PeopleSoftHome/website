@@ -1,0 +1,83 @@
+<template>
+  <div>
+    <main :class="s.page">
+      <div class="container">
+        <div :class="s.card" class="reveal">
+          <div :class="s.icon">✓</div>
+          <h1 :class="s.title">{{ t('marketplace.paymentSuccess') }}</h1>
+          <p :class="s.desc">{{ t('marketplace.paymentSuccessDesc') }}</p>
+          <div v-if="order" :class="s.orderInfo">
+            <p><strong>{{ t('marketplace.orderNo') }}:</strong> {{ order.orderNo }}</p>
+            <p><strong>{{ t('marketplace.amount') }}:</strong> {{ order.currency }} {{ order.total }}</p>
+          </div>
+          <div :class="s.actions">
+            <NuxtLink to="/marketplace" :class="s.btnPrimary">
+              {{ t('marketplace.backToMarketplace') }}
+            </NuxtLink>
+            <NuxtLink to="/profile" :class="s.btnSecondary">
+              {{ t('marketplace.viewMyApps') }}
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { paymentApi } from '@/api/marketplace';
+import s from './success.module.css';
+
+definePageMeta({ title: 'marketplace.paymentSuccess', description: 'marketplace.subtitle' });
+
+interface Order {
+  id: string;
+  orderNo: string;
+  status: string;
+  total: number;
+  currency: string;
+}
+
+const { t } = useI18n();
+const route = useRoute();
+
+const order = ref<Order | null>(null);
+
+onMounted(async () => {
+  const orderId = route.query.order_id;
+  if (orderId) {
+    try {
+      const res = await paymentApi.getOrder(Array.isArray(orderId) ? orderId[0] : orderId);
+      order.value = res.data as Order;
+    } catch {
+      // ignore
+    }
+  }
+});
+
+// 自动刷新订单状态（每 3 秒最多刷新 5 次）
+const refreshCount = ref(0);
+let refreshTimer: ReturnType<typeof setInterval> | null = null;
+
+onMounted(() => {
+  refreshTimer = setInterval(async () => {
+    const ord = order.value;
+    if (!ord || ord.status === 'COMPLETED' || refreshCount.value >= 5) {
+      if (refreshTimer) clearInterval(refreshTimer);
+      return;
+    }
+    try {
+      const res = await paymentApi.getOrder(ord.id);
+      order.value = res.data as Order;
+      refreshCount.value++;
+    } catch {
+      if (refreshTimer) clearInterval(refreshTimer);
+    }
+  }, 3000);
+});
+
+onUnmounted(() => {
+  if (refreshTimer) clearInterval(refreshTimer);
+});
+</script>

@@ -65,12 +65,12 @@
         </div>
 
         <div v-if="mode === 'register'" :class="s.formGroup">
-          <label :class="s.label">{{ t('auth.company') || '公司/团队名称' }}</label>
+          <label :class="s.label">{{ t('auth.company') }}</label>
           <input
             v-model="form.company"
             type="text"
             :class="[s.input, fieldError.company ? s.inputError : '']"
-            :placeholder="t('auth.companyPlaceholder') || '请输入公司或团队名称（可选）'"
+            :placeholder="t('auth.companyPlaceholder')"
           />
           <span v-if="fieldError.company" :class="s.errorMsg">{{ fieldError.company }}</span>
         </div>
@@ -90,11 +90,12 @@
   </BaseModal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
-import { inject } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
+import { usePublicConfig } from '@/composables/usePublicConfig';
 import s from './AuthModal.module.css';
 
 const props = defineProps({
@@ -104,14 +105,31 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const { t } = inject('i18n', { t: (k) => k });
-const auth = inject('auth', {});
+const { t } = useI18n();
+const auth = useAuthStore();
+const { recaptchaSiteKey } = usePublicConfig();
+
+interface AuthForm {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  company: string;
+}
+
+interface FieldErrors {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  name?: string;
+  company?: string;
+}
 
 const mode = ref(props.defaultMode);
 const error = ref('');
 const submitting = ref(false);
-const form = ref({ email: '', password: '', confirmPassword: '', name: '', company: '' });
-const fieldError = ref({});
+const form = ref<AuthForm>({ email: '', password: '', confirmPassword: '', name: '', company: '' });
+const fieldError = ref<FieldErrors>({});
 
 watch(() => props.isOpen, (open) => {
   if (open) {
@@ -133,7 +151,7 @@ const close = () => {
 };
 
 const validate = () => {
-  const errors = {};
+  const errors: FieldErrors = {};
   if (!form.value.email) errors.email = t('auth.emailRequired');
   else if (!/^\S+@\S+\.\S+$/.test(form.value.email)) errors.email = t('auth.emailInvalid');
 
@@ -164,10 +182,10 @@ const handleSubmit = async () => {
     } else {
       // 注册时获取 reCAPTCHA token
       let recaptchaToken = '';
-      if (window.grecaptcha) {
+      if (recaptchaSiteKey && window.grecaptcha) {
         try {
           recaptchaToken = await window.grecaptcha.execute(
-            import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+            recaptchaSiteKey,
             { action: 'register' },
           );
         } catch {
@@ -186,7 +204,8 @@ const handleSubmit = async () => {
     }
     close();
   } catch (e) {
-    error.value = e.message || t('auth.genericError');
+    const err = e as Error;
+    error.value = err.message || t('auth.genericError');
   } finally {
     submitting.value = false;
   }

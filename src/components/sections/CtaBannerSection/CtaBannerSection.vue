@@ -14,11 +14,11 @@
   </section>
 </template>
 
-<script setup>
-import { inject } from 'vue';
+<script setup lang="ts">
+import { useModalStore } from '@/stores/modal.pinia';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './CtaBannerSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { openModal: () => {} });
+const { t } = useI18n();
+const modalStore = useModalStore();
 </script>

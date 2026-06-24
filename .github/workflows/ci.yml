@@ -50,7 +50,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         with:
           name: frontend-dist
-          path: dist/
+          path: .output/public/
           retention-days: 30
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -193,12 +193,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: dist/
+          path: .output/public/
       - name: Download admin artifact
         uses: actions/download-artifact@v4
         with:
           name: admin-dist
           path: talentpro-admin/dist/
+
+      # 构建并推送前端 Docker 镜像
+      - name: Build frontend Docker image
+        run: |
+          docker build -t talentpro-web:${{ github.sha }} -f docker/Dockerfile.frontend .
+          docker tag talentpro-web:${{ github.sha }} talentpro-web:latest
 
       # 构建并推送后端 Docker 镜像（需要配置 Docker Registry 认证 Secrets）
       - name: Build backend Docker image
@@ -206,9 +212,11 @@ jobs:
           cd talentpro-backend
           docker build -t talentpro-api:${{ github.sha }} -f docker/Dockerfile .
           docker tag talentpro-api:${{ github.sha }} talentpro-api:latest
-      # - name: Push backend Docker image
+      # - name: Push Docker images
       #   run: |
       #     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin <registry>
+      #     docker push <registry>/talentpro-web:${{ github.sha }}
+      #     docker push <registry>/talentpro-web:latest
       #     docker push <registry>/talentpro-api:${{ github.sha }}
       #     docker push <registry>/talentpro-api:latest
 
@@ -216,7 +224,7 @@ jobs:
       # - name: Deploy frontend to OSS
       #   run: |
       #     npm install -g @alicloud/ossutil
-      #     ossutil cp -rf dist/ oss://talentpro-static/
+      #     ossutil cp -rf .output/public/ oss://talentpro-static/
       #   env:
       #     OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
       #     OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}

@@ -14,9 +14,10 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject } from 'vue';
-import { commentApi } from '@/api/comment.js';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { commentApi } from '@/api/comment';
 import MarkdownEditor from '../MarkdownEditor/MarkdownEditor.vue';
 import s from './CommentForm.module.css';
 
@@ -29,8 +30,8 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel']);
 
-const { t } = inject('i18n', { t: (k) => k });
-const auth = inject('auth', { user: { value: null } });
+const { t } = useI18n();
+const auth = useAuthStore();
 
 const content = ref('');
 const submitting = ref(false);
@@ -44,15 +45,16 @@ const submit = async () => {
     const res = await commentApi.createComment({
       entityType: props.entityType,
       entityId: props.entityId,
-      authorId: auth.user.value?.id || 'guest',
+      authorId: (auth.user as { id?: string } | null)?.id || 'guest',
       content: text,
       parentId: props.parentId || undefined,
     });
     const newComment = (res.data || res)?.data || res.data || res;
-    emit('submit', newComment);
+    emit('submit', newComment as Record<string, unknown>);
     content.value = '';
   } catch (e) {
-    import('@/utils/toast.js').then(({ showToast }) => showToast(e.response?.data?.message || t('comment.submitError'), 'error'));
+    const err = e as { response?: { data?: { message?: string } } };
+    import('@/utils/toast').then(({ showToast }) => showToast(err.response?.data?.message || t('comment.submitError'), 'error'));
   }
   submitting.value = false;
 };

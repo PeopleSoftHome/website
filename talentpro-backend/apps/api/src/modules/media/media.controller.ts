@@ -4,8 +4,10 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiConsumes } from '@ne
 import { MediaService } from './media.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
+import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { UserContext } from '@/common/types';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
@@ -44,7 +46,7 @@ export class MediaController {
   @Get(':id')
   @Public()
   @ApiOperation({ summary: '媒体详情' })
-  findOne(@Param('id') id: string, @CurrentUser() user?: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user?: UserContext) {
     return this.mediaService.findOne(id, user?.workspaceId);
   }
 
@@ -52,6 +54,7 @@ export class MediaController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
+  @Permission('media:create')
   @ApiOperation({ summary: '上传文件' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file', {
@@ -72,6 +75,7 @@ export class MediaController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
+  @Permission('media:create')
   @ApiOperation({ summary: '创建媒体记录（上传后调用）' })
   create(
     @CurrentUser('id') userId: string,
@@ -84,8 +88,9 @@ export class MediaController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
+  @Permission('media:update')
   @ApiOperation({ summary: '更新媒体信息' })
-  update(@Param('id') id: string, @CurrentUser() user: any, @Body() dto: UpdateMediaDto) {
+  update(@Param('id') id: string, @CurrentUser() user: UserContext, @Body() dto: UpdateMediaDto) {
     return this.mediaService.update(id, dto, user.workspaceId);
   }
 
@@ -93,8 +98,9 @@ export class MediaController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
+  @Permission('media:delete')
   @ApiOperation({ summary: '删除媒体' })
-  delete(@Param('id') id: string, @CurrentUser() user: any) {
+  delete(@Param('id') id: string, @CurrentUser() user: UserContext) {
     return this.mediaService.delete(id, user.workspaceId);
   }
 }

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+// SVG Sprite：全局注入 78 个图标定义，无运行时逻辑
+</script>
+
 <template>
   <svg style="display: none;" aria-hidden="true">
     <defs>

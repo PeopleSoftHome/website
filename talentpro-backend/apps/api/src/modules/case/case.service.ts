@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { PostStatus } from '@prisma/client';
 import { CaseStudyRepository } from './case-study.repository';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class CaseService {
   ) {}
 
   async findAll(industry?: string, featured?: boolean, page = 1, pageSize = 20) {
-    const where: any = { status: PostStatus.PUBLISHED, deletedAt: null };
+    const where: Prisma.CaseStudyWhereInput = { status: PostStatus.PUBLISHED, deletedAt: null };
     if (industry) where.industry = industry;
     if (featured !== undefined) where.featured = featured;
     return this.caseRepo.findAll({

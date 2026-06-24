@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { PostStatus } from '@prisma/client';
 import { NewsRepository } from './news.repository';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class NewsService {
   ) {}
 
   async findAll(category?: string, page = 1, pageSize = 20) {
-    const where: any = { status: PostStatus.PUBLISHED };
+    const where: Prisma.NewsWhereInput = { status: PostStatus.PUBLISHED };
     if (category) where.category = category;
     return this.repo.findAll({ page, pageSize, where, orderBy: [{ featured: 'desc' }, { publishedAt: 'desc' }] });
   }

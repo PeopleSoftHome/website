@@ -1,0 +1,21 @@
+.section { margin-bottom: 64px; }
+.featureGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.featureCard { background: var(--card-bg); border: 1px solid var(--card-border); border-left: 3px solid var(--primary); border-radius: var(--radius-lg); padding: 28px; transition: transform 0.25s var(--ease-out), box-shadow 0.25s; position: relative; overflow: hidden; cursor: default; }
+.featureCard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.featureCardExpanded { border-left-color: var(--primary); }
+.featureTop { position: relative; z-index: 1; }
+.featureBadge { width: 28px; height: 28px; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.featureTitle { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.featureDesc { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+.featureDetail { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--gray-200); font-size: 13px; color: var(--gray-500); line-height: 1.65; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.35s var(--ease-out), opacity 0.25s; }
+.featureCardExpanded .featureDetail { max-height: 200px; opacity: 1; }
+.featureArrow { position: absolute; bottom: 20px; right: 20px; font-size: 13px; font-weight: 600; color: var(--primary); opacity: 0; transform: translateX(-8px); transition: all 0.25s var(--ease-out); }
+.featureCard:hover .featureArrow { opacity: 1; transform: translateX(0); }
+
+@media (max-width: 1023px) {
+  .featureGrid { grid-template-columns: 1fr; }
+  .featureArrow { display: none; }
+}
+
+[data-theme="dark"] .featureTitle { color: var(--gray-50); }
+[data-theme="dark"] .featureDetail { border-top-color: var(--gray-700); color: var(--gray-400); }

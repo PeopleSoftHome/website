@@ -39,50 +39,58 @@
   </section>
 </template>
 
-<script setup>
-import { computed, inject, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 
-import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap.js';
-import { useTabs } from '@/composables/useTabs.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap';
+import { useTabs } from '@/composables/useTabs';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformIndustries } from '@/api/transforms';
+
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductScreenshot from './ProductScreenshot.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './IndustrySolutionSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { openModal: () => {} });
-const analytics = inject('analytics', { track: () => {} });
+interface IndustryFeature {
+  badge: string;
+  title: string;
+  desc: string;
+}
+
+interface IndustryTab {
+  id: string;
+  label: string;
+  features?: IndustryFeature[];
+  screenshot?: Record<string, any>;
+}
+
+const { t } = useI18n();
+const modalStore = useModalStore();
+const analyticsStore = useAnalyticsStore();
 const { activeIndex, selectTab } = useTabs(0);
 
 const originalSelectTab = selectTab;
-const trackedSelectTab = (idx) => {
+const trackedSelectTab = (idx: number) => {
   originalSelectTab(idx);
-  analytics.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
+  analyticsStore.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('industries', {
-  transform: (active) => (active || []).map((item) => ({
-    id: item.name
-      ? item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-      : `industry-${Math.random().toString(36).slice(2, 7)}`,
-    label: item.name || '',
-    icon: item.icon || 'factory',
-    features: item.features || [],
-    screenshot: item.screenshot || {},
-  })),
+const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('industries', {
+  transform: transformIndustries,
   fallbackKey: 'industries',
 });
-
-
+const tabs = computed(() => rawTabs.value as unknown as IndustryTab[]);
 
 const panel = computed(() => tabs.value[activeIndex.value]);
-const indKey = computed(() => INDUSTRY_KEY_MAP[panel.value?.id] ?? panel.value?.id ?? '');
+const indKey = computed(() => (INDUSTRY_KEY_MAP as Record<string, string>)[panel.value?.id || ''] ?? panel.value?.id ?? '');
 
 const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
-  const key = INDUSTRY_KEY_MAP[tab.id] ?? tab.id;
+  const keyMap = INDUSTRY_KEY_MAP as Record<string, string>;
+  const key = keyMap[tab.id] ?? tab.id;
   const translated = t(`industry.tabs.${key}`);
   return {
     ...tab,
@@ -90,11 +98,11 @@ const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
   };
 }));
 
-const features = computed(() => {
+const features = computed<IndustryFeature[]>(() => {
   if (panel.value?.features && panel.value.features.length > 0) {
     return panel.value.features;
   }
-  const key = indKey.value || 'manufacturing';
+  const key = indKey.value || 'mfg';
   return [
     { badge: t('industry.badges.f1'), title: t(`industry.${key}.f1title`), desc: t(`industry.${key}.f1desc`) },
     { badge: t('industry.badges.f2'), title: t(`industry.${key}.f2title`), desc: t(`industry.${key}.f2desc`) },

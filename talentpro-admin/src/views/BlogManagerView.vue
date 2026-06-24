@@ -50,6 +50,9 @@
         <el-form-item label="摘要">
           <el-input v-model="form.excerpt" type="textarea" :rows="2" />
         </el-form-item>
+        <el-form-item label="封面图">
+          <ImageUpload v-model="form.coverImage" />
+        </el-form-item>
         <el-form-item label="内容">
           <RichEditor v-model="form.content" />
         </el-form-item>
@@ -61,10 +64,24 @@
         </el-form-item>
       </el-form>
       <template #footer>
+        <AiAssistButton
+          type="blog"
+          :title="form.title"
+          :content="form.content || form.excerpt"
+          @result="(p) => { aiPayload.value = p; aiVisible.value = true; }"
+        />
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
+
+    <AiAssistDialog
+      v-model:visible="aiVisible"
+      type="blog"
+      :title="aiPayload.title"
+      :content="aiPayload.content"
+      @apply="(r) => applyAiResult(r, form)"
+    />
   </div>
 </template>
 
@@ -78,7 +95,13 @@ onMounted(() => {
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
 import RichEditor from '@/components/RichEditor.vue';
+import ImageUpload from '@/components/ImageUpload.vue';
 import { useList } from '@/composables/useList.js';
+import AiAssistButton from '@/components/AiAssistButton.vue';
+import AiAssistDialog from '@/components/AiAssistDialog.vue';
+
+const aiVisible = ref(false);
+const aiPayload = ref({ type: 'blog', title: '', content: '' });
 
 const list = useList({
   fetchFn: (p) => client.get(`/blogs/posts?page=${p.page}&pageSize=${p.pageSize}`),
@@ -88,7 +111,7 @@ const categories = ref([]);
 const dialogVisible = ref(false);
 const isEdit = ref(false);
 const saving = ref(false);
-const form = ref({ title: '', slug: '', categoryId: '', excerpt: '', content: '', status: 'DRAFT' });
+const form = ref({ title: '', slug: '', categoryId: '', excerpt: '', coverImage: '', content: '', status: 'DRAFT' });
 
 const fetchCategories = async () => {
   try {
@@ -104,7 +127,7 @@ const openDialog = (row = null) => {
   if (row) {
     form.value = { ...row, categoryId: row.category?.id };
   } else {
-    form.value = { title: '', slug: '', categoryId: '', excerpt: '', content: '', status: 'DRAFT' };
+    form.value = { title: '', slug: '', categoryId: '', excerpt: '', coverImage: '', content: '', status: 'DRAFT' };
   }
   dialogVisible.value = true;
 };
@@ -138,5 +161,18 @@ const handleDelete = async (row) => {
   }
 };
 
-
+const applyAiResult = ({ action, result }, target) => {
+  if (result.title) target.title = result.title;
+  if (result.summary) target.excerpt = result.summary;
+  if (result.description && action === 'seo') {
+    target.excerpt = result.description;
+  }
+  if (result.content) target.content = result.content;
+  if (result.translation) target.content = result.translation;
+  if (result.keywords && action === 'seo') {
+    // 博客模型无 keywords 字段，可追加到内容或摘要
+    target.excerpt = `${result.keywords.join(' / ')}\n${target.excerpt || ''}`.trim();
+  }
+  ElMessage.success('已应用生成结果，请确认后再保存');
+};
 </script>

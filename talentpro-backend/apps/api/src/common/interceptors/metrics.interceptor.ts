@@ -8,10 +8,10 @@ import { Observable, tap } from 'rxjs';
 import { PrometheusService } from '../metrics/prometheus.service';
 
 @Injectable()
-export class MetricsInterceptor implements NestInterceptor {
+export class MetricsInterceptor implements NestInterceptor<unknown, unknown> {
   constructor(private readonly prometheus: PrometheusService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const route = request.route?.path || request.url;

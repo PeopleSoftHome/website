@@ -33,21 +33,22 @@
   </div>
 </template>
 
-<script setup>
-import { computed, inject } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia';
 import Icon from '../Icon/Icon.vue';
 import s from './DemoModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { formData: { value: {} } });
+const { t } = useI18n();
+const modalStore = useModalStore();
 
 const lines = computed(() => t('modal.successSub').split('\n'));
 
 const summary = computed(() => ({
-  name: modalStore.formData.value.name || '',
-  company: modalStore.formData.value.company || '',
-  products: modalStore.formData.value.products || [],
-  scale: modalStore.formData.value.scale || '',
+  name: modalStore.formData.name || '',
+  company: modalStore.formData.company || '',
+  products: modalStore.formData.products || [],
+  scale: modalStore.formData.scale || '',
 }));
 
 const hasSummary = computed(() =>

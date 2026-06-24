@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './ProductScreenshot.module.css';
 import TableView from './ProductScreenshotViews/TableView.vue';
 import MetricsView from './ProductScreenshotViews/MetricsView.vue';

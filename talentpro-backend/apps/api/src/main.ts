@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -11,29 +12,50 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 async function bootstrap() {
-  const sentryDsn = process.env.SENTRY_DSN;
-  if (sentryDsn) {
-    Sentry.init({
-      dsn: sentryDsn,
-      environment: process.env.NODE_ENV || 'development',
-      tracesSampleRate: 1.0,
-    });
-  }
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
   });
-  app.enableShutdownHooks();
-  const logger = new Logger('Bootstrap');
-
+  app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
+  const sentryDsn = configService.get<string>('SENTRY_DSN');
+  if (sentryDsn) {
+    Sentry.init({
+      dsn: sentryDsn,
+      environment: configService.get<string>('NODE_ENV', 'development'),
+      tracesSampleRate: 1.0,
+    });
+  }
+  app.enableShutdownHooks();
+  const logger = app.get(Logger);
+
   const port = configService.get<number>('app.port', 4000);
   const frontendUrl = configService.get<string>('app.frontendUrl', 'http://localhost:3000');
 
   // Cookie parser（支持 signed cookies）
   app.use(cookieParser(configService.get<string>('JWT_SECRET')));
 
-  // Helmet 安全响应头
-  app.use(helmet());
+  // Helmet 安全响应头（显式 CSP，生产环境收紧 script-src）
+  const isProduction = configService.get<string>('app.env') === 'production';
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: isProduction ? ["'self'"] : ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'blob:'],
+          fontSrc: ["'self'"],
+          connectSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          frameAncestors: ["'none'"],
+          baseUri: ["'self'"],
+          formAction: ["'self'"],
+          ...(isProduction ? { upgradeInsecureRequests: [] } : {}),
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
 
   // CORS — 开发模式下允许多个 localhost 端口
   const corsOrigins = configService.get<string>('app.corsOrigins', frontendUrl);
@@ -67,7 +89,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   // Swagger（生产环境关闭）
-  if (process.env.NODE_ENV !== 'production') {
+  if (configService.get<string>('app.env') !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('TalentPro API')
       .setDescription('TalentPro HR Portal — Enterprise Backend API')
@@ -80,7 +102,7 @@ async function bootstrap() {
 
   await app.listen(port);
   logger.log(`🚀 Server running on http://localhost:${port}`);
-  if (process.env.NODE_ENV !== 'production') {
+  if (configService.get<string>('app.env') !== 'production') {
     logger.log(`📚 Swagger docs on http://localhost:${port}/api/docs`);
   }
 }

@@ -1,113 +1,142 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Subject } from 'rxjs';
-import { ChatMessage } from './ai.types';
+import OpenAI from 'openai';
+import { ChatMessage, StreamEvent, LlmProvider, LlmProviderConfig } from './ai.types';
 
 @Injectable()
-export class AiOpenAiService {
+export class AiOpenAiService implements LlmProvider {
+  readonly name = 'openai';
   private readonly logger = new Logger(AiOpenAiService.name);
-  private readonly openaiKey: string | undefined;
-  private readonly openaiModel: string;
+  private readonly config: LlmProviderConfig;
+  private readonly client: OpenAI | null = null;
 
-  constructor(private readonly config: ConfigService) {
-    this.openaiKey = this.config.get<string>('OPENAI_API_KEY');
-    this.openaiModel = this.config.get<string>('OPENAI_MODEL') || 'gpt-4o-mini';
-    if (!this.openaiKey) {
+  constructor(private readonly configService: ConfigService) {
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    this.config = {
+      provider: 'openai',
+      model: this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o-mini',
+      apiKey,
+      baseUrl: this.configService.get<string>('OPENAI_BASE_URL'),
+      temperature: Number(this.configService.get<string>('OPENAI_TEMPERATURE') || '0.7'),
+      maxTokens: Number(this.configService.get<string>('OPENAI_MAX_TOKENS') || '800'),
+      timeoutMs: Number(this.configService.get<string>('OPENAI_TIMEOUT_MS') || '30000'),
+    };
+
+    if (apiKey) {
+      this.client = new OpenAI({
+        apiKey,
+        baseURL: this.config.baseUrl || undefined,
+        timeout: this.config.timeoutMs,
+        maxRetries: 2,
+      });
+    } else {
       this.logger.warn('OPENAI_API_KEY not configured. AI chat will use rule-based fallback.');
     }
   }
 
   isConfigured(): boolean {
-    return !!this.openaiKey;
+    return !!this.client;
   }
 
-  async callOpenAI(message: string, history: ChatMessage[], systemPrompt: string) {
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      ...history.map((h) => ({ role: h.role, content: h.content })),
-      { role: 'user', content: message },
-    ];
+  getProviderConfig(): LlmProviderConfig {
+    return { ...this.config };
+  }
 
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.openaiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.openaiModel,
-        messages,
-        temperature: 0.7,
-        max_tokens: 800,
-      }),
-    });
+  async chat(messages: ChatMessage[], overrides?: Partial<LlmProviderConfig>): Promise<{ content: string }> {
+    const systemMessage = messages.find((m) => m.role === 'system');
+    const nonSystem = messages.filter((m) => m.role !== 'system');
+    const lastUser = [...nonSystem].reverse().find((m) => m.role === 'user');
+    if (!lastUser) {
+      return { content: '' };
+    }
+    const history = nonSystem.slice(0, nonSystem.indexOf(lastUser));
+    return this.callOpenAI(lastUser.content, history, systemMessage?.content || '', overrides);
+  }
 
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`OpenAI error: ${err}`);
+  async callOpenAI(message: string, history: ChatMessage[], systemPrompt: string, overrides?: Partial<LlmProviderConfig>) {
+    if (!this.client) {
+      return { content: '', sources: [] };
     }
 
-    const data = await res.json();
-    return {
-      content: data.choices?.[0]?.message?.content || '',
-      sources: [],
-    };
-  }
+    const cfg = { ...this.config, ...overrides };
 
-  async streamOpenAI(message: string, history: ChatMessage[], systemPrompt: string, subject: Subject<any>) {
     try {
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...history.map((h) => ({ role: h.role, content: h.content })),
-        { role: 'user', content: message },
-      ];
-
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.openaiKey}`,
-        },
-        body: JSON.stringify({
-          model: this.openaiModel,
-          messages,
-          stream: true,
-          max_tokens: 800,
-        }),
+      const completion = await this.client.chat.completions.create({
+        model: cfg.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...history.map((h) => ({ role: h.role, content: h.content }) as OpenAI.Chat.ChatCompletionMessageParam),
+          { role: 'user', content: message },
+        ],
+        temperature: cfg.temperature,
+        max_tokens: cfg.maxTokens,
       });
 
-      if (!res.ok || !res.body) {
-        throw new Error('OpenAI stream request failed');
+      const usage = completion.usage;
+      if (usage) {
+        this.logger.debug(`OpenAI usage: prompt=${usage.prompt_tokens}, completion=${usage.completion_tokens}`);
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
+      return {
+        content: completion.choices?.[0]?.message?.content || '',
+        sources: [],
+      };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`OpenAI chat error: ${message}`);
+      throw new Error(`OpenAI chat error: ${message}`);
+    }
+  }
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed || !trimmed.startsWith('data: ')) continue;
-          const data = trimmed.slice(6);
-          if (data === '[DONE]') {
-            subject.next({ data: JSON.stringify({ done: true }) });
-            subject.complete();
-            return;
-          }
-          try {
-            const parsed = JSON.parse(data);
-            const chunk = parsed.choices?.[0]?.delta?.content || '';
-            if (chunk) {
-              subject.next({ data: JSON.stringify({ chunk }) });
-            }
-          } catch {
-            // ignore parse error
-          }
+  async moderateContent(content: string): Promise<{ riskScore: number; flags: string[] }> {
+    if (!this.client) {
+      return { riskScore: 0, flags: [] };
+    }
+
+    try {
+      const moderation = await this.client.moderations.create({
+        input: content,
+        model: 'text-moderation-latest',
+      });
+
+      const result = moderation.results?.[0];
+      if (!result) {
+        return { riskScore: 0, flags: [] };
+      }
+
+      const flags = Object.entries(result.categories)
+        .filter(([, flagged]) => flagged)
+        .map(([category]) => category);
+      const scores = Object.values(result.category_scores).map((s) => Number(s) || 0);
+      const riskScore = scores.length > 0 ? Math.max(0, ...scores) : 0;
+
+      return { riskScore, flags };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Moderation request failed: ${message}`);
+      return { riskScore: 0, flags: [] };
+    }
+  }
+
+  async stream(messages: ChatMessage[], subject: Subject<StreamEvent>) {
+    if (!this.client) {
+      subject.error(new Error('OpenAI not configured'));
+      return;
+    }
+
+    try {
+      const stream = await this.client.chat.completions.create({
+        model: this.config.model,
+        messages: messages.map((m) => ({ role: m.role, content: m.content }) as OpenAI.Chat.ChatCompletionMessageParam),
+        stream: true,
+        max_tokens: this.config.maxTokens,
+      });
+
+      for await (const chunk of stream) {
+        const content = chunk.choices?.[0]?.delta?.content || '';
+        if (content) {
+          subject.next({ data: JSON.stringify({ chunk: content }) });
         }
       }
 

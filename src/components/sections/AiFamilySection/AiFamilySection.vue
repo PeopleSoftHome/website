@@ -39,20 +39,29 @@
   </section>
 </template>
 
-<script setup>
-import { computed, inject, ref } from 'vue';
-import { AI_CARD_KEY_MAP } from '@/i18n/keyMap.js';
-import { useCmsDataByKey } from '@/composables/useCmsData.js';
-import { transformAiCards } from '@/api/transforms.js';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia';
+import { AI_CARD_KEY_MAP } from '@/i18n/keyMap';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformAiCards } from '@/api/transforms';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AiCard from './AiCard.vue';
 import s from './AiFamilySection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { openModal: () => {} });
+interface AiCardItem {
+  id: string;
+  icon: string;
+  name: string;
+  tagline: string;
+  hot?: boolean;
+}
 
-const { displayItems: displayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });
+const { t } = useI18n();
+const modalStore = useModalStore();
 
+const { displayItems: rawDisplayCards } = useCmsDataByKey('ai-cards', { transform: transformAiCards, fallbackKey: 'ai-cards' });
+const displayCards = computed(() => rawDisplayCards.value as unknown as AiCardItem[]);
 
-const cardKey = (id) => AI_CARD_KEY_MAP[id];
+const cardKey = (id: string) => (AI_CARD_KEY_MAP as Record<string, string>)[id];
 </script>

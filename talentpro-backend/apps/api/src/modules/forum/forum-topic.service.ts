@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { ForumCategoryRepository } from './forum-category.repository';
@@ -37,7 +38,7 @@ export class ForumTopicService {
 
   // ─── Topics ───
   async findAllTopics(page = 1, pageSize = 20, categoryId?: string) {
-    const where: any = {};
+    const where: Prisma.ForumTopicWhereInput = {};
     if (categoryId) where.categoryId = categoryId;
     return this.topicRepo.findAll({
       page,
@@ -53,7 +54,7 @@ export class ForumTopicService {
   }
 
   async findTopicById(id: string, workspaceId?: string) {
-    const where: any = { id };
+    const where: Prisma.ForumTopicWhereInput = { id };
     if (workspaceId) where.workspaceId = workspaceId;
     const topic = await this.prisma.forumTopic.findFirst({
       where,

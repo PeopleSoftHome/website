@@ -9,7 +9,7 @@
           <div style="display:flex;align-items:center;gap:12px">
             <el-icon :size="32" :color="card.color"><component :is="card.icon" /></el-icon>
             <div>
-              <div style="font-size:13px;color:#666">{{ card.label }}</div>
+              <div style="font-size:13px;color:var(--admin-text-secondary)">{{ card.label }}</div>
               <div style="font-size:28px;font-weight:700">{{ card.value.toLocaleString() }}</div>
             </div>
           </div>
@@ -24,7 +24,7 @@
         <div v-for="(step, i) in funnel" :key="i" style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px">
             <span>{{ step.name }}</span>
-            <span style="font-weight:600">{{ step.count.toLocaleString() }} <span v-if="step.rate" style="color:#666;font-weight:400">({{ step.rate }})</span></span>
+            <span style="font-weight:600">{{ step.count.toLocaleString() }} <span v-if="step.rate" style="color:var(--admin-text-secondary);font-weight:400">({{ step.rate }})</span></span>
           </div>
           <el-progress
             :percentage="Math.round((step.count / funnel[0].count) * 100)"
@@ -103,9 +103,9 @@ const funnel = ref([]);
 const loading = ref(false);
 
 const overviewCards = computed(() => [
-  { label: '总页面浏览量', value: overview.value.totalPageViews, icon: 'View', color: '#1B5FEB' },
-  { label: '总事件数', value: overview.value.totalEvents, icon: 'Histogram', color: '#10B981' },
-  { label: '独立会话', value: overview.value.uniqueSessions, icon: 'User', color: '#F59E0B' },
+  { label: '总页面浏览量', value: overview.value.totalPageViews, icon: 'View', color: 'var(--admin-color-primary)' },
+  { label: '总事件数', value: overview.value.totalEvents, icon: 'Histogram', color: 'var(--admin-color-success)' },
+  { label: '独立会话', value: overview.value.uniqueSessions, icon: 'User', color: 'var(--admin-color-warning)' },
 ]);
 
 const formatShortDate = (d) => {

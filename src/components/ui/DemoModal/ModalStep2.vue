@@ -32,27 +32,28 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject, watch, computed } from 'vue';
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia';
 import s from './DemoModal.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { formData: { value: {} } });
-const PRODUCTS = t('modal.products') || [];
-const selected = ref(new Set(PRODUCTS.slice(0, 1)));
+const { t } = useI18n();
+const modalStore = useModalStore();
+const PRODUCTS = (t('modal.products') as unknown as string[]) || [];
+const selected = ref<Set<string>>(new Set(PRODUCTS.slice(0, 1)));
 
 watch(selected, (val) => {
-  modalStore.formData.value.products = Array.from(val);
+  modalStore.formData.products = Array.from(val);
 }, { deep: true, immediate: true });
 
-const toggle = (p) => {
-  const next = new Set(selected.value);
+const toggle = (p: string) => {
+  const next = new Set<string>(selected.value);
   next.has(p) ? next.delete(p) : next.add(p);
   selected.value = next;
 };
 
 // 智能推荐规则：基于已选产品推荐关联产品
-const RECOMMEND_MAP = {
+const RECOMMEND_MAP: Record<string, string[]> = {
   '招聘管理':  ['人才测评', 'AI Family'],
   '假勤管理':  ['薪酬管理', '组织人事'],
   '绩效管理':  ['组织人事', 'AI Family'],
@@ -63,7 +64,7 @@ const RECOMMEND_MAP = {
 };
 
 const recommendations = computed(() => {
-  const recs = new Set();
+  const recs = new Set<string>();
   for (const p of selected.value) {
     const mapped = RECOMMEND_MAP[p];
     if (mapped) {

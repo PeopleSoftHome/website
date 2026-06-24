@@ -19,7 +19,7 @@
           <p :class="s.subtitle">{{ t('hero.subtitle') }}</p>
           <div :class="s.ctas">
             <button :class="s.ctaPrimary" @click="modalStore.openModal()">{{ t('hero.cta1') }}</button>
-            <button :class="s.ctaGhost" @click="videoStore.openVideo()">{{ t('hero.cta2') }}</button>
+            <button :class="s.ctaGhost" @click="videoModalStore.openVideo()">{{ t('hero.cta2') }}</button>
           </div>
           <div :class="s.trust">
             <span v-for="k in ['trust1','trust2','trust3','trust4']" :key="k" :class="s.trustItem">
@@ -42,7 +42,7 @@
               </div>
               <div :class="s.dashStats">
                 <div v-for="(stat, i) in dashStats" :key="i" :class="s.dashStatCard">
-                  <div :ref="el => { if(el) numRefs[i] = el }" :class="s.dashStatNum">{{ i === 2 ? '0%' : '0' }}</div>
+                  <div :ref="el => { if(el) numRefs[i] = el as Element | null }" :class="s.dashStatNum">{{ i === 2 ? '0%' : '0' }}</div>
                   <div :class="s.dashStatLabel">{{ t(`hero.dash${i + 1}`) }}</div>
                 </div>
               </div>
@@ -74,15 +74,17 @@
   </section>
 </template>
 
-<script setup>
-import { inject, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
 import s from './HeroSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { openModal: () => {} });
-const videoStore = inject('videoModal', { openVideo: () => {} });
+const { t } = useI18n();
+const modalStore = useModalStore();
+const videoModalStore = useVideoModalStore();
 
-const numRefs = [];
+const numRefs: (Element | null)[] = [];
 const dashStats = [
   { target: 47, suffix: '' },
   { target: 23, suffix: '' },
@@ -98,9 +100,9 @@ const chartBars = [
 ];
 
 onMounted(() => {
-  const rafIds = [];
+  const rafIds: number[] = [];
 
-  const animateNum = (el, target, sfx = '') => {
+  const animateNum = (el: Element | null, target: number, sfx = '') => {
     if (!el) return;
     let cur = 0;
     const step = () => {
@@ -116,9 +118,9 @@ onMounted(() => {
   };
 
   const timer = setTimeout(() => {
-    animateNum(numRefs[0], dashStats[0].target, dashStats[0].suffix);
-    animateNum(numRefs[1], dashStats[1].target, dashStats[1].suffix);
-    animateNum(numRefs[2], dashStats[2].target, dashStats[2].suffix);
+    animateNum(numRefs[0]!, dashStats[0]!.target, dashStats[0]!.suffix);
+    animateNum(numRefs[1]!, dashStats[1]!.target, dashStats[1]!.suffix);
+    animateNum(numRefs[2]!, dashStats[2]!.target, dashStats[2]!.suffix);
   }, 1200);
 
   onUnmounted(() => {

@@ -1,0 +1,48 @@
+.header { margin-bottom: 20px; }
+.title { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+.filter { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filterBtn { padding: 6px 14px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); background: var(--card-bg); color: var(--gray-600); font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.filterBtn:hover { border-color: var(--primary); color: var(--primary); }
+.filterActive { background: var(--primary); color: var(--white); border-color: var(--primary); }
+.loading { text-align: center; padding: 40px; color: var(--gray-400); }
+.empty { text-align: center; padding: 60px 20px; }
+.emptyIcon { font-size: 48px; margin-bottom: 12px; }
+.empty p { color: var(--gray-500); margin-bottom: 12px; }
+.emptyCta { color: var(--primary); font-weight: 600; text-decoration: none; }
+.emptyCta:hover { text-decoration: underline; }
+
+.list { display: flex; flex-direction: column; gap: 14px; }
+.orderCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px; animation: cardIn 0.4s var(--ease-out) both; animation-delay: calc(var(--stagger, 0) * 50ms); }
+.orderTop { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.orderIcon { font-size: 28px; }
+.orderInfo { flex: 1; min-width: 0; }
+.orderName { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+.orderId { font-size: 12px; color: var(--gray-400); }
+.orderAmount { font-size: 18px; font-weight: 700; color: var(--primary); }
+.orderBottom { display: flex; justify-content: space-between; align-items: center; }
+.statusTag { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-sm); }
+.status_pending { background: var(--status-pending-bg); color: var(--status-pending-text); }
+.status_completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
+.status_refunded { background: var(--status-refunded-bg); color: var(--status-refunded-text); }
+.status_failed { background: var(--gray-100); color: var(--gray-500); }
+.orderDate { font-size: 13px; color: var(--gray-400); }
+
+.progress { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--card-border); }
+.progressBar { height: 4px; background: var(--gray-200); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+.progressFill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.4s; }
+.progressSteps { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-400); }
+.progressStepActive { color: var(--primary); font-weight: 600; }
+
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 639px) {
+  .orderTop { flex-wrap: wrap; }
+  .orderAmount { width: 100%; text-align: right; margin-top: 4px; }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .orderName { color: var(--gray-50); }
+[data-theme="dark"] .status_pending { background: var(--status-pending-alpha-15); }
+[data-theme="dark"] .status_completed { background: var(--status-completed-alpha-15); }
+[data-theme="dark"] .status_refunded { background: var(--status-refunded-alpha-15); }
+[data-theme="dark"] .status_failed { background: var(--gray-800); }

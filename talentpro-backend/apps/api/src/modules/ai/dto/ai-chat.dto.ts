@@ -8,4 +8,8 @@ export class AiChatDto {
   @IsOptional()
   @IsArray()
   history?: ChatMessage[];
+
+  @IsOptional()
+  @IsString()
+  sessionId?: string;
 }

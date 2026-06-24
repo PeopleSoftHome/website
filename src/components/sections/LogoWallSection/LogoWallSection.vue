@@ -37,19 +37,27 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue';
-import { LOGO_FILTERS } from '@/data/logos.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
-import { apiClient } from '@/api/client.js';
+import { LOGO_FILTERS } from '@/data/logos';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
+interface LogoItem {
+  id: string;
+  name: string;
+  initial: string;
+  brandColor: string;
+  industry: string;
+}
+
+const { t } = useI18n();
 const activeFilter = ref('all');
 
-const { displayItems: displayLogos, isLoading: loading } = useCmsDataByKey('logos', {
-  transform: (active) => (active || []).map((item) => ({
+const { displayItems: rawDisplayLogos, isLoading: loading } = useCmsDataByKey('logos', {
+  transform: (active: unknown[]) => (active || []).map((item: any) => ({
     id: item.name
       ? item.name.toLowerCase().replace(/\s+/g, '-')
       : `logo-${Math.random().toString(36).slice(2, 7)}`,
@@ -60,10 +68,10 @@ const { displayItems: displayLogos, isLoading: loading } = useCmsDataByKey('logo
   })),
   fallbackKey: 'logos',
 });
-
+const displayLogos = computed(() => rawDisplayLogos.value as unknown as LogoItem[]);
 
 const displayFilters = computed(() => {
-  const industries = new Set(['all']);
+  const industries = new Set<string>(['all']);
   (displayLogos.value || []).forEach((l) => {
     if (l.industry) industries.add(l.industry);
   });
@@ -73,5 +81,5 @@ const displayFilters = computed(() => {
   });
 });
 
-const isHidden = (item) => activeFilter.value !== 'all' && item.industry !== activeFilter.value;
+const isHidden = (item: LogoItem) => activeFilter.value !== 'all' && item.industry !== activeFilter.value;
 </script>

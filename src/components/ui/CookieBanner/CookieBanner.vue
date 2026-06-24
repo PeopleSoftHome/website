@@ -18,7 +18,7 @@
   </Transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import s from './CookieBanner.module.css';
 import CookieCompact from './CookieCompact.vue';
 import CookiePreferences from './CookiePreferences.vue';

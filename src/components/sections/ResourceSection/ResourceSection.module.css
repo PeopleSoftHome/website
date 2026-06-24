@@ -100,7 +100,7 @@
   border: none;
   border-radius: var(--radius-md);
   background: var(--primary);
-  color: white;
+  color: var(--white);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

@@ -2,7 +2,7 @@
   <span ref="el">{{ display }}</span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onUnmounted, inject } from 'vue';
 
 const props = defineProps({
@@ -12,16 +12,16 @@ const props = defineProps({
   duration:{ type: Number, default: 600 },
 });
 
-const el = ref(null);
+const el = ref<HTMLElement | null>(null);
 const display = ref('');
-let rafId = null;
-const { t } = inject('i18n', { t: (k) => k });
+let rafId: number | null = null;
+const { t } = useI18n();
 
-function animate(from, to) {
+function animate(from: number, to: number) {
   if (rafId) cancelAnimationFrame(rafId);
   const start = performance.now();
 
-  const tick = (now) => {
+  const tick = (now: number) => {
     const progress = Math.min((now - start) / props.duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
     const current = Math.round(from + (to - from) * eased);

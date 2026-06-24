@@ -118,7 +118,7 @@
 .ctaPrimary {
   padding: 14px 32px;
   background: var(--primary);
-  color: white;
+  color: var(--white);
   font-size: 16px;
   font-weight: 700;
   border-radius: var(--radius-md);
@@ -134,7 +134,7 @@
 
 .ctaGhost {
   padding: 14px 24px;
-  background: white;
+  background: var(--white);
   color: var(--primary);
   font-size: 15px;
   font-weight: 500;
@@ -232,7 +232,7 @@
 }
 
 .deviceFrame {
-  background: white;
+  background: var(--white);
   border-radius: var(--radius-lg);
   box-shadow: 0 24px 60px var(--primary-glow), 0 4px 16px var(--black-alpha-8);
   overflow: hidden;
@@ -284,7 +284,7 @@
   margin-bottom: 14px;
 }
 .dashStatCard {
-  background: white;
+  background: var(--white);
   border-radius: 10px;
   padding: 12px;
   box-shadow: var(--shadow-sm);
@@ -302,7 +302,7 @@
 
 /* 柱状图 */
 .dashChart {
-  background: white;
+  background: var(--white);
   border-radius: 10px;
   padding: 14px;
   box-shadow: var(--shadow-sm);
@@ -342,7 +342,7 @@
   background: linear-gradient(135deg, var(--primary), var(--ai-purple));
   border-radius: 10px;
   padding: 12px;
-  color: white;
+  color: var(--white);
   margin-top: 10px;
 }
 .dashAiLabel { font-size: 10px; opacity: 0.8; }

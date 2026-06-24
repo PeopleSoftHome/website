@@ -33,60 +33,58 @@
   </section>
 </template>
 
-<script setup>
-import { computed, inject, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 
-import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap.js';
-import { useTabs } from '@/composables/useTabs.js';
-import { useCmsData, useCmsDataByKey } from '@/composables/useCmsData.js';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap';
+import { useTabs } from '@/composables/useTabs';
+import { useCmsDataByKey } from '@/composables/useCmsData';
+import { transformProductTabs } from '@/api/transforms';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import ProductCard from './ProductCard.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './ProductMatrixSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const analytics = inject('analytics', { track: () => {} });
+interface ProductItem {
+  id: string;
+  icon: string;
+  name: string;
+  desc: string;
+  iconBg?: string;
+  iconColor?: string;
+}
+
+interface ProductTab {
+  id: string;
+  label: string;
+  products: ProductItem[];
+  iconBg?: string;
+  iconColor?: string;
+}
+
+const { t } = useI18n();
+const analyticsStore = useAnalyticsStore();
 const { activeIndex, selectTab } = useTabs(0);
 
 const originalSelectTab = selectTab;
-const trackedSelectTab = (idx) => {
+const trackedSelectTab = (idx: number) => {
   originalSelectTab(idx);
-  analytics.track('product_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
+  analyticsStore.track('product_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: tabs, isLoading: loading } = useCmsDataByKey('products', {
-  transform: (active) => {
-    if (!active || active.length === 0) return [];
-    const groups = {};
-    active.forEach((item) => {
-      const tabName = item.tabName || t('common.other');
-      if (!groups[tabName]) groups[tabName] = [];
-      groups[tabName].push(item);
-    });
-    return Object.entries(groups).map(([tabName, products]) => ({
-      id: tabName.toLowerCase().replace(/\s+/g, '-'),
-      label: tabName,
-      iconColor: '',
-      iconBg: '',
-      products: products.map((p, pIdx) => ({
-        id: p.name
-          ? p.name.toLowerCase().replace(/\s+/g, '-')
-          : `product-${pIdx}`,
-        icon: p.icon || 'box',
-        name: p.name || '',
-        desc: p.description || '',
-      })),
-    }));
-  },
+const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('products', {
+  transform: transformProductTabs,
   fallbackKey: 'products',
 });
-
+const tabs = computed(() => rawTabs.value as unknown as ProductTab[]);
 
 const activeTab = computed(() => tabs.value[activeIndex.value] ?? { products: [], iconBg: '', iconColor: '' });
 
 const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
-  const key = TAB_KEY_MAP[tab.id] ?? tab.id;
+  const keyMap = TAB_KEY_MAP as Record<string, string>;
+  const key = keyMap[tab.id] ?? tab.id;
   const translated = t(`products.tabs.${key}`);
   return {
     ...tab,
@@ -94,5 +92,5 @@ const translatedTabs = computed(() => (tabs.value || []).map((tab) => {
   };
 }));
 
-const productKey = (id) => PRODUCT_KEY_MAP[id];
+const productKey = (id: string) => (PRODUCT_KEY_MAP as Record<string, string>)[id];
 </script>

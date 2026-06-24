@@ -24,7 +24,7 @@
   top: 12px;
   right: 12px;
   background: var(--error);
-  color: white;
+  color: var(--white);
   font-size: 10px;
   font-weight: 700;
   padding: 2px 8px;
@@ -40,7 +40,7 @@
 .name {
   font-size: 15px;
   font-weight: 700;
-  color: white;
+  color: var(--white);
   margin-bottom: 6px;
 }
 
@@ -58,5 +58,5 @@
 }
 
 .card:hover .link {
-  color: white;
+  color: var(--white);
 }

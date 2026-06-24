@@ -10,6 +10,8 @@
     "resources": "資源中心",
     "blog": "博客",
     "forum": "社區",
+    "marketplace": "應用廣場",
+    "about": "關於我們",
     "login": "登入",
     "demo": "預約演示",
     "phone": "售前: 400-888-8888",
@@ -63,7 +65,13 @@
       "phone": "售前諮詢",
       "phoneNum": "400-888-8888",
       "cta": "預約演示 "
-    }
+    },
+    "lang": {
+      "zh": "簡體中文",
+      "en": "English",
+      "zhTw": "繁體中文"
+    },
+    "home": "首頁"
   },
   "hero": {
     "badge": " IDC 連續五年 HR SaaS 市占率第一",
@@ -316,7 +324,17 @@
       "f3desc": "外勤隊伍分層分級，對目標客群與業務能力匹配，打造高產能隊伍。",
       "ssTitle": " 金融 · 九宮格人才盤點",
       "g9axis": "績效表現 "
-    }
+    },
+    "performance": "績效表現",
+    "potential": "潛力",
+    "table": {
+      "employee": "員工",
+      "shift": "班次",
+      "clockIn": "打卡",
+      "status": "狀態",
+      "aiTip": "AI 智能提醒"
+    },
+    "taskHeader": "待處理事項"
   },
   "testimonials": {
     "sectionTag": " 客戶口碑",
@@ -492,6 +510,101 @@
         }
       ]
     }
+  },
+  "marketplace": {
+    "title": "應用廣場",
+    "subtitle": "發現與整合最適合您企業的 HR 數位化應用",
+    "appDetail": "應用詳情",
+    "searchPlaceholder": "搜尋應用名稱、功能或廠商...",
+    "search": "搜尋",
+    "allCategories": "全部分類",
+    "pricingFilter": "定價",
+    "allPricing": "全部定價",
+    "free": "免費",
+    "paid": "付費",
+    "subscription": "訂閱",
+    "sortBy": "排序",
+    "sortFeatured": "推薦",
+    "sortRating": "評分",
+    "sortInstalls": "安裝量",
+    "sortNewest": "最新",
+    "resultCount": "共 {n} 款應用",
+    "featured": "精選推薦",
+    "loadMore": "載入更多",
+    "noResults": "未找到符合條件的應用",
+    "ctaTitle": "沒找到合適的應用？",
+    "ctaDesc": "告訴我們您的需求，我們可以為您定製開發或推薦最佳方案",
+    "demoCta": "預約諮詢",
+    "overview": "概覽",
+    "pricing": "定價",
+    "reviews": "評價",
+    "screenshots": "產品截圖",
+    "screenshot": "截圖",
+    "features": "功能特性",
+    "compatibility": "相容產品",
+    "monthly": "按月付費",
+    "yearly": "按年付費",
+    "yearlySave": "省17%+",
+    "monthShort": "月",
+    "yearShort": "年",
+    "choosePlan": "選擇方案",
+    "mostPopular": "最受歡迎",
+    "installFree": "免費安裝",
+    "tryFree": "免費試用",
+    "contactSales": "聯繫銷售",
+    "installPrompt": "「{name}」安裝申請已提交，我們的顧問將盡快與您聯繫！",
+    "pricingModel": "定價模式",
+    "category": "分類",
+    "version": "版本",
+    "updated": "更新日期",
+    "relatedApps": "相關應用",
+    "star": "星",
+    "notFound": "未找到該應用",
+    "sortPopular": "熱門",
+    "sortName": "名稱",
+    "resultsFor": "搜尋結果",
+    "showing": "共",
+    "items": "個應用",
+    "priceFree": "免費",
+    "priceSubscription": "訂閱制",
+    "priceOneTime": "一次性",
+    "priceUsage": "按量計費",
+    "priceFreemium": "免費增值",
+    "pricePaid": "付費",
+    "detail": "應用詳情",
+    "installs": "次安裝",
+    "vendor": "廠商",
+    "about": "關於",
+    "pricingPlans": "定價方案",
+    "related": "相關應用",
+    "subscribe": "立即訂閱",
+    "subscribeNow": "立即訂閱",
+    "freeInstall": "免費安裝",
+    "addToCart": "加入購物車",
+    "addToCartSuccess": "已加入購物車",
+    "addToCartError": "加入購物車失敗",
+    "installSuccess": "安裝成功",
+    "installError": "安裝失敗，請登入後重試",
+    "paymentError": "支付初始化失敗",
+    "month": "月",
+    "recommended": "推薦",
+    "jsonLdName": "TalentPro 應用廣場",
+    "pricingShort": {
+      "free": "免費",
+      "subscription": "訂閱",
+      "oneTime": "買斷",
+      "usage": "按量",
+      "freemium": "增值"
+    },
+    "paymentSuccess": "支付成功",
+    "paymentSuccessDesc": "感謝您的購買，訂單已確認。",
+    "orderNo": "訂單號",
+    "amount": "金額",
+    "backToMarketplace": "返回應用廣場",
+    "viewMyApps": "查看我的應用",
+    "paymentCancelled": "支付已取消",
+    "paymentCancelledDesc": "您取消了支付，如有疑問請聯繫客服。",
+    "tryAgain": "重試支付"
   },
   "resources": {
     "sectionTag": " 資源中心",
@@ -716,7 +829,8 @@
     "noTopics": "暫無話題",
     "replies": "回覆",
     "pinned": "置頂",
-    "locked": "已鎖定"
+    "locked": "已鎖定",
+    "replyPlaceholder": "寫下你的回覆..."
   },
   "search": {
     "placeholder": "搜尋產品、行業方案、資源...",
@@ -876,7 +990,8 @@
         ],
         "isHandoff": true
       }
-    }
+    },
+    "title": "TalentPro 智能客服"
   },
   "auth": {
     "loginTitle": "歡迎回來",
@@ -906,11 +1021,13 @@
     "hasAccount": "已有帳號？",
     "toRegister": "立即註冊",
     "toLogin": "立即登入",
-    "genericError": "操作失敗，請稍後重試"
+    "genericError": "操作失敗，請稍後重試",
+    "company": "公司/團隊名稱",
+    "companyPlaceholder": "請輸入公司或團隊名稱（可選）"
   },
   "comment": {
     "title": "評論",
-    "placeholder": "寫下你的評論... 使用 @ 提及用戶",
+    "placeholder": "寫下你的評論... 使用 {'@'} 提及用戶",
     "replyPlaceholder": "寫下你的回覆...",
     "submit": "發表評論",
     "submitting": "提交中...",
@@ -934,7 +1051,66 @@
     "loading": "載入中...",
     "saveError": "儲存失敗",
     "jsonLdName": "TalentPro 個人中心",
-    "jsonLdDesc": "管理您的 TalentPro 賬戶和個人資料"
+    "jsonLdDesc": "管理您的 TalentPro 賬戶和個人資料",
+    "menu": {
+      "dashboard": "總覽",
+      "orders": "我的訂單",
+      "settings": "賬戶設置",
+      "security": "安全中心"
+    },
+    "activity": "最近動態",
+    "quick": "快捷入口",
+    "goMarketplace": "應用廣場",
+    "myOrders": "我的訂單",
+    "community": "用戶社區",
+    "security": "安全設置",
+    "statOrders": "訂單",
+    "statApps": "應用",
+    "statNotifications": "通知",
+    "statPoints": "積分",
+    "noOrders": "暫無訂單",
+    "changePassword": "修改密碼",
+    "currentPassword": "當前密碼",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認新密碼",
+    "updatePassword": "更新密碼",
+    "twoFA": "兩步驗證 (2FA)",
+    "twoFADesc": "登入時需要輸入手機驗證碼",
+    "loginHistory": "登入歷史",
+    "loginTime": "時間",
+    "loginDevice": "設備 / 瀏覽器",
+    "loginIp": "IP 地址",
+    "loginLocation": "地點",
+    "loginStatus": "狀態",
+    "currentSession": "當前會話",
+    "fillAll": "請填寫所有欄位",
+    "passwordMismatch": "兩次密碼不一致",
+    "passwordUpdated": "密碼已更新",
+    "basicInfo": "基本信息",
+    "email": "郵箱",
+    "phone": "手機號",
+    "company": "公司",
+    "jobTitle": "職位",
+    "preferences": "偏好設置",
+    "prefLang": "語言",
+    "prefLangDesc": "選擇介面顯示語言",
+    "prefNotif": "郵件通知",
+    "prefNotifDesc": "接收產品和活動郵件",
+    "prefMarketing": "營銷推送",
+    "prefMarketingDesc": "接收產品更新和優惠信息",
+    "saveSuccess": "儲存成功",
+    "orderStep": {
+      "order": "下單",
+      "pending": "待支付",
+      "pay": "支付",
+      "complete": "完成"
+    },
+    "orderStatus": {
+      "pending": "待支付",
+      "completed": "已完成",
+      "refunded": "已退款",
+      "failed": "已失敗"
+    }
   },
   "pagination": {
     "prev": "上一頁",
@@ -994,7 +1170,14 @@
     "demoCta": "預約方案諮詢",
     "ctaTitle": "需要行業專屬解決方案？",
     "ctaDesc": "我們的行業專家將為您提供一對一諮詢",
-    "notFound": "未找到該方案"
+    "notFound": "未找到該方案",
+    "pain": "痛點",
+    "solution": "方案",
+    "challenge": "業務挑戰",
+    "results": "成果收益",
+    "employees": "員工數",
+    "avgSalary": "平均月薪（元）",
+    "annualSavings": "預計年節省"
   },
   "cases": {
     "title": "客戶案例",
@@ -1020,15 +1203,52 @@
     "download": "立即下載",
     "featured": "精選資源",
     "related": "相關資源",
+    "searchPlaceholder": "搜尋資源標題、標籤...",
+    "noResults": "未找到匹配的資源",
     "demoCta": "預約產品演示",
-    "notFound": "未找到該資源"
+    "notFound": "未找到該資源",
+    "contents": "目錄",
+    "share": "分享",
+    "weibo": "微博",
+    "wechat": "微信",
+    "wechatTip": "請使用微信掃一掃分享",
+    "keyTakeaways": "核心要點",
+    "feedback": "這篇內容對您有幫助嗎？",
+    "feedbackUp": "感謝您的認可！",
+    "feedbackDown": "感謝您的反饋，我們會持續改進。",
+    "downloadForm": "填寫信息以下載",
+    "formName": "姓名",
+    "formEmail": "郵箱",
+    "formCompany": "公司",
+    "formNameRequired": "請輸入姓名",
+    "formEmailRequired": "請輸入有效郵箱",
+    "formCompanyRequired": "請輸入公司",
+    "submit": "提交並下載"
   },
   "news": {
     "title": "新聞動態",
     "subtitle": "TalentPro 最新資訊與行業動態",
     "detail": "新聞詳情",
     "featured": "精選",
-    "notFound": "未找到該新聞"
+    "notFound": "未找到該新聞",
+    "readMore": "閱讀全文",
+    "all": "全部",
+    "share": "分享",
+    "weibo": "微博",
+    "linkedin": "LinkedIn",
+    "wechat": "微信",
+    "wechatTip": "請使用微信掃一掃分享",
+    "relatedNews": "相關文章",
+    "subscribeTitle": "訂閱 TalentPro 洞察",
+    "subscribeSub": "獲取最新行業洞察與產品動態",
+    "subscribePlaceholder": "請輸入您的郵箱",
+    "subscribeBtn": "立即訂閱",
+    "subscribeSuccess": "訂閱成功！感謝您的關注。",
+    "related": "相關文章",
+    "subscribeDesc": "獲取最新產品動態、行業洞察與 HR 最佳實踐",
+    "emailPlaceholder": "請輸入您的郵箱",
+    "subscribe": "立即訂閱",
+    "invalidEmail": "請輸入有效郵箱"
   },
   "careers": {
     "title": "加入我們",
@@ -1060,7 +1280,29 @@
     "noRequirements": "暫無詳細任職要求，請聯繫 HR 獲取更多資訊。",
     "applyPrompt": "申請已提交，我們會盡快與您聯繫！",
     "jsonLdName": "TalentPro 加入我們",
-    "jsonLdDesc": "與我們一起，用科技重新定義人才管理"
+    "jsonLdDesc": "與我們一起，用科技重新定義人才管理",
+    "pathTitle": "成長路徑",
+    "testimonialTitle": "員工心聲",
+    "detailLabels": {
+      "department": "部門",
+      "location": "地點",
+      "type": "類型",
+      "experience": "經驗",
+      "education": "學歷",
+      "headcount": "人數",
+      "responsibilities": "崗位職責",
+      "applyProcess": "申請流程"
+    },
+    "process": {
+      "submit": "投遞履歷",
+      "submitDesc": "透過官網或招聘平台提交您的履歷",
+      "screen": "履歷篩選",
+      "screenDesc": "我們將在 5 個工作日內完成篩選",
+      "interview": "面試溝通",
+      "interviewDesc": "2-3 輪技術/業務面試",
+      "offer": "Offer 發放",
+      "offerDesc": "通過評估後發放正式錄用通知"
+    }
   },
   "about": {
     "title": "了解我們",
@@ -1082,7 +1324,11 @@
     "countries": "覆蓋國家",
     "learnMore": "了解更多",
     "jsonLdName": "TalentPro 了解我們",
-    "jsonLdDesc": "用科技連接人與組織，讓人才管理更高效"
+    "jsonLdDesc": "用科技連接人與組織，讓人才管理更高效",
+    "timeline": "發展歷程",
+    "certifications": "資質認證",
+    "partners": "合作夥伴與投資",
+    "office": "辦公環境"
   },
   "team": {
     "title": "團隊介紹",
@@ -1111,13 +1357,35 @@
     "addressTitle": "地址",
     "addressValue": "北京市海淀區中關村軟件園",
     "jsonLdName": "TalentPro 聯繫我們",
-    "jsonLdDesc": "我們期待與您交流，解答任何疑問"
+    "jsonLdDesc": "我們期待與您交流，解答任何疑問",
+    "company": "公司",
+    "inquiryType": "諮詢類型",
+    "inquiryPlaceholder": "請選擇",
+    "inquiryProduct": "產品諮詢",
+    "inquiryDemo": "預約演示",
+    "inquiryPartner": "生態合作",
+    "inquirySupport": "技術支援",
+    "inquiryOther": "其他",
+    "faq": "常見問題"
   },
   "common": {
     "loadError": "載入失敗，請重試",
     "retry": "重試",
     "loading": "載入中...",
-    "other": "其他"
+    "other": "其他",
+    "loadMore": "載入更多",
+    "all": "全部",
+    "cancel": "取消"
+  },
+  "cart": {
+    "title": "購物車",
+    "clear": "清空",
+    "empty": "購物車是空的",
+    "goShopping": "去應用廣場",
+    "total": "合計",
+    "checkout": "去結算",
+    "error": "操作失敗，請重試",
+    "checkoutComingSoon": "結算功能即將上線"
   },
   "errors": {
     "requestFailed": "請求失敗",
@@ -1139,5 +1407,13 @@
   "careersType": {
     "campus": "校招",
     "social": "社招"
+  },
+  "error": {
+    "title": "頁面出了點小問題",
+    "retry": "重新載入",
+    "backHome": "返回首頁",
+    "fallback": "組件載入失敗，請嘗試重新整理頁面。",
+    "unknown": "未知錯誤",
+    "details": "錯誤詳情（開發模式）"
   }
 }

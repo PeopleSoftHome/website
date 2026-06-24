@@ -23,24 +23,25 @@
   </BaseModal>
 </template>
 
-<script setup>
-import { ref, inject, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, onUnmounted } from 'vue';
+import { useVideoModalStore } from '@/stores/videoModal.pinia';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './VideoModal.module.css';
 
 const VIDEO_URL = 'https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1';
 
-const { t } = inject('i18n', { t: (k) => k });
-const videoStore = inject('videoModal', { isOpen: ref(false), closeVideo: () => {} });
+const { t } = useI18n();
+const videoModalStore = useVideoModalStore();
 
-const iframeRef = ref(null);
-const isOpen = videoStore.isOpen;
+const iframeRef = ref<HTMLIFrameElement | null>(null);
+const isOpen = videoModalStore.isOpen;
 
-let closeTimer = null;
+let closeTimer: ReturnType<typeof setTimeout> | null = null;
 const handleClose = () => {
   if (iframeRef.value) iframeRef.value.src = '';
-  closeTimer = setTimeout(() => videoStore.closeVideo(), 50);
+  closeTimer = setTimeout(() => videoModalStore.closeVideo(), 50);
 };
 onUnmounted(() => {
   if (closeTimer) clearTimeout(closeTimer);

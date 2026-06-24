@@ -1,0 +1,55 @@
+.dashboard { display: flex; flex-direction: column; gap: 24px; }
+.empty { text-align: center; padding: 60px; color: var(--gray-500); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.statCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px; text-align: center; }
+.statIcon { font-size: 24px; margin-bottom: 6px; }
+.statValue { font-size: 24px; font-weight: 800; color: var(--gray-900); margin-bottom: 2px; }
+.statLabel { font-size: 13px; color: var(--gray-500); }
+
+/* Two col */
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.profileCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; }
+.profileHeader { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.profileInfo { flex: 1; min-width: 0; }
+.profileName { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; }
+.profileEmail { font-size: 13px; color: var(--gray-500); }
+.profileWorkspace { font-size: 12px; color: var(--primary); margin-top: 2px; }
+.profileBio { font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 10px; }
+.profileMeta { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+.editLink { font-size: 13px; font-weight: 600; color: var(--primary); text-decoration: none; }
+.editLink:hover { text-decoration: underline; }
+
+.activityCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; }
+.cardTitle { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+.activityList { display: flex; flex-direction: column; gap: 14px; }
+.activityItem { display: flex; gap: 12px; }
+.activityDot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); margin-top: 6px; flex-shrink: 0; }
+.activityText { font-size: 14px; color: var(--gray-700); line-height: 1.5; }
+.activityDate { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+/* Quick actions */
+.quick { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; }
+.quickGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.quickCard { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--card-border); background: var(--page-bg); text-decoration: none; transition: all 0.2s; }
+.quickCard:hover { border-color: var(--primary); transform: translateY(-2px); }
+.quickIcon { font-size: 28px; }
+.quickLabel { font-size: 14px; font-weight: 500; color: var(--gray-700); }
+
+@media (max-width: 1023px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .twoCol { grid-template-columns: 1fr; }
+  .quickGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 479px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .quickGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+[data-theme="dark"] .statValue { color: var(--gray-50); }
+[data-theme="dark"] .profileName { color: var(--gray-50); }
+[data-theme="dark"] .profileBio { color: var(--gray-400); }
+[data-theme="dark"] .cardTitle { color: var(--gray-50); }
+[data-theme="dark"] .activityText { color: var(--gray-400); }
+[data-theme="dark"] .quickLabel { color: var(--gray-400); }

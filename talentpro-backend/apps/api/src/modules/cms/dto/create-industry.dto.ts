@@ -13,8 +13,8 @@ export class CreateIndustryDto {
 
   @IsOptional()
   @IsArray()
-  features?: any[];
+  features?: Record<string, unknown>[];
 
   @IsOptional()
-  screenshot?: any;
+  screenshot?: Record<string, unknown>;
 }

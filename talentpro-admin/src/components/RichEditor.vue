@@ -70,14 +70,14 @@ const toggleCodeBlock = () => editor.value?.chain().focus().toggleCodeBlock().ru
 
 <style scoped>
 .rich-editor {
-  border: 1px solid #dcdfe6;
+  border: 1px solid var(--admin-border-base);
   border-radius: 4px;
   overflow: hidden;
 }
 .toolbar {
   padding: 8px;
-  border-bottom: 1px solid #ebeef5;
-  background: #f5f7fa;
+  border-bottom: 1px solid var(--admin-border-lighter);
+  background: var(--admin-bg-base);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -85,7 +85,7 @@ const toggleCodeBlock = () => editor.value?.chain().focus().toggleCodeBlock().ru
 .editor-content {
   padding: 12px;
   min-height: 200px;
-  background: #fff;
+  background: var(--admin-white);
 }
 .editor-content :deep(.ProseMirror) {
   outline: none;
@@ -94,7 +94,7 @@ const toggleCodeBlock = () => editor.value?.chain().focus().toggleCodeBlock().ru
 .editor-content :deep(.ProseMirror p.is-editor-empty:first-child::before) {
   content: attr(data-placeholder);
   float: left;
-  color: #a8abb2;
+  color: var(--admin-text-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -103,6 +103,6 @@ const toggleCodeBlock = () => editor.value?.chain().focus().toggleCodeBlock().ru
 .editor-content :deep(.ProseMirror h3) { font-size: 18px; font-weight: 700; margin: 8px 0; }
 .editor-content :deep(.ProseMirror ul) { padding-left: 20px; list-style: disc; }
 .editor-content :deep(.ProseMirror ol) { padding-left: 20px; list-style: decimal; }
-.editor-content :deep(.ProseMirror blockquote) { border-left: 4px solid #dcdfe6; padding-left: 12px; margin: 8px 0; color: #606266; }
-.editor-content :deep(.ProseMirror pre) { background: #f5f7fa; padding: 12px; border-radius: 4px; font-family: monospace; }
+.editor-content :deep(.ProseMirror blockquote) { border-left: 4px solid var(--admin-border-base); padding-left: 12px; margin: 8px 0; color: var(--admin-text-regular); }
+.editor-content :deep(.ProseMirror pre) { background: var(--admin-bg-base); padding: 12px; border-radius: 4px; font-family: monospace; }
 </style>

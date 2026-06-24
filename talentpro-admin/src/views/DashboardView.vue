@@ -7,7 +7,7 @@
           <div style="display:flex;align-items:center;gap:12px">
             <el-icon :size="32" :color="card.color"><component :is="card.icon" /></el-icon>
             <div>
-              <div style="font-size:13px;color:#666">{{ card.title }}</div>
+              <div style="font-size:13px;color:var(--admin-text-secondary)">{{ card.title }}</div>
               <div style="font-size:24px;font-weight:700">{{ card.value }}</div>
             </div>
           </div>
@@ -42,14 +42,13 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { formatDate } from '@/utils/formatDate.js';
 import client from '@/api/client.js';
 
 const statCards = ref([
-  { title: '今日线索', value: '-', icon: 'Phone', color: '#1B5FEB' },
-  { title: '本月线索', value: '-', icon: 'TrendCharts', color: '#10B981' },
-  { title: '总用户', value: '-', icon: 'User', color: '#F59E0B' },
-  { title: '待跟进', value: '-', icon: 'Timer', color: '#EF4444' },
+  { title: '今日线索', value: '-', icon: 'Phone', color: 'var(--admin-color-primary)' },
+  { title: '本月线索', value: '-', icon: 'TrendCharts', color: 'var(--admin-color-success)' },
+  { title: '总用户', value: '-', icon: 'User', color: 'var(--admin-color-warning)' },
+  { title: '待跟进', value: '-', icon: 'Timer', color: 'var(--admin-color-danger)' },
 ]);
 
 const leadTrend = ref([3, 5, 2, 8, 6, 4, 7]);

@@ -15,14 +15,14 @@ export interface CacheEvictOptions {
 }
 
 export const Cacheable = (options: CacheOptions) => {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
     SetMetadata(CACHE_KEY, options.key)(target, propertyKey, descriptor);
     SetMetadata(CACHE_TTL, options.ttl || 60)(target, propertyKey, descriptor);
   };
 };
 
 export const CacheEvict = (options: CacheEvictOptions) => {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
     const keys = options.keys ?? (options.key ? [options.key] : []);
     SetMetadata(CACHE_EVICT, keys)(target, propertyKey, descriptor);
   };

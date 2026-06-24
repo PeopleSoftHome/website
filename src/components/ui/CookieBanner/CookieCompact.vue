@@ -22,12 +22,11 @@
   </div>
 </template>
 
-<script setup>
-import { inject } from 'vue';
+<script setup lang="ts">
+
 import s from './CookieBanner.module.css';
 
 const emit = defineEmits(['accept', 'reject', 'open-preferences']);
 
-const i18n = inject('i18n');
-const t = (key) => i18n?.t(key) ?? key;
+const { t } = useI18n();
 </script>

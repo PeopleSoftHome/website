@@ -16,10 +16,11 @@
   </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue';
-import { useScrollLock } from '@/composables/useScrollLock.js';
-import { useFocusTrap } from '@/composables/useFocusTrap.js';
+import type { Ref } from 'vue';
+import { useScrollLock } from '@/composables/useScrollLock';
+import { useFocusTrap } from '@/composables/useFocusTrap';
 
 const props = defineProps({
   isOpen:           { type: Boolean, required: true },
@@ -28,25 +29,27 @@ const props = defineProps({
 });
 const emit = defineEmits(['close']);
 
-const overlayRef = ref(null);
+const overlayRef: Ref<HTMLElement | null> = ref(null);
 
 useScrollLock(() => props.isOpen);
 useFocusTrap(() => props.isOpen, overlayRef);
 
-function onOverlayClick(e) {
+function onOverlayClick(e: MouseEvent) {
   if (e.target === e.currentTarget) emit('close');
 }
 
-function onKey(e) {
+function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape' && props.isOpen) emit('close');
 }
 
 watch(() => props.isOpen, (open) => {
+  if (typeof document === 'undefined') return;
   if (open) document.addEventListener('keydown', onKey);
   else document.removeEventListener('keydown', onKey);
 }, { immediate: true });
 
 onUnmounted(() => {
+  if (typeof document === 'undefined') return;
   document.removeEventListener('keydown', onKey);
 });
 </script>

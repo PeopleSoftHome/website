@@ -29,6 +29,9 @@ describe('CmsService', () => {
             upsertNavigation: jest.fn().mockResolvedValue({}),
             findTranslations: jest.fn().mockResolvedValue([]),
             upsertTranslation: jest.fn().mockResolvedValue({}),
+            findAllTranslations: jest.fn().mockResolvedValue({ data: [], meta: { total: 0 } }),
+            updateTranslation: jest.fn().mockResolvedValue({}),
+            deleteTranslation: jest.fn().mockResolvedValue({ message: '删除成功' }),
           },
         },
         {
@@ -79,13 +82,13 @@ describe('CmsService', () => {
 
     it('createPage delegates to pageService', async () => {
       const dto = { title: 'Home', slug: 'home' };
-      await service.createPage(dto as any);
+      await service.createPage(dto as unknown as Parameters<CmsService['createPage']>[0]);
       expect(pageService.createPage).toHaveBeenCalledWith(dto);
     });
 
     it('updatePage delegates to pageService', async () => {
       const dto = { title: 'Updated' };
-      await service.updatePage('p1', dto as any);
+      await service.updatePage('p1', dto as unknown as Parameters<CmsService['updatePage']>[1]);
       expect(pageService.updatePage).toHaveBeenCalledWith('p1', dto);
     });
 
@@ -102,7 +105,7 @@ describe('CmsService', () => {
     });
 
     it('batchUpdateSections delegates to pageService', async () => {
-      const sections = [{ id: 's1', order: 1 }];
+      const sections = [{ id: 's1', sortOrder: 1, isActive: true }];
       await service.batchUpdateSections(sections);
       expect(pageService.batchUpdateSections).toHaveBeenCalledWith(sections);
     });

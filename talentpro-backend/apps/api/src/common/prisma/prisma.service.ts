@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Prisma $extends query callbacks are inherently dynamic across all models.
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import { workspaceStorage } from './workspace.storage';
 import { softDeleteExtension } from './soft-delete.extension';
@@ -35,9 +38,9 @@ function shouldApplyWorkspaceFilter(model: string): boolean {
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor() {
+  constructor(config: ConfigService) {
     super();
-    const piiKey = process.env.PII_ENCRYPTION_KEY;
+    const piiKey = config.get<string>('PII_ENCRYPTION_KEY');
     if (!piiKey) {
       throw new Error(
         'PII_ENCRYPTION_KEY is required. ' +
@@ -49,11 +52,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     const extended = encrypted.$extends({
       query: {
         $allModels: {
-          async findMany({ model, operation, args, query }: any) {
+          async findMany({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async findUnique({ model, operation, args, query }: any) {
+          async findUnique({ model, _operation, args, query }: any) {
             // findUnique 无法直接注入 workspaceId（Prisma 要求 where 只含唯一字段）
             // 但需保留 softDelete 的 deletedAt 过滤
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
@@ -63,31 +66,31 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             };
             return query(softDeletedArgs);
           },
-          async findFirst({ model, operation, args, query }: any) {
+          async findFirst({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async count({ model, operation, args, query }: any) {
+          async count({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async update({ model, operation, args, query }: any) {
+          async update({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async updateMany({ model, operation, args, query }: any) {
+          async updateMany({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async delete({ model, operation, args, query }: any) {
+          async delete({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async deleteMany({ model, operation, args, query }: any) {
+          async deleteMany({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },
-          async upsert({ model, operation, args, query }: any) {
+          async upsert({ model, _operation, args, query }: any) {
             if (!shouldApplyWorkspaceFilter(model)) return query(args);
             return query(applyWorkspaceFilter(args, workspaceStorage.getStore()));
           },

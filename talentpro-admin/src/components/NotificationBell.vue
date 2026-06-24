@@ -8,7 +8,7 @@
   >
     <template #reference>
       <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="notification-badge">
-        <el-icon :size="20" class="bell-icon" @click="popoverVisible = !popoverVisible">
+        <el-icon :size="20" class="bell-icon">
           <Bell />
         </el-icon>
       </el-badge>
@@ -207,11 +207,11 @@ onUnmounted(() => {
   line-height: 1;
 }
 .bell-icon {
-  color: #606266;
+  color: var(--admin-text-regular);
   transition: color 0.2s;
 }
 .bell-icon:hover {
-  color: #409eff;
+  color: var(--admin-color-primary);
 }
 .notification-header {
   display: flex;
@@ -222,7 +222,7 @@ onUnmounted(() => {
 .notification-title {
   font-weight: 600;
   font-size: 15px;
-  color: #303133;
+  color: var(--admin-text-primary);
 }
 .notification-empty {
   padding: 8px 0;
@@ -233,7 +233,7 @@ onUnmounted(() => {
 }
 .notification-item {
   padding: 10px 12px;
-  border-bottom: 1px solid #ebeef5;
+  border-bottom: 1px solid var(--admin-border-lighter);
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -241,10 +241,10 @@ onUnmounted(() => {
   border-bottom: none;
 }
 .notification-item:hover {
-  background: #f5f7fa;
+  background: var(--admin-bg-base);
 }
 .notification-item.unread {
-  background: #ecf5ff;
+  background: var(--admin-color-primary-light-1);
 }
 .notification-item-header {
   display: flex;
@@ -254,17 +254,17 @@ onUnmounted(() => {
 }
 .notification-time {
   font-size: 12px;
-  color: #909399;
+  color: var(--admin-text-secondary);
 }
 .notification-item-title {
   font-size: 14px;
   font-weight: 500;
-  color: #303133;
+  color: var(--admin-text-primary);
   margin-bottom: 2px;
 }
 .notification-item-message {
   font-size: 13px;
-  color: #606266;
+  color: var(--admin-text-regular);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;

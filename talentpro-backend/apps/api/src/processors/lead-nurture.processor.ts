@@ -38,7 +38,19 @@ export class LeadNurtureProcessor extends WorkerHost {
 
   @OnWorkerEvent('failed')
   onFailed(job: Job, err: Error) {
-    this.logger.error(`Lead nurture job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`);
+    this.logger.error(
+      `Lead nurture job ${job.id} permanently failed after ${job.attemptsMade} attempts: ${err.message}`,
+      {
+        deadLetter: {
+          queue: 'lead-nurture',
+          jobId: job.id,
+          name: job.name,
+          data: job.data,
+          error: err.message,
+          stack: err.stack,
+        },
+      },
+    );
   }
 
   private async sendDay3FollowUp(data: { email: string; name: string; products: string[] }) {

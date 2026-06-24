@@ -38,7 +38,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from 'vue';
 import Avatar from '../Avatar/Avatar.vue';
 import CommentForm from '../CommentForm/CommentForm.vue';
@@ -52,18 +52,18 @@ defineProps({
 });
 
 const emit = defineEmits(['reply']);
-const { t } = inject('i18n', { t: (k) => k });
+import { renderMentions } from '@/utils/markdown';
+
+const { t } = useI18n();
 
 const replying = ref(false);
 
-const renderMentions = (text) => {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/@([\u4e00-\u9fa5a-zA-Z0-9_]+)/g, '<span class="mention">@$1</span>');
-};
+interface ReplyComment {
+  parentId?: string;
+  [key: string]: unknown;
+}
 
-const handleReply = (reply) => {
+const handleReply = (reply: ReplyComment) => {
   emit('reply', { parentId: reply.parentId, reply });
   replying.value = false;
 };

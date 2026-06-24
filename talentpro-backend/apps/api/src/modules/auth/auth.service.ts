@@ -24,6 +24,13 @@ export class AuthService {
     return { user, ...tokens };
   }
 
+  async devLogin(email?: string, roleName?: string) {
+    const { user } = await this.userService.devLogin(email, roleName);
+    const tokens = await this.tokenService.generateTokens(user.id, user.email, user.workspaceId);
+    await this.tokenService.saveRefreshToken(user.id, tokens.refreshToken);
+    return { user, ...tokens };
+  }
+
   async refresh(refreshToken: string) {
     return this.tokenService.refresh(refreshToken);
   }

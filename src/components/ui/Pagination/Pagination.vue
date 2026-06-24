@@ -25,7 +25,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, inject } from 'vue';
 import s from './Pagination.module.css';
 
@@ -36,7 +36,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
-const { t } = inject('i18n', { t: (k) => k });
+const { t } = useI18n();
 
 const current = computed({
   get: () => props.modelValue,
@@ -64,7 +64,7 @@ const pages = computed(() => {
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
 
-const go = (p) => {
+const go = (p: number) => {
   if (p < 1 || p > totalPages.value || p === current.value) return;
   current.value = p;
 };

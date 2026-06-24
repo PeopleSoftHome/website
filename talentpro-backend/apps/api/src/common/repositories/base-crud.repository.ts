@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Generic CRUD facade over Prisma dynamic models; concrete per-model typing lives in services.
 import { NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { getSkip, buildPaginatedResponse, PaginatedResult } from '@/common/helpers/pagination.helper';

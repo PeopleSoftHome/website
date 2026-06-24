@@ -1,8 +1,9 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import * as ExcelJS from 'exceljs';
-import { LeadStatus } from '@prisma/client';
+import { LeadStatus, Prisma } from '@prisma/client';
 import { Response } from 'express';
+import { Stream } from 'stream';
 
 const MAX_EXPORT_ROWS = 50000; // 单次导出最大记录数，防止 OOM
 const BATCH_SIZE = 1000; // 游标分页批次大小
@@ -15,7 +16,7 @@ export class ExportService {
     filters: { status?: LeadStatus; workspaceId?: string },
     res: Response,
   ) {
-    const where: any = {};
+    const where: Prisma.DemoBookingWhereInput = {};
     if (filters.status) where.status = filters.status;
     if (filters.workspaceId) where.workspaceId = filters.workspaceId;
 
@@ -25,7 +26,7 @@ export class ExportService {
     }
 
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
-      stream: res as any,
+      stream: res as unknown as Stream,
     });
     const worksheet = workbook.addWorksheet('线索列表');
     worksheet.addRow([
@@ -34,7 +35,6 @@ export class ExportService {
     ]);
 
     let cursor: { id: string } | undefined;
-    let count = 0;
     do {
       const batch = await this.prisma.demoBooking.findMany({
         where,
@@ -53,7 +53,6 @@ export class ExportService {
         ]);
       }
 
-      count += batch.length;
       cursor = batch.length === BATCH_SIZE ? { id: batch[batch.length - 1].id } : undefined;
     } while (cursor);
 
@@ -65,7 +64,7 @@ export class ExportService {
     filters: { workspaceId?: string },
     res: Response,
   ) {
-    const where: any = {};
+    const where: Prisma.UserWhereInput = {};
     if (filters.workspaceId) where.workspaceId = filters.workspaceId;
 
     const total = await this.prisma.user.count({ where });
@@ -74,7 +73,7 @@ export class ExportService {
     }
 
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
-      stream: res as any,
+      stream: res as unknown as Stream,
     });
     const worksheet = workbook.addWorksheet('用户列表');
     worksheet.addRow([
@@ -131,7 +130,7 @@ export class ExportService {
     }
 
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
-      stream: res as any,
+      stream: res as unknown as Stream,
     });
 
     // 页面访问

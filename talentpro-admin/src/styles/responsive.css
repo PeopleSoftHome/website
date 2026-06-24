@@ -1,0 +1,99 @@
+.cms-table-header {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Admin 移动端响应式补强 */
+
+@media (max-width: 768px) {
+  /* LayoutView 已提供基础 drawer，这里补强内容区 */
+  .layout .main {
+    padding: 12px !important;
+  }
+
+  .el-card__body {
+    padding: 12px !important;
+  }
+
+  /* 表格横向滚动，避免被压扁 */
+  .el-table {
+    width: 100% !important;
+  }
+  .el-table__inner-wrapper {
+    overflow-x: auto !important;
+  }
+
+  /* 弹窗宽度适配 */
+  .el-dialog {
+    width: 92% !important;
+    max-width: 92vw !important;
+    margin: 0 auto !important;
+  }
+  .el-dialog__body {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  /* 表单标签自动宽度 */
+  .el-form .el-form-item__label {
+    float: none;
+    display: block;
+    text-align: left;
+    width: auto !important;
+  }
+  .el-form .el-form-item__content {
+    margin-left: 0 !important;
+  }
+  .el-form-item {
+    display: block;
+  }
+
+  /* 输入框占满 */
+  .el-input,
+  .el-textarea,
+  .el-input-number {
+    width: 100% !important;
+  }
+
+  /* 分页换行 */
+  .el-pagination {
+    flex-wrap: wrap;
+    justify-content: center !important;
+    gap: 4px;
+  }
+
+  /* 列表顶部按钮垂直排列 */
+  .cms-table-header,
+  .table-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px;
+  }
+
+  .cms-table-header .el-button,
+  .table-header .el-button {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout .main {
+    padding: 8px !important;
+  }
+
+  .el-card__body {
+    padding: 8px !important;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .el-dialog {
+    width: 96% !important;
+    max-width: 96vw !important;
+  }
+}

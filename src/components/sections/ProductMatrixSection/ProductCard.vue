@@ -6,14 +6,16 @@
     </div>
     <div :class="s.name">{{ name }}</div>
     <p :class="s.desc">{{ desc }}</p>
-    <span :class="s.link">产品详情 <Icon name="arrow-right" :size="12" /></span>
+    <span :class="s.link">{{ linkText || t('products.linkText') }} <Icon name="arrow-right" :size="12" /></span>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import Icon from '../../ui/Icon/Icon.vue';
 import s from './ProductCard.module.css';
+
+const { t } = useI18n();
 
 const props = defineProps({
   icon:      { type: [Function, String], required: true },
@@ -21,7 +23,7 @@ const props = defineProps({
   desc:      { type: String, required: true },
   iconBg:    { type: String, default: '' },
   iconColor: { type: String, default: '' },
-  linkText:  { type: String, default: '产品详情' },
+  linkText:  { type: String, default: '' },
   delay:     { type: Number, default: 0 },
 });
 

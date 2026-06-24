@@ -1,13 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Observable, Subject } from 'rxjs';
-import { ChatMessage } from './ai.types';
+import { ChatMessage, StreamEvent, LlmProvider } from './ai.types';
 import { AiRagService } from './ai-rag.service';
 import { AiPromptService } from './ai-prompt.service';
-import { AiOpenAiService } from './ai-openai.service';
+import { LlmProviderFactory } from './ai-provider.factory';
+import { PrismaService } from '@/common/prisma/prisma.service';
 
 /**
  * AiService — Facade
- * 组合 RAG / Prompt / OpenAI 三个子服务，对外保持统一接口
+ * 组合 RAG / Prompt / LLM Provider 工厂，对外保持统一接口
  */
 @Injectable()
 export class AiService {
@@ -16,24 +18,199 @@ export class AiService {
   constructor(
     private ragService: AiRagService,
     private promptService: AiPromptService,
-    private openaiService: AiOpenAiService,
+    private providerFactory: LlmProviderFactory,
+    private prisma: PrismaService,
   ) {}
 
-  async chat(message: string, history: ChatMessage[] = []) {
-    const contexts = await this.ragService.retrieveContext(message);
-    const systemPrompt = this.promptService.buildSystemPrompt(contexts);
+  private get llm(): LlmProvider {
+    return this.providerFactory.getActiveProvider();
+  }
 
-    if (this.openaiService.isConfigured()) {
-      return this.openaiService.callOpenAI(message, history, systemPrompt);
+  async chat(message: string, history: ChatMessage[] = [], locale = 'zh') {
+    const contexts = await this.ragService.retrieveContext(message);
+    const systemPrompt = await this.promptService.buildSystemPrompt(contexts, locale);
+
+    if (this.llm.isConfigured()) {
+      return this.llm.chat([
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: message },
+      ]);
     }
 
     return this.fallbackResponse(message, contexts);
   }
 
-  chatStream(message: string, history: ChatMessage[] = []): Observable<any> {
-    const subject = new Subject<any>();
+  async moderateContent(content: string) {
+    if (!this.llm.isConfigured()) {
+      return { riskScore: 0, flags: [] as string[], autoApprove: true };
+    }
+    const ai = await this.llm.moderateContent(content);
+    return {
+      ...ai,
+      autoApprove: ai.riskScore < 0.3 && ai.flags.length === 0,
+    };
+  }
 
-    if (!this.openaiService.isConfigured()) {
+  async generateContent(dto: {
+    type: string;
+    prompt?: string;
+    content?: string;
+    language?: string;
+    tone?: string;
+  }) {
+    const { type, prompt = '', content = '', language = 'zh', tone = '专业' } = dto;
+
+    if (this.llm.isConfigured()) {
+      const userPrompt = this.buildGeneratePrompt(type, prompt, content, language, tone);
+      const result = await this.llm.chat([{ role: 'user', content: userPrompt }]);
+      return {
+        type,
+        content: result.content,
+        generatedAt: new Date().toISOString(),
+      };
+    }
+
+    return this.fallbackGenerate(type, prompt, content, language, tone);
+  }
+
+  async loadChatSession(sessionId: string): Promise<ChatMessage[]> {
+    if (!sessionId) return [];
+    try {
+      const session = await this.prisma.aiChatSession.findUnique({ where: { sessionId } });
+      const messages = Array.isArray(session?.messages) ? (session.messages as unknown as ChatMessage[]) : [];
+      return messages.slice(-20);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      this.logger.warn(`Failed to load chat session: ${message}`);
+      return [];
+    }
+  }
+
+  async appendChatMessage(sessionId: string, role: ChatMessage['role'], content: string) {
+    if (!sessionId) return;
+    try {
+      const existing = await this.prisma.aiChatSession.findUnique({ where: { sessionId } });
+      const messages: ChatMessage[] = existing && Array.isArray(existing.messages)
+        ? (existing.messages as unknown as ChatMessage[])
+        : [];
+      messages.push({ role, content });
+      await this.prisma.aiChatSession.upsert({
+        where: { sessionId },
+        update: { messages: messages as unknown as Prisma.InputJsonValue },
+        create: { sessionId, messages: messages as unknown as Prisma.InputJsonValue },
+      });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      this.logger.warn(`Failed to save chat message: ${message}`);
+    }
+  }
+
+  private buildGeneratePrompt(
+    type: string,
+    prompt: string,
+    content: string,
+    language: string,
+    tone: string,
+  ): string {
+    const base = `你是一位资深 HR SaaS 内容运营专家。请以「${tone}」的口吻，用「${language}」输出。`;
+    const input = prompt || content || 'TalentPro 一体化 HR SaaS 平台';
+
+    switch (type) {
+      case 'blog':
+        return `${base}\n请为以下主题生成一篇博客文章，包含标题、正文和摘要：\n${input}`;
+      case 'product':
+        return `${base}\n请为以下产品生成营销文案，包含标题、描述、核心功能和应用场景：\n${input}`;
+      case 'seo':
+        return `${base}\n请为以下主题生成 SEO 标题、描述和关键词：\n${input}`;
+      case 'translate':
+        return `${base}\n请翻译以下内容：\n${content || prompt}`;
+      case 'moderate':
+        return `${base}\n请审核以下内容是否合规，指出风险并给出修改建议：\n${content || prompt}`;
+      default:
+        return `${base}\n${input}`;
+    }
+  }
+
+  private fallbackGenerate(
+    type: string,
+    prompt: string,
+    content: string,
+    language: string,
+    tone: string,
+  ) {
+    const input = prompt || content || 'TalentPro 一体化 HR SaaS 平台';
+
+    switch (type) {
+      case 'blog':
+        return {
+          type,
+          title: `${input}：企业数字化 HR 的最佳实践`,
+          content: `在数字化转型的浪潮中，${input} 为企业提供了从招聘、入职、考勤、薪酬到绩效的全流程解决方案。\n\n通过 AI 驱动的智能分析，HR 团队可以实时掌握人才动态，优化组织结构，提升员工体验。`,
+          summary: `本文介绍了 ${input} 如何帮助企业实现 HR 数字化转型。`,
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+      case 'product':
+        return {
+          type,
+          title: input,
+          description: `${input} 是 TalentPro 平台的核心模块，致力于为中大型企业打造高效、合规、智能化的 HR 管理体验。`,
+          features: ['智能招聘', '绩效考评', '薪酬算薪', '组织架构'],
+          scenarios: ['中大型企业 HR 共享中心', '快速成长型企业', '跨国多法人组织'],
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+      case 'seo':
+        return {
+          type,
+          title: `${input} - 企业级 HR SaaS 解决方案 | TalentPro`,
+          description: `了解 ${input} 如何帮助企业降本增效，实现 HR 数字化管理。`,
+          keywords: ['HR SaaS', '人力资源管理', '招聘系统', '薪酬管理', '绩效考核'],
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+      case 'translate':
+        return {
+          type,
+          original: content || prompt,
+          translation: `[${language}] ${content || prompt}`,
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+      case 'moderate':
+        return {
+          type,
+          moderated: true,
+          issues: [],
+          suggestion: '内容暂未发现明显风险（当前为离线规则模式）。',
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+      default:
+        return {
+          type,
+          content: input,
+          language,
+          tone,
+          generatedAt: new Date().toISOString(),
+        };
+    }
+  }
+
+  chatStream(message: string, history: ChatMessage[] = [], sessionId?: string): Observable<StreamEvent> {
+    const subject = new Subject<StreamEvent>();
+
+    if (sessionId) {
+      this.appendChatMessage(sessionId, 'user', message).catch(() => {});
+    }
+
+    if (!this.llm.isConfigured()) {
       let interval: NodeJS.Timeout | null = null;
       this.chat(message, history).then((response) => {
         const text = response.content || '';
@@ -59,10 +236,33 @@ export class AiService {
       return subject.asObservable();
     }
 
-    this.ragService.retrieveContext(message).then((contexts) => {
-      const systemPrompt = this.promptService.buildSystemPrompt(contexts);
-      this.openaiService.streamOpenAI(message, history, systemPrompt, subject);
+    this.ragService.retrieveContext(message).then(async (contexts) => {
+      const systemPrompt = await this.promptService.buildSystemPrompt(contexts);
+      this.llm.stream([
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: message },
+      ], subject);
     }).catch((err) => subject.error(err));
+
+    if (sessionId) {
+      let assistantText = '';
+      const originalNext = subject.next.bind(subject);
+      const originalComplete = subject.complete.bind(subject);
+      subject.next = (value: StreamEvent) => {
+        try {
+          const parsed = JSON.parse(value.data);
+          if (parsed.chunk) assistantText += parsed.chunk;
+        } catch {
+          // ignore parse errors
+        }
+        return originalNext(value);
+      };
+      subject.complete = () => {
+        this.appendChatMessage(sessionId, 'assistant', assistantText).catch(() => {});
+        return originalComplete();
+      };
+    }
 
     return subject.asObservable();
   }

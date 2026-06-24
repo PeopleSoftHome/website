@@ -1,0 +1,90 @@
+.page { padding: 80px 0 80px; background: var(--page-bg); min-height: 60vh; }
+.hero { text-align: center; margin-bottom: 48px; }
+.title { font-size: 36px; font-weight: 800; color: var(--gray-900); margin-bottom: 12px; line-height: 1.2; }
+.subtitle { font-size: 18px; color: var(--gray-500); max-width: 640px; margin: 0 auto; }
+.channels { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 48px; }
+.channelCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-xl); padding: 36px 32px; text-align: center; text-decoration: none; transition: transform 0.3s var(--ease-out), box-shadow 0.3s; }
+.channelCard:hover { transform: translateY(-4px); box-shadow: 0 16px 40px var(--black-alpha-8); }
+.channelIcon { font-size: 40px; margin-bottom: 16px; }
+.channelTitle { font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.channelDesc { font-size: 14px; color: var(--gray-600); margin-bottom: 14px; }
+.channelCta { font-size: 14px; font-weight: 600; color: var(--primary); }
+
+.filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; justify-content: center; }
+.filterBtn { padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--gray-200); background: var(--card-bg); color: var(--gray-600); font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.filterBtn:hover { border-color: var(--primary); color: var(--primary); }
+.filterActive { background: var(--primary); color: var(--white); border-color: var(--primary); }
+.list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 64px; }
+.job { display: block; padding: 22px 24px; border-radius: var(--radius-lg); border: 1px solid var(--card-border); background: var(--card-bg); text-decoration: none; transition: box-shadow 0.25s, border-color 0.25s; animation: cardIn 0.4s var(--ease-out) both; animation-delay: calc(var(--stagger, 0) * 50ms); }
+.job:hover { border-color: var(--primary); box-shadow: 0 6px 18px var(--black-alpha-6); }
+.jobHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.jobTitle { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.jobType { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-alpha-10); padding: 4px 10px; border-radius: var(--radius-sm); }
+.jobMeta { display: flex; gap: 16px; font-size: 14px; color: var(--gray-500); margin-bottom: 8px; }
+.jobSummary { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+.moreWrap { text-align: center; margin-top: 20px; }
+.moreBtn { padding: 10px 24px; border-radius: var(--radius-md); border: 1px solid var(--primary); background: transparent; color: var(--primary); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.moreBtn:hover { background: var(--primary); color: var(--white); }
+
+@keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Path */
+.path { margin-bottom: 64px; }
+.sectionTitle { font-size: 28px; font-weight: 700; color: var(--gray-900); margin-bottom: 28px; text-align: center; }
+.pathList { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+.pathItem { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; text-align: center; position: relative; }
+.pathIcon { font-size: 32px; margin-bottom: 10px; }
+.pathStage { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.pathDesc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+.pathLine { position: absolute; top: 50%; right: -18px; width: 20px; height: 2px; background: var(--primary); transform: translateY(-50%); z-index: 1; }
+
+/* Testimonials */
+.testimonials { margin-bottom: 64px; }
+.testiList { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.testiCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; animation: cardIn 0.4s var(--ease-out) both; animation-delay: calc(var(--stagger, 0) * 80ms); }
+.testiQuote { font-size: 15px; color: var(--gray-700); line-height: 1.7; font-style: italic; margin-bottom: 16px; }
+.testiAuthor { display: flex; align-items: center; gap: 12px; }
+.testiAvatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--white); display: grid; place-items: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.testiName { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.testiRole { font-size: 12px; color: var(--gray-500); }
+
+/* Benefits */
+.benefits { margin-bottom: 40px; }
+.benefitsTitle { font-size: 28px; font-weight: 700; color: var(--gray-900); text-align: center; margin-bottom: 10px; }
+.benefitsDesc { font-size: 16px; color: var(--gray-500); text-align: center; margin-bottom: 28px; max-width: 640px; margin-left: auto; margin-right: auto; }
+.benefitGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.benefitCard { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+.benefitIcon { font-size: 32px; margin-bottom: 10px; }
+.benefitName { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.benefitDesc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+.loading { text-align: center; padding: 60px 0; color: var(--gray-400); }
+.error { text-align: center; padding: 60px 0; color: var(--error); }
+
+@media (max-width: 1023px) {
+  .channels { grid-template-columns: 1fr; }
+  .pathList { grid-template-columns: 1fr; }
+  .pathLine { display: none; }
+  .testiList { grid-template-columns: 1fr; }
+  .benefitGrid { grid-template-columns: repeat(2, 1fr); }
+  .title { font-size: 28px; }
+}
+@media (max-width: 639px) {
+  .benefitGrid { grid-template-columns: 1fr; }
+}
+
+[data-theme="dark"] .title { color: var(--gray-50); }
+[data-theme="dark"] .channelTitle { color: var(--gray-50); }
+[data-theme="dark"] .channelDesc { color: var(--gray-400); }
+[data-theme="dark"] .jobTitle { color: var(--gray-50); }
+[data-theme="dark"] .jobType { background: var(--primary-bright-alpha-20); }
+[data-theme="dark"] .jobSummary { color: var(--gray-400); }
+[data-theme="dark"] .sectionTitle { color: var(--gray-50); }
+[data-theme="dark"] .pathStage { color: var(--gray-50); }
+[data-theme="dark"] .pathDesc { color: var(--gray-400); }
+[data-theme="dark"] .testiQuote { color: var(--gray-400); }
+[data-theme="dark"] .testiName { color: var(--gray-50); }
+[data-theme="dark"] .testiRole { color: var(--gray-400); }
+[data-theme="dark"] .benefitsTitle { color: var(--gray-50); }
+[data-theme="dark"] .benefitName { color: var(--gray-50); }
+[data-theme="dark"] .benefitDesc { color: var(--gray-400); }

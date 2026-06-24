@@ -4,6 +4,8 @@ import { PrismaService } from '@/common/prisma/prisma.service';
 import { MediaRepository } from './media.repository';
 import { StorageService } from './storage.service';
 import { NotFoundException } from '@nestjs/common';
+import { Media, User } from '@prisma/client';
+import { PaginatedResult } from '@/common/helpers/pagination.helper';
 
 describe('MediaService', () => {
   let service: MediaService;
@@ -61,7 +63,7 @@ describe('MediaService', () => {
   describe('findAll', () => {
     it('should return paginated media list', async () => {
       const mockResult = { data: [], meta: { total: 0, page: 1, pageSize: 20 } };
-      jest.spyOn(repo, 'findAll').mockResolvedValue(mockResult as any);
+      jest.spyOn(repo, 'findAll').mockResolvedValue(mockResult as unknown as PaginatedResult<Media>);
 
       const result = await service.findAll(1, 20);
       expect(repo.findAll).toHaveBeenCalledWith(
@@ -72,7 +74,7 @@ describe('MediaService', () => {
 
     it('should filter by mimeType', async () => {
       const mockResult = { data: [], meta: { total: 0, page: 1, pageSize: 20 } };
-      jest.spyOn(repo, 'findAll').mockResolvedValue(mockResult as any);
+      jest.spyOn(repo, 'findAll').mockResolvedValue(mockResult as unknown as PaginatedResult<Media>);
 
       await service.findAll(1, 20, 'image');
       expect(repo.findAll).toHaveBeenCalledWith(
@@ -100,7 +102,7 @@ describe('MediaService', () => {
       const mockMedia = { id: 'm1', ...mockUploadResult, createdBy: 'u1' };
 
       jest.spyOn(storage, 'upload').mockResolvedValue(mockUploadResult);
-      jest.spyOn(repo, 'create').mockResolvedValue(mockMedia as any);
+      jest.spyOn(repo, 'create').mockResolvedValue(mockMedia as unknown as Media);
 
       const result = await service.upload(mockFile, 'u1');
 
@@ -121,10 +123,10 @@ describe('MediaService', () => {
   describe('delete', () => {
     it('should delete media and storage file', async () => {
       const mockMedia = { id: 'm1', filename: 'test.jpg', createdBy: 'u1' };
-      jest.spyOn(prisma.media, 'findUnique').mockResolvedValue(mockMedia as any);
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue({ workspaceId: 'ws1' } as any);
+      jest.spyOn(prisma.media, 'findUnique').mockResolvedValue(mockMedia as unknown as Media);
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue({ workspaceId: 'ws1' } as unknown as User);
       jest.spyOn(storage, 'delete').mockResolvedValue(undefined);
-      jest.spyOn(repo, 'delete').mockResolvedValue({ message: '删除成功' } as any);
+      jest.spyOn(repo, 'delete').mockResolvedValue({ message: '删除成功' } as unknown as { message: string });
 
       await service.delete('m1', 'ws1');
 
@@ -144,7 +146,8 @@ describe('MediaService', () => {
       jest.spyOn(prisma.media, 'count').mockResolvedValue(10);
       jest.spyOn(prisma.media, 'groupBy').mockResolvedValue([
         { mimeType: 'image/jpeg', _count: { mimeType: 5 }, _sum: { size: 5000 } },
-      ] as any);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ] as unknown as any[]);
 
       const result = await service.getStats();
 

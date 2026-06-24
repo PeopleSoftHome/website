@@ -1,19 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SensitiveWordCategory } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { Prisma, SensitiveWordCategory } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 
 @Injectable()
 export class SystemService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {}
 
   // ─── Settings ───
   async findAllSettings(category?: string) {
-    const where: any = {};
+    const where: Prisma.SettingWhereInput = {};
     if (category) where.category = category;
     const rows = await this.prisma.setting.findMany({ where, orderBy: { key: 'asc' } });
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
     for (const row of rows) {
       result[row.key] = row.value;
     }
@@ -26,13 +30,14 @@ export class SystemService {
     return setting;
   }
 
-  async upsertSetting(data: { key: string; value: any; category?: string; updatedBy?: string }) {
+  async upsertSetting(data: { key: string; value: unknown; category?: string; updatedBy?: string }) {
+    const value = data.value as Prisma.InputJsonValue;
     return this.prisma.setting.upsert({
       where: { key: data.key },
-      update: { value: data.value, category: data.category, updatedBy: data.updatedBy },
+      update: { value, category: data.category, updatedBy: data.updatedBy },
       create: {
         key: data.key,
-        value: data.value,
+        value,
         category: data.category || 'general',
         updatedBy: data.updatedBy,
       },
@@ -44,10 +49,32 @@ export class SystemService {
     return { message: '删除成功' };
   }
 
+  async getPublicConfig() {
+    const PUBLIC_SETTING_KEYS = ['sitePhone', 'copyright', 'featureFlags', 'hotTags', 'socialLinks', 'siteTitle', 'siteDescription'];
+    const settings = await this.prisma.setting.findMany({
+      where: { key: { in: PUBLIC_SETTING_KEYS } },
+    });
+    const mapped: Record<string, unknown> = {};
+    for (const row of settings) {
+      mapped[row.key] = row.value;
+    }
+    return {
+      recaptchaSiteKey: this.config.get<string>('NUXT_PUBLIC_RECAPTCHA_SITE_KEY') || '',
+      sentryDsn: this.config.get<string>('NUXT_PUBLIC_SENTRY_DSN') || this.config.get<string>('SENTRY_DSN') || '',
+      sitePhone: mapped.sitePhone || '',
+      copyright: mapped.copyright || '',
+      featureFlags: mapped.featureFlags || {},
+      hotTags: Array.isArray(mapped.hotTags) ? mapped.hotTags : [],
+      socialLinks: Array.isArray(mapped.socialLinks) ? mapped.socialLinks : [],
+      siteTitle: mapped.siteTitle || '',
+      siteDescription: mapped.siteDescription || '',
+    };
+  }
+
   // ─── AuditLogs ───
   async findAllAuditLogs(page = 1, pageSize = 20, filters?: { userId?: string; resource?: string }) {
     const skip = getSkip(page, pageSize);
-    const where: any = {};
+    const where: Prisma.AuditLogWhereInput = {};
     if (filters?.userId) where.userId = filters.userId;
     if (filters?.resource) where.resource = filters.resource;
     const [data, total] = await Promise.all([
@@ -68,16 +95,16 @@ export class SystemService {
     action: string;
     resource: string;
     resourceId?: string;
-    oldValue?: any;
-    newValue?: any;
+    oldValue?: Record<string, unknown>;
+    newValue?: Record<string, unknown>;
     ipAddress?: string;
     userAgent?: string;
   }) {
     return this.prisma.auditLog.create({
       data: {
         ...data,
-        oldValue: data.oldValue || undefined,
-        newValue: data.newValue || undefined,
+        oldValue: (data.oldValue || undefined) as Prisma.InputJsonValue | undefined,
+        newValue: (data.newValue || undefined) as Prisma.InputJsonValue | undefined,
       },
     });
   }
@@ -104,6 +131,33 @@ export class SystemService {
   async deleteEmailTemplate(key: string) {
     await this.prisma.emailTemplate.delete({ where: { key } });
     return { message: '删除成功' };
+  }
+
+  // ─── ChatBot Config ───
+  async getChatBotConfig() {
+    const config = await this.prisma.chatBotConfig.findUnique({ where: { key: 'default' } });
+    if (!config) {
+      return {
+        key: 'default',
+        intents: [],
+        quickReplies: [],
+        fallbackCopy: '抱歉，我暂时无法理解您的问题，建议您预约演示或联系人工客服。',
+      };
+    }
+    return config;
+  }
+
+  async upsertChatBotConfig(data: { intents?: unknown[]; quickReplies?: unknown[]; fallbackCopy?: string }) {
+    const value = {
+      intents: (Array.isArray(data.intents) ? data.intents : []) as Prisma.InputJsonValue,
+      quickReplies: (Array.isArray(data.quickReplies) ? data.quickReplies : []) as Prisma.InputJsonValue,
+      fallbackCopy: data.fallbackCopy || '抱歉，我暂时无法理解您的问题，建议您预约演示或联系人工客服。',
+    };
+    return this.prisma.chatBotConfig.upsert({
+      where: { key: 'default' },
+      update: value,
+      create: { key: 'default', ...value },
+    });
   }
 
   // ─── SensitiveWords ───

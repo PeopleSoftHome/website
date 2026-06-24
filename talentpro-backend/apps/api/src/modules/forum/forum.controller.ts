@@ -6,7 +6,8 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { UserContext } from '@/common/types';
+
 import { CreateForumTopicDto } from './dto/create-forum-topic.dto';
 import { UpdateForumTopicDto } from './dto/update-forum-topic.dto';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';
@@ -32,7 +33,7 @@ export class ForumController {
   @Post('categories')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:create')
+  @Permission('forum_category:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建分类' })
   createCategory(@Body() dto: CreateForumCategoryDto) {
@@ -42,7 +43,7 @@ export class ForumController {
   @Patch('categories/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_category:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新分类' })
   updateCategory(@Param('id') id: string, @Body() dto: UpdateForumCategoryDto) {
@@ -52,7 +53,7 @@ export class ForumController {
   @Delete('categories/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:delete')
+  @Permission('forum_category:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除分类' })
   deleteCategory(@Param('id') id: string) {
@@ -79,15 +80,16 @@ export class ForumController {
   @Get('topics/:id')
   @Public()
   @ApiOperation({ summary: '话题详情' })
-  findTopicById(@Param('id') id: string, @CurrentUser() user?: any) {
+  findTopicById(@Param('id') id: string, @CurrentUser() user?: UserContext) {
     return this.forumService.findTopicById(id, user?.workspaceId);
   }
 
   @Post('topics')
   @ApiBearerAuth()
+  @Permission('forum_topic:create')
   @ApiOperation({ summary: '发布话题' })
   createTopic(
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: CreateForumTopicDto,
   ) {
     return this.forumService.createTopic({ ...dto, authorId: user.id, workspaceId: user.workspaceId });
@@ -96,12 +98,12 @@ export class ForumController {
   @Patch('topics/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_topic:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新话题' })
   updateTopic(
     @Param('id') id: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: UpdateForumTopicDto,
   ) {
     return this.forumService.updateTopic(id, dto, user.workspaceId);
@@ -110,17 +112,17 @@ export class ForumController {
   @Delete('topics/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:delete')
+  @Permission('forum_topic:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除话题' })
-  deleteTopic(@Param('id') id: string, @CurrentUser() user: any) {
+  deleteTopic(@Param('id') id: string, @CurrentUser() user: UserContext) {
     return this.forumService.deleteTopic(id, user.workspaceId);
   }
 
   @Patch('topics/:id/pin')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_topic:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '置顶/取消置顶' })
   togglePin(@Param('id') id: string, @Body() dto: TogglePinDto) {
@@ -130,7 +132,7 @@ export class ForumController {
   @Patch('topics/:id/lock')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_topic:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '锁定/解锁话题' })
   toggleLock(@Param('id') id: string, @Body() dto: ToggleLockDto) {
@@ -140,9 +142,10 @@ export class ForumController {
   // Posts (Replies)
   @Post('posts')
   @ApiBearerAuth()
+  @Permission('forum_post:create')
   @ApiOperation({ summary: '回复话题' })
   createPost(
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: CreateForumPostDto,
   ) {
     return this.forumService.createPost({ ...dto, authorId: user.id, workspaceId: user.workspaceId });
@@ -151,12 +154,12 @@ export class ForumController {
   @Patch('posts/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_post:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新回复' })
   updatePost(
     @Param('id') id: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: UpdateForumPostDto,
   ) {
     return this.forumService.updatePost(id, dto, user.workspaceId);
@@ -165,17 +168,17 @@ export class ForumController {
   @Delete('posts/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:delete')
+  @Permission('forum_post:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除回复' })
-  deletePost(@Param('id') id: string, @CurrentUser() user: any) {
+  deletePost(@Param('id') id: string, @CurrentUser() user: UserContext) {
     return this.forumService.deletePost(id, user.workspaceId);
   }
 
   @Patch('posts/:id/solution')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('forum:update')
+  @Permission('forum_post:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '标记为解决方案' })
   markAsSolution(@Param('id') id: string) {

@@ -1,8 +1,8 @@
 # TalentPro HR Portal — 产品需求文档 (PRD)
 
-> **版本**：v3.0.0
+> **版本**：v4.1.0
 > **状态**：已同步最新实现
-> **最后更新**：2026-05-28
+> **最后更新**：2026-06-15
 > **唯一真相来源**：本文档与实现代码必须保持同步
 
 ---
@@ -13,6 +13,7 @@
 |------|------|------|---------|
 | v0.1.0 | 2026-03-15 | 项目经理 Agent | 文档框架初始化 |
 | v3.0.0 | 2026-05-28 | 开发 Agent | 重写核心章节，同步 v3.0.0 全部功能 |
+| v4.1.0 | 2026-06-15 | 开发 Agent | 新增 Marketplace / Payment / Cart，同步 Admin 能力，调整部署产物路径 |
 
 ---
 
@@ -23,7 +24,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 - **产品定位**：B2B 企业级 HR SaaS 营销门户
 - **核心转化目标**：预约产品演示（Demo Booking）
 - **目标用户**：企业 HR、CHRO、IT 采购决策者
-- **部署形态**：静态站点（`dist/` 目录直推 CDN / Nginx / Vercel）
+- **部署形态**：Nuxt SSG 静态站点（`.output/public/` 目录直推 CDN / Nginx / Vercel）
 
 ---
 
@@ -98,7 +99,7 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 ### 2.8 多语言
 
 - 3 种语言：简体中文（zh）、English（en）、繁體中文（zh-TW）
-- ~450 个 i18n key，支持 `{var}` 插值
+- ~772 个 i18n key，支持 `{var}` 插值
 - 语言偏好持久化（localStorage）
 
 ### 2.9 暗色模式
@@ -134,6 +135,13 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 - Redis Pub/Sub 支持多实例集群
 - 用户级频道：`sse:notifications:{userId}`
 - 全局仅 1 个 Redis psubscribe 连接
+
+### 2.14 应用广场、支付与购物车（v4.1.0）
+
+- **应用广场（Marketplace）**：App 列表 / 分类 / 供应商 / 评分 / 精选推荐
+- **购物车（Cart）**：Redis 存储，TTL 7 天，支持增删改查
+- **支付（Payment）**：Stripe Checkout 收银台，Webhook 处理订单生命周期
+- **管理后台**：App / Category / Vendor / Review / Subscription 管理
 
 ---
 
@@ -262,4 +270,4 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 ---
 
-*TalentPro HR Portal · PRD v3.0.0 · 2026-05-28*
+*TalentPro HR Portal · PRD v4.1.0 · 2026-06-15*

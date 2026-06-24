@@ -4,7 +4,7 @@ export class UpsertSettingDto {
   @IsString()
   key: string;
 
-  value: any;
+  value: unknown;
 
   @IsOptional()
   @IsString()

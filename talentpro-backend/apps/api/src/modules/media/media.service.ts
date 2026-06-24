@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { Prisma, Media } from '@prisma/client';
 import { MediaRepository } from './media.repository';
 import { StorageService } from './storage.service';
 
@@ -12,7 +13,7 @@ export class MediaService {
   ) {}
 
   async findAll(page = 1, pageSize = 20, mimeType?: string) {
-    const where: any = {};
+    const where: Prisma.MediaWhereInput = {};
     if (mimeType) where.mimeType = { startsWith: mimeType };
     return this.repo.findAll({ page, pageSize, where, orderBy: { createdAt: 'desc' } });
   }
@@ -86,7 +87,7 @@ export class MediaService {
     await this.checkWorkspaceAccess(media, workspaceId);
   }
 
-  private async checkWorkspaceAccess(media: any, workspaceId?: string) {
+  private async checkWorkspaceAccess(media: Pick<Media, 'createdBy'>, workspaceId?: string) {
     if (!workspaceId) return;
     const creator = await this.prisma.user.findUnique({
       where: { id: media.createdBy },

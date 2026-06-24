@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '@prisma/client';
 import { UserService } from './user.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
@@ -39,7 +40,7 @@ describe('UserService', () => {
       const mockUsers = [
         { id: 'u1', email: 'a@example.com', name: 'A', roleId: 'r1' },
       ];
-      jest.spyOn(prisma.user, 'findMany').mockResolvedValue(mockUsers as any);
+      jest.spyOn(prisma.user, 'findMany').mockResolvedValue(mockUsers as unknown as User[]);
       jest.spyOn(prisma.user, 'count').mockResolvedValue(1);
 
       const result = await service.findAll(1, 20);
@@ -62,7 +63,7 @@ describe('UserService', () => {
   describe('findOne', () => {
     it('should exclude password from response', async () => {
       const mockUser = { id: 'u1', email: 'a@example.com', name: 'A', roleId: 'r1' };
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser as any);
+      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(mockUser as unknown as User);
 
       const result = await service.findOne('u1');
 

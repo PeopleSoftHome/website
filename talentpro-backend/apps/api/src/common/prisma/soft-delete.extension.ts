@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Prisma extension callbacks are inherently dynamic: args/query shapes vary per model.
 import { Prisma } from '@prisma/client';
 
 const SOFT_DELETE_MODELS = [
@@ -35,31 +37,31 @@ export const softDeleteExtension = Prisma.defineExtension({
   },
   query: {
     $allModels: {
-      async findMany({ model, operation, args, query }: any) {
+      async findMany({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async findUnique({ model, operation, args, query }: any) {
+      async findUnique({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async findFirst({ model, operation, args, query }: any) {
+      async findFirst({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async count({ model, operation, args, query }: any) {
+      async count({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async update({ model, operation, args, query }: any) {
+      async update({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async updateMany({ model, operation, args, query }: any) {
+      async updateMany({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async delete({ model, operation, args, query }: any) {
+      async delete({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async deleteMany({ model, operation, args, query }: any) {
+      async deleteMany({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
-      async aggregate({ model, operation, args, query }: any) {
+      async aggregate({ model, _operation, args, query }: any) {
         return query(injectSoftDelete(model, args));
       },
     },

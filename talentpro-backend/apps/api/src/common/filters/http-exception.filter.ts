@@ -6,7 +6,16 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+
+interface ExceptionResponse {
+  message?: string | string[];
+  [key: string]: unknown;
+}
+
+interface RequestWithId extends Request {
+  requestId?: string;
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -15,8 +24,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
-    const requestId = (request as any)['requestId'];
+    const request = ctx.getRequest<RequestWithId>();
+    const requestId = request.requestId;
 
     const status =
       exception instanceof HttpException
@@ -28,15 +37,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : { message: 'Internal server error' };
 
-    const message =
-      typeof exceptionResponse === 'string'
-        ? exceptionResponse
-        : (exceptionResponse as any).message || 'Internal server error';
+    const responseBody = typeof exceptionResponse === 'string'
+      ? { message: exceptionResponse }
+      : (exceptionResponse as ExceptionResponse);
+    const message = responseBody.message || 'Internal server error';
 
     const errors =
-      typeof exceptionResponse === 'object' && (exceptionResponse as any).message
-        ? Array.isArray((exceptionResponse as any).message)
-          ? (exceptionResponse as any).message
+      typeof exceptionResponse === 'object' && responseBody.message
+        ? Array.isArray(responseBody.message)
+          ? responseBody.message
           : undefined
         : undefined;
 

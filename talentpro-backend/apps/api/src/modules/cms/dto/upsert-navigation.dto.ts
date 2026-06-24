@@ -13,5 +13,5 @@ export class UpsertNavigationDto {
 
   @IsOptional()
   @IsArray()
-  items?: any[];
+  items?: unknown[];
 }

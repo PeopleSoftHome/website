@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ExperimentService } from './experiment.service';
 import { Public } from '@/common/decorators/public.decorator';
@@ -49,9 +49,10 @@ export class ExperimentController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
+  @Permission('experiment:update')
   @ApiOperation({ summary: '更新实验状态' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdateExperimentStatusDto) {
-    return this.experimentService.updateStatus(id, dto.status as any);
+    return this.experimentService.updateStatus(id, dto.status);
   }
 
   @Post(':id/events')

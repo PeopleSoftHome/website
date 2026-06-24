@@ -3,7 +3,7 @@
     <h3 :class="s.sectionTitle">{{ t('comment.title') }} ({{ totalCount }})</h3>
 
     <CommentForm
-      v-if="auth.isLoggedIn.value"
+      v-if="auth.isLoggedIn"
       :entity-type="entityType"
       :entity-id="entityId"
       @submit="handleNewComment"
@@ -30,9 +30,10 @@
   </section>
 </template>
 
-<script setup>
-import { ref, inject, computed, onMounted } from 'vue';
-import { commentApi } from '@/api/comment.js';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth.pinia';
+import { commentApi } from '@/api/comment';
 import CommentForm from '../CommentForm/CommentForm.vue';
 import CommentItem from './CommentItem.vue';
 import s from './CommentSection.module.css';
@@ -42,15 +43,21 @@ const props = defineProps({
   entityId: { type: String, required: true },
 });
 
-const { t } = inject('i18n', { t: (k) => k });
-const auth = inject('auth', { isLoggedIn: { value: false }, user: { value: null } });
-const authModal = inject('authModal', { open: () => {} });
+interface Comment {
+  id: string;
+  replies?: Comment[];
+  [key: string]: unknown;
+}
 
-const comments = ref([]);
+const { t } = useI18n();
+const auth = useAuthStore();
+const authOpen = useState('authOpen', () => false);
+
+const comments = ref<Comment[]>([]);
 const loading = ref(false);
 const totalCount = computed(() => comments.value.length);
 
-const openAuth = () => authModal.open();
+const openAuth = () => { authOpen.value = true; };
 
 const fetchComments = async () => {
   loading.value = true;
@@ -64,11 +71,11 @@ const fetchComments = async () => {
   loading.value = false;
 };
 
-const handleNewComment = (newComment) => {
+const handleNewComment = (newComment: Comment) => {
   comments.value.unshift(newComment);
 };
 
-const handleNewReply = ({ parentId, reply }) => {
+const handleNewReply = ({ parentId, reply }: { parentId: string; reply: Comment }) => {
   const parent = comments.value.find((c) => c.id === parentId);
   if (parent) {
     if (!parent.replies) parent.replies = [];

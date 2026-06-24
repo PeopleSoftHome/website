@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import * as Handlebars from 'handlebars';
@@ -8,13 +8,13 @@ export interface MailPayload {
   to: string;
   subject: string;
   templateKey?: string;
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
   text?: string;
   html?: string;
 }
 
 @Injectable()
-export class MailService {
+export class MailService implements OnModuleDestroy {
   private readonly logger = new Logger(MailService.name);
   private transporter: nodemailer.Transporter;
 
@@ -74,6 +74,12 @@ export class MailService {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`Failed to send email: ${message}`);
       throw err;
+    }
+  }
+
+  async onModuleDestroy() {
+    if (this.transporter && typeof this.transporter.close === 'function') {
+      this.transporter.close();
     }
   }
 

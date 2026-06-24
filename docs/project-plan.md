@@ -1,9 +1,9 @@
 # TalentPro HR Portal — 产品规划文档
 
 > **产出角色**：产品经理 Agent
-> **文档版本**：v3.0（覆盖 v2.3.0 ~ v2.5.0 完整规划）
-> **最后更新**：2026-03-15
-> **当前基线**：v2.2.0 GA ✅（Sprint 1~10 全部完成，11/11 问题清零）
+> **文档版本**：v4.2.0（覆盖 v2.3.0 ~ v4.2.0 完整规划）
+> **最后更新**：2026-06-19
+> **当前基线**：v4.2.0 ✅（P0/P1/P2 清理完成，CI 全绿）
 
 ---
 
@@ -15,16 +15,16 @@ v2.2.0 GA 已完成全部预定目标，形成坚实的技术与视觉基线：
 
 | 维度 | 现状 |
 |------|------|
-| 页面完整度 | 15 个 Section 全量实装 |
+| 页面完整度 | 18+ 个 Section 全量实装 + 博客/论坛/案例/资源/新闻/Marketplace |
 | 响应式 | 375px / 768px / 1280px 三断点全覆盖 |
-| 组件体系 | 37 个 Vue 组件，15 个 Composables，10 个数据文件 |
-| 国际化 | ❌ 仅中文，无多语言架构 |
-| 无障碍 | ⚠️ 基础 aria-label，未系统化 |
-| 主题系统 | ❌ 仅亮色，无暗色模式 |
-| 全局搜索 | ❌ 缺失 |
-| 性能优化 | ⚠️ 无懒加载，无代码分割 |
-| SEO | ⚠️ 单页应用，无 SSR / meta 优化 |
-| 用户行为分析 | ❌ 无埋点，转化漏斗不可见 |
+| 组件体系 | 60+ Vue 组件，22 个 Composables，12+ 数据文件 |
+| 国际化 | ✅ 简体中文 / English / 繁體中文（@nuxtjs/i18n） |
+| 无障碍 | ✅ focus-visible、aria、skip-link、减弱动效 |
+| 主题系统 | ✅ 亮色 / 暗色模式（data-theme） |
+| 全局搜索 | ✅ Cmd+K 本地搜索 |
+| 性能优化 | ✅ 图片懒加载、异步弹窗 chunk、字体子集、PWA |
+| SEO | ✅ SSG 预渲染、动态 meta、JSON-LD、hreflang |
+| 用户行为分析 | ✅ 埋点队列、滚动深度、A/B 测试框架 |
 
 ### 用户调研洞察（假设性 PRD 输入）
 
@@ -65,6 +65,18 @@ v3.0.0          ████████████████  ✅ 2026-05-27
                 Sprint 19-20       CMS 动态化 + Workspace 隔离 + JWT 黑名单
                                    + PII 加密 + Redis 缓存 + SSE 流式输出
                                    + 审计日志 + CI/CD 流水线 + 依赖安全修复
+
+v4.0.0          ████████████████  ✅ 2026-06-01  Nuxt 3 迁移与工程化
+                Sprint 21          文件路由 + 自动导入 + SSR-safe Pinia
+                                   + @nuxtjs/i18n + @nuxt/image + PWA 重构
+
+v4.1.0          ████████████████  ✅ 2026-06-09  交易与扩展模块
+                Sprint 22          Marketplace + Payment（Stripe）+ Cart
+
+v4.2.0          ████████████████  ✅ 2026-06-19  配置治理与安全加固
+                Sprint 23          JWT Cookie-only 前端 + 后端双渠道认证
+                                   + CSP 前后端配置 + 限流收紧 + 安全测试
+                                   + BullMQ 重试/死信 + 覆盖率阈值 + 硬编码色值治理
 ```
 
 ---
@@ -214,7 +226,7 @@ export const useI18n = () => useContext(I18nContext);
 实现：
   1. global.css 增加 [data-theme="dark"] 选择器，覆盖所有 :root 变量
   2. useTheme Hook：读/写 localStorage['tp-theme']，监听 prefers-color-scheme
-  3. App.jsx：将 data-theme 挂载到 <html> 元素
+  3. App.vue：将 data-theme 挂载到 <html> 元素
   4. NavBar 追加主题切换按钮（☀️ / 🌙 图标）
 ```
 
@@ -264,10 +276,10 @@ export function useTheme() {
 | T11-03 `en.json` 英文翻译 | zh-CN.json | ≈ 5,000 | ≈ 6,000 |
 | T11-04 `zh-TW.json` 繁体转换 | zh-CN.json | ≈ 4,000 | ≈ 4,500 |
 | T11-05 所有组件接入 `useI18n` / `t()` | 37 个组件（批量） | ≈ 18,000 | ≈ 12,000 |
-| T11-06 NavBar 语言切换器 UI | NavBar.jsx + .module.css | ≈ 5,000 | ≈ 2,000 |
+| T11-06 NavBar 语言切换器 UI | NavBar.vue + .module.css | ≈ 5,000 | ≈ 2,000 |
 | T11-07 `useTheme` Hook + `ThemeContext` | 新建 | ≈ 2,000 | ≈ 1,500 |
 | T11-08 `global.css` 暗色 Token 覆盖层 | global.css | ≈ 3,000 | ≈ 3,000 |
-| T11-09 NavBar 主题切换按钮 | NavBar.jsx | ≈ 3,000 | ≈ 1,000 |
+| T11-09 NavBar 主题切换按钮 | NavBar.vue | ≈ 3,000 | ≈ 1,000 |
 | T11-10 各组件暗色样式回归修复 | 逐个 .module.css | ≈ 8,000 | ≈ 5,000 |
 | **合计** | | **≈ 61,000** | **≈ 46,000** |
 
@@ -402,7 +414,7 @@ src/
 ├── context/SearchContext.js     ← 全局搜索开关（Cmd+K 触发）
 ├── data/searchIndex.js          ← ~50 条搜索索引数据
 └── components/ui/SearchModal/
-    ├── SearchModal.jsx          ← 搜索浮层组件
+    ├── SearchModal.vue          ← 搜索浮层组件
     └── SearchModal.module.css
 ```
 
@@ -413,9 +425,9 @@ src/
 | T12-01 `src/data/searchIndex.js`（~50条）| 各 data 文件参考 | ≈ 6,000 | ≈ 4,000 |
 | T12-02 `useSearch.js` Hook（算法+键盘导航）| 参考 useModal | ≈ 3,000 | ≈ 2,500 |
 | T12-03 `SearchContext.js` | 参考 ModalContext | ≈ 1,500 | ≈ 800 |
-| T12-04 `SearchModal.jsx` + `.module.css` | — | ≈ 4,000 | ≈ 5,000 |
-| T12-05 NavBar 接入搜索按钮 + `Cmd+K` 监听 | NavBar.jsx | ≈ 4,000 | ≈ 1,500 |
-| T12-06 App.jsx 接入 SearchContext | App.jsx | ≈ 2,000 | ≈ 500 |
+| T12-04 `SearchModal.vue` + `.module.css` | — | ≈ 4,000 | ≈ 5,000 |
+| T12-05 NavBar 接入搜索按钮 + `Cmd+K` 监听 | NavBar.vue | ≈ 4,000 | ≈ 1,500 |
+| T12-06 App.vue 接入 SearchContext | App.vue | ≈ 2,000 | ≈ 500 |
 | **合计** | | **≈ 20,500** | **≈ 14,300** |
 
 #### Sprint 12 验收标准
@@ -482,9 +494,9 @@ Section ID：SEC-16
 ```
 src/
 ├── components/sections/RoiCalculatorSection/
-│   ├── RoiCalculatorSection.jsx
+│   ├── RoiCalculatorSection.vue
 │   ├── RoiCalculatorSection.module.css
-│   └── RoiChart.jsx              ← 简单 SVG 柱状图（无外部依赖）
+│   └── RoiChart.vue              ← 简单 SVG 柱状图（无外部依赖）
 ├── hooks/useRoiCalculator.js      ← 计算逻辑（纯函数，易测试）
 ```
 
@@ -550,7 +562,7 @@ Cookie 偏好中心（点击「了解更多」展开）：
 ```
 src/
 ├── components/ui/CookieBanner/
-│   ├── CookieBanner.jsx
+│   ├── CookieBanner.vue
 │   └── CookieBanner.module.css
 ├── context/CookieContext.js
 └── hooks/useCookieConsent.js
@@ -561,7 +573,7 @@ src/
 **目标**：为 Hero CTA 按钮文案、弹窗步骤顺序等关键转化节点提供 A/B 测试基础设施
 
 ```js
-// src/hooks/useABTest.js
+// src/composables/useABTest.js
 export function useABTest(testId, variants = ['A', 'B']) {
   const key = `tp-ab-${testId}`;
   const [variant] = useState(() => {
@@ -574,7 +586,7 @@ export function useABTest(testId, variants = ['A', 'B']) {
   return variant; // 返回 'A' 或 'B'
 }
 
-// 使用示例（CtaBannerSection.jsx）：
+// 使用示例（CtaBannerSection.vue）：
 // const variant = useABTest('cta-text');
 // const ctaText = variant === 'A' ? '预约产品演示 →' : '免费体验 14 天 →';
 ```
@@ -641,7 +653,7 @@ export function useABTest(testId, variants = ['A', 'B']) {
 
 **技术实现**
 ```js
-// src/hooks/useAnalytics.js
+// src/composables/useAnalytics.js
 export function useAnalytics() {
   const track = useCallback((event, props = {}) => {
     // 检查 Cookie 同意
@@ -740,10 +752,10 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | **v2.5.0** | | | | | | |
 | SEO-01 | 🆕 新增 | 🟡 P1 | 动态 title / meta（Blog/Forum 详情页手动更新）| v2.5.0 | S15 | ✅ |
 | SEO-02 | 🆕 新增 | 🟡 P1 | 构建时语义化 HTML 预渲染（prerender.js）| v2.5.0 | S15 | ✅ |
-| SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ⏳ |
+| SEO-03 | 🆕 新增 | 🟢 P2 | JSON-LD 结构化数据 | v2.5.0 | S15 | ✅ |
 | ANA-01 | 🆕 新增 | 🟡 P1 | useAnalytics Hook + 14 个核心事件 + 热力图/滚动深度 | v2.5.0 | S15 | ✅ |
 | PERF-01 | 🆕 新增 | 🟡 P1 | 非首屏组件 defineAsyncComponent 代码分割 | v2.5.0 | S16 | ✅ |
-| PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ⏳ |
+| PERF-02 | 🆕 新增 | 🟡 P1 | 字体子集化（Noto Sans SC）| v2.5.0 | S16 | ✅ |
 | PWA-01  | 🆕 新增 | 🟢 P2 | vite-plugin-pwa + Service Worker + Manifest | v2.5.0 | S16 | ✅ |
 | **v3.0.0** | | | | | | |
 | CMS-01 | 🆕 新增 | 🔴 P0 | CMS 动态化（首页板块配置）| v3.0.0 | S19 | ✅ |
@@ -767,7 +779,7 @@ const SearchModal            = lazy(() => import('./ui/SearchModal/SearchModal')
 | 里程碑 | 目标日期 | 内容 | 状态 |
 |-------|---------|------|------|
 | M1 文档基础 | 2026-03-15 | 架构 + 设计系统 + 项目计划 | ✅ |
-| M2 v2.0.0 基线 | 2026-03-15 | React 重构，15 Section，3 P0 Bug 修复 | ✅ |
+| M2 v2.0.0 基线 | 2026-03-15 | Vue 3 重构，18+ Section，3 P0 Bug 修复 | ✅ |
 | M3 v2.1.0 视觉 | 2026-03-15 | SVG图标 + 资源中心 + 页脚 + Hero | ✅ |
 | M4 v2.2.0 媒体 | 2026-03-15 | Logo图形化 + 安全认证 + 视频弹窗 | ✅ |
 | M5 v2.3.0 体验 | 2026-03-15 | 多语言（EN/繁中）+ 暗色模式 + 全局搜索 | ✅ |
@@ -785,7 +797,7 @@ TalentPro 客群包含跨国企业，英文版是进入国际市场的门票。�
 
 ### 为什么暗色模式与多语言同 Sprint？
 
-两者都依赖「全局状态注入 App.jsx 根节点」的架构模式，同期实施可共享 Provider 组合方式，避免重复搭架子。
+两者都依赖「全局状态注入 App.vue 根节点」的架构模式，同期实施可共享 Provider 组合方式，避免重复搭架子。
 
 ### 为什么全局搜索在 Sprint 12（非 Sprint 11）？
 

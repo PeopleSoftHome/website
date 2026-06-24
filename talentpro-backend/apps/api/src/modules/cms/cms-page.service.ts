@@ -1,6 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CmsContentRepository } from './cms-content.repository';
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon?: string;
+  description?: string;
+  sortOrder?: number;
+  isExternal?: boolean;
+}
 
 @Injectable()
 export class CmsPageService {
@@ -46,7 +56,7 @@ export class CmsPageService {
     });
   }
 
-  async createSection(data: { pageId: string; type: string; sortOrder?: number; config?: any; isActive?: boolean }) {
+  async createSection(data: { pageId: string; type: string; sortOrder?: number; config?: Record<string, unknown>; isActive?: boolean }) {
     return this.cmsRepo.forModel('section').create({
       pageId: data.pageId,
       type: data.type,
@@ -56,7 +66,7 @@ export class CmsPageService {
     });
   }
 
-  async updateSection(id: string, data: Partial<{ type: string; sortOrder: number; config: any; isActive: boolean }>) {
+  async updateSection(id: string, data: Partial<{ type: string; sortOrder: number; config: Record<string, unknown>; isActive: boolean }>) {
     return this.cmsRepo.forModel('section').update(id, data);
   }
 
@@ -89,7 +99,7 @@ export class CmsPageService {
     });
   }
 
-  async upsertNavigation(data: { key: string; label: string; location?: string; items: any[] }) {
+  async upsertNavigation(data: { key: string; label: string; location?: string; items: NavItem[] }) {
     return this.prisma.$transaction(async (tx) => {
       const nav = await tx.navigation.upsert({
         where: { key: data.key },
@@ -125,7 +135,7 @@ export class CmsPageService {
 
   // ─── Translation ───
   async findTranslations(locale: string, context?: string) {
-    const where: any = { locale };
+    const where: Prisma.TranslationWhereInput = { locale };
     if (context) where.context = context;
     const rows = await this.prisma.translation.findMany({ where });
     const result: Record<string, string> = {};
@@ -141,5 +151,33 @@ export class CmsPageService {
       update: { value: data.value, context: data.context },
       create: data,
     });
+  }
+
+  async findAllTranslations(page: number | undefined, pageSize: number | undefined, locale?: string, context?: string) {
+    const p = page || 1;
+    const ps = pageSize || 20;
+    const skip = (p - 1) * ps;
+    const where: Prisma.TranslationWhereInput = {};
+    if (locale) where.locale = locale;
+    if (context) where.context = context;
+    const [data, total] = await Promise.all([
+      this.prisma.translation.findMany({
+        where,
+        skip,
+        take: ps,
+        orderBy: [{ locale: 'asc' }, { key: 'asc' }],
+      }),
+      this.prisma.translation.count({ where }),
+    ]);
+    return { data, meta: { page: p, pageSize: ps, total, totalPages: Math.ceil(total / ps) } };
+  }
+
+  async updateTranslation(id: string, data: { value?: string; context?: string }) {
+    return this.prisma.translation.update({ where: { id }, data });
+  }
+
+  async deleteTranslation(id: string) {
+    await this.prisma.translation.delete({ where: { id } });
+    return { message: '删除成功' };
   }
 }

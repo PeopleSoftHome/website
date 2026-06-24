@@ -1,11 +1,11 @@
 <template>
   <div :class="s.avatarWrap" :style="wrapStyle">
-    <img v-if="src" :src="src" :alt="alt" :class="s.avatarImg" loading="lazy" />
+    <NuxtImg v-if="src" :src="src" :alt="alt" :class="s.avatarImg" loading="lazy" placeholder />
     <span v-else :class="s.avatarFallback">{{ initial }}</span>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import s from './Avatar.module.css';
 

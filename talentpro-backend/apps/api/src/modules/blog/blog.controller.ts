@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { BlogService } from './blog.service';
-import { PostStatus, CommentStatus } from '@prisma/client';
+import { PostStatus } from '@prisma/client';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { Permission } from '@/common/decorators/permission.decorator';
 import { Public } from '@/common/decorators/public.decorator';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { UserContext } from '@/common/types';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { CreateBlogCategoryDto } from './dto/create-blog-category.dto';
@@ -16,6 +16,7 @@ import { CreateBlogTagDto } from './dto/create-blog-tag.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { ModerateCommentDto } from './dto/moderate-comment.dto';
 import { BatchModerateCommentsDto } from './dto/batch-moderate-comments.dto';
+import { FindAdminCommentsDto } from './dto/find-admin-comments.dto';
 
 @ApiTags('博客管理')
 @Controller('blogs')
@@ -33,7 +34,7 @@ export class BlogController {
   @Post('categories')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:create')
+  @Permission('blog_category:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建分类' })
   createCategory(@Body() dto: CreateBlogCategoryDto) {
@@ -43,7 +44,7 @@ export class BlogController {
   @Patch('categories/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:update')
+  @Permission('blog_category:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新分类' })
   updateCategory(@Param('id') id: string, @Body() dto: UpdateBlogCategoryDto) {
@@ -53,7 +54,7 @@ export class BlogController {
   @Delete('categories/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:delete')
+  @Permission('blog_category:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除分类' })
   deleteCategory(@Param('id') id: string) {
@@ -89,11 +90,11 @@ export class BlogController {
   @Post('posts')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:create')
+  @Permission('blog_post:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
   createPost(
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: CreateBlogPostDto,
   ) {
     return this.blogService.createPost({ ...dto, authorId: user.id, workspaceId: user.workspaceId });
@@ -102,12 +103,12 @@ export class BlogController {
   @Patch('posts/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:update')
+  @Permission('blog_post:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新文章' })
   updatePost(
     @Param('id') id: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserContext,
     @Body() dto: UpdateBlogPostDto,
   ) {
     return this.blogService.updatePost(id, dto, user.workspaceId);
@@ -116,10 +117,10 @@ export class BlogController {
   @Delete('posts/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:delete')
+  @Permission('blog_post:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除文章' })
-  deletePost(@Param('id') id: string, @CurrentUser() user: any) {
+  deletePost(@Param('id') id: string, @CurrentUser() user: UserContext) {
     return this.blogService.deletePost(id, user.workspaceId);
   }
 
@@ -134,7 +135,7 @@ export class BlogController {
   @Post('tags')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:create')
+  @Permission('blog_tag:create')
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建标签' })
   createTag(@Body() dto: CreateBlogTagDto) {
@@ -144,7 +145,7 @@ export class BlogController {
   @Delete('tags/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:delete')
+  @Permission('blog_tag:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除标签' })
   deleteTag(@Param('id') id: string) {
@@ -170,6 +171,7 @@ export class BlogController {
 
   @Post('comments')
   @ApiBearerAuth()
+  @Permission('comment:create')
   @ApiOperation({ summary: '发表评论' })
   createComment(
     @CurrentUser('id') authorId: string,
@@ -181,7 +183,7 @@ export class BlogController {
   @Patch('comments/:id/moderate')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:update')
+  @Permission('comment:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '审核评论' })
   moderateComment(@Param('id') id: string, @Body() dto: ModerateCommentDto) {
@@ -191,7 +193,7 @@ export class BlogController {
   @Post('comments/batch-moderate')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:update')
+  @Permission('comment:update')
   @ApiBearerAuth()
   @ApiOperation({ summary: '批量审核评论' })
   batchModerateComments(@Body() dto: BatchModerateCommentsDto) {
@@ -203,23 +205,19 @@ export class BlogController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Admin 评论列表（支持按状态过滤）' })
-  findCommentsForAdmin(
-    @Query() pagination: PaginationDto,
-    @Query('status') status?: CommentStatus,
-    @Query('entityType') entityType?: string,
-  ) {
+  findCommentsForAdmin(@Query() query: FindAdminCommentsDto) {
     return this.blogService.findCommentsForAdmin({
-      status,
-      entityType,
-      page: pagination.page,
-      pageSize: pagination.pageSize,
+      status: query.status,
+      entityType: query.entityType,
+      page: query.page,
+      pageSize: query.pageSize,
     });
   }
 
   @Delete('comments/:id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('blog:delete')
+  @Permission('comment:delete')
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除评论' })
   deleteComment(@Param('id') id: string) {

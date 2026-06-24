@@ -333,29 +333,29 @@ onMounted(fetchPage);
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border: 1px solid #e4e7ed;
+  border: 1px solid var(--admin-border-light);
   border-radius: 6px;
-  background: #fff;
+  background: var(--admin-white);
   cursor: move;
   transition: background 0.15s, box-shadow 0.15s;
 }
 
 .section-item:hover {
-  background: #f5f7fa;
+  background: var(--admin-bg-base);
 }
 
 .section-item.is-dragging {
   opacity: 0.5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--admin-black-alpha-10);
 }
 
 .section-item.is-inactive {
   opacity: 0.6;
-  background: #fafafa;
+  background: var(--admin-bg-overlay);
 }
 
 .drag-handle {
-  color: #909399;
+  color: var(--admin-text-secondary);
   cursor: grab;
 }
 
@@ -365,8 +365,8 @@ onMounted(fetchPage);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ecf5ff;
-  color: #409eff;
+  background: var(--admin-color-primary-light-1);
+  color: var(--admin-color-primary);
   border-radius: 50%;
   font-size: 12px;
   font-weight: 600;
@@ -380,7 +380,7 @@ onMounted(fetchPage);
 }
 
 .section-title.is-unknown {
-  color: #f56c6c;
+  color: var(--admin-color-danger);
   text-decoration: line-through;
 }
 </style>

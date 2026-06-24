@@ -1,0 +1,23 @@
+export const APP_PAYROLL_AUTO_CALC = {
+  id: 'app-002',
+  slug: 'payroll-auto-calc',
+  name: '薪酬自动核算助手',
+  tagline: '一键算薪，合规无忧',
+  description: '自动关联考勤、绩效、社保数据，支持全国 300+ 城市个税政策实时更新。智能识别异常数据，一键生成工资条与报表。与 TalentPro 薪酬系统深度集成，算薪时间从 5 天缩短至 1 小时。',
+  category: 'compensation',
+  vendor: 'PayTech 科技',
+  icon: 'payroll-auto-calc',
+  pricingModel: 'subscription',
+  pricingTiers: [
+    { name: '标准版', priceMonthly: 599, priceYearly: 5990, desc: '最多 200 人', features: ['自动算薪', '个税申报', '工资条发放'] },
+    { name: '高级版', priceMonthly: 1299, priceYearly: 12990, desc: '最多 1000 人', features: ['自动算薪', '个税申报', '社保公积金', '成本分析', '多账套'] },
+    { name: '集团版', priceMonthly: 3999, priceYearly: 39990, desc: '不限人数', features: ['不限人数', '集团合并报表', '私有化部署', '定制开发'] },
+  ],
+  ratingAvg: 4.6,
+  ratingCount: 215,
+  installCount: 8920,
+  features: ['自动算薪', '个税实时更新', '异常预警', '工资条发放', '成本分析', '多账套管理'],
+  screenshots: ['payroll-1', 'payroll-2'],
+  compatibility: ['payroll', 'org'],
+  featured: true,
+};

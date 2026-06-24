@@ -7,8 +7,8 @@
   </div>
 </template>
 
-<script setup>
-import { useCountUp } from '@/composables/useCountUp.js';
+<script setup lang="ts">
+import { useCountUp } from '@/composables/useCountUp';
 import s from './StatsSection.module.css';
 
 const props = defineProps({

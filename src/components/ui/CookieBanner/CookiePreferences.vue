@@ -54,14 +54,13 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import s from './CookieBanner.module.css';
 
 const emit = defineEmits(['reject', 'save']);
 
-const i18n = inject('i18n');
-const t = (key) => i18n?.t(key) ?? key;
+const { t } = useI18n();
 
 const prefAnalytics = ref(false);
 const prefMarketing = ref(false);

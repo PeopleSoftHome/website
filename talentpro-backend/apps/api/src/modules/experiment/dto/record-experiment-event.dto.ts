@@ -15,5 +15,5 @@ export class RecordExperimentEventDto {
   sessionId: string;
 
   @IsOptional()
-  properties?: any;
+  properties?: Record<string, unknown>;
 }

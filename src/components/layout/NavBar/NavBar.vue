@@ -11,29 +11,30 @@
 
         <!-- 桌面导航链接 -->
         <div :class="s.links">
-          <template v-for="link in NAV_LINKS" :key="link.id">
+          <template v-for="link in navLinks" :key="link.id">
             <div v-if="link.hasDropdown" :class="s.item">
               <span :class="s.itemLabel">
                 {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily'
                   : link.id === 'solutions' ? 'solutions'
                   : link.id === 'cases'     ? 'cases'
                   : link.id === 'resources' ? 'resources'
+                  : link.id === 'about'     ? 'about'
                   : link.id}`) }}
                 <span :class="s.arrow"><Icon name="chevron-down" :size="14" /></span>
               </span>
               <NavDropdown :items="link.items" :banner="link.banner" />
             </div>
-            <router-link v-else :to="link.href" :class="s.item">
-              {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily' : link.id}`) }}
+            <router-link v-else :to="link.href || ''" :class="s.item">
+              {{ t(`nav.${link.id === 'ai-family' ? 'aiFamily'
+                : link.id === 'about' ? 'about'
+                : link.id}`) }}
             </router-link>
           </template>
-          <router-link to="/blog" :class="s.item">{{ t('nav.blog') }}</router-link>
-          <router-link to="/forum" :class="s.item">{{ t('nav.forum') }}</router-link>
         </div>
 
         <!-- 右侧操作区 -->
         <div :class="s.right">
-          <span :class="s.phone">{{ t('nav.phone') }}</span>
+          <span :class="s.phone">{{ sitePhone || t('nav.phone') }}</span>
 
           <!-- 搜索栏（内联展开） -->
           <div :class="[s.searchWrap, searchOpen ? s.searchExpanded : '', scrolled ? s.searchScrolled : '']">
@@ -66,20 +67,23 @@
               :aria-label="t('nav.langLabel')"
               :aria-expanded="langMenuOpen"
             >
-              <Icon name="globe" :size="14" /> {{ LOCALES[locale]?.label ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
+              <Icon name="globe" :size="14" /> {{ localeLabel(locale) ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
             </button>
             <div v-if="langMenuOpen" :class="s.langMenu" role="menu">
               <button
-                v-for="[key, { label }] in Object.entries(LOCALES)"
-                :key="key"
+                v-for="loc in localeOptions"
+                :key="loc.key"
                 role="menuitem"
-                :class="[s.langOption, locale === key ? s.langActive : '']"
-                @click="pickLang(key)"
+                :class="[s.langOption, locale === loc.key ? s.langActive : '']"
+                @click="pickLang(loc.key)"
               >
-                {{ label }}
+                {{ loc.label }}
               </button>
             </div>
           </div>
+
+          <!-- 购物车 -->
+          <CartButton />
 
           <!-- 主题切换 -->
           <button
@@ -90,12 +94,12 @@
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
 
-          <template v-if="auth.isLoggedIn.value">
+          <template v-if="auth.isLoggedIn">
             <NotificationBell />
             <div :class="s.userWrap">
               <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
                 <span :class="s.userAvatar">{{ userInitial }}</span>
-                <span :class="s.userName">{{ auth.user.value?.name || auth.user.value?.email }}</span>
+                <span :class="s.userName">{{ user?.name || user?.email }}</span>
                 <Icon name="chevron-down" :size="12" />
               </button>
               <div v-if="userMenuOpen" :class="s.userMenu" role="menu">
@@ -134,13 +138,44 @@
   <MobileMenu :is-open="mobileOpen" @close="closeMobile" @open-auth="authOpen = true" />
 </template>
 
-<script setup>
-import { ref, computed, inject, defineAsyncComponent, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, computed, defineAsyncComponent, onUnmounted } from 'vue';
 const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
-import { useRouter } from 'vue-router';
-import { useNavScroll } from '@/composables/useNavScroll.js';
-import { NAV_LINKS } from '@/data/navigation.js';
-import { LOCALES } from '@/stores/i18n.js';
+
+interface NavDropdownItem {
+  icon: string;
+  title: string;
+  desc: string;
+  href: string;
+}
+
+interface NavLinkItem {
+  id: string;
+  label: string;
+  href?: string;
+  hasDropdown: boolean;
+  items?: NavDropdownItem[];
+  banner?: { thumb: string; title: string; desc: string; href: string };
+}
+
+interface UserInfo {
+  name?: string;
+  email?: string;
+}
+
+import { useNavScroll } from '@/composables/useNavScroll';
+import { useNavigation } from '@/composables/useNavigation';
+import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useThemeStore } from '@/stores/theme.pinia';
+import { useSearchStore } from '@/stores/search.pinia';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAuthStore } from '@/stores/auth.pinia';
+const localeOptions = computed(() => [
+  { key: 'zh', label: t('nav.lang.zh') },
+  { key: 'en', label: t('nav.lang.en') },
+  { key: 'zh-TW', label: t('nav.lang.zhTw') },
+]);
+const localeLabel = (code: string) => localeOptions.value.find((l: { key: string; label: string }) => l.key === code)?.label;
 import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
 import MobileMenu from './MobileMenu.vue';
@@ -148,32 +183,32 @@ import Button from '../../ui/Button/Button.vue';
 import s from './NavBar.module.css';
 
 const { scrolled } = useNavScroll();
+const { navLinks } = useNavigation() as unknown as { navLinks: NavLinkItem[] };
+const { sitePhone } = useSiteConfig();
 
-const i18nStore   = inject('i18n', { t: (k) => k, locale: 'zh', setLocale: () => {} });
-const themeStore  = inject('theme', { theme: ref('light'), toggle: () => {} });
-const searchStore = inject('search', { openSearch: () => {} });
-const modalStore  = inject('modal', { openModal: () => {} });
-const auth        = inject('auth', { isLoggedIn: { value: false }, user: { value: null }, logout: () => {} });
-const authModal   = inject('authModal', { open: () => {} });
-
-const { t, locale, setLocale } = i18nStore;
+const { t, locale, setLocale } = useI18n();
+const themeStore  = useThemeStore();
+const searchStore = useSearchStore();
+const modalStore  = useModalStore();
+const auth        = useAuthStore();
+const authOpen    = useState('authOpen', () => false);
 
 const mobileOpen = ref(false);
 const langMenuOpen = ref(false);
 const userMenuOpen = ref(false);
 const searchOpen = ref(false);
 const searchQuery = ref('');
-const searchInputRef = ref(null);
+const searchInputRef = ref<HTMLInputElement | null>(null);
 const router = useRouter();
 
 const openMobile = () => { mobileOpen.value = true; };
 const closeMobile = () => { mobileOpen.value = false; };
-const pickLang = (l) => { setLocale(l); langMenuOpen.value = false; };
-const openAuth = () => { authModal.open(); };
+const pickLang = (l: string) => { setLocale(l as 'zh' | 'en' | 'zh-TW'); langMenuOpen.value = false; };
+const openAuth = () => { authOpen.value = true; };
 const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
 const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
 
-let searchFocusTimer = null;
+let searchFocusTimer: ReturnType<typeof setTimeout> | null = null;
 
 const openSearchBar = () => {
   searchOpen.value = true;
@@ -185,7 +220,7 @@ const closeSearchBar = () => {
   searchQuery.value = '';
 };
 
-const handleSearchKey = (e) => {
+const handleSearchKey = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && searchQuery.value.trim()) {
     searchStore.openSearch();
     closeSearchBar();
@@ -193,9 +228,10 @@ const handleSearchKey = (e) => {
   if (e.key === 'Escape') closeSearchBar();
 };
 
-const isDark = computed(() => themeStore.theme?.value === 'dark');
+const isDark = computed(() => themeStore.isDark);
+const user = computed(() => auth.user as UserInfo | null | undefined);
 const userInitial = computed(() => {
-  const name = auth.user.value?.name || auth.user.value?.email || '';
+  const name = user.value?.name || user.value?.email || '';
   return name.charAt(0).toUpperCase();
 });
 

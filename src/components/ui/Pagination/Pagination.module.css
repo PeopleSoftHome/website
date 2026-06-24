@@ -23,8 +23,8 @@
   transition: all 0.2s;
 }
 .pageBtn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-.pageBtn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.pageBtn.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
 .pageBtn.disabled { opacity: 0.4; cursor: not-allowed; }
 
 [data-theme="dark"] .pageBtn { border-color: var(--gray-700); color: var(--gray-400); background: var(--card-bg); }
-[data-theme="dark"] .pageBtn.active { background: var(--primary); color: white; border-color: var(--primary); }
+[data-theme="dark"] .pageBtn.active { background: var(--primary); color: var(--white); border-color: var(--primary); }

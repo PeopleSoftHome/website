@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useList } from './useList.js';
 
@@ -93,8 +93,7 @@ export function useCrud(options) {
     }
   };
 
-  return {
-    ...list,
+  const crud = reactive({
     dialogVisible,
     isEdit,
     saving,
@@ -103,5 +102,7 @@ export function useCrud(options) {
     openDialog,
     handleSave,
     handleDelete,
-  };
+  });
+  Object.assign(crud, list);
+  return crud;
 }

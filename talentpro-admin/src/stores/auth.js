@@ -9,6 +9,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isLoggedIn = computed(() => !!token.value);
 
+  // 将后端返回的 role 对象或字符串统一归一化为角色名
+  const role = computed(() => {
+    if (!user.value) return '';
+    const r = user.value.role;
+    if (typeof r === 'object' && r?.name) return r.name;
+    return typeof r === 'string' ? r : '';
+  });
+
   // RBAC：权限列表（从 user.role.permissions 推导，格式为 resource:action）
   const permissions = computed(() => {
     if (!user.value) return [];
@@ -20,7 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
   const hasPermission = (perm) => {
     if (!user.value) return false;
     // SUPER_ADMIN 拥有全部权限
-    if (user.value.role === 'SUPER_ADMIN') return true;
+    if (role.value === 'SUPER_ADMIN') return true;
     return permissions.value.includes(perm);
   };
 
@@ -54,6 +62,17 @@ export const useAuthStore = defineStore('auth', () => {
     return res;
   };
 
+  const devLogin = async () => {
+    const res = await client.post('/auth/dev-login', {});
+    const data = res.data || res;
+    token.value = data.accessToken;
+    refreshToken.value = data.refreshToken;
+    localStorage.setItem('tp_admin_token', token.value);
+    localStorage.setItem('tp_admin_refresh_token', refreshToken.value);
+    await fetchProfile();
+    return res;
+  };
+
   const fetchProfile = async () => {
     try {
       const res = await client.get('/auth/me');
@@ -76,5 +95,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('tp_admin_refresh_token');
   };
 
-  return { token, refreshToken, user, isLoggedIn, permissions, hasPermission, hasAnyPermission, hasAllPermissions, setToken, setRefreshToken, login, logout, fetchProfile };
+  return { token, refreshToken, user, isLoggedIn, role, permissions, hasPermission, hasAnyPermission, hasAllPermissions, setToken, setRefreshToken, login, devLogin, logout, fetchProfile };
 });

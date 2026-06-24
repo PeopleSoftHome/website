@@ -96,27 +96,38 @@
   </section>
 </template>
 
-<script setup>
-import { inject, watch } from 'vue';
-import { useRoiCalculator } from '@/composables/useRoiCalculator.js';
+<script setup lang="ts">
+import { watch } from 'vue';
+import { useModalStore } from '@/stores/modal.pinia';
+import { useAnalyticsStore } from '@/stores/analytics.pinia';
+import { useRoiCalculator } from '@/composables/useRoiCalculator';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AnimatedNumber from './AnimatedNumber.vue';
 import RoiBarChart from './RoiBarChart.vue';
 import s from './RoiCalculatorSection.module.css';
 
-const { t } = inject('i18n', { t: (k) => k });
-const modalStore = inject('modal', { openModal: () => {} });
-const analytics = inject('analytics', { track: () => {} });
+const { t } = useI18n();
+const modalStore = useModalStore();
+const analyticsStore = useAnalyticsStore();
 
 const calc = useRoiCalculator();
 
+interface CalcField {
+  key: 'employeeCount' | 'monthlyHires' | 'hireCycleDays' | 'hrTeamSize' | 'hrMonthlySalary';
+  labelKey: string;
+  min: number;
+  max: number;
+  step: number;
+  unitKey: string;
+}
+
 // ROI 交互埋点（防抖 1s）
-let roiTimer = null;
+let roiTimer: ReturnType<typeof setTimeout> | undefined;
 const trackRoi = () => {
   clearTimeout(roiTimer);
   roiTimer = setTimeout(() => {
-    analytics.track('roi_interact', {
+    analyticsStore.track('roi_interact', {
       employees: calc.employeeCount.value,
       monthlyHires: calc.monthlyHires.value,
       roi: Math.round(calc.roi.value),
@@ -133,7 +144,7 @@ watch([
   () => calc.hrMonthlySalary.value,
 ], trackRoi, { flush: 'post' });
 
-const fields = [
+const fields: CalcField[] = [
   { key: 'employeeCount',  labelKey: 'roi.empCount',  min: 100,  max: 50000, step: 100,  unitKey: 'units.people' },
   { key: 'monthlyHires',   labelKey: 'roi.monthHire', min: 5,    max: 500,   step: 5,    unitKey: 'units.people' },
   { key: 'hireCycleDays',  labelKey: 'roi.hireCycle', min: 7,    max: 90,    step: 1,    unitKey: 'units.days' },
@@ -141,20 +152,20 @@ const fields = [
   { key: 'hrMonthlySalary',labelKey: 'roi.hrSalary',  min: 5000, max: 30000, step: 500,  unitKey: 'units.yuan' },
 ];
 
-function formatValue(field) {
+function formatValue(field: CalcField) {
   const v = calc[field.key].value;
   const unit = t(field.unitKey);
   if (field.unitKey === 'units.yuan') return `¥${v.toLocaleString()}`;
   return `${v.toLocaleString()}${unit}`;
 }
 
-function formatMinMax(v, unitKey) {
+function formatMinMax(v: number, unitKey: string) {
   const unit = t(unitKey);
   if (unitKey === 'units.yuan') return `¥${v.toLocaleString()}`;
   return `${v.toLocaleString()}${unit}`;
 }
 
-function formatCurrency(v) {
+function formatCurrency(v: number) {
   if (v >= 10000) return `${(v / 10000).toFixed(1)}${t('units.tenThousand')}`;
   return v.toLocaleString();
 }

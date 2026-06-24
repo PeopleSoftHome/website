@@ -7,9 +7,10 @@ import { BlogController } from './blog.controller';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
 import { NotificationModule } from '../notification/notification.module';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
-  imports: [NotificationModule],
+  imports: [NotificationModule, AiModule],
   providers: [
     BlogService,
     BlogPostService,

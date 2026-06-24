@@ -9,8 +9,8 @@ import { catchError } from 'rxjs/operators';
 import * as Sentry from '@sentry/nestjs';
 
 @Injectable()
-export class SentryInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+export class SentryInterceptor implements NestInterceptor<unknown, unknown> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     const userId = user?.id;

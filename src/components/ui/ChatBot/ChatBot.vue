@@ -3,7 +3,7 @@
     <div ref="windowRef" :class="s.window">
       <div :class="s.header">
         <div :class="s.headerLeft">
-          <div :class="s.avatar"><Icon name="message-circle" :size="20" color="#fff" /></div>
+          <div :class="s.avatar"><Icon name="message-circle" :size="20" color="var(--white)" /></div>
           <div>
             <div :class="s.botName">{{ t('chatBot.botName') }}</div>
             <div :class="s.status">
@@ -20,7 +20,7 @@
 
       <div :class="s.messages" aria-live="polite" aria-atomic="false">
         <div v-for="msg in messages" :key="msg.id" :class="[s.msgRow, msg.from === 'bot' ? s.botRow : s.userRow]">
-          <span v-if="msg.from === 'bot'" :class="s.msgAvatar"><Icon name="message-circle" :size="16" color="#fff" /></span>
+          <span v-if="msg.from === 'bot'" :class="s.msgAvatar"><Icon name="message-circle" :size="16" color="var(--white)" /></span>
           <div :class="s.msgGroup">
             <div :class="[s.bubble, msg.from === 'bot' ? s.botBubble : s.userBubble]">
               <span v-html="formatMessage(msg.text)" />
@@ -33,7 +33,7 @@
         </div>
 
         <div v-if="isTyping" :class="s.typingRow" aria-hidden="true">
-          <span :class="s.typingAvatar"><Icon name="message-circle" :size="16" color="#fff" /></span>
+          <span :class="s.typingAvatar"><Icon name="message-circle" :size="16" color="var(--white)" /></span>
           <div :class="s.typingBubble"><span :class="s.dot" /><span :class="s.dot" /><span :class="s.dot" /></div>
         </div>
 
@@ -58,23 +58,23 @@
   </div>
 </template>
 
-<script setup>
-import { ref, inject, watch, onMounted, onUnmounted } from 'vue';
-import { useFocusTrap } from '@/composables/useFocusTrap.js';
-import { useChatBot } from '@/composables/useChatBot.js';
+<script setup lang="ts">
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { useFocusTrap } from '@/composables/useFocusTrap';
+import { useChatBot } from '@/composables/useChatBot';
 import Icon from '../Icon/Icon.vue';
 import s from './ChatBot.module.css';
 
 const props = defineProps({ isOpen: { type: Boolean, default: false } });
 const emit = defineEmits(['close', 'openDemo']);
 
-const { t, locale } = inject('i18n', { t: (k) => k, locale: ref('zh') });
+const { t, locale } = useI18n();
 
-const windowRef = ref(null);
-const bottomRef = ref(null);
-const inputRef = ref(null);
+const windowRef = ref<HTMLElement | null>(null);
+const bottomRef = ref<HTMLElement | null>(null);
+const inputRef = ref<HTMLTextAreaElement | null>(null);
 
-useFocusTrap(() => props.isOpen, windowRef);
+useFocusTrap(computed(() => props.isOpen), windowRef);
 
 const {
   messages, input, isTyping, isHandoff, initialized,
@@ -82,7 +82,7 @@ const {
   welcomeMessages, quickRepliesDefault,
   sendMessage, handleQuickReply, handleKeyDown,
   formatMessage,
-} = useChatBot({ emit, locale });
+} = useChatBot({ emit: emit as (event: string, ...args: unknown[]) => void, locale });
 
 // 初始化欢迎语
 watch(() => props.isOpen, (open) => {
@@ -95,7 +95,7 @@ watch(() => props.isOpen, (open) => {
     initialized.value = true;
     let delay = 300;
     welcomeMessages.value.forEach((msg, i) => {
-      const id = setTimeout(() => {
+      const id = window.setTimeout(() => {
         messages.value.push({
           id: Date.now() + i,
           from: 'bot',
@@ -109,18 +109,18 @@ watch(() => props.isOpen, (open) => {
     });
   }
   if (open) {
-    timers.value.push(setTimeout(() => inputRef.value?.focus(), 100));
+    timers.value.push(window.setTimeout(() => inputRef.value?.focus(), 100));
   }
 });
 
 // 消息更新时滚动到底部
 watch([messages, isTyping], () => {
   clearAllTimers();
-  timers.value.push(setTimeout(() => bottomRef.value?.scrollIntoView({ behavior: 'smooth' }), 50));
+  timers.value.push(window.setTimeout(() => bottomRef.value?.scrollIntoView({ behavior: 'smooth' }), 50));
 });
 
 // Escape 关闭
-const onEsc = (e) => {
+const onEsc = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && props.isOpen) emit('close');
 };
 onMounted(() => document.addEventListener('keydown', onEsc));
