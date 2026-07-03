@@ -181,6 +181,37 @@ describe('PaymentService', () => {
     });
   });
 
+  describe('checkoutCart', () => {
+    it('should throw BadRequestException when cart is empty', async () => {
+      await expect(service.checkoutCart('user-1', 'ws-1', [])).rejects.toThrow(BadRequestException);
+    });
+
+    it('should create orders for cart items and throw when Stripe is not configured', async () => {
+      jest.spyOn(prisma.app, 'findUnique').mockResolvedValue({
+        id: 'a1',
+        name: 'Test App',
+        pricingModel: 'RECURRING',
+        pricingTiers: [{ name: 'pro', price: { month: 299 } }],
+      } as unknown as App);
+      jest.spyOn(prisma.subscription, 'create').mockResolvedValue({ id: 'sub-1' } as unknown as import('@prisma/client').Subscription);
+      jest.spyOn(prisma.order, 'create').mockResolvedValue({
+        id: 'o1',
+        orderNo: 'TP20240601ABC123',
+        status: PaymentStatus.PENDING,
+        total: 299,
+        currency: 'CNY',
+      } as unknown as Order);
+
+      await expect(
+        service.checkoutCart('user-1', 'ws-1', [
+          { appId: 'a1', tierName: 'pro', amount: 299, currency: 'CNY', quantity: 1, interval: 'month' },
+        ]),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(prisma.order.create).toHaveBeenCalled();
+    });
+  });
+
   describe('handleStripeWebhook', () => {
     it('should return received false when Stripe is not configured', async () => {
       const result = await service.handleStripeWebhook('sig', Buffer.from('{}'));

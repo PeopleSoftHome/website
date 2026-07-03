@@ -724,7 +724,7 @@
       "Careers"
     ],
     "copyright": "© 2026 TalentPro Technology Co., Ltd. All rights reserved.",
-    "icp": "ICP License: XXXXXXXX",
+    "icp": "ICP License: 00000000",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "sitemap": "Sitemap",
@@ -1023,7 +1023,8 @@
     "toLogin": "Sign In",
     "genericError": "Operation failed, please try again later",
     "company": "Company / Team Name",
-    "companyPlaceholder": "Enter company or team name (optional)"
+    "companyPlaceholder": "Enter company or team name (optional)",
+    "pleaseLogin": "Please log in first"
   },
   "comment": {
     "title": "Comments",
@@ -1385,7 +1386,7 @@
     "total": "Total",
     "checkout": "Checkout",
     "error": "Operation failed, please try again",
-    "checkoutComingSoon": "Checkout coming soon"
+    "checkoutError": "Checkout failed, please try again"
   },
   "errors": {
     "requestFailed": "Request failed",

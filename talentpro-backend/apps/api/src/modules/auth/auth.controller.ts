@@ -98,7 +98,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @Permission('auth:logout')
+  @ApiBearerAuth()
   @ApiOperation({ summary: '登出' })
   logout(
     @Body() dto: RefreshTokenDto,

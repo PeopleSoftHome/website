@@ -18,6 +18,11 @@ export class CreateOrderDto {
   @Min(0)
   amount: number;
 
+  @IsNumber()
+  @Min(1)
+  @IsOptional()
+  quantity?: number;
+
   @IsString()
   @IsOptional()
   currency?: string;

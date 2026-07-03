@@ -31,6 +31,8 @@ export const marketplaceApi = {
 export const paymentApi = {
   createOrder: (data: OrderData): Promise<AxiosResponse> =>
     apiClient.post('/payments/orders', data),
+  checkoutCart: (data: { items: CartItemData[] }): Promise<AxiosResponse> =>
+    apiClient.post('/payments/cart/checkout', data),
   getOrders: (params: AppListParams): Promise<AxiosResponse> =>
     apiClient.get('/payments/orders', { params }),
   getOrder: (id: string | number | undefined | null): Promise<AxiosResponse> =>

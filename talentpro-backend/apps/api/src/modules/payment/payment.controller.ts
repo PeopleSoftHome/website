@@ -6,6 +6,7 @@ import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { PaymentService } from './payment.service';
 import { CreateOrderDto, CreateStripeCheckoutDto } from './dto/create-order.dto';
+import { CheckoutCartDto } from './dto/checkout-cart.dto';
 
 @ApiTags('支付')
 @Controller('payments')
@@ -24,6 +25,18 @@ export class PaymentController {
     @Body() dto: CreateOrderDto,
   ) {
     return this.paymentService.createOrder(userId, user.workspaceId, dto);
+  }
+
+  @Post('cart/checkout')
+  @ApiBearerAuth()
+  @Permission('payment:manage')
+  @ApiOperation({ summary: '购物车结算' })
+  checkoutCart(
+    @CurrentUser('id') userId: string,
+    @CurrentUser() user: { workspaceId: string },
+    @Body() dto: CheckoutCartDto,
+  ) {
+    return this.paymentService.checkoutCart(userId, user.workspaceId, dto.items);
   }
 
   @Get('orders')

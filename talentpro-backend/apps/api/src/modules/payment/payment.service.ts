@@ -31,6 +31,7 @@ export class PaymentService {
     amount: number;
     currency?: string;
     provider?: PaymentProvider;
+    quantity?: number;
   }) {
     const app = await this.prisma.app.findUnique({ where: { id: dto.appId } });
     if (!app) throw new NotFoundException('应用不存在');
@@ -39,10 +40,12 @@ export class PaymentService {
     if (!tier) throw new BadRequestException('指定的订阅套餐不存在');
 
     const interval = dto.interval || 'month';
-    const expectedAmount = tier.price?.[interval] ?? tier.price;
-    if (expectedAmount === undefined) {
+    const quantity = dto.quantity || 1;
+    const unitPrice = tier.price?.[interval] ?? tier.price;
+    if (unitPrice === undefined) {
       throw new BadRequestException('指定周期暂无价格');
     }
+    const expectedAmount = unitPrice * quantity;
     if (Math.abs(expectedAmount - dto.amount) > 0.01) {
       throw new BadRequestException('订单金额与套餐价格不一致');
     }
@@ -118,16 +121,56 @@ export class PaymentService {
     return order;
   }
 
+  async checkoutCart(
+    userId: string,
+    workspaceId: string,
+    items: { appId: string; tierName: string; interval?: string; amount: number; currency?: string; quantity?: number }[],
+  ) {
+    if (!items || items.length === 0) {
+      throw new BadRequestException('购物车为空');
+    }
+
+    const orders = [];
+    for (const item of items) {
+      const order = await this.createOrder(userId, workspaceId, {
+        appId: item.appId,
+        tierName: item.tierName,
+        interval: item.interval,
+        amount: item.amount,
+        currency: item.currency,
+        quantity: item.quantity,
+      });
+      orders.push(order);
+    }
+
+    const orderIds = orders.map((o) => o.id);
+    const origin = this.config.get<string>('app.frontendUrl', 'http://localhost:3000');
+    const successUrl = `${origin}/marketplace/payment/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${origin}/marketplace/payment/cancel`;
+    const checkout = await this.createStripeCheckoutForOrders(orderIds, successUrl, cancelUrl);
+
+    return { orders, ...checkout };
+  }
+
   // ─── Stripe ───
 
   async createStripeCheckout(orderId: string, successUrl?: string, cancelUrl?: string) {
+    const checkout = await this.createStripeCheckoutForOrders([orderId], successUrl, cancelUrl);
+    return checkout;
+  }
+
+  private async createStripeCheckoutForOrders(orderIds: string[], successUrl?: string, cancelUrl?: string) {
     if (!this.stripe) {
       throw new BadRequestException('Stripe 未配置');
     }
 
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order) throw new NotFoundException('订单不存在');
-    if (order.status !== PaymentStatus.PENDING) {
+    const orders = await this.prisma.order.findMany({
+      where: { id: { in: orderIds } },
+    });
+    if (orders.length !== orderIds.length) {
+      throw new NotFoundException('部分订单不存在');
+    }
+    if (orders.some((o) => o.status !== PaymentStatus.PENDING)) {
       throw new BadRequestException('订单状态不允许支付');
     }
 
@@ -135,24 +178,22 @@ export class PaymentService {
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: order.currency.toLowerCase(),
-            product_data: { name: `TalentPro 应用订阅 #${order.orderNo}` },
-            unit_amount: Math.round(order.total * 100),
-          },
-          quantity: 1,
+      line_items: orders.map((order) => ({
+        price_data: {
+          currency: order.currency.toLowerCase(),
+          product_data: { name: `TalentPro 应用订阅 #${order.orderNo}` },
+          unit_amount: Math.round(order.total * 100),
         },
-      ],
+        quantity: 1,
+      })),
       mode: 'payment',
-      success_url: successUrl || `${origin}/marketplace/payment/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-      cancel_url: cancelUrl || `${origin}/marketplace/payment/cancel?order_id=${order.id}`,
-      metadata: { orderId: order.id },
+      success_url: successUrl || `${origin}/marketplace/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${origin}/marketplace/payment/cancel`,
+      metadata: { orderIds: orderIds.join(',') },
     });
 
-    await this.prisma.order.update({
-      where: { id: orderId },
+    await this.prisma.order.updateMany({
+      where: { id: { in: orderIds } },
       data: { provider: PaymentProvider.STRIPE, providerPaymentId: session.id },
     });
 
@@ -174,8 +215,9 @@ export class PaymentService {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as unknown as StripeTypes.Checkout.Session;
-      const orderId = session.metadata?.orderId;
-      if (orderId) {
+      const rawOrderIds = session.metadata?.orderIds || session.metadata?.orderId || '';
+      const orderIds = rawOrderIds.split(',').filter(Boolean);
+      for (const orderId of orderIds) {
         await this.confirmOrderPayment(orderId, PaymentProvider.STRIPE, session.id);
       }
     }

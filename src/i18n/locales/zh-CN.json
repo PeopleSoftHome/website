@@ -724,7 +724,7 @@
       "加入我们"
     ],
     "copyright": "© 2026 TalentPro 人才科技有限公司版权所有",
-    "icp": "京ICP备XXXXXXXX号",
+    "icp": "京ICP备00000000号",
     "privacy": "隐私政策",
     "terms": "服务条款",
     "sitemap": "网站地图",
@@ -1023,7 +1023,8 @@
     "toLogin": "立即登录",
     "genericError": "操作失败，请稍后重试",
     "company": "公司/团队名称",
-    "companyPlaceholder": "请输入公司或团队名称（可选）"
+    "companyPlaceholder": "请输入公司或团队名称（可选）",
+    "pleaseLogin": "请先登录"
   },
   "comment": {
     "title": "评论",
@@ -1385,7 +1386,7 @@
     "total": "合计",
     "checkout": "去结算",
     "error": "操作失败，请重试",
-    "checkoutComingSoon": "结算功能即将上线"
+    "checkoutError": "结算失败，请重试"
   },
   "errors": {
     "requestFailed": "请求失败",

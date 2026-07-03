@@ -50,15 +50,17 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia';
 import Icon from '@/components/ui/Icon/Icon.vue';
-import { cartApi } from '@/api/marketplace';
+import { cartApi, paymentApi } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
 import s from './CartButton.module.css';
 
 interface CartItem {
   appId: string;
+  slug: string;
   tierName: string;
   name: string;
   price: number;
+  currency: string;
   quantity: number;
 }
 
@@ -113,9 +115,34 @@ const handleClear = async () => {
   }
 };
 
-const handleCheckout = () => {
-  open.value = false;
-  showToast(t('cart.checkoutComingSoon'), 'info');
+const handleCheckout = async () => {
+  if (!auth.isLoggedIn) {
+    showToast(t('auth.pleaseLogin'), 'error');
+    return;
+  }
+  if (items.value.length === 0) return;
+
+  try {
+    const checkoutItems = items.value.map((item) => ({
+      appId: item.appId,
+      tierName: item.tierName,
+      amount: Number((item.price * item.quantity).toFixed(2)),
+      currency: item.currency || 'CNY',
+      interval: 'month',
+      quantity: item.quantity,
+    }));
+
+    const res = await paymentApi.checkoutCart({ items: checkoutItems });
+    if (res.data?.url) {
+      open.value = false;
+      window.location.href = res.data.url;
+    } else {
+      showToast(t('cart.checkoutError'), 'error');
+    }
+  } catch (e) {
+    const err = e as { response?: { data?: { message?: string } } };
+    showToast(err.response?.data?.message || t('cart.checkoutError'), 'error');
+  }
 };
 
 const handleClickOutside = (e: MouseEvent) => {
