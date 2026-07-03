@@ -43,9 +43,11 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { aboutApi } from '@/api/about';
 import { TEAM_CATEGORIES, TEAM_FALLBACK } from '@/data/team';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { usePageSeo } from '@/composables/usePageSeo';
 import s from './team.module.css';
 
 const { t } = useI18n();
+usePageSeo({ title: t('team.title'), description: t('team.subtitle'), path: '/about/team' });
 const activeCategoryIndex = ref(0);
 
 const categoryTabs = computed(() => TEAM_CATEGORIES.map((c) => ({ id: c, label: c })));

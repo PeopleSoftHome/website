@@ -128,13 +128,22 @@ const error = computed(() => fetchError.value || null);
 
 useHead(() => {
   if (!item.value) return {};
+  const url = `https://talentpro.cn/news/${route.params.slug}`;
   return {
     title: `${item.value.title} | TalentPro`,
     meta: [
       { name: 'description', content: item.value.summary || item.value.title },
       { property: 'og:title', content: item.value.title },
       { property: 'og:description', content: item.value.summary || item.value.title },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: item.value.coverImage || 'https://talentpro.cn/og-image.png' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: item.value.title },
+      { name: 'twitter:description', content: item.value.summary || item.value.title },
+      { name: 'twitter:image', content: item.value.coverImage || 'https://talentpro.cn/og-image.png' },
     ],
+    link: [{ rel: 'canonical', href: url }],
   };
 });
 

@@ -43,9 +43,11 @@ import { onMounted, onUnmounted, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { usePageSeo } from '@/composables/usePageSeo';
 import s from './partners.module.css';
 
 const { t } = useI18n();
+usePageSeo({ title: t('partners.title'), description: t('partners.subtitle'), path: '/about/partners' });
 
 const { data: partners, pending: loading, error: asyncError } = useAsyncData(
   'about-partners',

@@ -84,9 +84,11 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news';
 import { NEWS_FALLBACK, NEWS_CATEGORIES } from '@/data/news';
 import { useListPage } from '@/composables/useListPage';
+import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
 const { t } = useI18n();
+usePageSeo({ title: t('news.title'), description: t('news.subtitle'), path: '/news' });
 const activeCategoryIndex = ref(0);
 
 const categoryTabs = computed(() => NEWS_CATEGORIES.map((c) => ({ id: c, label: c })));

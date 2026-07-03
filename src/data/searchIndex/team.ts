@@ -1,0 +1,51 @@
+/* ══════════════ TEAM — 核心团队 ══════════════ */
+export const SEARCH_TEAM = [
+  {
+    id: 'team-chen-mingyuan', type: 'team', weight: 0.6,
+    title: '陈明远 - 创始人兼 CEO',
+    tags: ['陈明远','CEO','创始人','管理层','团队','team'],
+    desc: '前 SAP SuccessFactors 中国区总经理，20 年 HR 科技领域经验。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+  {
+    id: 'team-lin-sihan', type: 'team', weight: 0.6,
+    title: '林思涵 - 联合创始人兼 CTO',
+    tags: ['林思涵','CTO','联合创始人','AI','技术','team'],
+    desc: '前 Google 机器学习工程师，主导 TalentPro AI 技术架构。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+  {
+    id: 'team-wang-jianhua', type: 'team', weight: 0.6,
+    title: '王建华 - 首席产品官',
+    tags: ['王建华','CPO','产品','管理层','team'],
+    desc: '前 Workday 产品总监，主导产品矩阵规划。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+  {
+    id: 'team-zhang-ruixue', type: 'team', weight: 0.6,
+    title: '张瑞雪 - 首席运营官',
+    tags: ['张瑞雪','COO','运营','管理层','team'],
+    desc: '前德勤人力资本咨询合伙人，服务 100+ 世界 500 强企业。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+  {
+    id: 'team-li-bowen', type: 'team', weight: 0.55,
+    title: '李博文 - AI 实验室负责人',
+    tags: ['李博文','AI','NLP','技术专家','team'],
+    desc: '清华大学计算机系副教授，自然语言处理领域专家。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+  {
+    id: 'team-zhao-zixuan', type: 'team', weight: 0.55,
+    title: '赵子轩 - 首席架构师',
+    tags: ['赵子轩','架构师','云原生','技术专家','team'],
+    desc: '前阿里云技术专家，主导云原生架构升级。',
+    section: 'general', icon: 'users',
+    route: '/about/team',
+  },
+];

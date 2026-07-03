@@ -101,9 +101,11 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
 import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
 const { t } = useI18n();
+usePageSeo({ title: t('careers.title'), description: t('careers.subtitle'), path: '/careers' });
 
 const activeDept = ref('');
 const PAGE_SIZE = 6;

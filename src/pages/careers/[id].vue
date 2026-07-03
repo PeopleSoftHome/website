@@ -99,8 +99,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted } from 'vue';
-import { removeJsonLd } from '@/utils/jsonld';
+import { computed, onMounted, onUnmounted } from 'vue';
+import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
 import s from './[id].module.css';
@@ -113,9 +113,21 @@ const id = computed(() => route.params.id);
 
 useHead(() => {
   if (!job.value) return {};
+  const j = job.value;
+  const url = `https://talentpro.cn/careers/${route.params.id}`;
   return {
-    title: `${job.value.title} | TalentPro`,
-    meta: [{ name: 'description', content: job.value.description || t('careers.subtitle') }],
+    title: `${j.title} | TalentPro`,
+    meta: [
+      { name: 'description', content: j.description || t('careers.subtitle') },
+      { property: 'og:title', content: j.title },
+      { property: 'og:description', content: j.description || t('careers.subtitle') },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: url },
+      { name: 'twitter:card', content: 'summary' },
+      { name: 'twitter:title', content: j.title },
+      { name: 'twitter:description', content: j.description || t('careers.subtitle') },
+    ],
+    link: [{ rel: 'canonical', href: url }],
   };
 });
 
@@ -165,6 +177,21 @@ const processSteps = [
 const handleApply = () => {
   import('@/utils/toast').then(({ showToast }) => showToast(t('careers.applyPrompt'), 'success'));
 };
+
+onMounted(() => {
+  if (!job.value) return;
+  const j = job.value;
+  injectJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: j.title,
+    description: j.description,
+    hiringOrganization: { '@type': 'Organization', name: 'TalentPro' },
+    jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressLocality: j.location, addressCountry: 'CN' } },
+    employmentType: j.type,
+    datePosted: j.createdAt,
+  });
+});
 
 onUnmounted(removeJsonLd);
 </script>

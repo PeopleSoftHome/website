@@ -97,9 +97,11 @@ import { caseApi } from '@/api/case';
 import { CASES, CASE_INDUSTRIES } from '@/data/cases';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import { coverStyle } from '@/utils/coverStyle';
+import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
 const { t } = useI18n();
+usePageSeo({ title: t('cases.title'), description: t('cases.subtitle'), path: '/cases' });
 
 const activeIndustry = ref('');
 const displayLimit = ref(6);

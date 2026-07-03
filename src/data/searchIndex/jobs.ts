@@ -1,0 +1,51 @@
+/* ══════════════ JOBS — 招聘职位 ══════════════ */
+export const SEARCH_JOBS = [
+  {
+    id: 'job-senior-frontend', type: 'job', weight: 0.65,
+    title: '高级前端工程师',
+    tags: ['前端','Vue','React','TypeScript','北京','社招','job'],
+    desc: '负责 TalentPro 核心产品前端架构设计与开发。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers',
+  },
+  {
+    id: 'job-ai-algorithm', type: 'job', weight: 0.65,
+    title: 'AI 算法工程师',
+    tags: ['AI','算法','NLP','LLM','PyTorch','北京','上海','job'],
+    desc: '负责 TalentPro AI Family 系列产品的算法研发。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers',
+  },
+  {
+    id: 'job-product-manager-recruit', type: 'job', weight: 0.65,
+    title: '产品经理（招聘方向）',
+    tags: ['产品经理','B端','HR SaaS','招聘','北京','job'],
+    desc: '负责招聘管理系统的产品规划与迭代。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers',
+  },
+  {
+    id: 'job-customer-success', type: 'job', weight: 0.65,
+    title: '客户成功经理',
+    tags: ['客户成功','SaaS','上海','深圳','job'],
+    desc: '负责中大型客户全生命周期管理。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers',
+  },
+  {
+    id: 'job-management-trainee', type: 'job', weight: 0.6,
+    title: '2026 届管培生',
+    tags: ['管培生','应届生','轮岗','北京','校招','job'],
+    desc: '为期 18 个月的轮岗培养计划。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers/campus',
+  },
+  {
+    id: 'job-frontend-intern', type: 'job', weight: 0.55,
+    title: '前端开发实习生',
+    tags: ['实习','前端','在校生','北京','job'],
+    desc: '参与前端组件库和营销门户开发。',
+    section: 'general', icon: 'briefcase',
+    route: '/careers/campus',
+  },
+];

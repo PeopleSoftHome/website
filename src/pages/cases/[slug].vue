@@ -148,13 +148,22 @@ const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
 useHead(() => {
   if (!caseStudy.value) return {};
   const c = caseStudy.value;
+  const url = `https://talentpro.cn/cases/${route.params.slug}`;
   return {
     title: `${c.clientName} | TalentPro`,
     meta: [
       { name: 'description', content: c.excerpt || c.title },
       { property: 'og:title', content: c.title },
       { property: 'og:description', content: c.excerpt },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: c.coverImage || 'https://talentpro.cn/og-image.png' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: c.title },
+      { name: 'twitter:description', content: c.excerpt },
+      { name: 'twitter:image', content: c.coverImage || 'https://talentpro.cn/og-image.png' },
     ],
+    link: [{ rel: 'canonical', href: url }],
   };
 });
 

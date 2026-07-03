@@ -20,6 +20,10 @@ import { SEARCH_GENERAL } from './general';
 import { SEARCH_CASES } from './cases';
 import { SEARCH_PAGES } from './pages';
 import { SEARCH_MARKETPLACE } from './marketplace';
+import { SEARCH_NEWS } from './news';
+import { SEARCH_JOBS } from './jobs';
+import { SEARCH_TEAM } from './team';
+import { SEARCH_PARTNERS } from './partners';
 export { SEARCH_PRODUCTS } from './products';
 export { SEARCH_INDUSTRIES } from './industries';
 export { SEARCH_RESOURCES } from './resources';
@@ -28,6 +32,10 @@ export { SEARCH_GENERAL } from './general';
 export { SEARCH_CASES } from './cases';
 export { SEARCH_PAGES } from './pages';
 export { SEARCH_MARKETPLACE } from './marketplace';
+export { SEARCH_NEWS } from './news';
+export { SEARCH_JOBS } from './jobs';
+export { SEARCH_TEAM } from './team';
+export { SEARCH_PARTNERS } from './partners';
 export { HOT_SEARCHES } from './hotSearches';
 export { TYPE_LABELS } from './typeLabels';
 
@@ -41,4 +49,8 @@ export const SEARCH_INDEX = [
   ...SEARCH_CASES,
   ...SEARCH_PAGES,
   ...SEARCH_MARKETPLACE,
+  ...SEARCH_NEWS,
+  ...SEARCH_JOBS,
+  ...SEARCH_TEAM,
+  ...SEARCH_PARTNERS,
 ];
