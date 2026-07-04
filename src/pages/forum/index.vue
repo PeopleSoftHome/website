@@ -88,10 +88,13 @@ import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum';
 import { formatDate } from '@/utils/date';
-import { FORUM_CATEGORIES, FORUM_TOPICS } from '@/data/forum';
+import { getForumCategories, getForumTopics } from '@/data/forum';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
+const FORUM_CATEGORIES = computed(() => getForumCategories(locale.value));
+const FORUM_TOPICS = computed(() => getForumTopics(locale.value));
 
 const page = ref(1);
 const pageSize = FORUM_PAGE_SIZE;
@@ -108,7 +111,7 @@ const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopi
 );
 
 const fallbackTopics = computed(() => {
-  let list = FORUM_TOPICS;
+  let list = FORUM_TOPICS.value;
   if (activeCategory.value) {
     list = list.filter((t) => t.category?.id === activeCategory.value);
   }
@@ -130,7 +133,7 @@ const { data: catRes } = useAsyncData(
   { server: false, default: () => ({ data: FORUM_CATEGORIES }) }
 );
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
-const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : FORUM_CATEGORIES);
+const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : FORUM_CATEGORIES.value);
 
 const setCategory = (id: string | number) => {
   activeCategory.value = activeCategory.value === id ? null : id;

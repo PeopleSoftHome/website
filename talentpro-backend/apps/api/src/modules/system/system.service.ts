@@ -26,7 +26,7 @@ export class SystemService {
 
   async findSettingByKey(key: string) {
     const setting = await this.prisma.setting.findUnique({ where: { key } });
-    if (!setting) throw new NotFoundException('设置项不存在');
+    if (!setting) throw new NotFoundException('Setting not found');
     return setting;
   }
 
@@ -46,7 +46,7 @@ export class SystemService {
 
   async deleteSetting(key: string) {
     await this.prisma.setting.delete({ where: { key } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   async getPublicConfig() {
@@ -116,7 +116,7 @@ export class SystemService {
 
   async findEmailTemplateByKey(key: string) {
     const template = await this.prisma.emailTemplate.findUnique({ where: { key } });
-    if (!template) throw new NotFoundException('邮件模板不存在');
+    if (!template) throw new NotFoundException('Email template not found');
     return template;
   }
 
@@ -130,7 +130,7 @@ export class SystemService {
 
   async deleteEmailTemplate(key: string) {
     await this.prisma.emailTemplate.delete({ where: { key } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   // ─── ChatBot Config ───
@@ -173,7 +173,7 @@ export class SystemService {
 
   async deleteSensitiveWord(id: string) {
     await this.prisma.sensitiveWord.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   async testModeration(content: string) {

@@ -6,7 +6,7 @@
 
     <div :class="s.filter" class="reveal">
       <button v-for="st in statuses" :key="st.value" :class="[s.filterBtn, activeStatus === st.value && s.filterActive]" @click="activeStatus = st.value">
-        {{ st.label }}
+        {{ t(st.labelKey) }}
       </button>
     </div>
 
@@ -57,7 +57,7 @@
 definePageMeta({ title: 'profile.menu.orders', requiresAuth: true });
 import { ref, computed } from 'vue';
 import { paymentApi } from '@/api/marketplace';
-import { ORDER_STATUSES, ORDER_FALLBACK } from '@/data/profile';
+import { ORDER_STATUSES, getOrderFallback } from '@/data/profile';
 import s from './orders.module.css';
 
 interface Order {
@@ -69,13 +69,14 @@ interface Order {
   icon?: string;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const activeStatus = ref('all');
 const statuses = ORDER_STATUSES;
+const orderFallback = computed(() => getOrderFallback(locale.value));
 
-const { data: ordersRes, pending: loading } = useAsyncData('profile-orders-page', () => paymentApi.getOrders({}), { server: false, default: () => ({ data: ORDER_FALLBACK as Order[] }) });
+const { data: ordersRes, pending: loading } = useAsyncData('profile-orders-page', () => paymentApi.getOrders({}), { server: false, default: () => ({ data: { data: orderFallback.value as Order[], meta: { total: orderFallback.value.length } } }) });
 
-const orders = computed<Order[]>(() => (ordersRes.value?.data as Order[] | undefined) || []);
+const orders = computed<Order[]>(() => ((ordersRes.value?.data as { data?: Order[] } | undefined)?.data) || []);
 
 const filteredOrders = computed(() => {
   if (activeStatus.value === 'all') return orders.value;

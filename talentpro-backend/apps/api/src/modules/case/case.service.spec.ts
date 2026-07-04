@@ -112,7 +112,7 @@ describe('CaseService', () => {
       jest.spyOn(prisma.caseStudy, 'findFirst').mockResolvedValue(null);
 
       await expect(service.findBySlug('not-found')).rejects.toThrow(NotFoundException);
-      await expect(service.findBySlug('not-found')).rejects.toThrow('案例不存在');
+      await expect(service.findBySlug('not-found')).rejects.toThrow('Case not found');
     });
   });
 

@@ -83,7 +83,7 @@ export class MediaService {
   private async checkWorkspaceAccessById(id: string, workspaceId?: string) {
     if (!workspaceId) return;
     const media = await this.prisma.media.findUnique({ where: { id } });
-    if (!media) throw new NotFoundException('媒体文件不存在');
+    if (!media) throw new NotFoundException('Media file not found');
     await this.checkWorkspaceAccess(media, workspaceId);
   }
 
@@ -94,7 +94,7 @@ export class MediaService {
       select: { workspaceId: true },
     });
     if (creator?.workspaceId !== workspaceId) {
-      throw new NotFoundException('媒体文件不存在或无权访问');
+      throw new NotFoundException('Media file not found or no access');
     }
   }
 }

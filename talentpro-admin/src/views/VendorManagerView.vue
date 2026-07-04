@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom: 20px">应用厂商管理</h2>
+    <h2 style="margin-bottom: 20px">{{ t('vendors.title') }}</h2>
     <el-card shadow="hover">
       <CmsTable
         ref="tableRef"
@@ -13,7 +13,7 @@
         </template>
         <template #column-isVerified="{ row }">
           <el-tag :type="row.isVerified ? 'success' : 'info'" size="small">
-            {{ row.isVerified ? '已认证' : '未认证' }}
+            {{ row.isVerified ? t('vendors.verified') : t('vendors.unverified') }}
           </el-tag>
         </template>
       </CmsTable>
@@ -23,26 +23,29 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import CmsTable from '@/components/CmsTable.vue';
+
+const { t } = useI18n();
 
 const tableRef = ref(null);
 
 const columns = [
-  { prop: 'name', label: '厂商名称', minWidth: 160 },
-  { prop: 'slug', label: 'Slug', width: 140 },
-  { prop: 'contactEmail', label: '联系邮箱', width: 180 },
-  { prop: 'website', label: '官网', minWidth: 180 },
-  { prop: 'revenueShareRate', label: '分成比例', width: 100 },
-  { prop: 'isVerified', label: '认证状态', width: 100 },
+  { prop: 'name', label: t('vendors.name'), minWidth: 160 },
+  { prop: 'slug', label: t('vendors.slug'), width: 140 },
+  { prop: 'contactEmail', label: t('vendors.contactEmail'), width: 180 },
+  { prop: 'website', label: t('vendors.website'), minWidth: 180 },
+  { prop: 'revenueShareRate', label: t('vendors.revenueShareRate'), width: 100 },
+  { prop: 'isVerified', label: t('vendors.verifiedStatus'), width: 100 },
 ];
 
 const formFields = [
-  { prop: 'name', label: '厂商名称', type: 'input' },
-  { prop: 'slug', label: 'Slug', type: 'input' },
-  { prop: 'description', label: '简介', type: 'textarea', rows: 3 },
-  { prop: 'contactEmail', label: '联系邮箱', type: 'input' },
-  { prop: 'website', label: '官网', type: 'input' },
-  { prop: 'revenueShareRate', label: '分成比例', type: 'number', placeholder: '0.3 表示 30%' },
-  { prop: 'isVerified', label: '已认证', type: 'switch' },
+  { prop: 'name', label: t('vendors.name'), type: 'input' },
+  { prop: 'slug', label: t('vendors.slug'), type: 'input' },
+  { prop: 'description', label: t('vendors.description'), type: 'textarea', rows: 3 },
+  { prop: 'contactEmail', label: t('vendors.contactEmail'), type: 'input' },
+  { prop: 'website', label: t('vendors.website'), type: 'input' },
+  { prop: 'revenueShareRate', label: t('vendors.revenueShareRate'), type: 'number', placeholder: t('vendors.revenueSharePlaceholder') },
+  { prop: 'isVerified', label: t('vendors.isVerified'), type: 'switch' },
 ];
 </script>

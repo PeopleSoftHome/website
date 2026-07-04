@@ -71,7 +71,7 @@
                 <div :class="s.testiAvatar">{{ item.avatar }}</div>
                 <div>
                   <div :class="s.testiName">{{ item.name }}</div>
-                  <div :class="s.testiRole">{{ item.role }} · {{ item.joinYear }} 年加入</div>
+                  <div :class="s.testiRole">{{ item.role }} · {{ t('careers.joinedIn', { year: item.joinYear }) }}</div>
                 </div>
               </div>
             </div>
@@ -99,12 +99,12 @@ definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
-import { CAREER_TESTIMONIALS, CAREER_PATH } from '@/data/careers';
+import { getCareerTestimonials, getCareerPath } from '@/data/careers';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 usePageSeo({ title: t('careers.title'), description: t('careers.subtitle'), path: '/careers' });
 
 const activeDept = ref('');
@@ -162,8 +162,8 @@ const benefits = [
   { icon: '🌍', nameKey: 'careers.benefits.team', descKey: 'careers.benefits.teamDesc' },
 ];
 
-const careerPath = CAREER_PATH;
-const testimonials = CAREER_TESTIMONIALS;
+const careerPath = computed(() => getCareerPath(locale.value));
+const testimonials = computed(() => getCareerTestimonials(locale.value));
 
 onMounted(() => {
   injectJsonLd({

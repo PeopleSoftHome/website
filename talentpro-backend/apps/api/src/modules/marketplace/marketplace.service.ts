@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { AppStatus, PricingModel, SubscriptionStatus } from '@prisma/client';
+import { AppStatus, PricingModel, SubscriptionStatus, Prisma } from '@prisma/client';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 import { MarketplaceRepository } from './marketplace.repository';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -62,7 +62,7 @@ export class MarketplaceService {
       where: { slug, status: AppStatus.PUBLISHED, deletedAt: null },
       include: { category: true, vendor: true },
     });
-    if (!app) throw new NotFoundException('应用不存在');
+    if (!app) throw new NotFoundException('App not found');
     return app;
   }
 
@@ -80,7 +80,7 @@ export class MarketplaceService {
 
   async findReviews(appSlug: string, page = 1, pageSize = 20) {
     const app = await this.prisma.app.findUnique({ where: { slug: appSlug } });
-    if (!app) throw new NotFoundException('应用不存在');
+    if (!app) throw new NotFoundException('App not found');
     const skip = getSkip(page, pageSize);
     const [data, total] = await Promise.all([
       this.prisma.appReview.findMany({
@@ -96,7 +96,7 @@ export class MarketplaceService {
 
   async createReview(appSlug: string, userId: string, dto: CreateReviewDto) {
     const app = await this.prisma.app.findUnique({ where: { slug: appSlug } });
-    if (!app) throw new NotFoundException('应用不存在');
+    if (!app) throw new NotFoundException('App not found');
     const review = await this.prisma.appReview.create({
       data: { ...dto, appId: app.id, userId },
     });
@@ -108,11 +108,11 @@ export class MarketplaceService {
 
   async installApp(appSlug: string, workspaceId: string, _userId: string) {
     const app = await this.prisma.app.findUnique({ where: { slug: appSlug } });
-    if (!app) throw new NotFoundException('应用不存在');
+    if (!app) throw new NotFoundException('App not found');
     const existing = await this.prisma.subscription.findFirst({
       where: { appId: app.id, workspaceId },
     });
-    if (existing) throw new ConflictException('该应用已在工作空间安装');
+    if (existing) throw new ConflictException('This app is already installed in the workspace');
     const subscription = await this.prisma.subscription.create({
       data: {
         appId: app.id,
@@ -174,6 +174,42 @@ export class MarketplaceService {
 
   async updateAppStatus(id: string, status: AppStatus) {
     return this.marketplaceRepo.update(id, { status });
+  }
+
+  // ─── Admin Subscriptions ───
+
+  async findAllSubscriptionsForAdmin({
+    status,
+    page = 1,
+    pageSize = 20,
+  }: {
+    status?: SubscriptionStatus;
+    page?: number;
+    pageSize?: number;
+  }) {
+    const pageNum = Math.max(1, page);
+    const size = Math.max(1, pageSize);
+    const skip = getSkip(pageNum, size);
+    const where: Prisma.SubscriptionWhereInput = {};
+    if (status) where.status = status;
+
+    const [data, total] = await Promise.all([
+      this.prisma.subscription.findMany({
+        where,
+        skip,
+        take: size,
+        orderBy: { createdAt: 'desc' },
+        include: { app: true },
+      }),
+      this.prisma.subscription.count({ where }),
+    ]);
+    return buildPaginatedResponse(data, pageNum, size, total);
+  }
+
+  async updateSubscriptionStatus(id: string, status: SubscriptionStatus) {
+    const subscription = await this.prisma.subscription.findUnique({ where: { id } });
+    if (!subscription) throw new NotFoundException('Subscription not found');
+    return this.prisma.subscription.update({ where: { id }, data: { status } });
   }
 
   async featureApp(id: string, featured: boolean, sortOrder?: number) {

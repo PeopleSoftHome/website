@@ -24,3 +24,27 @@ OKR 应该鼓励冒险，如果直接决定奖金，员工只会写保守目标�
   tags: [{ id: 't3', name: 'OKR' }, { id: 't4', name: '绩效管理' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_OKR_IMPLEMENTATION_EN: BlogPost = {
+  id: 'blog-2',
+  slug: 'okr-implementation',
+  title: 'Why OKR Implementations Fail: Three Things 90% of Companies Miss',
+  excerpt: 'Goal-management tools are only the surface. The real challenges are organizational alignment, process review, and decoupling from performance ratings.',
+  content: `## Why OKR Fails
+Many companies treat OKR as another form of KPI, making employees afraid to set ambitious goals.
+
+## Key 1: Decouple from Performance Ratings
+OKR should encourage risk-taking. If it directly determines bonuses, employees will only write conservative goals.
+
+## Key 2: Process Matters More Than Results
+Weekly check-ins and quarterly reviews are more valuable than the final score.
+
+## Key 3: Keep Tools Simple
+Complex features raise the barrier to entry. Run the process first, then digitize.`,
+  coverImage: cover('OKR Implementation'),
+  createdAt: '2026-05-15T09:00:00.000Z',
+  updatedAt: '2026-05-15T09:00:00.000Z',
+  category: { id: 'cat-practice', name: 'Best Practice', slug: 'practice' },
+  tags: [{ id: 't3', name: 'OKR' }, { id: 't4', name: 'Performance Management' }],
+  status: 'PUBLISHED',
+};

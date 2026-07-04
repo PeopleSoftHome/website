@@ -32,3 +32,38 @@ export const CASE_STATEGRID = {
   ],
   relatedCases: [],
 };
+
+export const CASE_STATEGRID_EN = {
+  id: 'case-stategrid',
+  slug: 'stategrid-gov',
+  featured: true,
+  industry: 'Energy',
+  clientName: 'State Grid',
+  title: 'State Grid: End-to-End Digital Cadre Competition Wins Organization-Wide Trust',
+  excerpt: 'TalentPro cadre management and competition system helped State Grid make leadership selection transparent, traceable, and auditable.',
+  challenge: 'Cadre competitions involved 10+ steps from application and qualification review to written exams, interviews, assessment, and public announcement. Manual processes were inefficient, lacked transparency, and raised fairness concerns.',
+  solution: 'TalentPro cadre competition management system digitized the entire process: posting positions, online applications, qualification review, online exams, video defense, peer review, and public announcement. Every step was logged and auditable.',
+  results: 'Competition organization time shortened from 2 months to 3 weeks, participation rose 40%, and employee satisfaction with competition fairness climbed from 65% to 92%.',
+  metrics: [
+    { id: 'm1', value: '3 weeks', label: 'Competition Cycle' },
+    { id: 'm2', value: '+40%', label: 'Participation' },
+    { id: 'm3', value: '92%', label: 'Fairness Rating' },
+  ],
+  tags: ['SOE', 'Cadre Management', 'Competition'],
+  products: ['org', 'talent', 'assess-exam'],
+  quote: 'The competition system makes cadre selection more open and transparent. Every step is traceable and audit reports can be exported with one click, greatly reducing compliance pressure.',
+  author: 'James Liu',
+  authorTitle: 'Head of Organization Department',
+  coverImage: "linear-gradient(135deg, #10B981 0%, #06B6D4 100%)",
+  date: '2026-01-10',
+  teamSize: '15-person project team',
+  projectDuration: '5 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Review', title: 'Competition Process Review', desc: 'Mapped the 10+ cadre competition steps, defined owners and deadlines, and identified digitization opportunities.' },
+    { phase: 'Build', title: 'Custom System Development', desc: 'Developed a tailored cadre competition system covering posting, application, qualification review, exams, interviews, and announcement.' },
+    { phase: 'Pilot', title: 'First Online Competition Pilot', desc: 'Piloted the full online competition process for 2 positions, gathering feedback to refine the system and workflow.' },
+    { phase: 'Launch', title: 'Full Launch & Policy Alignment', desc: 'Rolled out the system organization-wide and updated cadre management policies to establish a long-term digital competition mechanism.' },
+  ],
+  relatedCases: [],
+};

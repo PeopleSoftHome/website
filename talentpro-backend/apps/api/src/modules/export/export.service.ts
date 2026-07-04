@@ -22,7 +22,7 @@ export class ExportService {
 
     const total = await this.prisma.demoBooking.count({ where });
     if (total > MAX_EXPORT_ROWS) {
-      throw new BadRequestException(`导出记录数超过上限 ${MAX_EXPORT_ROWS}，请缩小筛选范围`);
+      throw new BadRequestException(`Export row count exceeds the limit of ${MAX_EXPORT_ROWS}, please narrow your filters`);
     }
 
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
@@ -69,7 +69,7 @@ export class ExportService {
 
     const total = await this.prisma.user.count({ where });
     if (total > MAX_EXPORT_ROWS) {
-      throw new BadRequestException(`导出记录数超过上限 ${MAX_EXPORT_ROWS}，请缩小筛选范围`);
+      throw new BadRequestException(`Export row count exceeds the limit of ${MAX_EXPORT_ROWS}, please narrow your filters`);
     }
 
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({

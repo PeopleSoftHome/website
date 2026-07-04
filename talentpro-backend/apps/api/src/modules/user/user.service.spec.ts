@@ -83,7 +83,7 @@ describe('UserService', () => {
 
     it('should throw NotFoundException when user not found', async () => {
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
-      await expect(service.findOne('missing')).rejects.toThrow('用户不存在');
+      await expect(service.findOne('missing')).rejects.toThrow('User not found');
     });
   });
 
@@ -156,7 +156,7 @@ describe('UserService', () => {
       const result = await service.remove('u1');
 
       expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: 'u1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw NotFoundException when deleting missing user', async () => {

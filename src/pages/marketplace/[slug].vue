@@ -113,48 +113,52 @@ import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import AppPricing from '@/components/sections/Marketplace/AppPricing.vue';
 import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
-import { MARKETPLACE_APPS, MARKETPLACE_APP_MAP, MARKETPLACE_CATEGORIES } from '@/data/marketplace';
-import { marketplaceApi, paymentApi, cartApi } from '@/api/marketplace';
+import { getMarketplaceApps, getMarketplaceAppMap, getMarketplaceCategories } from '@/data/marketplace';
+import { marketplaceApi, paymentApi, cartApi, transformMarketplaceApp, type MarketplaceApp } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 const modalStore = useModalStore();
 
-interface MarketplaceApp {
-  id: string;
-  slug: string;
-  name: string;
-  tagline: string;
-  description: string;
-  category: string;
-  vendor: string;
-  icon: string;
-  pricingModel: string;
-  pricingTiers: { name: string; priceMonthly: number; priceYearly: number; desc: string; features: string[] }[];
-  ratingAvg: number;
-  ratingCount: number;
-  installCount: number;
-  features: string[];
-  screenshots: string[];
-  compatibility: string[];
-  featured?: boolean;
-}
+const fallbackAppMap = computed(() => getMarketplaceAppMap(locale.value));
+const fallbackCategories = computed(() => getMarketplaceCategories(locale.value));
 
-const app = computed(() => (MARKETPLACE_APP_MAP as Record<string, MarketplaceApp>)[slugStr.value || ''] || null);
+const { data: apiApp, error: appError } = useAsyncData(
+  () => `marketplace-app-${slugStr.value}-${locale.value}`,
+  async () => {
+    if (!slugStr.value) return null;
+    const res = await marketplaceApi.getApp(slugStr.value);
+    return transformMarketplaceApp(res?.data || res);
+  },
+  { server: false, default: () => null as MarketplaceApp | null, watch: [slugStr, locale] }
+);
+
+const { data: apiApps } = useAsyncData(
+  () => `marketplace-apps-all-${locale.value}`,
+  async () => {
+    const res = await marketplaceApi.getApps({ pageSize: 100 });
+    const list = (res?.data?.data || res?.data || res || []) as any[];
+    return list.map(transformMarketplaceApp);
+  },
+  { server: false, default: () => [] as MarketplaceApp[] }
+);
+
+const app = computed(() => apiApp.value || (fallbackAppMap.value as Record<string, MarketplaceApp>)[slugStr.value || ''] || null);
 const selectedTier = ref(0);
 
 const categoryLabel = computed(() => {
   const current = app.value;
   if (!current) return '';
-  const cat = MARKETPLACE_CATEGORIES.find((c) => c.id === current.category);
-  return cat?.label || current.category;
+  const catId = current.category;
+  const cat = fallbackCategories.value.find((c) => c.id === catId);
+  return cat ? t(`marketplace.categories.${catId}`) : catId;
 });
 
 useHead(() => {
@@ -215,6 +219,7 @@ const handleAddToCart = async (tier: { name: string; priceMonthly: number }) => 
       quantity: 1,
     });
     showToast(t('marketplace.addToCartSuccess'), 'success');
+    setTimeout(() => navigateTo('/marketplace/cart'), 600);
   } catch (e) {
     const err = e as { response?: { data?: { message?: string } } };
     showToast(err.response?.data?.message || t('marketplace.addToCartError'), 'error');
@@ -249,7 +254,9 @@ const handleSubscribe = async (tier: { name: string; priceMonthly: number }) => 
 const relatedApps = computed(() => {
   const current = app.value;
   if (!current) return [];
-  return MARKETPLACE_APPS.filter((a) => a.category === current.category && a.slug !== current.slug).slice(0, 3);
+  const fallbackList = getMarketplaceApps(locale.value) as MarketplaceApp[];
+  const list = apiApps.value?.length ? apiApps.value : fallbackList;
+  return list.filter((a) => a.category === current.category && a.slug !== current.slug).slice(0, 3);
 });
 
 onMounted(() => {

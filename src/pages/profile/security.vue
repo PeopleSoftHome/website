@@ -53,11 +53,12 @@
           <span>{{ t('profile.loginStatus') }}</span>
         </div>
         <div v-for="(item, i) in loginHistory" :key="i" :class="s.historyRow">
-          <span>{{ item.date }}</span>
-          <span>{{ item.device }}</span>
-          <span>{{ item.ip }}</span>
-          <span>{{ item.location }}</span>
+          <span><span :class="s.mobileLabel">{{ t('profile.loginTime') }}:</span> {{ item.date }}</span>
+          <span><span :class="s.mobileLabel">{{ t('profile.loginDevice') }}:</span> {{ item.device }}</span>
+          <span><span :class="s.mobileLabel">IP:</span> {{ item.ip }}</span>
+          <span><span :class="s.mobileLabel">{{ t('profile.loginLocation') }}:</span> {{ item.location }}</span>
           <span>
+            <span :class="s.mobileLabel">{{ t('profile.loginStatus') }}:</span>
             <span v-if="item.current" :class="s.currentTag">{{ t('profile.currentSession') }}</span>
             <span v-else :class="s.pastTag">—</span>
           </span>
@@ -69,17 +70,17 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'profile.menu.security', requiresAuth: true });
-import { ref } from 'vue';
-import { LOGIN_HISTORY } from '@/data/profile';
+import { ref, computed } from 'vue';
+import { getLoginHistory } from '@/data/profile';
 import s from './security.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const pwd = ref({ current: '', new: '', confirm: '' });
 const pwdSaving = ref(false);
 const twoFA = ref(false);
 
-const loginHistory = LOGIN_HISTORY;
+const loginHistory = computed(() => getLoginHistory(locale.value));
 
 const handleChangePassword = async () => {
   if (!pwd.value.current || !pwd.value.new || !pwd.value.confirm) {

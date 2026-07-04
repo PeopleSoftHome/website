@@ -101,7 +101,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeatureCards.vue';
 import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScenarioTabs.vue';
-import { PRODUCT_MAP } from '@/data/products';
+import { getProductMap } from '@/data/products/map';
 import { cmsApi } from '@/api/cms';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
@@ -130,7 +130,7 @@ function mergeProduct(cms: any, fallback: any) {
 
 definePageMeta({ title: 'productPage.detail', description: 'productPage.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const modalStore = useModalStore();
@@ -138,11 +138,13 @@ const relatedRef = ref<HTMLElement | null>(null);
 
 const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 
+const productMap = computed(() => getProductMap(locale.value));
+
 const { data: product } = useAsyncData(
-  () => `product-${slugStr.value}`,
+  () => `product-${slugStr.value}-${locale.value}`,
   async () => {
     const key = slugStr.value || '';
-    const fallback = (PRODUCT_MAP as Record<string, any>)[key] || null;
+    const fallback = (productMap.value as Record<string, any>)[key] || null;
     try {
       const cms = await cmsApi.getProductBySlug(key);
       const merged = mergeProduct(cms, fallback);
@@ -157,7 +159,7 @@ const { data: product } = useAsyncData(
     }
     return fallback;
   },
-  { server: false, default: () => null, watch: [slugStr] }
+  { server: false, default: () => null, watch: [slugStr, locale] }
 );
 
 useHead(() => {
@@ -177,7 +179,7 @@ useHead(() => {
 
 const relatedProducts = computed(() => {
   if (!product.value?.related) return [];
-  return product.value.related.map((s: string) => (PRODUCT_MAP as Record<string, any>)[s]).filter(Boolean);
+  return product.value.related.map((s: string) => (productMap.value as Record<string, any>)[s]).filter(Boolean);
 });
 
 const scrollRelated = (dir: number) => {

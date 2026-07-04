@@ -29,3 +29,32 @@ AI 面试官适合初筛场景，能够 7×24 小时工作，但仍需人类 HR 
   tags: [{ id: 't1', name: 'AI 招聘' }, { id: 't2', name: '人岗匹配' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_AI_RECRUITING_2026_EN: BlogPost = {
+  id: 'blog-1',
+  slug: 'ai-recruiting-2026',
+  title: '2026 AI Recruiting Deep Dive: From Resume Screening to Smart Interviews',
+  excerpt: 'AI recruiting has moved from proof of concept to scaled deployment. This article breaks down the implementation essentials of resume parsing, job-candidate matching, AI interviews, and offer prediction.',
+  content: `## 1. The Core Value of AI Recruiting
+In today's fierce talent competition, recruiting efficiency directly determines an organization's talent density. AI recruiting automates repetitive work so HR can return to high-value communication.
+
+## 2. The Evolution of Resume Parsing
+From rule templates to deep learning, modern resume parsers handle 50+ formats with key information extraction accuracy above 95%.
+
+## 3. Key Metrics for Job-Candidate Matching
+Matching scores should not rely solely on keyword overlap. They should combine job competency models, candidate potential, and cultural fit.
+
+## 4. Best Practices for AI Interviews
+AI interviewers are ideal for initial screening, working 24/7, but human HR should still own final interviews and key decisions.
+
+## 5. Deployment Recommendations
+1. Start with high-volume, standardized roles.
+2. Establish algorithmic fairness review mechanisms.
+3. Continuously collect hiring-manager feedback to iterate models.`,
+  coverImage: cover('AI Recruiting'),
+  createdAt: '2026-05-20T10:00:00.000Z',
+  updatedAt: '2026-05-20T10:00:00.000Z',
+  category: { id: 'cat-ai', name: 'AI Column', slug: 'ai' },
+  tags: [{ id: 't1', name: 'AI Recruiting' }, { id: 't2', name: 'Job Matching' }],
+  status: 'PUBLISHED',
+};

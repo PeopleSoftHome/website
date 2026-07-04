@@ -94,18 +94,21 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { caseApi } from '@/api/case';
-import { CASES, CASE_INDUSTRIES } from '@/data/cases';
+import { getCases, getCaseIndustries } from '@/data/cases';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import { coverStyle } from '@/utils/coverStyle';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 usePageSeo({ title: t('cases.title'), description: t('cases.subtitle'), path: '/cases' });
 
 const activeIndustry = ref('');
 const displayLimit = ref(6);
 const PAGE_SIZE = 6;
+
+const caseList = computed(() => getCases(locale.value));
+const industries = computed(() => getCaseIndustries(locale.value));
 
 const tabItems = computed(() => industries.value.map((ind) => ({
   id: ind || 'all',
@@ -117,13 +120,17 @@ function onSelectIndustry(index: number) {
   displayLimit.value = PAGE_SIZE;
 }
 
+watch(locale, () => {
+  activeIndustry.value = '';
+});
+
 const { data: casesRes, pending: loading, error: fetchError } = useAsyncData(
-  'cases-list',
+  () => `cases-list-${locale.value}`,
   () => {
     const params = activeIndustry.value !== '' ? { industry: activeIndustry.value } : {};
     return caseApi.getCases(params);
   },
-  { server: false, watch: [activeIndustry], default: () => ({ data: [] }) }
+  { server: false, watch: [activeIndustry, locale], default: () => ({ data: [] }) }
 );
 
 const cases = computed(() => {
@@ -131,9 +138,9 @@ const cases = computed(() => {
   const hasApiData = Array.isArray(apiData) && apiData.length > 0;
   if (fetchError.value || !hasApiData) {
     if (activeIndustry.value !== '') {
-      return CASES.filter((c) => c.industry === activeIndustry.value);
+      return caseList.value.filter((c) => c.industry === activeIndustry.value);
     }
-    return CASES;
+    return caseList.value;
   }
   return apiData;
 });
@@ -143,7 +150,6 @@ const error = computed(() => {
   return err.response?.data?.message || err.message || t('common.loadError');
 });
 
-const industries = ref(CASE_INDUSTRIES);
 const featuredCase = computed(() => {
   return cases.value.find((c) => c.featured) || null;
 });
@@ -160,7 +166,7 @@ onMounted(() => {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: t('cases.jsonLdName'),
-    itemListElement: CASES.slice(0, 6).map((c, i) => ({
+    itemListElement: caseList.value.slice(0, 6).map((c, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       name: c.title,

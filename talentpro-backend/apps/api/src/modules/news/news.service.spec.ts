@@ -104,7 +104,7 @@ describe('NewsService', () => {
       jest.spyOn(prisma.news, 'findFirst').mockResolvedValue(null);
 
       await expect(service.findBySlug('not-found')).rejects.toThrow(NotFoundException);
-      await expect(service.findBySlug('not-found')).rejects.toThrow('新闻不存在');
+      await expect(service.findBySlug('not-found')).rejects.toThrow('News not found');
     });
   });
 

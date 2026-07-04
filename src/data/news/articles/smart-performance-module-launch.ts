@@ -12,3 +12,18 @@ export const NEWS_SMART_PERFORMANCE_MODULE_LAUNCH = {
   featured: false,
   tags: ['绩效管理', 'OKR', 'KPI', '产品升级'],
 };
+
+export const NEWS_SMART_PERFORMANCE_MODULE_LAUNCH_EN = {
+  id: 'news-5',
+  slug: 'smart-performance-module-launch',
+  title: 'Performance Management Module 4.0 Launched: OKR + KPI Dual-Track Experience',
+  summary: 'The new performance module supports flexible switching between OKR and KPI, plus real-time goal alignment maps, AI performance insights, and intelligent calibration meetings.',
+  content: 'TalentPro Performance Management Module 4.0 is officially released, delivering a revolutionary performance management experience.\nKey upgrades include: flexible switching between OKR and KPI dual-track modes to meet different enterprise needs; real-time goal alignment maps that visualize cascading organizational goals; AI performance insights that automatically identify high-potential employees and performance risks; and intelligent calibration meetings that provide data-driven recommendations and discussion frameworks.\nBeta data shows that companies using the new module shortened performance review cycles by an average of 30% and improved employee satisfaction with performance fairness by 25%.',
+  category: 'Product Update',
+  coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23A855F7'/%3E%3Cstop offset='100%25' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white' font-family='system-ui'%3EPerformance 4.0%3C/text%3E%3C/svg%3E",
+  author: 'Product Team',
+  authorTitle: 'Performance Product Lead',
+  publishedAt: '2026-02-20',
+  featured: false,
+  tags: ['Performance Management', 'OKR', 'KPI', 'Product Upgrade'],
+};

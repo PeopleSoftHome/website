@@ -90,12 +90,12 @@ describe('ForumController', () => {
     });
 
     it('deleteCategory should delegate to service', async () => {
-      jest.spyOn(forumService, 'deleteCategory').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(forumService, 'deleteCategory').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteCategory('c1');
 
       expect(forumService.deleteCategory).toHaveBeenCalledWith('c1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -161,12 +161,12 @@ describe('ForumController', () => {
     });
 
     it('deleteTopic should delegate with id and workspaceId', async () => {
-      jest.spyOn(forumService, 'deleteTopic').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(forumService, 'deleteTopic').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteTopic('t1', mockUser);
 
       expect(forumService.deleteTopic).toHaveBeenCalledWith('t1', mockUser.workspaceId);
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('togglePin should delegate to service', async () => {
@@ -216,12 +216,12 @@ describe('ForumController', () => {
     });
 
     it('deletePost should delegate with id and workspaceId', async () => {
-      jest.spyOn(forumService, 'deletePost').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(forumService, 'deletePost').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deletePost('p1', mockUser);
 
       expect(forumService.deletePost).toHaveBeenCalledWith('p1', mockUser.workspaceId);
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('markAsSolution should delegate to service', async () => {

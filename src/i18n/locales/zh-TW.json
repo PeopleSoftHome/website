@@ -518,6 +518,16 @@
     "searchPlaceholder": "搜尋應用名稱、功能或廠商...",
     "search": "搜尋",
     "allCategories": "全部分類",
+    "categories": {
+      "recruitment": "招聘與人才獲取",
+      "compensation": "薪酬與福利",
+      "performance": "績效與目標",
+      "learning": "學習與發展",
+      "experience": "員工體驗",
+      "compliance": "合規與安全",
+      "ai": "AI 與自動化",
+      "analytics": "數據與分析"
+    },
     "pricingFilter": "定價",
     "allPricing": "全部定價",
     "free": "免費",
@@ -565,6 +575,7 @@
     "resultsFor": "搜尋結果",
     "showing": "共",
     "items": "個應用",
+    "anonymousUser": "匿名用戶",
     "priceFree": "免費",
     "priceSubscription": "訂閱制",
     "priceOneTime": "一次性",
@@ -604,7 +615,16 @@
     "viewMyApps": "查看我的應用",
     "paymentCancelled": "支付已取消",
     "paymentCancelledDesc": "您取消了支付，如有疑問請聯繫客服。",
-    "tryAgain": "重試支付"
+    "tryAgain": "重試支付",
+    "cartTitle": "購物車",
+    "cartEmpty": "購物車是空的",
+    "cartCheckout": "去結算",
+    "cartContinue": "繼續購物",
+    "orderTotal": "合計",
+    "orderSubtotal": "小計",
+    "orderDiscount": "優惠",
+    "orderTax": "稅費",
+    "orderInvoices": "發票"
   },
   "resources": {
     "sectionTag": " 資源中心",
@@ -784,7 +804,8 @@
     "summaryCompany": "公司",
     "summaryProducts": "意向產品",
     "summaryScale": "企業規模",
-    "recommendTitle": "您可能還需要"
+    "recommendTitle": "您可能還需要",
+    "submitError": "提交失敗，請稍後重試"
   },
   "floatingBar": {
     "demo": "預約演示",
@@ -817,6 +838,8 @@
   "blog": {
     "title": "TalentPro 博客",
     "pageTitle": "TalentPro 博客",
+    "subtitle": "人力資源數字化轉型的前沿洞察",
+    "detail": "文章詳情",
     "back": "返回博客列表",
     "noPosts": "暫無文章",
     "jsonLdName": "TalentPro 博客",
@@ -1056,15 +1079,24 @@
     "menu": {
       "dashboard": "總覽",
       "orders": "我的訂單",
+      "apps": "我的應用",
       "settings": "賬戶設置",
       "security": "安全中心"
     },
     "activity": "最近動態",
+    "activityOrder": "購買了 AI 招募助手 Pro",
+    "activityLogin": "在新設備上登入",
+    "activityReview": "發表了應用評價",
+    "activityInstall": "安裝了績效管理系統",
+    "activityUpdate": "更新了個人資料",
     "quick": "快捷入口",
     "goMarketplace": "應用廣場",
     "myOrders": "我的訂單",
+    "myApps": "我的應用",
     "community": "用戶社區",
     "security": "安全設置",
+    "noApps": "暫無應用",
+    "unknownApp": "未知應用",
     "statOrders": "訂單",
     "statApps": "應用",
     "statNotifications": "通知",
@@ -1111,6 +1143,23 @@
       "completed": "已完成",
       "refunded": "已退款",
       "failed": "已失敗"
+    },
+    "billing": "賬單與訂閱",
+    "billingSubscriptions": "訂閱",
+    "billingOrders": "訂單",
+    "billingInvoices": "發票",
+    "requestInvoice": "申請發票",
+    "invoiceTitle": "發票抬頭",
+    "invoiceTaxNo": "稅號",
+    "invoiceRequested": "已申請",
+    "noSubscriptions": "暫無訂閱",
+    "noInvoices": "暫無發票",
+    "subscriptionStatus": {
+      "active": "生效中",
+      "trialing": "試用中",
+      "expired": "已過期",
+      "cancelled": "已取消",
+      "pastDue": "已欠費"
     }
   },
   "pagination": {
@@ -1140,6 +1189,7 @@
   "productPage": {
     "title": "產品",
     "subtitle": "一體化 HR SaaS，加速人力資源數位化",
+    "jsonLdName": "TalentPro 產品矩陣",
     "detail": "產品詳情",
     "tag": "產品",
     "all": "全部",
@@ -1206,6 +1256,8 @@
     "related": "相關資源",
     "searchPlaceholder": "搜尋資源標題、標籤...",
     "noResults": "未找到匹配的資源",
+    "jsonLdName": "TalentPro 資源中心",
+    "jsonLdDesc": "白皮書、報告、指南與工具",
     "demoCta": "預約產品演示",
     "notFound": "未找到該資源",
     "contents": "目錄",
@@ -1284,6 +1336,7 @@
     "jsonLdDesc": "與我們一起，用科技重新定義人才管理",
     "pathTitle": "成長路徑",
     "testimonialTitle": "員工心聲",
+    "joinedIn": "{year} 年加入",
     "detailLabels": {
       "department": "部門",
       "location": "地點",
@@ -1376,7 +1429,9 @@
     "other": "其他",
     "loadMore": "載入更多",
     "all": "全部",
-    "cancel": "取消"
+    "cancel": "取消",
+    "apply": "應用",
+    "confirm": "確認"
   },
   "cart": {
     "title": "購物車",
@@ -1386,7 +1441,9 @@
     "total": "合計",
     "checkout": "去結算",
     "error": "操作失敗，請重試",
-    "checkoutError": "結算失敗，請重試"
+    "checkoutError": "結算失敗，請重試",
+    "itemCount": "共 {n} 件商品",
+    "remove": "刪除"
   },
   "errors": {
     "requestFailed": "請求失敗",
@@ -1415,6 +1472,8 @@
     "backHome": "返回首頁",
     "fallback": "組件載入失敗，請嘗試重新整理頁面。",
     "unknown": "未知錯誤",
-    "details": "錯誤詳情（開發模式）"
+    "details": "錯誤詳情（開發模式）",
+    "component": "組件",
+    "info": "資訊"
   }
 }

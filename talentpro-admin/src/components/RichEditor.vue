@@ -27,13 +27,16 @@
 
 <script setup>
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 
+const { t } = useI18n();
+
 const props = defineProps({
   modelValue: { type: String, default: '' },
-  placeholder: { type: String, default: '请输入内容...' },
+  placeholder: { type: String, default: '' },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -42,7 +45,7 @@ const editor = useEditor({
   content: props.modelValue,
   extensions: [
     StarterKit,
-    Placeholder.configure({ placeholder: props.placeholder }),
+    Placeholder.configure({ placeholder: props.placeholder || t('richEditor.placeholder') }),
   ],
   onUpdate: ({ editor }) => {
     emit('update:modelValue', editor.getHTML());

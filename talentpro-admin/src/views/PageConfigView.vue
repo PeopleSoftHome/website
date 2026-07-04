@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">首页配置管理</h2>
+    <h2 style="margin-bottom:20px">{{ t('pageConfig.title') }}</h2>
 
     <el-row :gutter="16">
       <!-- 左侧：CMS 可编辑配置 -->
@@ -8,29 +8,29 @@
         <el-card shadow="hover" v-loading="loading">
           <template #header>
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <span>板块排序与启用状态</span>
+              <span>{{ t('pageConfig.sectionSortAndStatus') }}</span>
               <div style="display:flex;gap:8px;align-items:center">
-                <el-tag v-if="page?.isPublished" type="success" size="small">已发布</el-tag>
-                <el-tag v-else type="warning" size="small">未发布</el-tag>
+                <el-tag v-if="page?.isPublished" type="success" size="small">{{ t('pageConfig.published') }}</el-tag>
+                <el-tag v-else type="warning" size="small">{{ t('pageConfig.unpublished') }}</el-tag>
                 <el-button v-if="hasChanges" type="primary" size="small" @click="save" :loading="saving">
-                  保存更改
+                  {{ t('pageConfig.saveChanges') }}
                 </el-button>
-                <el-button size="small" @click="refresh">刷新</el-button>
+                <el-button size="small" @click="refresh">{{ t('pageConfig.refresh') }}</el-button>
               </div>
             </div>
           </template>
 
           <!-- 无 page -->
-          <el-empty v-if="!page" description="暂无首页配置" :image-size="80">
+          <el-empty v-if="!page" :description="t('pageConfig.noPageConfig')" :image-size="80">
             <el-button type="primary" @click="createDefaultPage" :loading="creating">
-              初始化默认首页
+              {{ t('pageConfig.initDefaultHome') }}
             </el-button>
           </el-empty>
 
           <!-- 有 page 但无 sections -->
-          <el-empty v-else-if="sections.length === 0" description="页面已创建，但无 Section 配置" :image-size="80">
+          <el-empty v-else-if="sections.length === 0" :description="t('pageConfig.pageCreatedNoSections')" :image-size="80">
             <el-button type="primary" @click="autoCreateSections" :loading="creating">
-              生成默认 Section
+              {{ t('pageConfig.generateDefaultSections') }}
             </el-button>
           </el-empty>
 
@@ -59,8 +59,8 @@
                 v-model="s.isActive"
                 size="small"
                 inline-prompt
-                active-text="启用"
-                inactive-text="禁用"
+                :active-text="t('pageConfig.enable')"
+                :inactive-text="t('pageConfig.disable')"
                 style="margin-left:auto"
                 @change="hasChanges = true"
               />
@@ -71,14 +71,14 @@
                 style="margin-left:8px"
                 @click="removeSection(i)"
               >
-                删除
+                {{ t('pageConfig.delete') }}
               </el-button>
             </div>
           </div>
 
           <!-- 添加 Section -->
           <div v-if="page && availableSections.length > 0" style="margin-top:16px;display:flex;gap:8px;align-items:center">
-            <el-select v-model="selectedToAdd" placeholder="选择要添加的板块" size="small" style="width:220px">
+            <el-select v-model="selectedToAdd" :placeholder="t('pageConfig.selectSection')" size="small" style="width:220px">
               <el-option
                 v-for="rs in availableSections"
                 :key="rs.key"
@@ -87,7 +87,7 @@
               />
             </el-select>
             <el-button type="primary" size="small" @click="addSection" :disabled="!selectedToAdd">
-              添加
+              {{ t('pageConfig.add') }}
             </el-button>
           </div>
         </el-card>
@@ -95,13 +95,13 @@
         <!-- Page 元信息 -->
         <el-card shadow="hover" style="margin-top:16px" v-if="page">
           <template #header>
-            <span>页面元信息</span>
+            <span>{{ t('pageConfig.pageMeta') }}</span>
           </template>
           <el-descriptions :column="2" border size="small">
-            <el-descriptions-item label="Slug">{{ page.slug }}</el-descriptions-item>
-            <el-descriptions-item label="标题">{{ page.title }}</el-descriptions-item>
-            <el-descriptions-item label="Meta Title">{{ page.metaTitle || '-' }}</el-descriptions-item>
-            <el-descriptions-item label="Meta Desc">{{ page.metaDesc || '-' }}</el-descriptions-item>
+            <el-descriptions-item :label="t('pageConfig.slug')">{{ page.slug }}</el-descriptions-item>
+            <el-descriptions-item :label="t('pageConfig.pageTitle')">{{ page.title }}</el-descriptions-item>
+            <el-descriptions-item :label="t('pageConfig.metaTitle')">{{ page.metaTitle || '-' }}</el-descriptions-item>
+            <el-descriptions-item :label="t('pageConfig.metaDesc')">{{ page.metaDesc || '-' }}</el-descriptions-item>
           </el-descriptions>
         </el-card>
       </el-col>
@@ -110,27 +110,27 @@
       <el-col :xs="24" :md="8" style="margin-top:16px">
         <el-card shadow="hover">
           <template #header>
-            <span>前端插件注册表（{{ REGISTERED_SECTIONS.length }} 个）</span>
+            <span>{{ t('pageConfig.registryCount', { count: REGISTERED_SECTIONS.length }) }}</span>
           </template>
 
           <el-table :data="REGISTERED_SECTIONS" size="small" :border="true">
-            <el-table-column label="key" width="110" prop="key" />
-            <el-table-column label="名称" prop="title" />
-            <el-table-column label="CMS 中" width="70" align="center">
+            <el-table-column :label="t('pageConfig.key')" width="110" prop="key" />
+            <el-table-column :label="t('pageConfig.name')" prop="title" />
+            <el-table-column :label="t('pageConfig.inCms')" width="70" align="center">
               <template #default="{ row }">
                 <el-tag :type="isInCms(row.key) ? 'success' : 'info'" size="small">
-                  {{ isInCms(row.key) ? '✓' : '-' }}
+                  {{ isInCms(row.key) ? t('pageConfig.yes') : t('pageConfig.no') }}
                 </el-tag>
               </template>
             </el-table-column>
           </el-table>
 
-          <el-alert title="提示" type="info" :closable="false" style="margin-top:16px">
+          <el-alert :title="t('pageConfig.tip')" type="info" :closable="false" style="margin-top:16px">
             <p style="margin:0;font-size:13px;line-height:1.6">
-              • 拖拽左侧列表可调整板块渲染顺序<br>
-              • 关闭开关可禁用板块（不会删除数据）<br>
-              • 未在 CMS 中注册的板块，前端将跳过渲染<br>
-              • 修改后点击「保存更改」才会生效
+              • {{ t('pageConfig.dragHint') }}<br>
+              • {{ t('pageConfig.disableHint') }}<br>
+              • {{ t('pageConfig.skipHint') }}<br>
+              • {{ t('pageConfig.saveToTakeEffect') }}
             </p>
           </el-alert>
         </el-card>
@@ -141,10 +141,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Rank } from '@element-plus/icons-vue';
 import client from '@/api/client.js';
 import { REGISTERED_SECTIONS } from '@/data/sectionRegistry.js';
+
+const { t } = useI18n();
 
 const page = ref(null);
 const sections = ref([]);
@@ -227,11 +230,11 @@ const save = async () => {
       isActive: s.isActive,
     }));
     await client.post('/cms/sections/batch', { sections: payload });
-    ElMessage.success('保存成功');
+    ElMessage.success(t('pageConfig.saveSuccess'));
     hasChanges.value = false;
     fetchPage();
   } catch (e) {
-    ElMessage.error(e?.response?.data?.message || e.message || '保存失败');
+    ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.saveFailed'));
   }
   saving.value = false;
 };
@@ -239,14 +242,14 @@ const save = async () => {
 const removeSection = async (i) => {
   const s = sections.value[i];
   try {
-    await ElMessageBox.confirm(`确认删除「${s.title}」板块？`, '提示', { type: 'warning' });
+    await ElMessageBox.confirm(t('pageConfig.deleteConfirm', { title: s.title }), t('pageConfig.deleteTip'), { type: 'warning' });
     await client.delete(`/cms/sections/${s.id}`);
     sections.value.splice(i, 1);
-    ElMessage.success('已删除');
+    ElMessage.success(t('pageConfig.deleted'));
     hasChanges.value = true;
   } catch (e) {
     if (e !== 'cancel') {
-      ElMessage.error(e?.response?.data?.message || e.message || '删除失败');
+      ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.deleteFailed'));
     }
   }
 };
@@ -262,11 +265,11 @@ const addSection = async () => {
       config: reg?.defaultConfig || {},
       isActive: true,
     });
-    ElMessage.success('添加成功');
+    ElMessage.success(t('pageConfig.addSuccess'));
     selectedToAdd.value = '';
     fetchPage();
   } catch (e) {
-    ElMessage.error(e?.response?.data?.message || e.message || '添加失败');
+    ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.addFailed'));
   }
 };
 
@@ -275,18 +278,18 @@ const createDefaultPage = async () => {
   try {
     await client.post('/cms/pages', {
       slug: 'home',
-      title: '首页',
-      metaTitle: 'TalentPro — 用 AI 重新定义人才管理',
-      metaDesc: 'TalentPro 为中大型企业提供一体化 HR SaaS 解决方案',
+      title: t('pageConfig.defaults.pageTitle'),
+      metaTitle: t('pageConfig.defaults.metaTitle'),
+      metaDesc: t('pageConfig.defaults.metaDesc'),
     });
-    ElMessage.success('默认首页配置已创建');
+    ElMessage.success(t('pageConfig.defaultHomeCreated'));
     await fetchPage();
     // 自动创建默认 sections
     if (page.value && sections.value.length === 0) {
       await autoCreateSections();
     }
   } catch (e) {
-    ElMessage.error(e?.response?.data?.message || e.message || '创建失败');
+    ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.createFailed'));
   }
   creating.value = false;
 };
@@ -305,17 +308,17 @@ const autoCreateSections = async () => {
         isActive: true,
       });
     }
-    ElMessage.success('默认 Section 已生成');
+    ElMessage.success(t('pageConfig.defaultSectionsGenerated'));
     fetchPage();
   } catch (e) {
-    ElMessage.error(e?.response?.data?.message || e.message || '生成失败');
+    ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.generateFailed'));
   }
   creating.value = false;
 };
 
 const refresh = () => {
   fetchPage();
-  ElMessage.success('已刷新');
+  ElMessage.success(t('pageConfig.refreshed'));
 };
 
 onMounted(fetchPage);

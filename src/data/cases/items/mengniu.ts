@@ -32,3 +32,38 @@ export const CASE_MENGNIU = {
   ],
   relatedCases: ['xinyada-bio'],
 };
+
+export const CASE_MENGNIU_EN = {
+  id: 'case-mengniu',
+  slug: 'mengniu-ai-recruit',
+  featured: true,
+  industry: 'FMCG',
+  clientName: 'Mengniu Dairy',
+  title: 'Mengniu: AI Recruiting Powers 10,000+ Campus Hires, Screening Efficiency Up 80%',
+  excerpt: 'By deploying TalentPro AI Recruiter and AI Interviewer, Mengniu automated its entire campus recruiting workflow, filtering tens of thousands of resumes and letting HR focus on high-value candidates.',
+  challenge: 'Each campus season brings more than 100,000 applications for a 20-person HR team. Manual screening was slow and error-prone, top candidates dropped off, and interview scheduling created long wait times and poor experiences.',
+  solution: 'TalentPro AI Recruiter scored and matched resumes automatically, while the AI Interviewer handled first-round interviews 24/7. A real-time recruiting dashboard tracked funnel conversion and pinpointed bottlenecks.',
+  results: 'Initial resume screening dropped from 15 minutes per candidate to 30 seconds. The AI Interviewer handled 70% of first-round interviews, campus hiring cycle shortened from 60 days to 36 days, and candidate satisfaction rose 25%.',
+  metrics: [
+    { id: 'm1', value: '80%', label: 'Screening Efficiency Gain' },
+    { id: 'm2', value: '36 days', label: 'Campus Hiring Cycle' },
+    { id: 'm3', value: '100K+', label: 'Resumes Processed' },
+  ],
+  tags: ['AI Recruiting', 'Campus Hiring', 'FMCG'],
+  products: ['ai-recruit', 'ai-interview', 'recruit'],
+  quote: 'AI Recruiter freed our HR team from tedious resume screening so they could focus on real talent strategy.',
+  author: 'Lily Wang',
+  authorTitle: 'VP of Human Resources',
+  coverImage: "linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)",
+  date: '2026-01-20',
+  teamSize: '20-person HR team',
+  projectDuration: '3 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Discovery', title: 'Needs Assessment & Solution Design', desc: 'In-depth interviews with HR and business teams mapped campus hiring pain points and defined AI screening models and interview dimensions.' },
+    { phase: 'Deployment', title: 'System Deployment & Data Integration', desc: 'The system went live in two weeks, integrated with WeCom and the careers portal, and imported historical resume data in bulk.' },
+    { phase: 'Training', title: 'AI Model Training & Calibration', desc: 'AI screening algorithms were trained on Mengniu competency models and interview scoring criteria were calibrated for consistency.' },
+    { phase: 'Launch', title: 'Full Launch & Continuous Optimization', desc: 'Rolled out across the campus season with real-time funnel monitoring and continuous optimization of AI models and interview question banks.' },
+  ],
+  relatedCases: ['xinyada-bio'],
+};

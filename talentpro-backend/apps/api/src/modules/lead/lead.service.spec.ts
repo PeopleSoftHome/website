@@ -142,7 +142,7 @@ describe('LeadService', () => {
       jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(null);
 
       await expect(service.findOne('missing')).rejects.toThrow(NotFoundException);
-      await expect(service.findOne('missing')).rejects.toThrow('预约记录不存在');
+      await expect(service.findOne('missing')).rejects.toThrow('Booking record not found');
     });
   });
 
@@ -241,7 +241,7 @@ describe('LeadService', () => {
       jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(null);
 
       await expect(service.updateStatus('missing', LeadStatus.CONTACTED)).rejects.toThrow(NotFoundException);
-      await expect(service.updateStatus('missing', LeadStatus.CONTACTED)).rejects.toThrow('预约记录不存在');
+      await expect(service.updateStatus('missing', LeadStatus.CONTACTED)).rejects.toThrow('Booking record not found');
     });
 
     it('should throw BadRequestException when status transition is invalid', async () => {
@@ -249,7 +249,7 @@ describe('LeadService', () => {
       jest.spyOn(prisma.demoBooking, 'findFirst').mockResolvedValue(mockBooking as unknown as DemoBooking);
 
       await expect(service.updateStatus('b1', LeadStatus.NEW)).rejects.toThrow(BadRequestException);
-      await expect(service.updateStatus('b1', LeadStatus.NEW)).rejects.toThrow('状态无法从 WON 变更为 NEW');
+      await expect(service.updateStatus('b1', LeadStatus.NEW)).rejects.toThrow('Status cannot transition from WON to NEW');
     });
   });
 });

@@ -118,7 +118,7 @@ describe('RoleService', () => {
     it('should delete role and return message', async () => {
       const result = await service.remove('r1');
       expect(prisma.role.delete).toHaveBeenCalledWith({ where: { id: 'r1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw when deleting nonexistent role', async () => {

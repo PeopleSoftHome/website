@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, PaymentStatus } from '@prisma/client';
 import { PrismaService } from '@/common/prisma/prisma.service';
 
 @Injectable()
@@ -180,6 +180,67 @@ export class AnalyticsService {
         sessionId: data.sessionId,
       },
     });
+  }
+
+  async getMarketplaceRevenue(days = 30) {
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+    since.setHours(0, 0, 0, 0);
+
+    const [byProvider, byDay, topApps] = await Promise.all([
+      this.prisma.order.groupBy({
+        by: ['provider'],
+        where: { status: PaymentStatus.COMPLETED },
+        _count: { provider: true },
+        _sum: { total: true },
+      }),
+      this.prisma.order.groupBy({
+        by: ['createdAt'],
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: since } },
+        _sum: { total: true },
+        _count: { id: true },
+      }).then((rows) =>
+        rows.map((r) => ({
+          date: r.createdAt.toISOString().split('T')[0],
+          revenue: r._sum.total || 0,
+          orders: r._count.id,
+        })),
+      ),
+      this.prisma.order.findMany({
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: since } },
+        include: { subscription: { include: { app: true } } },
+        orderBy: { paidAt: 'asc' },
+      }).then((orders) => {
+        const appMap = new Map<string, { name: string; revenue: number; orders: number }>();
+        for (const order of orders) {
+          const app = order.subscription?.app;
+          if (!app) continue;
+          const stat = appMap.get(app.id) || { name: app.name, revenue: 0, orders: 0 };
+          stat.revenue += order.total;
+          stat.orders += 1;
+          appMap.set(app.id, stat);
+        }
+        return Array.from(appMap.entries())
+          .sort((a, b) => b[1].revenue - a[1].revenue)
+          .slice(0, 10)
+          .map(([appId, value]) => ({ appId, ...value }));
+      }),
+    ]);
+
+    const totalRevenue = byProvider.reduce((sum, row) => sum + (row._sum.total || 0), 0);
+    const totalOrders = byProvider.reduce((sum, row) => sum + row._count.provider, 0);
+
+    return {
+      totalRevenue,
+      totalOrders,
+      byProvider: byProvider.map((row) => ({
+        provider: row.provider || 'UNKNOWN',
+        count: row._count.provider,
+        revenue: row._sum.total || 0,
+      })),
+      byDay,
+      topApps,
+    };
   }
 
   async getConversionFunnel() {

@@ -89,6 +89,16 @@ export class AnalyticsController {
     return this.analyticsService.getDashboardStats(days ? Number(days) || 30 : 30);
   }
 
+  @Get('marketplace-revenue')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '应用市场收入分析' })
+  @ApiQuery({ name: 'days', required: false })
+  getMarketplaceRevenue(@Query('days') days?: string) {
+    return this.analyticsService.getMarketplaceRevenue(days ? Number(days) || 30 : 30);
+  }
+
   @Get('funnel')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')

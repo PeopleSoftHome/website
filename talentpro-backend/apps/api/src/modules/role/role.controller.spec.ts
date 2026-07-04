@@ -95,7 +95,7 @@ describe('RoleController', () => {
 
   describe('DELETE /roles/:id', () => {
     it('should remove role', async () => {
-      const expected = { message: '删除成功' };
+      const expected = { message: 'Deleted successfully' };
       jest.spyOn(roleService, 'remove').mockResolvedValue(expected);
 
       const result = await controller.remove('r1');

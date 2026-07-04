@@ -14,30 +14,30 @@
         <img :src="modelValue" alt="preview" />
         <div class="upload-mask">
           <el-icon :size="20"><Delete /></el-icon>
-          <span>点击或拖拽替换</span>
+          <span>{{ t('imageUpload.replaceHint') }}</span>
         </div>
       </div>
       <div v-else>
         <el-icon :size="28"><UploadFilled /></el-icon>
         <div class="el-upload__text">
-          拖拽图片到此处 或 <em>点击上传</em>
+          {{ t('imageUpload.dragHint') }} <em>{{ t('imageUpload.clickUpload') }}</em>
         </div>
       </div>
       <template #tip>
-        <div class="el-upload__tip">支持 jpg/png/gif/webp，不超过 5MB</div>
+        <div class="el-upload__tip">{{ t('imageUpload.tip') }}</div>
       </template>
     </el-upload>
 
     <div v-if="modelValue" class="upload-actions">
       <el-button link type="danger" size="small" @click.stop="handleRemove">
-        <el-icon><Delete /></el-icon> 删除
+        <el-icon><Delete /></el-icon> {{ t('imageUpload.delete') }}
       </el-button>
       <el-button link type="primary" size="small" @click.stop="handlePreview">
-        <el-icon><View /></el-icon> 预览
+        <el-icon><View /></el-icon> {{ t('imageUpload.preview') }}
       </el-button>
     </div>
 
-    <el-dialog v-model="previewVisible" title="图片预览" append-to-body>
+    <el-dialog v-model="previewVisible" :title="t('imageUpload.previewTitle')" append-to-body>
       <img :src="modelValue" style="width: 100%; display: block;" />
     </el-dialog>
   </div>
@@ -45,9 +45,12 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { UploadFilled, Delete, View } from '@element-plus/icons-vue';
 import { useAuthStore } from '@/stores/auth.js';
+
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -71,12 +74,12 @@ const beforeUpload = (file) => {
   const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   const isValid = validTypes.includes(file.type);
   if (!isValid) {
-    ElMessage.error('仅支持 jpg/png/gif/webp 格式');
+    ElMessage.error(t('imageUpload.invalidType'));
     return false;
   }
   const isLt5M = file.size / 1024 / 1024 < 5;
   if (!isLt5M) {
-    ElMessage.error('图片大小不能超过 5MB');
+    ElMessage.error(t('imageUpload.tooLarge'));
     return false;
   }
   return true;
@@ -86,14 +89,14 @@ const handleSuccess = (res) => {
   const url = res.data?.url || res.url || res.data;
   if (url) {
     emit('update:modelValue', url);
-    ElMessage.success('上传成功');
+    ElMessage.success(t('imageUpload.uploadSuccess'));
   } else {
-    ElMessage.error('上传响应格式异常');
+    ElMessage.error(t('imageUpload.invalidResponse'));
   }
 };
 
 const handleError = () => {
-  ElMessage.error('上传失败');
+  ElMessage.error(t('imageUpload.uploadFailed'));
 };
 
 const handleRemove = () => {

@@ -111,7 +111,7 @@ describe('ForumTopicService', () => {
       const result = await service.deleteCategory('c1');
 
       expect(prisma.forumCategory.delete).toHaveBeenCalledWith({ where: { id: 'c1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -242,7 +242,7 @@ describe('ForumTopicService', () => {
       jest.spyOn(prisma.forumTopic, 'findFirst').mockResolvedValue(null);
 
       await expect(service.findTopicById('missing')).rejects.toThrow(NotFoundException);
-      await expect(service.findTopicById('missing')).rejects.toThrow('话题不存在');
+      await expect(service.findTopicById('missing')).rejects.toThrow('Topic not found');
     });
 
     it('should include workspaceId in query when provided', async () => {
@@ -336,7 +336,7 @@ describe('ForumTopicService', () => {
       jest.spyOn(prisma.forumTopic, 'findFirst').mockResolvedValue(null);
 
       await expect(service.updateTopic('t1', { title: 'X' }, 'w1')).rejects.toThrow(NotFoundException);
-      await expect(service.updateTopic('t1', { title: 'X' }, 'w1')).rejects.toThrow('话题不存在或无权访问');
+      await expect(service.updateTopic('t1', { title: 'X' }, 'w1')).rejects.toThrow('Topic not found or no access');
     });
   });
 
@@ -347,7 +347,7 @@ describe('ForumTopicService', () => {
       const result = await service.deleteTopic('t1');
 
       expect(prisma.forumTopic.findFirst).not.toHaveBeenCalled();
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should delete a topic with workspaceId when it exists', async () => {
@@ -357,14 +357,14 @@ describe('ForumTopicService', () => {
       const result = await service.deleteTopic('t1', 'w1');
 
       expect(prisma.forumTopic.findFirst).toHaveBeenCalledWith({ where: { id: 't1', workspaceId: 'w1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw NotFoundException when workspace topic not found', async () => {
       jest.spyOn(prisma.forumTopic, 'findFirst').mockResolvedValue(null);
 
       await expect(service.deleteTopic('t1', 'w1')).rejects.toThrow(NotFoundException);
-      await expect(service.deleteTopic('t1', 'w1')).rejects.toThrow('话题不存在或无权访问');
+      await expect(service.deleteTopic('t1', 'w1')).rejects.toThrow('Topic not found or no access');
     });
   });
 

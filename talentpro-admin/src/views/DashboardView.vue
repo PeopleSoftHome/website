@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">仪表盘</h2>
+    <h2 style="margin-bottom:20px">{{ t('dashboard.title') }}</h2>
     <el-row :gutter="16">
-      <el-col :span="6" v-for="card in statCards" :key="card.title">
+      <el-col :span="6" v-for="card in statCards" :key="card.titleKey">
         <el-card shadow="hover">
           <div style="display:flex;align-items:center;gap:12px">
             <el-icon :size="32" :color="card.color"><component :is="card.icon" /></el-icon>
             <div>
-              <div style="font-size:13px;color:var(--admin-text-secondary)">{{ card.title }}</div>
+              <div style="font-size:13px;color:var(--admin-text-secondary)">{{ t(card.titleKey) }}</div>
               <div style="font-size:24px;font-weight:700">{{ card.value }}</div>
             </div>
           </div>
@@ -18,18 +18,18 @@
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>最近 7 天线索趋势</span></template>
+          <template #header><span>{{ t('dashboard.leadTrend') }}</span></template>
           <v-chart :option="leadChartOption" style="height:240px" autoresize />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>最近线索</span></template>
+          <template #header><span>{{ t('dashboard.recentLeads') }}</span></template>
           <el-table :data="recentLeads" size="small" v-loading="loading">
-            <el-table-column prop="name" label="姓名" width="100" />
-            <el-table-column prop="company" label="公司" />
-            <el-table-column prop="phone" label="手机" width="120" />
-            <el-table-column prop="createdAt" label="时间" width="160">
+            <el-table-column prop="name" :label="t('dashboard.name')" width="100" />
+            <el-table-column prop="company" :label="t('dashboard.company')" />
+            <el-table-column prop="phone" :label="t('dashboard.phone')" width="120" />
+            <el-table-column prop="createdAt" :label="t('dashboard.time')" width="160">
               <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
             </el-table-column>
           </el-table>
@@ -42,13 +42,16 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import client from '@/api/client.js';
 
+const { t } = useI18n();
+
 const statCards = ref([
-  { title: '今日线索', value: '-', icon: 'Phone', color: 'var(--admin-color-primary)' },
-  { title: '本月线索', value: '-', icon: 'TrendCharts', color: 'var(--admin-color-success)' },
-  { title: '总用户', value: '-', icon: 'User', color: 'var(--admin-color-warning)' },
-  { title: '待跟进', value: '-', icon: 'Timer', color: 'var(--admin-color-danger)' },
+  { titleKey: 'dashboard.todayLeads', value: '-', icon: 'Phone', color: 'var(--admin-color-primary)' },
+  { titleKey: 'dashboard.monthLeads', value: '-', icon: 'TrendCharts', color: 'var(--admin-color-success)' },
+  { titleKey: 'dashboard.totalUsers', value: '-', icon: 'User', color: 'var(--admin-color-warning)' },
+  { titleKey: 'dashboard.pendingLeads', value: '-', icon: 'Timer', color: 'var(--admin-color-danger)' },
 ]);
 
 const leadTrend = ref([3, 5, 2, 8, 6, 4, 7]);
@@ -62,7 +65,7 @@ const leadChartOption = computed(() => {
     tooltip: { trigger: 'axis' },
     xAxis: {
       type: 'category',
-      data: dates.length ? dates : ['一', '二', '三', '四', '五', '六', '日'],
+      data: dates.length ? dates : t('dashboard.weekdays'),
     },
     yAxis: { type: 'value' },
     series: [

@@ -29,3 +29,32 @@ export const BLOG_HR_DATA_SECURITY: BlogPost = {
   tags: [{ id: 't5', name: '数据安全' }, { id: 't6', name: '合规' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_HR_DATA_SECURITY_EN: BlogPost = {
+  id: 'blog-3',
+  slug: 'hr-data-security',
+  title: 'HR SaaS Data Security Checklist: Level-3 Compliance Is Just the Start',
+  excerpt: 'Employee data is among an enterprise\'s most sensitive assets. This article outlines 12 security capabilities to verify when selecting an HR system.',
+  content: `## Why Data Security Is the Lifeline of HR SaaS
+From identity information to payroll data, HR systems store the most critical personnel data.
+
+## 12 Core Capabilities
+1. Encryption in transit and at rest
+2. Granular permission control
+3. Audit logs
+4. Data masking and classification
+5. Off-site backup and disaster recovery
+6. Third-party security certifications
+7. Privacy compliance framework
+8. API access control
+9. Employee self-service authorization
+10. Data lifecycle management
+11. Penetration testing and vulnerability response
+12. Vendor security assessment`,
+  coverImage: cover('Data Security'),
+  createdAt: '2026-05-08T08:00:00.000Z',
+  updatedAt: '2026-05-08T08:00:00.000Z',
+  category: { id: 'cat-insight', name: 'Industry Insight', slug: 'insight' },
+  tags: [{ id: 't5', name: 'Data Security' }, { id: 't6', name: 'Compliance' }],
+  status: 'PUBLISHED',
+};

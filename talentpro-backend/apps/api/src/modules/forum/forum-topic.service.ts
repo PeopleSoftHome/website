@@ -67,7 +67,7 @@ export class ForumTopicService {
         },
       },
     });
-    if (!topic) throw new NotFoundException('话题不存在');
+    if (!topic) throw new NotFoundException('Topic not found');
     await this.prisma.forumTopic.update({ where: { id }, data: { viewCount: { increment: 1 } } });
     return topic;
   }
@@ -94,7 +94,7 @@ export class ForumTopicService {
   async updateTopic(id: string, data: Partial<{ title: string; content: string; categoryId: string }>, workspaceId?: string) {
     if (workspaceId) {
       const existing = await this.prisma.forumTopic.findFirst({ where: { id, workspaceId } });
-      if (!existing) throw new NotFoundException('话题不存在或无权访问');
+      if (!existing) throw new NotFoundException('Topic not found or no access');
     }
     const topic = await this.topicRepo.update(id, data);
     this.eventEmitter.emit('search.index', new SearchIndexEvent('forum_topic', id, 'update'));
@@ -104,11 +104,11 @@ export class ForumTopicService {
   async deleteTopic(id: string, workspaceId?: string) {
     if (workspaceId) {
       const existing = await this.prisma.forumTopic.findFirst({ where: { id, workspaceId } });
-      if (!existing) throw new NotFoundException('话题不存在或无权访问');
+      if (!existing) throw new NotFoundException('Topic not found or no access');
     }
     await this.topicRepo.delete(id);
     this.eventEmitter.emit('search.index', new SearchIndexEvent('forum_topic', id, 'delete'));
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   async togglePin(id: string, isPinned: boolean) {

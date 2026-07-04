@@ -38,7 +38,7 @@ const props = defineProps({
 
 const delayClass = computed(() => props.delay > 0 ? `reveal-delay-${props.delay}` : '');
 type ResourceType = keyof typeof RESOURCE_TYPE_STYLES;
-const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type as ResourceType] ?? RESOURCE_TYPE_STYLES.article);
+const typeStyle = computed(() => RESOURCE_TYPE_STYLES[props.type as ResourceType] ?? RESOURCE_TYPE_STYLES.article as { bg: string; color: string });
 
 const analyticsStore = useAnalyticsStore();
 const emit = defineEmits(['download']);

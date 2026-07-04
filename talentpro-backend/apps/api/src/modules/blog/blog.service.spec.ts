@@ -97,12 +97,12 @@ describe('BlogService', () => {
     });
 
     it('deleteCategory delegates to postService', async () => {
-      jest.spyOn(postService, 'deleteCategory').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(postService, 'deleteCategory').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deleteCategory('c1');
 
       expect(postService.deleteCategory).toHaveBeenCalledWith('c1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -148,12 +148,12 @@ describe('BlogService', () => {
     });
 
     it('deletePost delegates to postService with workspaceId', async () => {
-      jest.spyOn(postService, 'deletePost').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(postService, 'deletePost').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deletePost('p1', 'ws1');
 
       expect(postService.deletePost).toHaveBeenCalledWith('p1', 'ws1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -179,12 +179,12 @@ describe('BlogService', () => {
     });
 
     it('deleteTag delegates to postService', async () => {
-      jest.spyOn(postService, 'deleteTag').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(postService, 'deleteTag').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deleteTag('t1');
 
       expect(postService.deleteTag).toHaveBeenCalledWith('t1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -210,12 +210,12 @@ describe('BlogService', () => {
     });
 
     it('deleteComment delegates to commentService', async () => {
-      jest.spyOn(commentService, 'deleteComment').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(commentService, 'deleteComment').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deleteComment('cm1');
 
       expect(commentService.deleteComment).toHaveBeenCalledWith('cm1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 

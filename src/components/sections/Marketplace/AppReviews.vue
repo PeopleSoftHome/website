@@ -22,11 +22,39 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { REVIEWS } from '@/data/marketplace';
+import { getMarketplaceReviews } from '@/data/marketplace';
+import { marketplaceApi } from '@/api/marketplace';
+import { formatDate } from '@/utils/date';
 import s from './AppReviews.module.css';
 
-const props = defineProps({ appSlug: { type: String, default: '' } });
-const { t } = useI18n();
+interface Review {
+  user: string;
+  company: string;
+  rating: number;
+  text: string;
+  date: string;
+}
 
-const reviews = computed(() => REVIEWS);
+const props = defineProps({ appSlug: { type: String, default: '' } });
+const { t, locale } = useI18n();
+
+const fallbackReviews = computed(() => getMarketplaceReviews(locale.value));
+
+const { data: apiReviews } = useAsyncData(
+  () => `marketplace-reviews-${locale.value}-${props.appSlug}`,
+  async () => {
+    const res = await marketplaceApi.getReviews(props.appSlug, { pageSize: 6 });
+    const list = (res?.data?.data || res?.data || res || []) as any[];
+    return list.map((r: any) => ({
+      user: r.user?.name || r.userName || t('marketplace.anonymousUser'),
+      company: r.user?.company || r.company || '',
+      rating: r.rating || 5,
+      text: r.comment || r.text || '',
+      date: r.createdAt ? formatDate(r.createdAt) : '',
+    } as Review));
+  },
+  { server: false, default: () => [] as Review[], watch: [() => props.appSlug, locale] }
+);
+
+const reviews = computed<Review[]>(() => apiReviews.value?.length ? apiReviews.value : fallbackReviews.value);
 </script>

@@ -11,7 +11,7 @@
           <el-sub-menu v-if="item.children" :index="item.label">
             <template #title>
               <el-icon><component :is="item.icon" /></el-icon>
-              <span>{{ item.label }}</span>
+              <span>{{ t(item.label) }}</span>
             </template>
             <el-menu-item
               v-for="child in item.children"
@@ -19,12 +19,12 @@
               :index="child.path"
             >
               <el-icon><component :is="child.icon" /></el-icon>
-              <span>{{ child.label }}</span>
+              <span>{{ t(child.label) }}</span>
             </el-menu-item>
           </el-sub-menu>
           <el-menu-item v-else :index="item.path">
             <el-icon><component :is="item.icon" /></el-icon>
-            <span>{{ item.label }}</span>
+            <span>{{ t(item.label) }}</span>
           </el-menu-item>
         </template>
       </el-menu>
@@ -46,12 +46,12 @@
           <NotificationBell />
           <el-dropdown @command="handleCommand">
             <span class="user-info">
-              {{ auth.user?.name || '管理员' }}
+              {{ auth.user?.name || t('layout.admin') }}
               <el-icon><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item command="logout">{{ t('layout.logout') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -81,19 +81,19 @@
         <el-sub-menu v-if="item.children" :index="item.label">
           <template #title>
             <el-icon><component :is="item.icon" /></el-icon>
-            <span>{{ item.label }}</span>
+            <span>{{ t(item.label) }}</span>
           </template>
           <el-menu-item
             v-for="child in item.children"
             :key="child.path"
             :index="child.path"
           >
-            <span>{{ child.label }}</span>
+            <span>{{ t(child.label) }}</span>
           </el-menu-item>
         </el-sub-menu>
         <el-menu-item v-else :index="item.path">
           <el-icon><component :is="item.icon" /></el-icon>
-          <span>{{ item.label }}</span>
+          <span>{{ t(item.label) }}</span>
         </el-menu-item>
       </template>
     </el-menu>
@@ -103,6 +103,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth.js';
 import { Fold, ArrowDown, Management } from '@element-plus/icons-vue';
 import NotificationBell from '@/components/NotificationBell.vue';
@@ -110,6 +111,7 @@ import { menuConfig, hasMenuPermission } from '@/config/menu.config.js';
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const auth = useAuthStore();
 const drawerVisible = ref(false);
 
@@ -141,14 +143,14 @@ const breadcrumbs = computed(() => {
       if (item.children) {
         const childMatch = item.children.find((c) => c.path === path);
         if (childMatch) {
-          if (depth === 0) result.push({ title: item.label, path: item.children[0]?.path });
-          result.push({ title: childMatch.label, path: undefined });
+          if (depth === 0) result.push({ title: t(item.label), path: item.children[0]?.path });
+          result.push({ title: t(childMatch.label), path: undefined });
           return true;
         }
         if (findBreadcrumb(item.children, depth + 1)) return true;
       }
       if (item.path === path) {
-        result.push({ title: item.label, path: undefined });
+        result.push({ title: t(item.label), path: undefined });
         return true;
       }
     }
@@ -158,7 +160,7 @@ const breadcrumbs = computed(() => {
   findBreadcrumb(menuConfig);
 
   if (result.length === 0) {
-    return [{ title: '首页', path: undefined }];
+    return [{ title: t('layout.home'), path: undefined }];
   }
   return result;
 });

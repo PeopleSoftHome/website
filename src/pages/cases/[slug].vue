@@ -72,8 +72,8 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';
 import { caseApi } from '@/api/case';
-import { CASES } from '@/data/cases';
-import { PRODUCT_MAP } from '@/data/products';
+import { getCases } from '@/data/cases';
+import { getProductMap } from '@/data/products';
 import { coverStyle } from '@/utils/coverStyle';
 import s from './[slug].module.css';
 
@@ -84,14 +84,15 @@ interface ProductMapItem {
   iconColor?: string;
 }
 
-const productMap = PRODUCT_MAP as Record<string, ProductMapItem | undefined>;
+const productMap = computed(() => getProductMap(locale.value) as Record<string, ProductMapItem | undefined>);
 
 definePageMeta({ title: 'cases.detail', description: 'cases.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const videoModalStore = useVideoModalStore();
+const caseList = computed(() => getCases(locale.value));
 
 interface CaseItem {
   slug: string;
@@ -115,7 +116,7 @@ interface CaseItem {
 }
 
 const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
-  () => `case-${slug.value}`,
+  () => `case-${locale.value}-${slug.value}`,
   async () => {
     let data: CaseItem | null = null;
     try {
@@ -124,7 +125,7 @@ const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
     } catch {
       // API 失败时使用静态 fallback
     }
-    const staticCase = (CASES as CaseItem[]).find((c) => c.slug === slug.value) || null;
+    const staticCase = (caseList.value as CaseItem[]).find((c) => c.slug === slug.value) || null;
     if (!data && !staticCase) {
       throw createError({ statusCode: 404, statusMessage: 'Case Study Not Found', fatal: true });
     }
@@ -142,7 +143,7 @@ const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
     }
     return data || staticCase;
   },
-  { server: false, default: () => null, watch: [slug] }
+  { server: false, default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -176,7 +177,7 @@ const error = computed(() => {
 const relatedCases = computed<CaseItem[]>(() => {
   const slugs = caseStudy.value?.relatedCases || [];
   return slugs
-    .map((slug) => (CASES as CaseItem[]).find((c) => c.slug === slug))
+    .map((slug) => (caseList.value as CaseItem[]).find((c) => c.slug === slug))
     .filter((c): c is CaseItem => Boolean(c))
     .slice(0, 3);
 });

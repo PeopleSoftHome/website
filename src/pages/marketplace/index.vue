@@ -88,11 +88,12 @@ definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle'
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { MARKETPLACE_APPS, MARKETPLACE_CATEGORIES } from '@/data/marketplace';
+import { getMarketplaceApps, getMarketplaceCategories } from '@/data/marketplace';
+import { marketplaceApi, transformMarketplaceApp, transformMarketplaceCategory, type MarketplaceApp, type MarketplaceCategory } from '@/api/marketplace';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const modalStore = useModalStore();
 
 const activeCategory = ref('all');
@@ -107,13 +108,48 @@ const iconMap = {
 
 const categoryIcon = (icon?: string) => (icon ? iconMap[icon as keyof typeof iconMap] || '•' : '•');
 
+const { data: apiCategories, error: categoriesError } = useAsyncData('marketplace-categories', async () => {
+  const res = await marketplaceApi.getCategories();
+  const list = (res?.data?.data || res?.data || res || []) as any[];
+  return list.map(transformMarketplaceCategory).filter((c) => c.slug);
+}, { server: false, default: () => [] as MarketplaceCategory[] });
+
+const { data: apiApps, error: appsError } = useAsyncData('marketplace-apps', async () => {
+  const res = await marketplaceApi.getApps({ pageSize: 100 });
+  const list = (res?.data?.data || res?.data || res || []) as any[];
+  return list.map(transformMarketplaceApp);
+}, { server: false, default: () => [] as MarketplaceApp[] });
+
+const { data: apiFeatured, error: featuredError } = useAsyncData('marketplace-featured', async () => {
+  const res = await marketplaceApi.getFeaturedApps();
+  const list = (res?.data || res || []) as any[];
+  return list.map(transformMarketplaceApp);
+}, { server: false, default: () => [] as MarketplaceApp[] });
+
+const fallbackCategories = computed(() => getMarketplaceCategories(locale.value));
+const fallbackApps = computed(() => getMarketplaceApps(locale.value));
+
+const categoryList = computed<MarketplaceCategory[]>(() =>
+  (apiCategories.value?.length ? apiCategories.value : fallbackCategories.value.map((c) => ({ id: c.id, slug: c.id, name: c.label, icon: c.icon }))) as MarketplaceCategory[]
+);
+
+const appList = computed<MarketplaceApp[]>(() =>
+  apiApps.value?.length ? apiApps.value : fallbackApps.value as MarketplaceApp[]
+);
+
+const featuredList = computed<MarketplaceApp[]>(() =>
+  apiFeatured.value?.length ? apiFeatured.value : (fallbackApps.value as MarketplaceApp[]).filter((a) => a.featured)
+);
+
+const isLoading = computed(() => !apiApps.value?.length && !appsError.value);
+
 const categories = computed<Array<{ id: string; label: string; icon?: string }>>(() => [
   { id: 'all', label: t('common.all') },
-  ...MARKETPLACE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, icon: c.icon })),
+  ...categoryList.value.map((c) => ({ id: c.slug || c.id, label: t(`marketplace.categories.${c.slug || c.id}`), icon: c.icon })),
 ]);
 
 const filteredApps = computed(() => {
-  let list = [...MARKETPLACE_APPS];
+  let list = [...appList.value];
   if (activeCategory.value !== 'all') list = list.filter((a) => a.category === activeCategory.value);
   const q = searchQuery.value.trim().toLowerCase();
   if (q) {
@@ -127,13 +163,13 @@ const filteredApps = computed(() => {
   switch (sortBy.value) {
     case 'rating': list.sort((a, b) => b.ratingAvg - a.ratingAvg); break;
     case 'installCount': list.sort((a, b) => b.installCount - a.installCount); break;
-    case 'name': list.sort((a, b) => a.name.localeCompare(b.name, 'zh')); break;
+    case 'name': list.sort((a, b) => a.name.localeCompare(b.name, locale.value)); break;
     default: list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || b.ratingAvg - a.ratingAvg); break;
   }
   return list.map((a, i) => ({ ...a, _stagger: i }));
 });
 
-const featuredApps = computed(() => MARKETPLACE_APPS.filter((a) => a.featured).slice(0, 4));
+const featuredApps = computed(() => featuredList.value.slice(0, 4));
 
 const formatPricing = (model: string) => {
   const map = {
@@ -157,8 +193,8 @@ onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: t('marketplace.tsonLdName'),
-    itemListElement: MARKETPLACE_APPS.slice(0, 8).map((app, i) => ({
+    name: t('marketplace.jsonLdName'),
+    itemListElement: appList.value.slice(0, 8).map((app, i) => ({
       '@type': 'ListItem', position: i + 1, name: app.name, description: app.tagline,
     })),
   });

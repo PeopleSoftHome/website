@@ -77,7 +77,7 @@ describe('NotificationController', () => {
 
   describe('PATCH /notifications/:id/read', () => {
     it('should mark notification as read', async () => {
-      const expected = { message: '已标记为已读' };
+      const expected = { message: 'Marked as read' };
       jest.spyOn(service, 'markAsRead').mockResolvedValue(expected);
 
       const result = await controller.markAsRead('u1', 'n1');
@@ -89,7 +89,7 @@ describe('NotificationController', () => {
 
   describe('PATCH /notifications/read-all', () => {
     it('should mark all notifications as read', async () => {
-      const expected = { message: '全部已读' };
+      const expected = { message: 'All marked as read' };
       jest.spyOn(service, 'markAllAsRead').mockResolvedValue(expected);
 
       const result = await controller.markAllAsRead('u1');

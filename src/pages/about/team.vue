@@ -41,17 +41,20 @@ import { onMounted, onUnmounted, computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { aboutApi } from '@/api/about';
-import { TEAM_CATEGORIES, TEAM_FALLBACK } from '@/data/team';
+import { getTeamCategories, getTeam } from '@/data/team';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './team.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 usePageSeo({ title: t('team.title'), description: t('team.subtitle'), path: '/about/team' });
 const activeCategoryIndex = ref(0);
 
-const categoryTabs = computed(() => TEAM_CATEGORIES.map((c) => ({ id: c, label: c })));
-const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || TEAM_CATEGORIES[0]);
+const teamCategories = computed(() => getTeamCategories(locale.value));
+const teamFallback = computed(() => getTeam(locale.value));
+
+const categoryTabs = computed(() => teamCategories.value.map((c) => ({ id: c, label: c === teamCategories.value[0] ? t('common.all') : c })));
+const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || teamCategories.value[0]);
 
 const { data: apiTeam, pending: loading, error: asyncError } = useAsyncData(
   'about-team',
@@ -63,13 +66,13 @@ const { data: apiTeam, pending: loading, error: asyncError } = useAsyncData(
 );
 
 const team = computed(() => {
-  if (asyncError.value) return TEAM_FALLBACK;
+  if (asyncError.value) return teamFallback.value;
   const data = apiTeam.value || [];
-  return data.length > 0 ? data : TEAM_FALLBACK;
+  return data.length > 0 ? data : teamFallback.value;
 });
 
 const displayTeam = computed(() => {
-  if (activeCategory.value === '全部') return team.value;
+  if (activeCategory.value === teamCategories.value[0]) return team.value;
   return team.value.filter((m: any) => m.category === activeCategory.value);
 });
 

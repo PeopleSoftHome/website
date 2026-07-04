@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom: 20px">新闻管理</h2>
+    <h2 style="margin-bottom: 20px">{{ t('news.title') }}</h2>
     <el-card shadow="hover">
       <CmsTable
         api-url="/news"
@@ -10,20 +10,20 @@
       >
         <template #column-status="{ row }">
           <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'">
-            {{ row.status === 'PUBLISHED' ? '已发布' : '草稿' }}
+            {{ t(`news.statusOptions.${row.status}`, row.status) }}
           </el-tag>
         </template>
         <template #form-field-category="{ form }">
           <el-select v-model="form.category" style="width: 100%">
-            <el-option label="公司动态" value="company" />
-            <el-option label="产品更新" value="product" />
-            <el-option label="行业活动" value="event" />
+            <el-option :label="t('news.categoryOptions.company')" value="company" />
+            <el-option :label="t('news.categoryOptions.product')" value="product" />
+            <el-option :label="t('news.categoryOptions.event')" value="event" />
           </el-select>
         </template>
         <template #form-field-status="{ form }">
           <el-select v-model="form.status" style="width: 100%">
-            <el-option label="草稿" value="DRAFT" />
-            <el-option label="已发布" value="PUBLISHED" />
+            <el-option :label="t('news.statusOptions.DRAFT')" value="DRAFT" />
+            <el-option :label="t('news.statusOptions.PUBLISHED')" value="PUBLISHED" />
           </el-select>
         </template>
       </CmsTable>
@@ -32,26 +32,29 @@
 </template>
 
 <script setup>
-import CmsTable from '@/components/CmsTable.vue'
+import { useI18n } from 'vue-i18n';
+import CmsTable from '@/components/CmsTable.vue';
+
+const { t } = useI18n();
 
 const columns = [
-  { prop: 'title', label: '标题' },
-  { prop: 'category', label: '分类', width: 120 },
-  { prop: 'author', label: '作者', width: 120 },
-  { prop: 'featured', label: '精选', width: 100, type: 'switch' },
-  { prop: 'status', label: '状态', width: 100 },
-  { prop: 'viewCount', label: '浏览量', width: 100 },
-]
+  { prop: 'title', label: t('news.titleCol') },
+  { prop: 'category', label: t('news.category'), width: 120 },
+  { prop: 'author', label: t('news.author'), width: 120 },
+  { prop: 'featured', label: t('news.featured'), width: 100, type: 'switch' },
+  { prop: 'status', label: t('news.status'), width: 100 },
+  { prop: 'viewCount', label: t('news.viewCount'), width: 100 },
+];
 
 const formFields = [
-  { prop: 'title', label: '标题', type: 'input' },
-  { prop: 'slug', label: 'Slug', type: 'input' },
-  { prop: 'category', label: '分类', type: 'input' },
-  { prop: 'summary', label: '摘要', type: 'textarea', rows: 3 },
-  { prop: 'coverImage', label: '封面图', type: 'image-upload' },
-  { prop: 'content', label: '内容', type: 'textarea', rows: 4 },
-  { prop: 'author', label: '作者', type: 'input' },
-  { prop: 'status', label: '状态', type: 'input' },
-  { prop: 'featured', label: '精选', type: 'switch' },
-]
+  { prop: 'title', label: t('news.titleCol'), type: 'input' },
+  { prop: 'slug', label: t('news.slug'), type: 'input' },
+  { prop: 'category', label: t('news.category'), type: 'input' },
+  { prop: 'summary', label: t('news.summary'), type: 'textarea', rows: 3 },
+  { prop: 'coverImage', label: t('news.coverImage'), type: 'image-upload' },
+  { prop: 'content', label: t('news.content'), type: 'textarea', rows: 4 },
+  { prop: 'author', label: t('news.author'), type: 'input' },
+  { prop: 'status', label: t('news.status'), type: 'input' },
+  { prop: 'featured', label: t('news.featured'), type: 'switch' },
+];
 </script>

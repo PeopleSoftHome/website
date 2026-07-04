@@ -26,6 +26,7 @@ const INITIAL_FORM_DATA: DemoFormData = {
 };
 
 export function useDemoBooking() {
+  const { t } = useI18n();
   const { recaptchaSiteKey } = usePublicConfig();
 
   const modal = useStepModal<DemoFormData>({
@@ -60,7 +61,8 @@ export function useDemoBooking() {
       modal.markSuccessAndClose();
     } catch (e) {
       const err = e as Error;
-      modal.setError(err.message || '提交失败，请稍后重试');
+      modal.setError(err.message || t('modal.submitError'));
+
     } finally {
       modal.setSubmitting(false);
     }

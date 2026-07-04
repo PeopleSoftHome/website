@@ -32,3 +32,38 @@ export const CASE_XINYADA = {
   ],
   relatedCases: ['mengniu-ai-recruit'],
 };
+
+export const CASE_XINYADA_EN = {
+  id: 'case-xinyada',
+  slug: 'xinyada-bio',
+  featured: false,
+  industry: 'Pharma',
+  clientName: 'Innovent Biologics',
+  title: 'Innovent Biologics: AI Interviewer Cuts Senior Talent Hiring Cycle by 50%',
+  excerpt: 'With TalentPro AI Interviewer, Innovent Biologics accelerated prescreening and assessment of senior R&D talent while improving both quality and efficiency.',
+  challenge: 'Senior R&D talent is scarce in biopharma, interview processes are long, overseas candidates are hard to coordinate, and top candidates often join competitors.',
+  solution: 'TalentPro AI Interviewer prescreened candidates and assessed professional capabilities, supported overseas candidates in multiple languages, and generated instant interview reports for HR and hiring managers.',
+  results: 'Senior hiring cycle shortened from 90 days to 45 days, AI interview assessment consistency with final interviews reached 89%, and candidate experience scores rose 30%.',
+  metrics: [
+    { id: 'm1', value: '-50%', label: 'Hiring Cycle' },
+    { id: 'm2', value: '89%', label: 'Assessment Consistency' },
+    { id: 'm3', value: '+30%', label: 'Experience Score' },
+  ],
+  tags: ['Pharma', 'AI Interview', 'Senior Talent'],
+  products: ['ai-interview', 'recruit', 'assess-recruit'],
+  quote: 'The AI Interviewer\'s depth of understanding on professional questions exceeded our expectations, and the candidates it screened had significantly higher final-interview pass rates.',
+  author: 'Tina Sun',
+  authorTitle: 'Recruiting Director',
+  coverImage: "linear-gradient(135deg, #14B8A6 0%, #22C55E 100%)",
+  date: '2026-02-20',
+  teamSize: '12-person recruiting team',
+  projectDuration: '2 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Discovery', title: 'Senior Hiring Pain-Point Research', desc: 'Mapped the full senior R&D recruiting process, identifying overseas candidate coordination and professional assessment gaps as top pain points.' },
+    { phase: 'Training', title: 'AI Interviewer Specialized Training', desc: 'Trained the AI Interviewer on biopharma competency models and multilingual support for overseas candidates.' },
+    { phase: 'Pilot', title: 'R&D Role Pilot Assessment', desc: 'Piloted AI interviews for 10 R&D roles, comparing AI assessments with final interview results to calibrate scoring.' },
+    { phase: 'Scale', title: 'Full Rollout & Continuous Optimization', desc: 'Scaled to all senior roles, continuously optimizing interview question banks and assessment models to improve candidate experience.' },
+  ],
+  relatedCases: ['mengniu-ai-recruit'],
+};

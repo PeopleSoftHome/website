@@ -85,7 +85,7 @@ describe('SystemController', () => {
     });
 
     it('deleteSetting should delegate to service', async () => {
-      const expected = { message: '删除成功' };
+      const expected = { message: 'Deleted successfully' };
       jest.spyOn(systemService, 'deleteSetting').mockResolvedValue(expected);
 
       const result = await controller.deleteSetting('siteTitle');
@@ -161,7 +161,7 @@ describe('SystemController', () => {
     });
 
     it('deleteEmailTemplate should delegate to service', async () => {
-      const expected = { message: '删除成功' };
+      const expected = { message: 'Deleted successfully' };
       jest.spyOn(systemService, 'deleteEmailTemplate').mockResolvedValue(expected);
 
       const result = await controller.deleteEmailTemplate('welcome');
@@ -194,7 +194,7 @@ describe('SystemController', () => {
     });
 
     it('deleteSensitiveWord should delegate to service', async () => {
-      const expected = { message: '删除成功' };
+      const expected = { message: 'Deleted successfully' };
       jest.spyOn(systemService, 'deleteSensitiveWord').mockResolvedValue(expected);
 
       const result = await controller.deleteSensitiveWord('w1');

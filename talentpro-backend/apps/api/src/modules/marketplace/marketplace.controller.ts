@@ -11,7 +11,7 @@ import { MarketplaceService } from './marketplace.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/create-vendor.dto';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/create-category.dto';
-import { AppStatus, PricingModel } from '@prisma/client';
+import { AppStatus, PricingModel, SubscriptionStatus } from '@prisma/client';
 
 @ApiTags('应用市场')
 @Controller('marketplace')
@@ -162,6 +162,32 @@ export class MarketplaceAdminController {
     @Body('sortOrder') sortOrder?: number,
   ) {
     return this.marketplaceService.featureApp(id, featured, sortOrder);
+  }
+
+  // ─── Admin Subscriptions ───
+
+  @Get('subscriptions')
+  @ApiOperation({ summary: 'Admin 订阅列表' })
+  @ApiQuery({ name: 'status', required: false, enum: SubscriptionStatus })
+  findAllSubscriptionsForAdmin(
+    @Query() pagination: PaginationDto,
+    @Query('status') status?: SubscriptionStatus,
+  ) {
+    return this.marketplaceService.findAllSubscriptionsForAdmin({
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      status,
+    });
+  }
+
+  @Patch('subscriptions/:id/status')
+  @Permission('marketplace_subscription:update')
+  @ApiOperation({ summary: 'Admin 更新订阅状态' })
+  updateSubscriptionStatus(
+    @Param('id') id: string,
+    @Body('status') status: SubscriptionStatus,
+  ) {
+    return this.marketplaceService.updateSubscriptionStatus(id, status);
   }
 
   // ─── Admin Vendors ───

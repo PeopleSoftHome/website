@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom: 20px">客户证言管理</h2>
+    <h2 style="margin-bottom: 20px">{{ t('testimonials.title') }}</h2>
     <el-card shadow="hover">
       <CmsTable
         api-url="/cms/content/testimonial"
@@ -13,25 +13,28 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
 import CmsTable from '@/components/CmsTable.vue';
 
+const { t } = useI18n();
+
 const columns = [
-  { prop: 'name', label: '姓名' },
-  { prop: 'title', label: '职位' },
-  { prop: 'text', label: '证言内容', minWidth: 200 },
-  { prop: 'industry', label: '行业' },
-  { prop: 'product', label: '产品' },
-  { prop: 'isActive', label: '启用', width: 100, type: 'switch' },
-  { prop: 'sortOrder', label: '排序', width: 100 },
+  { prop: 'name', label: t('testimonials.name') },
+  { prop: 'title', label: t('testimonials.titleCol') },
+  { prop: 'text', label: t('testimonials.text'), minWidth: 200 },
+  { prop: 'industry', label: t('testimonials.industry') },
+  { prop: 'product', label: t('testimonials.product') },
+  { prop: 'isActive', label: t('testimonials.isActive'), width: 100, type: 'switch' },
+  { prop: 'sortOrder', label: t('testimonials.sortOrder'), width: 100 },
 ];
 
 const formFields = [
-  { prop: 'name', label: '姓名', type: 'input' },
-  { prop: 'title', label: '职位', type: 'input' },
-  { prop: 'text', label: '证言内容', type: 'textarea', rows: 4 },
-  { prop: 'industry', label: '行业', type: 'input' },
-  { prop: 'product', label: '产品', type: 'input' },
-  { prop: 'isActive', label: '启用', type: 'switch' },
-  { prop: 'sortOrder', label: '排序', type: 'number' },
+  { prop: 'name', label: t('testimonials.name'), type: 'input' },
+  { prop: 'title', label: t('testimonials.titleCol'), type: 'input' },
+  { prop: 'text', label: t('testimonials.text'), type: 'textarea', rows: 4 },
+  { prop: 'industry', label: t('testimonials.industry'), type: 'input' },
+  { prop: 'product', label: t('testimonials.product'), type: 'input' },
+  { prop: 'isActive', label: t('testimonials.isActive'), type: 'switch' },
+  { prop: 'sortOrder', label: t('testimonials.sortOrder'), type: 'number' },
 ];
 </script>

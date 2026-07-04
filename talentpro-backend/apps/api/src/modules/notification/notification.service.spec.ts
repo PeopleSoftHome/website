@@ -65,7 +65,7 @@ describe('NotificationService', () => {
         where: { id: 'n1', userId: 'u1' },
         data: { isRead: true },
       });
-      expect(result).toEqual({ message: '已标记为已读' });
+      expect(result).toEqual({ message: 'Marked as read' });
     });
   });
 
@@ -76,7 +76,7 @@ describe('NotificationService', () => {
         where: { userId: 'u1', isRead: false },
         data: { isRead: true },
       });
-      expect(result).toEqual({ message: '全部已读' });
+      expect(result).toEqual({ message: 'All marked as read' });
     });
   });
 

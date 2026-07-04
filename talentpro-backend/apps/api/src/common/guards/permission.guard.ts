@@ -26,7 +26,7 @@ export class PermissionGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
     if (!user || !user.role) {
-      throw new ForbiddenException('权限不足');
+      throw new ForbiddenException('Insufficient permissions');
     }
 
     // SUPER_ADMIN 绕过所有权限检查
@@ -54,7 +54,7 @@ export class PermissionGuard implements CanActivate {
 
     if (!hasPermission) {
       throw new ForbiddenException(
-        `权限不足，需要${mode === 'any' ? '任一' : '全部'}权限: ${requiredPermissions.join(', ')}`,
+        `Insufficient permissions，需要${mode === 'any' ? '任一' : '全部'}权限: ${requiredPermissions.join(', ')}`,
       );
     }
 

@@ -26,14 +26,14 @@ export class CareersService {
   async findById(id: string) {
     const data = await this.jobRepo.findOne(id);
     if (data.status !== 'open' || data.deletedAt) {
-      throw new NotFoundException('职位不存在或已关闭');
+      throw new NotFoundException('Job not found or closed');
     }
     return data;
   }
 
   async apply(jobId: string, dto: { name: string; email: string; phone?: string; resumeUrl?: string; coverLetter?: string; portfolioUrl?: string }) {
     const job = await this.prisma.job.findFirst({ where: { id: jobId, status: 'open' } });
-    if (!job) throw new NotFoundException('职位不存在或已关闭');
+    if (!job) throw new NotFoundException('Job not found or closed');
     return this.prisma.jobApplication.create({
       data: { jobId, ...dto },
     });

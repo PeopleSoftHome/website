@@ -152,7 +152,18 @@ export default defineNuxtConfig({
   vite: {
     build: {
       sourcemap: process.env.SOURCE_MAP === 'true',
-      chunkSizeWarningLimit: 150,
+      // SSG 入口 chunk 包含全站路由预加载映射，405KB 属于 manifest 级别开销；
+      // 将告警阈值提高到 500KB，避免误报，同时通过 manualChunks 拆分第三方库。
+      chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-vue': ['vue', 'vue-router', 'pinia'],
+            'vendor-utils': ['axios', '@sentry/vue', 'dompurify', 'marked'],
+            'vendor-i18n': ['vue-i18n'],
+          },
+        },
+      },
     },
     optimizeDeps: {
       include: [

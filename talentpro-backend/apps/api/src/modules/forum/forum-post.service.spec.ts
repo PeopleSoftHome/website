@@ -159,7 +159,7 @@ describe('ForumPostService', () => {
 
       expect(prisma.forumPost.findUnique).toHaveBeenCalledWith({ where: { id: 'p1' } });
       expect(prisma.forumPost.delete).toHaveBeenCalledWith({ where: { id: 'p1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw NotFoundException when post does not exist', async () => {

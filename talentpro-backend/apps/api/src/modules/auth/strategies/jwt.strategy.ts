@@ -55,7 +55,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     });
     if (!user || user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('用户不存在或已被禁用');
+      throw new UnauthorizedException('User not found or disabled');
     }
     return user;
   }

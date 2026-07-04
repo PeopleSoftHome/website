@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">数据分析</h2>
+    <h2 style="margin-bottom:20px">{{ t('analytics.title') }}</h2>
 
     <!-- 概览卡片 -->
     <el-row :gutter="16">
@@ -19,7 +19,7 @@
 
     <!-- 转化漏斗 -->
     <el-card shadow="hover" style="margin-top:16px">
-      <template #header><span>转化漏斗</span></template>
+      <template #header><span>{{ t('analytics.conversionFunnel') }}</span></template>
       <div v-if="funnel.length" style="max-width:600px">
         <div v-for="(step, i) in funnel" :key="i" style="margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px">
@@ -34,20 +34,20 @@
           />
         </div>
       </div>
-      <el-empty v-else description="暂无数据" />
+      <el-empty v-else :description="t('analytics.noData')" />
     </el-card>
 
     <!-- 每日趋势 -->
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>每日页面浏览量</span></template>
+          <template #header><span>{{ t('analytics.dailyPageViews') }}</span></template>
           <v-chart :option="pageViewChartOption" style="height:260px" autoresize />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>每日事件数</span></template>
+          <template #header><span>{{ t('analytics.dailyEvents') }}</span></template>
           <v-chart :option="eventChartOption" style="height:260px" autoresize />
         </el-card>
       </el-col>
@@ -57,21 +57,21 @@
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>热门页面 TOP10</span></template>
+          <template #header><span>{{ t('analytics.topPages') }}</span></template>
           <el-table :data="topPages" size="small">
             <el-table-column type="index" width="40" />
-            <el-table-column prop="path" label="页面路径" />
-            <el-table-column prop="_count.path" label="浏览量" width="80" />
+            <el-table-column prop="path" :label="t('analytics.pagePath')" />
+            <el-table-column prop="_count.path" :label="t('analytics.views')" width="80" />
           </el-table>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>热门事件 TOP10</span></template>
+          <template #header><span>{{ t('analytics.topEvents') }}</span></template>
           <el-table :data="topEvents" size="small">
             <el-table-column type="index" width="40" />
-            <el-table-column prop="event" label="事件名称" />
-            <el-table-column prop="_count.event" label="触发次数" width="80" />
+            <el-table-column prop="event" :label="t('analytics.eventName')" />
+            <el-table-column prop="_count.event" :label="t('analytics.triggers')" width="80" />
           </el-table>
         </el-card>
       </el-col>
@@ -81,7 +81,7 @@
     <el-row :gutter="16" style="margin-top:16px">
       <el-col :span="12">
         <el-card shadow="hover">
-          <template #header><span>事件类型分布</span></template>
+          <template #header><span>{{ t('analytics.eventTypeDistribution') }}</span></template>
           <v-chart :option="eventPieOption" style="height:300px" autoresize />
         </el-card>
       </el-col>
@@ -91,8 +91,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import client from '@/api/client.js';
+
+const { t } = useI18n();
 
 const overview = ref({ totalPageViews: 0, totalEvents: 0, uniqueSessions: 0 });
 const topPages = ref([]);
@@ -103,9 +106,9 @@ const funnel = ref([]);
 const loading = ref(false);
 
 const overviewCards = computed(() => [
-  { label: '总页面浏览量', value: overview.value.totalPageViews, icon: 'View', color: 'var(--admin-color-primary)' },
-  { label: '总事件数', value: overview.value.totalEvents, icon: 'Histogram', color: 'var(--admin-color-success)' },
-  { label: '独立会话', value: overview.value.uniqueSessions, icon: 'User', color: 'var(--admin-color-warning)' },
+  { label: t('analytics.totalPageViews'), value: overview.value.totalPageViews, icon: 'View', color: 'var(--admin-color-primary)' },
+  { label: t('analytics.totalEvents'), value: overview.value.totalEvents, icon: 'Histogram', color: 'var(--admin-color-success)' },
+  { label: t('analytics.uniqueSessions'), value: overview.value.uniqueSessions, icon: 'User', color: 'var(--admin-color-warning)' },
 ]);
 
 const formatShortDate = (d) => {
@@ -153,7 +156,7 @@ const eventPieOption = computed(() => ({
   legend: { top: '5%', left: 'center' },
   series: [
     {
-      name: '事件类型',
+      name: t('analytics.eventType'),
       type: 'pie',
       radius: ['40%', '70%'],
       avoidLabelOverlap: false,
@@ -185,7 +188,7 @@ const fetchData = async () => {
     dailyEvents.value = dash.data?.dailyEvents || [];
     funnel.value = funnelRes.data?.steps || [];
   } catch (e) {
-    ElMessage.error('加载数据失败');
+    ElMessage.error(t('analytics.loadFailed'));
   }
   loading.value = false;
 };

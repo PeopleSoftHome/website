@@ -1,3 +1,3 @@
-export { NAV_LINKS } from './header';
-export { FOOTER_LINKS } from './footer';
-export { HOT_TAGS } from './hotTags';
+export { NAV_LINKS, getHeaderNav } from './header';
+export { FOOTER_LINKS, getFooterNav } from './footer';
+export { HOT_TAGS, getHotTags } from './hotTags';

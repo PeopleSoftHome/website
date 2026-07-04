@@ -44,6 +44,7 @@ import { useSiteConfig } from '@/composables/useSiteConfig';
 import { useGlobalErrorReporter } from '@/composables/useGlobalErrorReporter';
 import { usePageMetaSync } from '@/composables/usePageMetaSync';
 import { usePrefetchModals } from '@/composables/usePrefetchModals';
+import { setDateLocale } from '@/utils/date';
 import { useLifecycleAnalytics } from '@/composables/useLifecycleAnalytics';
 import { useGlobalRevealObserver } from '@/composables/useGlobalRevealObserver';
 
@@ -87,6 +88,9 @@ useRum();
 const { reportError } = useGlobalErrorReporter();
 provide('reportError', reportError);
 usePrefetchModals();
+
+/* 日期格式跟随应用语言 */
+watch(locale, (val) => { setDateLocale(val); }, { immediate: true });
 
 /* Cookie 同意横幅 */
 const { showBanner, showPreferences, acceptAll, rejectAll, savePreferences, openPreferences } = useCookieConsent();

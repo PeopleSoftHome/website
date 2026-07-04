@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2 style="margin-top: 0">翻译管理</h2>
+    <h2 style="margin-top: 0">{{ t('translations.title') }}</h2>
     <p style="color: var(--admin-text-secondary); margin-bottom: 16px">
-      管理 CMS 多语言文案覆盖层。同一 key 在后端会覆盖前端 i18n JSON 的默认值。
+      {{ t('translations.description') }}
     </p>
 
     <CmsTable
@@ -16,25 +16,28 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
 import CmsTable from '@/components/CmsTable.vue';
 
+const { t } = useI18n();
+
 const columns = [
-  { prop: 'locale', label: '语言', width: 100 },
-  { prop: 'key', label: 'Key', minWidth: 200 },
-  { prop: 'value', label: '文案', minWidth: 280 },
-  { prop: 'context', label: '上下文', width: 140 },
+  { prop: 'locale', label: t('translations.locale'), width: 100 },
+  { prop: 'key', label: t('translations.key'), minWidth: 200 },
+  { prop: 'value', label: t('translations.value'), minWidth: 280 },
+  { prop: 'context', label: t('translations.context'), width: 140 },
 ];
 
 const formFields = [
-  { prop: 'locale', label: '语言', type: 'input', placeholder: '如 zh / en / zh-TW' },
-  { prop: 'key', label: 'Key', type: 'input', placeholder: '如 nav.demo' },
-  { prop: 'value', label: '文案', type: 'textarea', rows: 4, placeholder: '翻译内容' },
-  { prop: 'context', label: '上下文', type: 'input', placeholder: '可选，如 nav' },
+  { prop: 'locale', label: t('translations.locale'), type: 'input', placeholder: t('translations.localePlaceholder') },
+  { prop: 'key', label: t('translations.key'), type: 'input', placeholder: t('translations.keyPlaceholder') },
+  { prop: 'value', label: t('translations.value'), type: 'textarea', rows: 4, placeholder: t('translations.valuePlaceholder') },
+  { prop: 'context', label: t('translations.context'), type: 'input', placeholder: t('translations.contextPlaceholder') },
 ];
 
 const rules = {
-  locale: [{ required: true, message: '请输入语言代码', trigger: 'blur' }],
-  key: [{ required: true, message: '请输入 Key', trigger: 'blur' }],
-  value: [{ required: true, message: '请输入文案', trigger: 'blur' }],
+  locale: [{ required: true, message: t('translations.localeRequired'), trigger: 'blur' }],
+  key: [{ required: true, message: t('translations.keyRequired'), trigger: 'blur' }],
+  value: [{ required: true, message: t('translations.valueRequired'), trigger: 'blur' }],
 };
 </script>

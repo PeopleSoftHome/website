@@ -368,11 +368,11 @@ describe('CmsController', () => {
     });
 
     it('deleteContent should resolve type and call generic service', async () => {
-      (cmsGenericService.delete as jest.Mock).mockResolvedValue({ message: '删除成功' });
+      (cmsGenericService.delete as jest.Mock).mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteContent('ai-cards', '1');
       expect(cmsGenericService.delete).toHaveBeenCalledWith('aiCard', '1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 });

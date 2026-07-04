@@ -2,7 +2,7 @@
   <div>
     <div class="cms-table-header">
       <div>
-        <el-button type="primary" @click="openDialog()">+ 新建</el-button>
+        <el-button type="primary" @click="openDialog()">+ {{ t('cmsTable.create') }}</el-button>
         <el-button
           v-if="selection"
           type="danger"
@@ -10,7 +10,7 @@
           @click="handleBatchDelete"
           style="margin-left: 12px"
         >
-          批量删除 ({{ selectedRows.length }})
+          {{ t('cmsTable.batchDeleteCount', { count: selectedRows.length }) }}
         </el-button>
       </div>
     </div>
@@ -38,7 +38,7 @@
             <!-- 内置类型渲染 -->
             <template v-if="col.type === 'switch'">
               <el-tag :type="row[col.prop] ? 'success' : 'info'">
-                {{ row[col.prop] ? '是' : '否' }}
+                {{ row[col.prop] ? t('cmsTable.yes') : t('cmsTable.no') }}
               </el-tag>
             </template>
             <template v-else-if="col.type === 'json'">
@@ -59,11 +59,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" width="180" fixed="right">
+      <el-table-column :label="t('cmsTable.operation')" width="180" fixed="right">
         <template #default="{ row }">
           <slot name="actions" :row="row">
-            <el-button link type="primary" @click="openDialog(row)">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+            <el-button link type="primary" @click="openDialog(row)">{{ t('cmsTable.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row)">{{ t('cmsTable.delete') }}</el-button>
           </slot>
         </template>
       </el-table-column>
@@ -77,7 +77,7 @@
       v-model:current-page="page"
     />
 
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑' : '新建'" width="600px" destroy-on-close>
+    <el-dialog v-model="dialogVisible" :title="isEdit ? t('cmsTable.editDialog') : t('cmsTable.createDialog')" width="600px" destroy-on-close>
       <el-form :model="form" label-width="100px" :rules="rules" ref="formRef">
         <el-form-item
           v-for="field in formFields"
@@ -123,8 +123,8 @@
           :content="form.content || form.summary || form.excerpt || form.description || ''"
           @result="(p) => { aiPayload = p; aiVisible = true; }"
         />
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('cmsTable.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave" :loading="saving">{{ t('cmsTable.save') }}</el-button>
       </template>
     </el-dialog>
 
@@ -141,12 +141,15 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
 import ImageUpload from './ImageUpload.vue';
 import AiAssistButton from './AiAssistButton.vue';
 import AiAssistDialog from './AiAssistDialog.vue';
 import { useCrud } from '@/composables/useCrud.js';
+
+const { t } = useI18n();
 
 const props = defineProps({
   apiUrl: { type: String, required: true },
@@ -240,7 +243,7 @@ const applyAiResult = ({ action, result }) => {
   }
   // SEO 关键词：如果表单有 keywords 字段则填入
   if (result.keywords && 'keywords' in form.value) form.value.keywords = result.keywords;
-  ElMessage.success('已应用生成结果，请确认后再保存');
+  ElMessage.success(t('cmsTable.applied'));
 };
 
 const handleSelectionChange = (rows) => {
@@ -250,13 +253,13 @@ const handleSelectionChange = (rows) => {
 const handleBatchDelete = async () => {
   const ids = selectedRows.value.map((r) => r.id);
   try {
-    await ElMessageBox.confirm(`确认删除选中的 ${ids.length} 条记录？`, '提示', { type: 'warning' });
+    await ElMessageBox.confirm(t('cmsTable.batchDeleteConfirm', { count: ids.length }), t('common.tip'), { type: 'warning' });
     await Promise.all(ids.map((id) => client.delete(`${props.apiUrl}/${id}`)));
-    ElMessage.success('批量删除成功');
+    ElMessage.success(t('cmsTable.batchDeleteSuccess'));
     selectedRows.value = [];
     crud.fetch();
   } catch (e) {
-    if (e !== 'cancel') ElMessage.error('批量删除失败');
+    if (e !== 'cancel') ElMessage.error(t('cmsTable.batchDeleteFailed'));
   }
 };
 

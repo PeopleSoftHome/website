@@ -518,6 +518,16 @@
     "searchPlaceholder": "搜索应用名称、功能或厂商...",
     "search": "搜索",
     "allCategories": "全部分类",
+    "categories": {
+      "recruitment": "招聘与人才获取",
+      "compensation": "薪酬与福利",
+      "performance": "绩效与目标",
+      "learning": "学习与发展",
+      "experience": "员工体验",
+      "compliance": "合规与安全",
+      "ai": "AI 与自动化",
+      "analytics": "数据与分析"
+    },
     "pricingFilter": "定价",
     "allPricing": "全部定价",
     "free": "免费",
@@ -565,6 +575,7 @@
     "resultsFor": "搜索结果",
     "showing": "共",
     "items": "个应用",
+    "anonymousUser": "匿名用户",
     "priceFree": "免费",
     "priceSubscription": "订阅制",
     "priceOneTime": "一次性",
@@ -604,7 +615,16 @@
     "viewMyApps": "查看我的应用",
     "paymentCancelled": "支付已取消",
     "paymentCancelledDesc": "您取消了支付，如有疑问请联系客服。",
-    "tryAgain": "重试支付"
+    "tryAgain": "重试支付",
+    "cartTitle": "购物车",
+    "cartEmpty": "购物车是空的",
+    "cartCheckout": "去结算",
+    "cartContinue": "继续购物",
+    "orderTotal": "合计",
+    "orderSubtotal": "小计",
+    "orderDiscount": "优惠",
+    "orderTax": "税费",
+    "orderInvoices": "发票"
   },
   "resources": {
     "sectionTag": " 资源中心",
@@ -784,7 +804,8 @@
     "summaryCompany": "公司",
     "summaryProducts": "意向产品",
     "summaryScale": "企业规模",
-    "recommendTitle": "您可能还需要"
+    "recommendTitle": "您可能还需要",
+    "submitError": "提交失败，请稍后重试"
   },
   "floatingBar": {
     "demo": "预约演示",
@@ -817,6 +838,8 @@
   "blog": {
     "title": "TalentPro 博客",
     "pageTitle": "TalentPro 博客",
+    "subtitle": "人力资源数字化转型的前沿洞察",
+    "detail": "文章详情",
     "back": "返回博客列表",
     "noPosts": "暂无文章",
     "jsonLdName": "TalentPro 博客",
@@ -1056,15 +1079,24 @@
     "menu": {
       "dashboard": "总览",
       "orders": "我的订单",
+      "apps": "我的应用",
       "settings": "账户设置",
       "security": "安全中心"
     },
     "activity": "最近动态",
+    "activityOrder": "购买了 AI 招聘助手 Pro",
+    "activityLogin": "在新设备上登录",
+    "activityReview": "发表了应用评价",
+    "activityInstall": "安装了绩效管理系统",
+    "activityUpdate": "更新了个人资料",
     "quick": "快捷入口",
     "goMarketplace": "应用广场",
     "myOrders": "我的订单",
+    "myApps": "我的应用",
     "community": "用户社区",
     "security": "安全设置",
+    "noApps": "暂无应用",
+    "unknownApp": "未知应用",
     "statOrders": "订单",
     "statApps": "应用",
     "statNotifications": "通知",
@@ -1111,6 +1143,23 @@
       "completed": "已完成",
       "refunded": "已退款",
       "failed": "已失败"
+    },
+    "billing": "账单与订阅",
+    "billingSubscriptions": "订阅",
+    "billingOrders": "订单",
+    "billingInvoices": "发票",
+    "requestInvoice": "申请发票",
+    "invoiceTitle": "发票抬头",
+    "invoiceTaxNo": "税号",
+    "invoiceRequested": "已申请",
+    "noSubscriptions": "暂无订阅",
+    "noInvoices": "暂无发票",
+    "subscriptionStatus": {
+      "active": "生效中",
+      "trialing": "试用中",
+      "expired": "已过期",
+      "cancelled": "已取消",
+      "pastDue": "已欠费"
     }
   },
   "pagination": {
@@ -1140,6 +1189,7 @@
   "productPage": {
     "title": "产品",
     "subtitle": "一体化 HR SaaS，加速人力资源数字化",
+    "jsonLdName": "TalentPro 产品矩阵",
     "detail": "产品详情",
     "tag": "产品",
     "all": "全部",
@@ -1206,6 +1256,8 @@
     "related": "相关资源",
     "searchPlaceholder": "搜索资源标题、标签...",
     "noResults": "未找到匹配的资源",
+    "jsonLdName": "TalentPro 资源中心",
+    "jsonLdDesc": "白皮书、报告、指南与工具",
     "demoCta": "预约产品演示",
     "notFound": "未找到该资源",
     "contents": "目录",
@@ -1284,6 +1336,7 @@
     "jsonLdDesc": "与我们一起，用科技重新定义人才管理",
     "pathTitle": "成长路径",
     "testimonialTitle": "员工心声",
+    "joinedIn": "{year} 年加入",
     "detailLabels": {
       "department": "部门",
       "location": "地点",
@@ -1376,7 +1429,9 @@
     "other": "其他",
     "loadMore": "加载更多",
     "all": "全部",
-    "cancel": "取消"
+    "cancel": "取消",
+    "apply": "应用",
+    "confirm": "确认"
   },
   "cart": {
     "title": "购物车",
@@ -1386,7 +1441,9 @@
     "total": "合计",
     "checkout": "去结算",
     "error": "操作失败，请重试",
-    "checkoutError": "结算失败，请重试"
+    "checkoutError": "结算失败，请重试",
+    "itemCount": "共 {n} 件商品",
+    "remove": "删除"
   },
   "errors": {
     "requestFailed": "请求失败",
@@ -1415,6 +1472,8 @@
     "backHome": "返回首页",
     "fallback": "组件加载失败，请尝试刷新页面。",
     "unknown": "未知错误",
-    "details": "错误详情（开发模式）"
+    "details": "错误详情（开发模式）",
+    "component": "组件",
+    "info": "信息"
   }
 }

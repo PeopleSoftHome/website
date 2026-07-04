@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h2 style="margin-bottom: 20px">应用评价管理</h2>
+    <h2 style="margin-bottom: 20px">{{ t('reviews.title') }}</h2>
     <el-card shadow="hover">
       <div style="margin-bottom: 16px; display: flex; gap: 12px">
-        <el-input v-model="searchAppSlug" placeholder="输入应用 slug 筛选" clearable style="width: 220px" @change="handleFilterChange" />
-        <el-button type="primary" @click="handleFilterChange">查询</el-button>
+        <el-input v-model="searchAppSlug" :placeholder="t('reviews.filterPlaceholder')" clearable style="width: 220px" @change="handleFilterChange" />
+        <el-button type="primary" @click="handleFilterChange">{{ t('reviews.query') }}</el-button>
       </div>
 
       <CmsTable
@@ -28,7 +28,10 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import CmsTable from '@/components/CmsTable.vue';
+
+const { t } = useI18n();
 
 const tableRef = ref(null);
 const searchAppSlug = ref('');
@@ -41,18 +44,18 @@ const reviewsApiUrl = computed(() => {
 });
 
 const columns = [
-  { prop: 'appName', label: '应用', width: 140, formatter: (row) => row.app?.name || '-' },
-  { prop: 'rating', label: '评分', width: 120 },
-  { prop: 'title', label: '标题', width: 160 },
-  { prop: 'content', label: '内容', minWidth: 240 },
-  { prop: 'userName', label: '用户', width: 120, formatter: (row) => row.user?.name || row.userId },
-  { prop: 'createdAt', label: '时间', width: 160, formatter: (row) => formatDate(row.createdAt) },
+  { prop: 'appName', label: t('reviews.app'), width: 140, formatter: (row) => row.app?.name || '-' },
+  { prop: 'rating', label: t('reviews.rating'), width: 120 },
+  { prop: 'title', label: t('reviews.titleCol'), width: 160 },
+  { prop: 'content', label: t('reviews.content'), minWidth: 240 },
+  { prop: 'userName', label: t('reviews.user'), width: 120, formatter: (row) => row.user?.name || row.userId },
+  { prop: 'createdAt', label: t('reviews.time'), width: 160, formatter: (row) => formatDate(row.createdAt) },
 ];
 
 const formFields = [
-  { prop: 'rating', label: '评分', type: 'number' },
-  { prop: 'title', label: '标题', type: 'input' },
-  { prop: 'content', label: '内容', type: 'textarea', rows: 4 },
+  { prop: 'rating', label: t('reviews.rating'), type: 'number' },
+  { prop: 'title', label: t('reviews.titleCol'), type: 'input' },
+  { prop: 'content', label: t('reviews.content'), type: 'textarea', rows: 4 },
 ];
 
 const formatDate = (d) => {

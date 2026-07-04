@@ -62,17 +62,17 @@
 import { computed, markRaw } from 'vue';
 import { useNavigation } from '@/composables/useNavigation';
 import { useSiteConfig } from '@/composables/useSiteConfig';
-import { HOT_TAGS } from '@/data/navigation';
+import { getHotTags } from '@/data/navigation';
 import QrPlaceholder from '@/components/ui/Icon/QrPlaceholder.vue';
 import ZhihuIcon from '@/components/ui/Icon/ZhihuIcon.vue';
 import WeiboIcon from '@/components/ui/Icon/WeiboIcon.vue';
 import s from './Footer.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { footerLinks } = useNavigation();
 const { copyright: siteCopyright, hotTags: cmsHotTags, socialLinks: cmsSocialLinks } = useSiteConfig();
 
-const displayHotTags = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : HOT_TAGS));
+const displayHotTags = computed(() => (cmsHotTags.value.length ? cmsHotTags.value : getHotTags(locale.value)));
 
 const iconMap: Record<string, ReturnType<typeof markRaw>> = { zhihu: markRaw(ZhihuIcon), weibo: markRaw(WeiboIcon) };
 const defaultSocialLinks = computed(() => [

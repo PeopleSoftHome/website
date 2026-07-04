@@ -32,3 +32,38 @@ export const CASE_BYTEDANCE = {
   ],
   relatedCases: [],
 };
+
+export const CASE_BYTEDANCE_EN = {
+  id: 'case-bytedance',
+  slug: 'bytedance-internet',
+  featured: false,
+  industry: 'Internet',
+  clientName: 'ByteDance',
+  title: 'ByteDance: OKR + AI Performance Management for a 100,000-Person Agile Organization',
+  excerpt: 'TalentPro Performance Management helped ByteDance digitize OKR alignment, continuous feedback, and performance calibration.',
+  challenge: 'With more than 100,000 employees and many business lines, goal alignment was difficult. Performance review cycles were short and frequent, making manual processes unsustainable.',
+  solution: 'TalentPro Performance Management enabled cascading OKR decomposition, visual alignment maps, automated continuous feedback and quarterly reviews, and online calibration meetings.',
+  results: 'Goal alignment rose from 70% to 95%, performance review cycle shortened from 3 weeks to 1 week, and manager satisfaction with the performance system reached 88%.',
+  metrics: [
+    { id: 'm1', value: '95%', label: 'Goal Alignment' },
+    { id: 'm2', value: '1 week', label: 'Review Cycle' },
+    { id: 'm3', value: '88%', label: 'Manager Satisfaction' },
+  ],
+  tags: ['Internet', 'OKR', 'Performance Management'],
+  products: ['performance', 'analytics', 'ai-coach'],
+  quote: 'The OKR alignment map let us see the goal network of 100,000 people for the first time, giving us more confidence in strategy execution.',
+  author: 'William Zhou',
+  authorTitle: 'HRBP Lead',
+  coverImage: "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)",
+  date: '2026-03-10',
+  teamSize: '40-person HR team',
+  projectDuration: '4 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Review', title: 'Performance System Assessment', desc: 'Reviewed existing performance processes and pain points, identifying OKR alignment and continuous feedback as core needs.' },
+    { phase: 'Config', title: 'System Configuration & Integration', desc: 'Configured the performance system and integrated with internal OA and collaboration tools for goal decomposition and progress sync.' },
+    { phase: 'Pilot', title: 'Pilot in 3 Business Groups', desc: 'Piloted OKR alignment maps and continuous feedback in 3 business groups, collecting manager feedback.' },
+    { phase: 'Scale', title: 'Company-Wide Rollout & Dashboards', desc: 'Scaled to all employees and launched executive dashboards and HR analytics for data-driven performance decisions.' },
+  ],
+  relatedCases: [],
+};

@@ -13,6 +13,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: process.env.SOURCE_MAP === 'true',
+    // Admin 为内部后台工具，第三方库（element-plus/echarts）体积较大；
+    // 已通过 manualChunks 拆分 vendor，提高告警阈值避免误报。
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {

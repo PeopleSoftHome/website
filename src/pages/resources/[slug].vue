@@ -137,7 +137,7 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { RESOURCES, RESOURCE_TYPE_STYLES } from '@/data/resources';
+import { getResources, RESOURCE_TYPE_STYLES } from '@/data/resources';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import { useScrollProgress } from '@/composables/useScrollProgress';
 import { useSpyScroll } from '@/composables/useSpyScroll';
@@ -145,10 +145,11 @@ import s from './[slug].module.css';
 
 definePageMeta({ title: 'resourcePage.detail', description: 'resourcePage.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const modalStore = useModalStore();
+const resources = computed(() => getResources(locale.value));
 const { progressStyle } = useScrollProgress();
 const { activeId } = useSpyScroll('[data-section]');
 
@@ -161,13 +162,13 @@ const formError = ref('');
 const { data: resource } = useAsyncData(
   () => `resource-${slug.value}`,
   async () => {
-    const data = RESOURCES.find((r) => r.slug === slug.value) || null;
+    const data = resources.value.find((r) => r.slug === slug.value) || null;
     if (!data) {
       throw createError({ statusCode: 404, statusMessage: 'Resource Not Found', fatal: true });
     }
     return data;
   },
-  { server: false, default: () => null, watch: [slug] }
+  { server: false, default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -185,7 +186,7 @@ useHead(() => {
 const relatedResources = computed(() => {
   const current = resource.value;
   if (!current) return [];
-  return RESOURCES.filter((r) => r.type === current.type && r.id !== current.id).slice(0, 3);
+  return resources.value.filter((r) => r.type === current.type && r.id !== current.id).slice(0, 3);
 });
 
 const pageUrl = computed(() => {
@@ -201,11 +202,6 @@ const weiboShareUrl = computed(() => {
 const linkedinShareUrl = computed(() => {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl.value)}`;
 });
-
-const formatDate = (d: string | number | Date | undefined) => {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString();
-};
 
 const typeStyle = (type: string) => {
   const styles = RESOURCE_TYPE_STYLES as Record<string, { bg: string; color: string }>;

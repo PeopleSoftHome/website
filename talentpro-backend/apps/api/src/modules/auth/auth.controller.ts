@@ -63,7 +63,7 @@ export class AuthController {
     const appEnv = this.configService.get('APP_ENV');
     const nodeEnv = this.configService.get('NODE_ENV');
     if (appEnv !== 'development' && nodeEnv !== 'development') {
-      throw new ForbiddenException('开发登录仅在 development 环境可用');
+      throw new ForbiddenException('Dev login is only available in development environment');
     }
 
     const result = await this.authService.devLogin(dto.email, dto.roleName);
@@ -86,7 +86,7 @@ export class AuthController {
   ) {
     const refreshToken = dto.refreshToken || req.cookies?.tp_refresh_token;
     if (!refreshToken) {
-      throw new UnauthorizedException('缺少刷新令牌');
+      throw new UnauthorizedException('Missing refresh token');
     }
     const result = await this.authService.refresh(refreshToken);
     this.tokenService.setAuthCookies(res, {

@@ -15,16 +15,16 @@
     </template>
 
     <div class="notification-header">
-      <span class="notification-title">通知中心</span>
+      <span class="notification-title">{{ t('notificationBell.notificationCenter') }}</span>
       <el-button v-if="unreadCount > 0" link type="primary" size="small" @click="markAllRead">
-        全部已读
+        {{ t('notificationBell.markAllRead') }}
       </el-button>
     </div>
 
     <el-divider style="margin: 8px 0" />
 
     <div v-if="notifications.length === 0" class="notification-empty">
-      <el-empty description="暂无通知" :image-size="60" />
+      <el-empty :description="t('notificationBell.noNotifications')" :image-size="60" />
     </div>
 
     <div v-else class="notification-list">
@@ -47,10 +47,13 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Bell } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 import client from '@/api/client.js';
 import { useAuthStore } from '@/stores/auth.js';
+
+const { t } = useI18n();
 
 const auth = useAuthStore();
 const notifications = ref([]);
@@ -60,8 +63,7 @@ let eventSource = null;
 const unreadCount = computed(() => notifications.value.filter((n) => !n.isRead).length);
 
 const typeLabel = (type) => {
-  const map = { info: '信息', success: '成功', warning: '警告', error: '错误' };
-  return map[type] || '信息';
+  return t(`notificationBell.typeLabels.${type || 'info'}`, 'Info');
 };
 
 const formatTime = (d) => {
@@ -69,9 +71,9 @@ const formatTime = (d) => {
   const date = new Date(d);
   const now = new Date();
   const diff = now - date;
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+  if (diff < 60000) return t('notificationBell.justNow');
+  if (diff < 3600000) return t('notificationBell.minutesAgo', { n: Math.floor(diff / 60000) });
+  if (diff < 86400000) return t('notificationBell.hoursAgo', { n: Math.floor(diff / 3600000) });
   return date.toLocaleDateString('zh-CN');
 };
 
@@ -81,7 +83,7 @@ const fetchNotifications = async () => {
     notifications.value = res.data || [];
   } catch (e) {
     if (import.meta.env.DEV) {
-      console.error('获取通知失败', e);
+      console.error(t('notificationBell.fetchFailed'), e);
     }
   }
 };
@@ -93,7 +95,7 @@ const markRead = async (item) => {
     item.isRead = true;
   } catch (e) {
     if (import.meta.env.DEV) {
-      console.error('标记已读失败', e);
+      console.error(t('notificationBell.markReadFailed'), e);
     }
   }
 };
@@ -104,7 +106,7 @@ const markAllRead = async () => {
     notifications.value.forEach((n) => { n.isRead = true; });
   } catch (e) {
     if (import.meta.env.DEV) {
-      console.error('全部已读失败', e);
+      console.error(t('notificationBell.markAllReadFailed'), e);
     }
   }
 };
@@ -135,7 +137,7 @@ const connectSSE = () => {
   }
   if (sseRetryCount >= MAX_SSE_RETRIES) {
     if (import.meta.env.DEV) {
-      console.warn('SSE 重连次数已达上限，停止重试');
+      console.warn(t('notificationBell.sseMaxRetries'));
     }
     return;
   }
@@ -155,7 +157,7 @@ const connectSSE = () => {
       handleNewNotification(data);
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.error('SSE 消息解析失败', e);
+        console.error(t('notificationBell.sseParseFailed'), e);
       }
     }
   });
@@ -165,20 +167,20 @@ const connectSSE = () => {
     // 如果从未成功连接过，很可能是 401 token 无效，不再重试
     if (!sseHasOpened && sseRetryCount >= 1) {
       if (import.meta.env.DEV) {
-        console.warn('SSE 认证失败，停止重试');
+        console.warn(t('notificationBell.sseAuthFailed'));
       }
       return;
     }
     sseRetryCount += 1;
     if (sseRetryCount >= MAX_SSE_RETRIES) {
       if (import.meta.env.DEV) {
-        console.warn('SSE 重连次数已达上限，停止重试');
+        console.warn(t('notificationBell.sseMaxRetries'));
       }
       return;
     }
     const delay = Math.min(3000 * Math.pow(2, sseRetryCount - 1), 30000);
     if (import.meta.env.DEV) {
-      console.warn(`SSE 连接错误，${delay / 1000}秒后第${sseRetryCount}次重连`);
+      console.warn(t('notificationBell.sseReconnect', { delay: delay / 1000, count: sseRetryCount }));
     }
     reconnectTimer = setTimeout(connectSSE, delay);
   });
@@ -258,7 +260,7 @@ onUnmounted(() => {
 }
 .notification-item-title {
   font-size: 14px;
-  font-weight: 500;
+  font: 500;
   color: var(--admin-text-primary);
   margin-bottom: 2px;
 }

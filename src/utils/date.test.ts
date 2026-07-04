@@ -8,7 +8,7 @@ describe('date utils', () => {
   });
 
   it('formatDate formats date string', () => {
-    const result = formatDate('2026-06-15T00:00:00Z');
+    const result = formatDate('2026-06-15T00:00:00Z', 'zh-CN');
     expect(result).toContain('2026');
     expect(result).toContain('6');
     expect(result).toContain('15');
@@ -20,7 +20,7 @@ describe('date utils', () => {
   });
 
   it('formatTime formats date string', () => {
-    const result = formatTime('2026-06-15T08:30:00Z');
+    const result = formatTime('2026-06-15T08:30:00Z', 'zh-CN');
     expect(result).toContain('6');
     expect(result).toContain('15');
   });
@@ -42,25 +42,35 @@ describe('date utils', () => {
       expect(formatRelativeTime(undefined)).toBe('');
     });
 
-    it('returns 刚刚 within 60s', () => {
-      expect(formatRelativeTime(new Date(now.getTime() - 30 * 1000))).toBe('刚刚');
+    it('returns seconds ago within 60s', () => {
+      const result = formatRelativeTime(new Date(now.getTime() - 30 * 1000), 'zh-CN');
+      expect(result).toMatch(/30/);
+      expect(result).toMatch(/秒|second/);
     });
 
     it('returns minutes ago', () => {
-      expect(formatRelativeTime(new Date(now.getTime() - 5 * 60 * 1000))).toBe('5分钟前');
+      const result = formatRelativeTime(new Date(now.getTime() - 5 * 60 * 1000), 'zh-CN');
+      expect(result).toMatch(/5/);
+      expect(result).toMatch(/分|minute/);
     });
 
     it('returns hours ago', () => {
-      expect(formatRelativeTime(new Date(now.getTime() - 3 * 60 * 60 * 1000))).toBe('3小时前');
+      const result = formatRelativeTime(new Date(now.getTime() - 3 * 60 * 60 * 1000), 'zh-CN');
+      expect(result).toMatch(/3/);
+      expect(result).toMatch(/小时|hour/);
     });
 
     it('returns days ago within a week', () => {
-      expect(formatRelativeTime(new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000))).toBe('2天前');
+      const past = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+      const result = formatRelativeTime(past, 'zh-CN');
+      // numeric: 'auto' 可能输出 "前天"，不一定含数字 2
+      expect(result).not.toBe(formatDate(past, 'zh-CN'));
+      expect(result).toMatch(/前天|昨天|\d+天|\d+ days|day/);
     });
 
     it('falls back to formatDate after a week', () => {
       const past = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
-      expect(formatRelativeTime(past)).toBe(formatDate(past));
+      expect(formatRelativeTime(past, 'zh-CN')).toBe(formatDate(past, 'zh-CN'));
     });
   });
 });

@@ -148,7 +148,7 @@ describe('AuthTokenService', () => {
           data: expect.objectContaining({ token: 'at1', type: TokenType.ACCESS, userId: 'u1' }),
         }),
       );
-      expect(result.message).toBe('登出成功');
+      expect(result.message).toBe('Logged out successfully');
     });
 
     it('should ignore invalid access token', async () => {
@@ -157,7 +157,7 @@ describe('AuthTokenService', () => {
       });
       const result = await service.logout('rt1', 'bad');
       expect(prisma.tokenBlacklist.create).not.toHaveBeenCalled();
-      expect(result.message).toBe('登出成功');
+      expect(result.message).toBe('Logged out successfully');
     });
   });
 

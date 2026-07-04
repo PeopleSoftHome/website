@@ -16,7 +16,7 @@ export class RoleService {
       where: { id },
       include: { permissions: true },
     });
-    if (!role) throw new NotFoundException('角色不存在');
+    if (!role) throw new NotFoundException('Role not found');
     return role;
   }
 
@@ -51,6 +51,6 @@ export class RoleService {
   async remove(id: string) {
     await this.findOne(id);
     await this.prisma.role.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 }

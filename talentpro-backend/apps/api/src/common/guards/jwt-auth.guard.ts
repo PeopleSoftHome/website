@@ -38,7 +38,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         where: { token },
       });
       if (blacklisted) {
-        throw new UnauthorizedException('Token 已失效，请重新登录');
+        throw new UnauthorizedException('Token has expired, please log in again');
       }
     }
 
@@ -47,7 +47,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest<TUser = UserContext>(err: unknown, user: TUser | null): TUser {
     if (err || !user) {
-      throw err || new UnauthorizedException('未授权，请登录');
+      throw err || new UnauthorizedException('Unauthorized, please log in');
     }
     return user;
   }

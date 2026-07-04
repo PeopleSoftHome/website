@@ -19,7 +19,7 @@ export class AuthUserService {
       where: { email: dto.email },
     });
     if (existing) {
-      throw new ConflictException('邮箱已被注册');
+      throw new ConflictException('Email already registered');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 12);
@@ -33,7 +33,7 @@ export class AuthUserService {
         where: { token: dto.inviteToken },
       });
       if (!invite || invite.email !== dto.email || invite.usedAt || invite.expiresAt < new Date()) {
-        throw new BadRequestException('邀请码无效或已过期');
+        throw new BadRequestException('Invalid or expired invitation code');
       }
 
       const result = await this.prisma.$transaction(async (tx) => {
@@ -67,7 +67,7 @@ export class AuthUserService {
       });
 
       return {
-        message: '注册成功',
+        message: 'Registered successfully',
         user: result.user,
       };
     }
@@ -123,7 +123,7 @@ export class AuthUserService {
     });
 
     return {
-      message: '注册成功',
+      message: 'Registered successfully',
       user: result.user,
     };
   }
@@ -152,16 +152,16 @@ export class AuthUserService {
       include: { role: true, workspace: true },
     });
     if (!user) {
-      throw new UnauthorizedException('邮箱或密码错误');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('邮箱或密码错误');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     if (user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('账号已被禁用');
+      throw new UnauthorizedException('Account is disabled');
     }
 
     return {
@@ -198,7 +198,7 @@ export class AuthUserService {
         where: { name: roleName || 'USER' },
       });
       if (!role) {
-        throw new BadRequestException('默认角色不存在，请先运行 seed');
+        throw new BadRequestException('Default role does not exist, please run seed first');
       }
 
       const devEmail = email || 'dev@talentpro.com';
@@ -286,6 +286,6 @@ export class AuthUserService {
         createdAt: true,
       },
     });
-    return { message: '更新成功', user };
+    return { message: 'Updated successfully', user };
   }
 }

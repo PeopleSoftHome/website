@@ -1,15 +1,15 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">审计日志</h2>
+    <h2 style="margin-bottom:20px">{{ t('auditLogs.title') }}</h2>
     <el-card shadow="hover">
       <el-table :data="logs" v-loading="loading" size="default">
-        <el-table-column prop="userId" label="用户ID" width="200" />
-        <el-table-column prop="action" label="操作" width="120" />
-        <el-table-column prop="resource" label="资源" width="120" />
-        <el-table-column prop="resourceId" label="资源ID" width="200" />
-        <el-table-column prop="ipAddress" label="IP地址" width="140" />
-        <el-table-column prop="userAgent" label="User Agent" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="createdAt" label="时间" width="170">
+        <el-table-column prop="userId" :label="t('auditLogs.userId')" width="200" />
+        <el-table-column prop="action" :label="t('auditLogs.action')" width="120" />
+        <el-table-column prop="resource" :label="t('auditLogs.resource')" width="120" />
+        <el-table-column prop="resourceId" :label="t('auditLogs.resourceId')" width="200" />
+        <el-table-column prop="ipAddress" :label="t('auditLogs.ipAddress')" width="140" />
+        <el-table-column prop="userAgent" :label="t('auditLogs.userAgent')" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="createdAt" :label="t('auditLogs.time')" width="170">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
         </el-table-column>
       </el-table>
@@ -28,8 +28,11 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import client from '@/api/client.js';
+
+const { t } = useI18n();
 
 const logs = ref([]);
 const total = ref(0);
@@ -44,7 +47,7 @@ const fetchLogs = async () => {
     logs.value = res.data || [];
     total.value = res.meta?.total || 0;
   } catch (e) {
-    ElMessage.error('加载失败');
+    ElMessage.error(t('auditLogs.loadFailed'));
   }
   loading.value = false;
 };

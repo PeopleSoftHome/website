@@ -12,3 +12,18 @@ export const NEWS_HR_DIGITIZATION_TREND_2026 = {
   featured: false,
   tags: ['行业报告', '数字化趋势', 'AI 渗透'],
 };
+
+export const NEWS_HR_DIGITIZATION_TREND_2026_EN = {
+  id: 'news-3',
+  slug: 'hr-digitization-trend-2026',
+  title: '2026 China HR Digitalization Trends Report: AI Penetration Exceeds 65%',
+  summary: 'A leading report shows that Chinese enterprises increased HR digitalization investment by 28% year over year in 2026, with AI penetration surpassing 65% in recruiting, performance, and training.',
+  content: 'The China HR Digitalization Research Institute released the 2026 China HR Digitalization Trends Report, revealing new industry developments.\nThe report shows that Chinese enterprises increased HR digitalization investment by 28% year over year in 2026, with average investment reaching 12% of HR budgets.\nAI penetration in HR continues to climb: 72% in recruiting, 58% in performance management, and 65% in training and development.\nThe report also notes that data security and privacy protection have become top criteria for enterprise software selection, with Class-3 cybersecurity and ISO 27001 certification becoming baseline requirements.\nTalentPro was named an HR SaaS Leader in the report, ranking first in AI capability, customer satisfaction, and data security.',
+  category: 'Industry Insight',
+  coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F59E0B'/%3E%3Cstop offset='100%25' stop-color='%23EF4444'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white' font-family='system-ui'%3EHR Trends 2026%3C/text%3E%3C/svg%3E",
+  author: 'Tina Li',
+  authorTitle: 'Industry Analyst',
+  publishedAt: '2026-03-05',
+  featured: false,
+  tags: ['Industry Report', 'Digital Trends', 'AI Adoption'],
+};

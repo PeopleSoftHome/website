@@ -28,7 +28,7 @@ export class CaseService {
       where: { slug, status: PostStatus.PUBLISHED, deletedAt: null },
       include: { metrics: true },
     });
-    if (!data) throw new NotFoundException('案例不存在');
+    if (!data) throw new NotFoundException('Case not found');
     await this.prisma.caseStudy.update({ where: { id: data.id }, data: { viewCount: { increment: 1 } } });
     return data;
   }

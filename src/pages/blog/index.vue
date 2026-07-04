@@ -80,27 +80,30 @@ import { formatDate } from '@/utils/date';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination';
-import { BLOG_POSTS, BLOG_CATEGORIES } from '@/data/blog';
+import { getBlogPosts, getBlogCategories } from '@/data/blog';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const page = ref(1);
 const activeCategory = ref<string | null>(null);
 const pageSize = BLOG_PAGE_SIZE;
 
+const blogPosts = computed(() => getBlogPosts(locale.value));
+const blogCategories = computed(() => getBlogCategories(locale.value));
+
 const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyncData(
-  'blog-posts',
+  () => `blog-posts-${locale.value}`,
   () => blogApi.getPosts({
     page: page.value,
     pageSize,
     category: activeCategory.value || undefined,
     status: 'PUBLISHED',
   }),
-  { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
+  { server: false, default: () => ({ data: [], meta: { total: 0 } }), watch: [page, activeCategory, locale] }
 );
 
 const fallbackPosts = computed(() => {
-  let list = BLOG_POSTS;
+  let list = blogPosts.value;
   if (activeCategory.value) {
     list = list.filter((p) => p.category?.slug === activeCategory.value || p.category?.id === activeCategory.value);
   }
@@ -111,12 +114,12 @@ const posts = computed(() => hasApiPosts.value ? postsRes.value.data : fallbackP
 const total = computed(() => hasApiPosts.value ? ((postsRes.value as any)?.meta?.total || 0) : fallbackPosts.value.length);
 
 const { data: catRes } = useAsyncData(
-  'blog-categories',
+  () => `blog-categories-${locale.value}`,
   () => blogApi.getCategories(),
-  { server: false, default: () => ({ data: BLOG_CATEGORIES }) }
+  { server: false, default: () => ({ data: blogCategories.value }), watch: [locale] }
 );
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
-const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : BLOG_CATEGORIES);
+const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : blogCategories.value);
 
 const setCategory = (slug: string) => {
   activeCategory.value = activeCategory.value === slug ? null : slug;

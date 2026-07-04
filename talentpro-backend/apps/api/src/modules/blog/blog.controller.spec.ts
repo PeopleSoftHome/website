@@ -95,12 +95,12 @@ describe('BlogController', () => {
     });
 
     it('deleteCategory should delegate to service', async () => {
-      jest.spyOn(blogService, 'deleteCategory').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(blogService, 'deleteCategory').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteCategory('c1');
 
       expect(blogService.deleteCategory).toHaveBeenCalledWith('c1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -161,12 +161,12 @@ describe('BlogController', () => {
     });
 
     it('deletePost should delegate with id and workspaceId', async () => {
-      jest.spyOn(blogService, 'deletePost').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(blogService, 'deletePost').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deletePost('p1', mockUser);
 
       expect(blogService.deletePost).toHaveBeenCalledWith('p1', mockUser.workspaceId);
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -193,12 +193,12 @@ describe('BlogController', () => {
     });
 
     it('deleteTag should delegate to service', async () => {
-      jest.spyOn(blogService, 'deleteTag').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(blogService, 'deleteTag').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteTag('t1');
 
       expect(blogService.deleteTag).toHaveBeenCalledWith('t1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -263,12 +263,12 @@ describe('BlogController', () => {
     });
 
     it('deleteComment should delegate to service', async () => {
-      jest.spyOn(blogService, 'deleteComment').mockResolvedValue({ message: '删除成功' });
+      jest.spyOn(blogService, 'deleteComment').mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await controller.deleteComment('cm1');
 
       expect(blogService.deleteComment).toHaveBeenCalledWith('cm1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 });

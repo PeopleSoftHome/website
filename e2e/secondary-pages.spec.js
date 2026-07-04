@@ -1,16 +1,5 @@
 import { test, expect } from '@playwright/test';
-
-async function waitForAppReady(page) {
-  await page.waitForSelector('nav', { timeout: 15000 });
-}
-
-async function dismissCookieBanner(page) {
-  await page.evaluate(() => {
-    const banners = document.querySelectorAll('[class*="_banner_"]');
-    banners.forEach(b => b.remove());
-  });
-  await page.waitForTimeout(200);
-}
+import { waitForAppReady, dismissCookieBanner } from './helpers.js';
 
 test.describe('Secondary Pages', () => {
   const pages = [
@@ -140,9 +129,9 @@ test.describe('Secondary Pages', () => {
 
     // Click first product card
     await page.locator('main a[href^="/products/"]').first().click();
+    await page.waitForURL(/\/products\//, { timeout: 10000 });
     await waitForAppReady(page);
-    await expect(page).toHaveURL(/\/products\//);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1')).toBeVisible({ timeout: 15000 });
   });
 
   test('Solutions list should navigate to solution detail', async ({ page }) => {
@@ -152,9 +141,9 @@ test.describe('Secondary Pages', () => {
 
     // Click first solution card
     await page.locator('main a[href^="/solutions/"]').first().click();
+    await page.waitForURL(/\/solutions\//, { timeout: 10000 });
     await waitForAppReady(page);
-    await expect(page).toHaveURL(/\/solutions\//);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('h1')).toBeVisible({ timeout: 15000 });
   });
 
   test('Careers page should show job list and benefits', async ({ page }) => {

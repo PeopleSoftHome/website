@@ -60,14 +60,16 @@ definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle'
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { PRODUCT_TABS } from '@/data/products';
+import { getProductList } from '@/data/products/list';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const modalStore = useModalStore();
 
-const tabs = [{ id: 'all', name: t('productPage.all') }, ...PRODUCT_TABS.map((tab) => ({ id: tab.id, name: tab.label }))];
+const productTabs = computed(() => getProductList(locale.value));
+
+const tabs = computed(() => [{ id: 'all', name: t('productPage.all') }, ...productTabs.value.map((tab: any) => ({ id: tab.id, name: tab.label }))]);
 const activeTab = ref('all');
 
 interface ProductItem {
@@ -85,7 +87,7 @@ interface ProductItem {
 
 const allProducts = computed<ProductItem[]>(() => {
   const list: ProductItem[] = [];
-  PRODUCT_TABS.forEach((tab: any) => {
+  productTabs.value.forEach((tab: any) => {
     tab.products.forEach((p: any) => {
       list.push({ ...p, tabId: tab.id, tabLabel: tab.label, iconBg: tab.iconBg, iconColor: tab.iconColor });
     });
@@ -102,7 +104,7 @@ onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'TalentPro 产品矩阵',
+    name: t('productPage.jsonLdName'),
     itemListElement: allProducts.value.map((p, i) => ({
       '@type': 'ListItem',
       position: i + 1,

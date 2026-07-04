@@ -49,7 +49,7 @@ onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: t('hero.jsonLdName') || 'TalentPro — 用 AI 重新定义人才管理',
+    name: t('hero.jsonLdName') || 'TalentPro — Redefine Talent Management with AI',
     description: t('hero.jsonLdDesc') || t('hero.subtitle'),
     url: 'https://talentpro.cn/',
     publisher: {

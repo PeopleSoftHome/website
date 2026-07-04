@@ -1,10 +1,33 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@/common/prisma/prisma.service';
-import { PaymentStatus, PaymentProvider, SubscriptionStatus } from '@prisma/client';
+import { PaymentStatus, PaymentProvider, SubscriptionStatus, Prisma } from '@prisma/client';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
 import Stripe from 'stripe';
 import type { Stripe as StripeTypes } from 'stripe/cjs/stripe.core.js';
+
+export interface FindOrdersAdminFilters {
+  status?: PaymentStatus;
+  provider?: PaymentProvider;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface OrderStatsResult {
+  totalRevenue: number;
+  totalOrders: number;
+  completedOrders: number;
+  refundedOrders: number;
+  pendingOrders: number;
+  byProvider: { provider: string; count: number; revenue: number }[];
+}
+
+export interface RevenueAnalyticsResult extends OrderStatsResult {
+  byDay: { date: string; revenue: number; orders: number }[];
+  topApps: { appId: string; name: string; revenue: number; orders: number }[];
+}
 
 @Injectable()
 export class PaymentService {
@@ -34,20 +57,20 @@ export class PaymentService {
     quantity?: number;
   }) {
     const app = await this.prisma.app.findUnique({ where: { id: dto.appId } });
-    if (!app) throw new NotFoundException('应用不存在');
+    if (!app) throw new NotFoundException('App not found');
 
     const tier = this.findPricingTier(app.pricingTiers, dto.tierName);
-    if (!tier) throw new BadRequestException('指定的订阅套餐不存在');
+    if (!tier) throw new BadRequestException('Selected subscription tier not found');
 
     const interval = dto.interval || 'month';
     const quantity = dto.quantity || 1;
     const unitPrice = tier.price?.[interval] ?? tier.price;
     if (unitPrice === undefined) {
-      throw new BadRequestException('指定周期暂无价格');
+      throw new BadRequestException('Pricing not available for the selected interval');
     }
     const expectedAmount = unitPrice * quantity;
     if (Math.abs(expectedAmount - dto.amount) > 0.01) {
-      throw new BadRequestException('订单金额与套餐价格不一致');
+      throw new BadRequestException('Order amount does not match pricing');
     }
 
     const orderNo = this.generateOrderNo();
@@ -117,9 +140,220 @@ export class PaymentService {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, userId },
     });
-    if (!order) throw new NotFoundException('订单不存在');
+    if (!order) throw new NotFoundException('Order not found');
     return order;
   }
+
+  async cancelOrder(userId: string, orderId: string) {
+    const order = await this.findOrderById(userId, orderId);
+    if (!this.isValidStatusTransition(order.status, PaymentStatus.CANCELLED)) {
+      throw new BadRequestException('Current order status does not allow cancellation');
+    }
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: { status: PaymentStatus.CANCELLED },
+    });
+  }
+
+  // ─── State machine ───
+
+  private isValidStatusTransition(from: PaymentStatus, to: PaymentStatus): boolean {
+    if (from === to) return false;
+    const transitions: Record<PaymentStatus, PaymentStatus[]> = {
+      [PaymentStatus.PENDING]: [PaymentStatus.PROCESSING, PaymentStatus.COMPLETED, PaymentStatus.FAILED, PaymentStatus.CANCELLED],
+      [PaymentStatus.PROCESSING]: [PaymentStatus.COMPLETED, PaymentStatus.FAILED],
+      [PaymentStatus.COMPLETED]: [PaymentStatus.REFUNDED, PaymentStatus.PARTIALLY_REFUNDED],
+      [PaymentStatus.REFUNDED]: [],
+      [PaymentStatus.PARTIALLY_REFUNDED]: [PaymentStatus.REFUNDED],
+      [PaymentStatus.FAILED]: [],
+      [PaymentStatus.CANCELLED]: [],
+    };
+    return transitions[from]?.includes(to) ?? false;
+  }
+
+  async updateOrderStatus(userId: string, orderId: string, status: PaymentStatus) {
+    const order = await this.findOrderById(userId, orderId);
+    if (!this.isValidStatusTransition(order.status, status)) {
+      throw new BadRequestException(`Order status cannot transition from ${order.status} to ${status}`);
+    }
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+  }
+
+  async updateOrderStatusAdmin(orderId: string, status: PaymentStatus, _reason?: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+    if (!this.isValidStatusTransition(order.status, status)) {
+      throw new BadRequestException(`Order status cannot transition from ${order.status} to ${status}`);
+    }
+    // reason 用于审计说明，当前模型未持久化，仅保留参数接口一致性
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+  }
+
+  // ─── Invoice ───
+
+  async requestInvoice(userId: string, orderId: string, _invoiceData: { title: string; taxNo?: string }) {
+    const order = await this.findOrderById(userId, orderId);
+    if (order.status !== PaymentStatus.COMPLETED && order.status !== PaymentStatus.REFUNDED && order.status !== PaymentStatus.PARTIALLY_REFUNDED) {
+      throw new BadRequestException('Only completed or refunded orders can request an invoice');
+    }
+
+    const invoiceNo = this.generateInvoiceNo();
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        invoiceRequested: true,
+        invoiceNo,
+      },
+    });
+  }
+
+  async updateInvoiceAdmin(orderId: string, _invoiceData: { title: string; taxNo?: string }) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+    const invoiceNo = order.invoiceNo || this.generateInvoiceNo();
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        invoiceRequested: true,
+        invoiceNo,
+      },
+    });
+  }
+
+  private generateInvoiceNo(): string {
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+    return `INV-${date}-${random}`;
+  }
+
+  // ─── Admin Orders ───
+
+  async findOrdersAdmin(filters: FindOrdersAdminFilters) {
+    const page = Math.max(1, filters.page || 1);
+    const pageSize = Math.max(1, filters.pageSize || 20);
+    const skip = getSkip(page, pageSize);
+
+    const where: Prisma.OrderWhereInput = {};
+    if (filters.status) where.status = filters.status;
+    if (filters.provider) where.provider = filters.provider;
+    if (filters.startDate || filters.endDate) {
+      where.createdAt = {};
+      if (filters.startDate) where.createdAt.gte = new Date(filters.startDate);
+      if (filters.endDate) where.createdAt.lte = new Date(filters.endDate);
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+        include: { subscription: { include: { app: true } } },
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return buildPaginatedResponse(data, page, pageSize, total);
+  }
+
+  async getOrderStats(): Promise<OrderStatsResult> {
+    const [allOrders, completedOrders, refundedOrders, pendingOrders, byProvider] = await Promise.all([
+      this.prisma.order.count(),
+      this.prisma.order.count({ where: { status: PaymentStatus.COMPLETED } }),
+      this.prisma.order.count({ where: { status: { in: [PaymentStatus.REFUNDED, PaymentStatus.PARTIALLY_REFUNDED] } } }),
+      this.prisma.order.count({ where: { status: PaymentStatus.PENDING } }),
+      this.prisma.order.groupBy({
+        by: ['provider'],
+        _count: { provider: true },
+        _sum: { total: true },
+        where: { status: PaymentStatus.COMPLETED },
+      }),
+    ]);
+
+    const totalRevenue = byProvider.reduce((sum, row) => sum + (row._sum.total || 0), 0);
+
+    return {
+      totalRevenue,
+      totalOrders: allOrders,
+      completedOrders,
+      refundedOrders,
+      pendingOrders,
+      byProvider: byProvider.map((row) => ({
+        provider: row.provider || 'UNKNOWN',
+        count: row._count.provider,
+        revenue: row._sum.total || 0,
+      })),
+    };
+  }
+
+  async getRevenueAnalytics(days = 30): Promise<RevenueAnalyticsResult> {
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+    since.setHours(0, 0, 0, 0);
+
+    const stats = await this.getOrderStats();
+
+    const completedOrders = await this.prisma.order.findMany({
+      where: {
+        status: PaymentStatus.COMPLETED,
+        paidAt: { gte: since },
+      },
+      include: { subscription: { include: { app: true } } },
+      orderBy: { paidAt: 'asc' },
+    });
+
+    const byDayMap = new Map<string, { revenue: number; orders: number }>();
+    const appMap = new Map<string, { name: string; revenue: number; orders: number }>();
+
+    for (const order of completedOrders) {
+      const date = order.paidAt!.toISOString().split('T')[0];
+      const day = byDayMap.get(date) || { revenue: 0, orders: 0 };
+      day.revenue += order.total;
+      day.orders += 1;
+      byDayMap.set(date, day);
+
+      const app = order.subscription?.app;
+      if (app) {
+        const appStat = appMap.get(app.id) || { name: app.name, revenue: 0, orders: 0 };
+        appStat.revenue += order.total;
+        appStat.orders += 1;
+        appMap.set(app.id, appStat);
+      }
+    }
+
+    const byDay = Array.from(byDayMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, value]) => ({ date, ...value }));
+
+    const topApps = Array.from(appMap.entries())
+      .sort((a, b) => b[1].revenue - a[1].revenue)
+      .slice(0, 10)
+      .map(([appId, value]) => ({ appId, ...value }));
+
+    return {
+      ...stats,
+      byDay,
+      topApps,
+    };
+  }
+
+  // ─── Subscriptions ───
+
+  async findSubscriptions(userId: string, workspaceId: string) {
+    return this.prisma.subscription.findMany({
+      where: { workspaceId },
+      include: { app: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  // ─── Cart ───
 
   async checkoutCart(
     userId: string,
@@ -127,7 +361,7 @@ export class PaymentService {
     items: { appId: string; tierName: string; interval?: string; amount: number; currency?: string; quantity?: number }[],
   ) {
     if (!items || items.length === 0) {
-      throw new BadRequestException('购物车为空');
+      throw new BadRequestException('Cart is empty');
     }
 
     const orders = [];
@@ -161,17 +395,17 @@ export class PaymentService {
 
   private async createStripeCheckoutForOrders(orderIds: string[], successUrl?: string, cancelUrl?: string) {
     if (!this.stripe) {
-      throw new BadRequestException('Stripe 未配置');
+      throw new BadRequestException('Stripe is not configured');
     }
 
     const orders = await this.prisma.order.findMany({
       where: { id: { in: orderIds } },
     });
     if (orders.length !== orderIds.length) {
-      throw new NotFoundException('部分订单不存在');
+      throw new NotFoundException('Some orders not found');
     }
     if (orders.some((o) => o.status !== PaymentStatus.PENDING)) {
-      throw new BadRequestException('订单状态不允许支付');
+      throw new BadRequestException('Order status does not allow payment');
     }
 
     const origin = this.config.get<string>('app.frontendUrl', 'http://localhost:3000');
@@ -218,7 +452,7 @@ export class PaymentService {
       const rawOrderIds = session.metadata?.orderIds || session.metadata?.orderId || '';
       const orderIds = rawOrderIds.split(',').filter(Boolean);
       for (const orderId of orderIds) {
-        await this.confirmOrderPayment(orderId, PaymentProvider.STRIPE, session.id);
+        await this.confirmOrderPayment(orderId, PaymentProvider.STRIPE, session.payment_intent as string || session.id);
       }
     }
 
@@ -232,7 +466,14 @@ export class PaymentService {
       where: { id: orderId },
       include: { subscription: true },
     });
-    if (!order || order.status === PaymentStatus.COMPLETED) return;
+    if (!order) return;
+
+    // 幂等性：已完成的订单不再处理
+    if (order.status === PaymentStatus.COMPLETED) return;
+
+    // 仅允许从 PENDING / PROCESSING 进入完成态
+    const allowComplete: PaymentStatus[] = [PaymentStatus.PENDING, PaymentStatus.PROCESSING];
+    if (!allowComplete.includes(order.status)) return;
 
     const updateSubscriptionOps = [];
     if (order.subscriptionId && order.subscription) {

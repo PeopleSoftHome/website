@@ -54,17 +54,18 @@ import { blogApi } from '@/api/blog';
 import { renderMarkdown } from '@/utils/markdown';
 import { formatDate } from '@/utils/date';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
-import { BLOG_POST_MAP } from '@/data/blog';
+import { getBlogPostMap } from '@/data/blog';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
+const blogPostMap = computed(() => getBlogPostMap(locale.value));
 
 const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(
-  () => `blog-${slug.value}`,
+  () => `blog-${locale.value}-${slug.value}`,
   async () => {
     try {
       const res = await blogApi.getPost(slug.value);
@@ -73,13 +74,13 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    const fallback = BLOG_POST_MAP[slug.value as string] || null;
+    const fallback = blogPostMap.value[slug.value as string] || null;
     if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
     }
     return fallback;
   },
-  { server: false, default: () => null, watch: [slug] }
+  { server: false, default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {

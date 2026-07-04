@@ -12,3 +12,18 @@ export const NEWS_ISO27001_CERTIFICATION = {
   featured: false,
   tags: ['安全认证', 'ISO 27001', '数据安全'],
 };
+
+export const NEWS_ISO27001_CERTIFICATION_EN = {
+  id: 'news-4',
+  slug: 'talentpro-iso27001-certification',
+  title: 'TalentPro Achieves ISO 27001 Information Security Management Certification',
+  summary: 'Following rigorous third-party auditing, TalentPro has officially obtained ISO 27001 certification, demonstrating internationally recognized information security management capabilities.',
+  content: 'TalentPro announced that it has officially passed ISO 27001:2022 information security management system certification, marking industry-leading information security management capabilities.\nThe certification was audited comprehensively by SGS, covering all TalentPro product lines and operating processes.\nTalentPro\'s CTO said: "Information security is the lifeline of HR SaaS. We have built a nine-layer protection system from physical security to application security to ensure the confidentiality, integrity, and availability of customer data."\nTo date, TalentPro has obtained multiple security certifications including Class-3 Cybersecurity, ISO 27001, and SOC 2 Type II, providing comprehensive data security assurance for enterprise clients.',
+  category: 'Company News',
+  coverImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2314B8A6'/%3E%3Cstop offset='100%25' stop-color='%2322C55E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='40' fill='white' font-family='system-ui'%3EISO 27001%3C/text%3E%3C/svg%3E",
+  author: 'Security Team',
+  authorTitle: 'Information Security Lead',
+  publishedAt: '2026-02-28',
+  featured: false,
+  tags: ['Security Certification', 'ISO 27001', 'Data Security'],
+};

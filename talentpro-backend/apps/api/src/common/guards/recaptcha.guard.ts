@@ -16,7 +16,7 @@ export class RecaptchaGuard implements CanActivate {
     }
 
     if (!token) {
-      throw new BadRequestException('缺少 reCAPTCHA 验证令牌');
+      throw new BadRequestException('Missing reCAPTCHA token');
     }
 
     const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
@@ -29,12 +29,12 @@ export class RecaptchaGuard implements CanActivate {
     const data = await response.json();
 
     if (!data.success) {
-      throw new BadRequestException('reCAPTCHA 验证失败，请重试');
+      throw new BadRequestException('reCAPTCHA verification failed, please try again');
     }
 
     // v3 分数检查（可选）
     if (typeof data.score === 'number' && data.score < 0.3) {
-      throw new BadRequestException('安全验证未通过，请重试');
+      throw new BadRequestException('Security verification failed, please try again');
     }
 
     return true;

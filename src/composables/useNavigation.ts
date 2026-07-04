@@ -1,7 +1,7 @@
 import { ref, computed, onMounted } from 'vue';
 import type { Ref } from 'vue';
 import { cmsApi } from '@/api/cms';
-import { NAV_LINKS, FOOTER_LINKS } from '@/data/navigation';
+import { getHeaderNav, getFooterNav } from '@/data/navigation';
 
 /**
  * 将 CMS Navigation 的 href 映射到前端 i18n key。
@@ -130,18 +130,19 @@ function ensureLoaded() {
 
 export function useNavigation() {
   onMounted(ensureLoaded);
+  const { locale } = useI18n();
 
   const navLinks = computed(() => {
     const items = headerNav.value?.items;
     if (Array.isArray(items) && items.length > 0) {
       return items.map(transformHeaderItem);
     }
-    return NAV_LINKS;
+    return getHeaderNav(locale.value);
   });
 
   const footerLinks = computed(() => {
     const transformed = transformFooterNav(footerNav.value);
-    return transformed && transformed.length > 0 ? transformed : FOOTER_LINKS;
+    return transformed && transformed.length > 0 ? transformed : getFooterNav(locale.value);
   });
 
   return {

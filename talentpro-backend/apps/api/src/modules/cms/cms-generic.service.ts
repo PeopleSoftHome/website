@@ -42,7 +42,7 @@ export class CmsGenericService {
   private getModel(type: string): CmsModel {
     const model = (this.prisma as unknown as Record<string, CmsModel | undefined>)[type];
     if (!model) {
-      throw new NotFoundException(`CMS 内容类型 "${type}" 不存在`);
+      throw new NotFoundException(`CMS content type "${type}" not found`);
     }
     return model;
   }
@@ -73,7 +73,7 @@ export class CmsGenericService {
   async findBySlug(type: string, slug: string) {
     const model = this.getModel(type);
     const item = await model.findUnique({ where: { slug } });
-    if (!item) throw new NotFoundException(`${type} "${slug}" 不存在`);
+    if (!item) throw new NotFoundException(`${type} "${slug}" not found`);
     return item;
   }
 
@@ -90,6 +90,6 @@ export class CmsGenericService {
   async delete(type: string, id: string) {
     const model = this.getModel(type);
     await model.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 }

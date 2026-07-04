@@ -236,7 +236,7 @@ describe('BlogCommentService', () => {
       const result = await service.deleteComment('cm1');
 
       expect(prisma.comment.delete).toHaveBeenCalledWith({ where: { id: 'cm1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 });

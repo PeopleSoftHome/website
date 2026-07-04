@@ -2,7 +2,16 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ElementPlus from 'element-plus';
+import { createI18n } from 'vue-i18n';
+import zhCN from '@/i18n/locales/zh-CN.json';
 import ImageUpload from './ImageUpload.vue';
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'zh',
+  fallbackLocale: 'zh',
+  messages: { zh: zhCN },
+});
 
 describe('ImageUpload', () => {
   beforeEach(() => {
@@ -13,7 +22,7 @@ describe('ImageUpload', () => {
     mount(ImageUpload, {
       props: { modelValue: '', ...props },
       global: {
-        plugins: [ElementPlus],
+        plugins: [ElementPlus, i18n],
       },
     });
 

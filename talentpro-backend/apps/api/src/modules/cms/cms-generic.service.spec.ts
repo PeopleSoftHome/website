@@ -214,7 +214,7 @@ describe('CmsGenericService', () => {
       const result = await service.delete('whyUsTab', '1');
 
       expect(prisma.whyUsTab.delete).toHaveBeenCalledWith({ where: { id: '1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw NotFoundException when model does not exist', async () => {

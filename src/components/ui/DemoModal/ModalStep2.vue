@@ -52,23 +52,27 @@ const toggle = (p: string) => {
   selected.value = next;
 };
 
-// 智能推荐规则：基于已选产品推荐关联产品
-const RECOMMEND_MAP: Record<string, string[]> = {
-  '招聘管理':  ['人才测评', 'AI Family'],
-  '假勤管理':  ['薪酬管理', '组织人事'],
-  '绩效管理':  ['组织人事', 'AI Family'],
-  '组织人事':  ['假勤管理', '薪酬管理', '绩效管理'],
-  '薪酬管理':  ['假勤管理', '组织人事'],
-  '人才测评':  ['招聘管理', 'AI Family'],
-  'AI Family': ['招聘管理', '绩效管理', '人才测评'],
+// 智能推荐规则：基于产品数组下标推荐关联产品，确保多语言下稳定匹配
+const RECOMMEND_MAP: Record<number, number[]> = {
+  0: [1, 6], // Recruiting -> Assessment, AI Family
+  2: [3, 4], // Attendance -> Payroll, HR & Org
+  5: [4, 6], // Performance -> HR & Org, AI Family
+  4: [2, 3, 5], // HR & Org -> Attendance, Payroll, Performance
+  3: [2, 4], // Payroll -> Attendance, HR & Org
+  1: [0, 6], // Assessment -> Recruiting, AI Family
+  6: [0, 5, 1], // AI Family -> Recruiting, Performance, Assessment
 };
 
 const recommendations = computed(() => {
   const recs = new Set<string>();
   for (const p of selected.value) {
-    const mapped = RECOMMEND_MAP[p];
+    const idx = PRODUCTS.indexOf(p);
+    const mapped = RECOMMEND_MAP[idx];
     if (mapped) {
-      mapped.forEach((r) => { if (!selected.value.has(r)) recs.add(r); });
+      mapped.forEach((rIdx) => {
+        const r = PRODUCTS[rIdx];
+        if (r && !selected.value.has(r)) recs.add(r);
+      });
     }
   }
   return Array.from(recs);

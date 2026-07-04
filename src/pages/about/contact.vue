@@ -81,13 +81,13 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle' });
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
-import { CONTACT_FAQ } from '@/data/contact';
+import { getContactFaq } from '@/data/contact';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './contact.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const openFaq = ref(-1);
 
 const contacts = [
@@ -96,7 +96,7 @@ const contacts = [
   { icon: '📍', title: t('contactPage.addressTitle'), value: t('contactPage.addressValue') },
 ];
 
-const faq = CONTACT_FAQ;
+const faq = computed(() => getContactFaq(locale.value));
 
 const form = ref({ name: '', email: '', company: '', inquiryType: '', message: '' });
 const submitting = ref(false);

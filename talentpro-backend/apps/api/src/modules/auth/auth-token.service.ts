@@ -45,14 +45,14 @@ export class AuthTokenService {
       where: { token: refreshToken },
     });
     if (!stored || stored.expiresAt < new Date()) {
-      throw new UnauthorizedException('Refresh token 无效或已过期');
+      throw new UnauthorizedException('Refresh token is invalid or expired');
     }
 
     const user = await this.prisma.user.findUnique({
       where: { id: stored.userId },
     });
     if (!user || user.status !== 'ACTIVE') {
-      throw new UnauthorizedException('用户不存在');
+      throw new UnauthorizedException('User not found');
     }
 
     await this.prisma.refreshToken.deleteMany({ where: { id: stored.id } });
@@ -83,7 +83,7 @@ export class AuthTokenService {
         // ignore decode error
       }
     }
-    return { message: '登出成功' };
+    return { message: 'Logged out successfully' };
   }
 
   /* ── Cookie 辅助方法 ── */

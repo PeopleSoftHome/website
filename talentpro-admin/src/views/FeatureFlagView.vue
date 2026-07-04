@@ -1,19 +1,19 @@
 <template>
   <div>
-    <h2 style="margin-top: 0">功能开关</h2>
+    <h2 style="margin-top: 0">{{ t('featureFlags.title') }}</h2>
     <p style="color: var(--admin-text-secondary); margin-bottom: 16px">
-      管理灰度发布与模块启停。开关以 JSON 对象形式存储在 <code>featureFlags</code> 设置项中。
+      {{ t('featureFlags.description') }}
     </p>
 
     <el-card shadow="hover" v-loading="loading">
       <div style="margin-bottom: 16px">
-        <el-button type="primary" @click="openDialog()">+ 新增开关</el-button>
-        <el-button @click="fetch">刷新</el-button>
+        <el-button type="primary" @click="openDialog()">+ {{ t('featureFlags.addFlag') }}</el-button>
+        <el-button @click="fetch">{{ t('featureFlags.refresh') }}</el-button>
       </div>
 
       <el-table :data="flagList" size="default">
-        <el-table-column prop="key" label="Key" width="240" />
-        <el-table-column label="状态" width="120">
+        <el-table-column prop="key" :label="t('featureFlags.key')" width="240" />
+        <el-table-column :label="t('featureFlags.status')" width="120">
           <template #default="{ row }">
             <el-switch
               v-model="row.value"
@@ -21,28 +21,28 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column :label="t('featureFlags.operation')" width="120">
           <template #default="{ row }">
-            <el-button link type="danger" @click="remove(row.key)">删除</el-button>
+            <el-button link type="danger" @click="remove(row.key)">{{ t('featureFlags.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <el-empty v-if="!flagList.length" description="暂无功能开关" />
+      <el-empty v-if="!flagList.length" :description="t('featureFlags.noFlags')" />
     </el-card>
 
-    <el-dialog v-model="dialogVisible" title="新增功能开关" width="480px">
+    <el-dialog v-model="dialogVisible" :title="t('featureFlags.addFlagDialog')" width="480px">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="Key">
-          <el-input v-model="form.key" placeholder="如 enableNewPricing" />
+        <el-form-item :label="t('featureFlags.key')">
+          <el-input v-model="form.key" placeholder="enableNewPricing" />
         </el-form-item>
-        <el-form-item label="开启">
+        <el-form-item :label="t('featureFlags.enabled')">
           <el-switch v-model="form.value" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="addFlag" :loading="saving">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('featureFlags.cancel') }}</el-button>
+        <el-button type="primary" @click="addFlag" :loading="saving">{{ t('featureFlags.save') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -50,8 +50,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
+
+const { t } = useI18n();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -71,7 +74,7 @@ const fetch = async () => {
     const row = rows.find((r) => r.key === 'featureFlags');
     flags.value = row?.value && typeof row.value === 'object' ? row.value : {};
   } catch (e) {
-    ElMessage.error('加载失败');
+    ElMessage.error(t('featureFlags.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -83,12 +86,12 @@ const saveFlags = async (nextFlags) => {
     await client.post('/system/settings', {
       key: 'featureFlags',
       value: nextFlags,
-      description: '功能开关配置',
+      description: 'feature flags config',
     });
     flags.value = { ...nextFlags };
-    ElMessage.success('保存成功');
+    ElMessage.success(t('featureFlags.saveSuccess'));
   } catch (e) {
-    ElMessage.error(e.message || '保存失败');
+    ElMessage.error(e.message || t('featureFlags.saveFailed'));
   } finally {
     saving.value = false;
   }
@@ -100,12 +103,12 @@ const toggle = (key, val) => {
 
 const remove = async (key) => {
   try {
-    await ElMessageBox.confirm(`确认删除开关 "${key}"？`, '提示', { type: 'warning' });
+    await ElMessageBox.confirm(t('featureFlags.deleteConfirm', { key }), t('featureFlags.deleteTip'), { type: 'warning' });
     const next = { ...flags.value };
     delete next[key];
     await saveFlags(next);
   } catch (e) {
-    if (e !== 'cancel') ElMessage.error('删除失败');
+    if (e !== 'cancel') ElMessage.error(t('featureFlags.deleteFailed'));
   }
 };
 
@@ -116,7 +119,7 @@ const openDialog = () => {
 
 const addFlag = async () => {
   if (!form.value.key.trim()) {
-    ElMessage.warning('请输入 Key');
+    ElMessage.warning(t('featureFlags.keyRequired'));
     return;
   }
   await saveFlags({ ...flags.value, [form.value.key.trim()]: form.value.value });

@@ -71,6 +71,6 @@ export class BlogCommentService {
 
   async deleteComment(id: string) {
     await this.prisma.comment.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 }

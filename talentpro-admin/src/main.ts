@@ -12,6 +12,7 @@ import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components';
 import App from './App.vue';
 import router from './router';
+import i18n from './i18n';
 import { permissionDirective } from './directives/permission.js';
 
 use([CanvasRenderer, BarChart, LineChart, PieChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent]);
@@ -26,6 +27,7 @@ app.component('v-chart', VueECharts);
 
 app.use(createPinia());
 app.use(router);
+app.use(i18n);
 app.use(ElementPlus);
 app.directive('permission', permissionDirective);
 app.mount('#app');

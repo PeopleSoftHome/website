@@ -71,7 +71,7 @@ export class CmsController {
 
   private resolveContentType(type: string): string {
     const model = this.contentTypeMap[type];
-    if (!model) throw new NotFoundException(`CMS 内容类型 "${type}" 不存在`);
+    if (!model) throw new NotFoundException(`CMS content type "${type}" not found`);
     return model;
   }
 

@@ -26,3 +26,29 @@ AI Family 3.0 采用统一大模型底座 + 垂直领域小模型 + 企业知识
   tags: [{ id: 't9', name: 'AI Family' }, { id: 't10', name: '产品发布' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_AI_FAMILY_3_DEEP_DIVE_EN: BlogPost = {
+  id: 'blog-5',
+  slug: 'ai-family-3-deep-dive',
+  title: 'TalentPro AI Family 3.0 Technical Deep Dive: How 10 Assistants Collaborate',
+  excerpt: 'AI Family 3.0 is not a single-point tool but an agent network covering recruiting, performance, learning, and employee service.',
+  content: `## Architecture Upgrade
+AI Family 3.0 uses a three-layer architecture: unified large model foundation, domain-specific small models, and enterprise knowledge base.
+
+## 10 Assistants in Action
+- Recruiter screens candidates
+- Interviewer handles first-round interviews
+- Payroll assistant answers policy questions
+- Learning assistant recommends courses
+- Performance assistant generates insights
+- Employee service assistant is online 24/7
+
+## Safety and Control
+All AI outputs are traceable, and key decisions retain human review.`,
+  coverImage: cover('AI Family'),
+  createdAt: '2026-04-15T06:00:00.000Z',
+  updatedAt: '2026-04-15T06:00:00.000Z',
+  category: { id: 'cat-product', name: 'Product Update', slug: 'product' },
+  tags: [{ id: 't9', name: 'AI Family' }, { id: 't10', name: 'Product Launch' }],
+  status: 'PUBLISHED',
+};

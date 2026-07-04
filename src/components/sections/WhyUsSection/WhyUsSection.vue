@@ -50,8 +50,8 @@ import { ref, computed, inject, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs';
 import { useCmsDataByKey } from '@/composables/useCmsData';
 import { transformWhyUsTabs } from '@/api/transforms';
-import { STATS_BAR, WHY_US_TABS } from '@/data/whyUs';
-import { SECURITY_CERTS } from '@/data/security';
+import { getStatsBar } from '@/data/whyUs';
+import { getSecurityCerts } from '@/data/security';
 import Icon from '../../ui/Icon/Icon.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
 import MetricCard from './MetricCard.vue';
@@ -76,8 +76,11 @@ interface StatsBarItem {
   label: string;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { activeIndex, selectTab } = useTabs(0);
+
+const STATS_BAR = computed(() => getStatsBar(locale.value));
+const SECURITY_CERTS = computed(() => getSecurityCerts(locale.value));
 
 const { displayItems: rawApiTabs } = useCmsDataByKey('why-us', { transform: transformWhyUsTabs, fallbackKey: 'why-us' });
 const apiTabs = computed(() => rawApiTabs.value as unknown as WhyUsTab[]);
@@ -94,13 +97,13 @@ const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'produc
 const currentMetrics = computed<WhyUsMetric[]>(() => {
   const apiTab = apiTabs.value[activeIndex.value];
   if (apiTab?.metrics?.length) return apiTab.metrics;
-  const staticTab = WHY_US_TABS.find((tab) => tab.id === currentTabId.value);
-  return (staticTab?.metrics || []) as WhyUsMetric[];
+  const i18nMetrics = t(`whyUs.metrics.${currentTabId.value}`) as unknown as WhyUsMetric[];
+  return i18nMetrics || [];
 });
 
 const barRefs: (Element | null)[] = [];
 onMounted(() => {
-  STATS_BAR.forEach((item: StatsBarItem, i) => {
+  STATS_BAR.value.forEach((item: StatsBarItem, i) => {
     const el = barRefs[i];
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -125,6 +128,6 @@ onMounted(() => {
   });
 });
 
-const certLabel = (i: number) => SECURITY_CERTS[i]?.label || '';
-const certDesc = (i: number) => SECURITY_CERTS[i]?.desc || '';
+const certLabel = (i: number) => (t(`whyUs.security.certs.${i}.label`) as unknown as string) || SECURITY_CERTS.value[i]?.label || '';
+const certDesc = (i: number) => (t(`whyUs.security.certs.${i}.desc`) as unknown as string) || SECURITY_CERTS.value[i]?.desc || '';
 </script>

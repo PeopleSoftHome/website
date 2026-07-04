@@ -31,7 +31,7 @@ export class CmsPageService {
     const page = await this.cmsRepo.forModel('page').findBySlug(slug, {
       sections: { orderBy: { sortOrder: 'asc' } },
     });
-    if (!page) throw new NotFoundException('页面不存在');
+    if (!page) throw new NotFoundException('Page not found');
     return page;
   }
 
@@ -178,6 +178,6 @@ export class CmsPageService {
 
   async deleteTranslation(id: string) {
     await this.prisma.translation.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 }

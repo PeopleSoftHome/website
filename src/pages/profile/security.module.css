@@ -27,17 +27,13 @@
 .historyRow { display: grid; grid-template-columns: 1.6fr 1.4fr 1fr 0.8fr 0.8fr; gap: 12px; padding: 12px; border-radius: var(--radius-md); font-size: 13px; color: var(--gray-700); background: var(--page-bg); }
 .currentTag { font-size: 12px; font-weight: 600; color: var(--primary); background: var(--primary-10); padding: 2px 8px; border-radius: var(--radius-sm); }
 .pastTag { color: var(--gray-400); }
+.mobileLabel { display: none; }
 
 @media (max-width: 1023px) {
   .form { grid-template-columns: 1fr; }
   .historyHead { display: none; }
   .historyRow { display: flex; flex-direction: column; gap: 4px; padding: 14px; }
-  .historyRow span::before { font-weight: 600; color: var(--gray-500); display: inline-block; min-width: 70px; }
-  .historyRow span:nth-child(1)::before { content: '时间: '; }
-  .historyRow span:nth-child(2)::before { content: '设备: '; }
-  .historyRow span:nth-child(3)::before { content: 'IP: '; }
-  .historyRow span:nth-child(4)::before { content: '地点: '; }
-  .historyRow span:nth-child(5)::before { content: '状态: '; }
+  .mobileLabel { font-weight: 600; color: var(--gray-500); display: inline-block; min-width: 70px; }
 }
 
 [data-theme="dark"] .title { color: var(--gray-50); }

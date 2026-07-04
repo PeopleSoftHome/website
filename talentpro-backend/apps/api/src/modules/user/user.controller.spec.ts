@@ -124,7 +124,7 @@ describe('UserController', () => {
 
   describe('DELETE /users/:id', () => {
     it('should remove user', async () => {
-      const expected = { message: '删除成功' };
+      const expected = { message: 'Deleted successfully' };
       jest.spyOn(userService, 'remove').mockResolvedValue(expected);
 
       const result = await controller.remove('u1');

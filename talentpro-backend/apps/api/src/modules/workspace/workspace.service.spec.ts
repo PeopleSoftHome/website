@@ -119,7 +119,7 @@ describe('WorkspaceService', () => {
 
       const result = await service.inviteMember('u1', 'ws1', 'new@example.com');
 
-      expect(result.message).toBe('邀请成功');
+      expect(result.message).toBe('Invitation successful');
     });
 
     it('should create invite token for unregistered email', async () => {

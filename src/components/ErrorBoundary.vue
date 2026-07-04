@@ -36,7 +36,7 @@ const isDev = import.meta.env.DEV;
 onErrorCaptured((err, instance, info) => {
   hasError.value = true;
   errorMessage.value = err?.message || t('error.unknown');
-  errorInfo.value = `${err?.stack || ''}\n\n组件: ${instance?.$options?.name || 'unknown'}\n信息: ${info}`;
+  errorInfo.value = `${err?.stack || ''}\n\n${t('error.component')}: ${instance?.$options?.name || 'unknown'}\n${t('error.info')}: ${info}`;
 
   // 上报错误（生产环境）
   if (!isDev && reportError) {

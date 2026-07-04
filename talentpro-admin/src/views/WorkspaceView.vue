@@ -1,38 +1,38 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">工作空间</h2>
+    <h2 style="margin-bottom:20px">{{ t('workspaces.title') }}</h2>
     <el-card shadow="hover">
       <div style="margin-bottom:16px">
-        <el-button type="primary" @click="openDialog()" v-if="!workspaces.length">+ 创建工作空间</el-button>
+        <el-button type="primary" @click="openDialog()" v-if="!workspaces.length">+ {{ t('workspaces.createWorkspace') }}</el-button>
       </div>
       <el-table :data="workspaces" v-loading="loading" size="default">
-        <el-table-column prop="name" label="名称" width="160" />
-        <el-table-column prop="slug" label="Slug" width="160" />
-        <el-table-column prop="plan" label="Plan" width="100" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="name" :label="t('workspaces.name')" width="160" />
+        <el-table-column prop="slug" :label="t('workspaces.slug')" width="160" />
+        <el-table-column prop="plan" :label="t('workspaces.plan')" width="100" />
+        <el-table-column prop="status" :label="t('workspaces.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 'ACTIVE' ? 'success' : 'danger'">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="ownerId" label="Owner ID" width="200" />
-        <el-table-column label="成员数" width="100">
+        <el-table-column prop="ownerId" :label="t('workspaces.ownerId')" width="200" />
+        <el-table-column :label="t('workspaces.memberCount')" width="100">
           <template #default="{ row }">{{ row._count?.users ?? row.users?.length ?? 0 }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column :label="t('workspaces.operation')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="openDialog(row)">编辑</el-button>
-            <el-button link type="primary" @click="openInviteDialog(row)">邀请成员</el-button>
+            <el-button link type="primary" @click="openDialog(row)">{{ t('workspaces.edit') }}</el-button>
+            <el-button link type="primary" @click="openInviteDialog(row)">{{ t('workspaces.inviteMember') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑工作空间' : '新建工作空间'" width="480px">
+    <el-dialog v-model="dialogVisible" :title="isEdit ? t('workspaces.editWorkspace') : t('workspaces.createWorkspaceDialog')" width="480px">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="名称">
+        <el-form-item :label="t('workspaces.name')">
           <el-input v-model="form.name" />
         </el-form-item>
-        <el-form-item label="状态" v-if="isEdit">
+        <el-form-item :label="t('workspaces.status')" v-if="isEdit">
           <el-select v-model="form.status" style="width:100%">
             <el-option label="ACTIVE" value="ACTIVE" />
             <el-option label="SUSPENDED" value="SUSPENDED" />
@@ -41,20 +41,20 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('workspaces.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave" :loading="saving">{{ t('workspaces.save') }}</el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="inviteVisible" title="邀请成员" width="440px">
+    <el-dialog v-model="inviteVisible" :title="t('workspaces.inviteTitle')" width="440px">
       <el-form :model="inviteForm" label-width="80px">
-        <el-form-item label="邮箱">
-          <el-input v-model="inviteForm.email" placeholder="成员邮箱" />
+        <el-form-item :label="t('workspaces.email')">
+          <el-input v-model="inviteForm.email" :placeholder="t('workspaces.memberEmail')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="inviteVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleInvite" :loading="inviteLoading">发送邀请</el-button>
+        <el-button @click="inviteVisible = false">{{ t('workspaces.cancel') }}</el-button>
+        <el-button type="primary" @click="handleInvite" :loading="inviteLoading">{{ t('workspaces.sendInvite') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -62,8 +62,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import client from '@/api/client.js';
+
+const { t } = useI18n();
 
 const workspaces = ref([]);
 const loading = ref(false);
@@ -107,15 +110,15 @@ const handleSave = async () => {
   try {
     if (isEdit.value) {
       await client.patch(`/workspaces/${form.value.id}`, { id: form.value.id, name: form.value.name, status: form.value.status });
-      ElMessage.success('更新成功');
+      ElMessage.success(t('workspaces.updateSuccess'));
     } else {
       await client.post('/workspaces', { name: form.value.name });
-      ElMessage.success('创建成功');
+      ElMessage.success(t('workspaces.createSuccess'));
     }
     dialogVisible.value = false;
     fetchWorkspaces();
   } catch (e) {
-    ElMessage.error(e.message || '保存失败');
+    ElMessage.error(e.message || t('workspaces.saveFailed'));
   }
   saving.value = false;
 };
@@ -128,7 +131,7 @@ const openInviteDialog = (row) => {
 
 const handleInvite = async () => {
   if (!inviteForm.value.email) {
-    ElMessage.warning('请输入邮箱');
+    ElMessage.warning(t('workspaces.emailRequired'));
     return;
   }
   inviteLoading.value = true;
@@ -137,10 +140,10 @@ const handleInvite = async () => {
       id: currentWorkspace.value.id,
       email: inviteForm.value.email,
     });
-    ElMessage.success('邀请已发送');
+    ElMessage.success(t('workspaces.inviteSent'));
     inviteVisible.value = false;
   } catch (e) {
-    ElMessage.error(e.message || '邀请失败');
+    ElMessage.error(e.message || t('workspaces.inviteFailed'));
   }
   inviteLoading.value = false;
 };

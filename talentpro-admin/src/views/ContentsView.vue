@@ -1,26 +1,26 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">内容管理</h2>
+    <h2 style="margin-bottom:20px">{{ t('contents.title') }}</h2>
     <el-card shadow="hover">
       <el-tabs v-model="activeTab">
-        <el-tab-pane label="产品" name="products">
+        <el-tab-pane :label="t('contents.tabProducts')" name="products">
           <el-table :data="products" v-loading="loading" size="default">
-            <el-table-column prop="name" label="名称" />
-            <el-table-column prop="category" label="分类" width="120" />
-            <el-table-column prop="description" label="描述" show-overflow-tooltip />
+            <el-table-column prop="name" :label="t('contents.name')" />
+            <el-table-column prop="category" :label="t('contents.category')" width="120" />
+            <el-table-column prop="description" :label="t('contents.description')" show-overflow-tooltip />
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="行业方案" name="industries">
+        <el-tab-pane :label="t('contents.tabIndustries')" name="industries">
           <el-table :data="industries" v-loading="loading" size="default">
-            <el-table-column prop="name" label="名称" />
-            <el-table-column prop="slug" label="标识" width="120" />
+            <el-table-column prop="name" :label="t('contents.name')" />
+            <el-table-column prop="slug" :label="t('contents.slug')" width="120" />
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="资源" name="resources">
+        <el-tab-pane :label="t('contents.tabResources')" name="resources">
           <el-table :data="resources" v-loading="loading" size="default">
-            <el-table-column prop="title" label="标题" />
-            <el-table-column prop="type" label="类型" width="100" />
-            <el-table-column prop="date" label="日期" width="120" />
+            <el-table-column prop="title" :label="t('contents.titleCol')" />
+            <el-table-column prop="type" :label="t('contents.type')" width="100" />
+            <el-table-column prop="date" :label="t('contents.date')" width="120" />
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -29,9 +29,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import client from '@/api/client.js';
 
+const { t } = useI18n();
 const activeTab = ref('products');
 const loading = ref(false);
 const products = ref([]);

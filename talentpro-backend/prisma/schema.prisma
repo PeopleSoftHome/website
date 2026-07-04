@@ -1040,6 +1040,7 @@ enum PaymentStatus {
   FAILED
   REFUNDED
   PARTIALLY_REFUNDED
+  CANCELLED
 }
 
 enum PaymentProvider {

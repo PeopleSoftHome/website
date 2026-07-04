@@ -1,4 +1,9 @@
-export const NAV_LINKS = [
+/**
+ * 顶部导航 fallback 数据
+ * v4.2.0：支持按 locale 返回对应语言数据
+ */
+
+const NAV_LINKS_ZH = [
   {
     id: 'ai-family',
     label: 'AI Family',
@@ -77,3 +82,91 @@ export const NAV_LINKS = [
     ],
   },
 ];
+
+const NAV_LINKS_EN = [
+  {
+    id: 'ai-family',
+    label: 'AI Family',
+    hasDropdown: true,
+    items: [
+      { icon: 'bot', title: 'AI Recruiter', desc: 'Smarter, faster hiring', href: '/products/ai-recruit' },
+      { icon: 'target', title: 'AI Interviewer', desc: 'Beyond skills — assess potential', href: '/products/ai-interview' },
+      { icon: 'book', title: 'AI Learning Coach', desc: 'Personalized employee growth', href: '/products/ai-course' },
+      { icon: 'award', title: 'AI Leadership Coach', desc: 'Personal coach for every manager', href: '/products/ai-coach' },
+    ],
+    banner: {
+      thumb: 'award',
+      title: '2026 AI+HR Best Practice Playbook',
+      desc: 'How Mengniu, BOE & more are winning with AI HR',
+      href: '/cases',
+    },
+  },
+  {
+    id: 'products',
+    label: 'Products',
+    hasDropdown: true,
+    items: [
+      { icon: 'users', title: 'Recruitment Management', desc: 'End-to-end digital recruiting', href: '/products/recruit' },
+      { icon: 'bar-chart', title: 'Performance Management', desc: 'Align goals, drive results', href: '/products/performance' },
+      { icon: 'building', title: 'HR & Organization', desc: 'Enterprise org management', href: '/products/org' },
+      { icon: 'dollar-sign', title: 'Payroll Management', desc: 'Precise payroll, automated', href: '/products/payroll' },
+    ],
+    banner: {
+      thumb: 'bar-chart',
+      title: '2026 HR Digitalization Maturity Report',
+      desc: 'Authoritative research, free download',
+      href: '/resources/hr-digitization-whitepaper',
+    },
+  },
+  {
+    id: 'solutions',
+    label: 'Solutions',
+    hasDropdown: true,
+    items: [
+      { icon: 'factory', title: 'Manufacturing', desc: 'Streamline complex operations', href: '/solutions/manufacturing' },
+      { icon: 'store', title: 'Retail & Chain', desc: 'Multi-store workforce efficiency', href: '/solutions/retail' },
+      { icon: 'monitor', title: 'Internet & Tech', desc: 'Agile HR for fast-growing teams', href: '/solutions/internet' },
+      { icon: 'landmark', title: 'State-owned Enterprise', desc: 'Talent-driven enterprise strategy', href: '/solutions/government' },
+    ],
+    banner: {
+      thumb: 'factory',
+      title: 'Manufacturing HR Digital Transformation Guide',
+      desc: 'Covering scheduling, attendance & blue-collar hiring',
+      href: '/resources/hr-digital-upgrade',
+    },
+  },
+  {
+    id: 'cases',
+    label: 'Case Studies',
+    hasDropdown: false,
+    href: '/cases',
+  },
+  {
+    id: 'resources',
+    label: 'Resources',
+    hasDropdown: false,
+    href: '/resources',
+  },
+  {
+    id: 'about',
+    label: 'About Us',
+    hasDropdown: true,
+    items: [
+      { icon: 'building', title: 'About TalentPro', desc: 'Learn about our journey and vision', href: '/about' },
+      { icon: 'newspaper', title: 'News', desc: 'Latest product releases and company news', href: '/news' },
+      { icon: 'grid', title: 'Marketplace', desc: 'Explore rich HR ecosystem apps', href: '/marketplace' },
+      { icon: 'book-open', title: 'Blog', desc: 'HR digitalization practice and insights', href: '/blog' },
+      { icon: 'message-circle', title: 'Community', desc: 'User exchange and best practice sharing', href: '/forum' },
+      { icon: 'users', title: 'Careers', desc: 'Join us to build the next-gen HR SaaS', href: '/careers' },
+      { icon: 'mail', title: 'Contact Us', desc: 'Get product consulting and professional support', href: '/about/contact' },
+    ],
+  },
+];
+
+export function getHeaderNav(locale?: string) {
+  if (locale === 'zh' || locale === 'zh-TW') return NAV_LINKS_ZH;
+  return NAV_LINKS_EN;
+}
+
+/** 兼容旧直接引用：默认中文 */
+export const NAV_LINKS = NAV_LINKS_ZH;

@@ -32,3 +32,38 @@ export const CASE_HAIER = {
   ],
   relatedCases: ['boe-manufacturing'],
 };
+
+export const CASE_HAIER_EN = {
+  id: 'case-haier',
+  slug: 'haier-manufacturing',
+  featured: true,
+  industry: 'Manufacturing',
+  clientName: 'Haier Group',
+  title: 'Haier: Smart Scheduling & Attendance Digitalization Boosts Workforce Efficiency 20%',
+  excerpt: 'Haier unified attendance policies across 30+ global plants with TalentPro Time & Attendance and Payroll, enabling AI-assisted scheduling and automated payroll.',
+  challenge: 'With 30+ plants and 50,000 employees worldwide, attendance rules varied by location. Scheduling relied on experience, causing overtime and idle time. Monthly payroll took 10 days and generated frequent complaints.',
+  solution: 'TalentPro Time & Attendance was deployed globally with localized rules and leave policies. AI-assisted scheduling factored in orders, skills, and compliance to generate optimal plans. Payroll was integrated with attendance data for automatic calculation.',
+  results: 'Scheduling efficiency rose 60%, labor utilization improved 20%, payroll processing dropped from 10 days to 1 day, and employee complaints fell 85%.',
+  metrics: [
+    { id: 'm1', value: '20%', label: 'Efficiency Gain' },
+    { id: 'm2', value: '1 day', label: 'Payroll Processing' },
+    { id: 'm3', value: '30+', label: 'Plants Covered' },
+  ],
+  tags: ['Smart Manufacturing', 'Scheduling', 'Payroll'],
+  products: ['attendance', 'payroll', 'org'],
+  quote: 'Smart scheduling matches capacity with manpower precisely. What used to rely on intuition is now data-driven.',
+  author: 'Michael Zhang',
+  authorTitle: 'Global HR Director',
+  coverImage: "linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)",
+  date: '2026-02-15',
+  teamSize: '50-person HR team',
+  projectDuration: '6 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Discovery', title: 'Global Attendance Rule Review', desc: 'Mapped attendance rules and leave policies across 30+ plants, identifying key differences and compliance risks.' },
+    { phase: 'Deployment', title: 'Unified Time & Attendance Rollout', desc: 'Deployed the system globally with localized rule engines and integrated existing attendance hardware.' },
+    { phase: 'Scheduling', title: 'AI Scheduling Pilot', desc: 'Piloted AI-assisted scheduling at 3 plants, balancing orders, skills, and working-hour compliance to generate optimal plans.' },
+    { phase: 'Scale', title: 'Global Scale & Payroll Integration', desc: 'Scaled to all plants, connected payroll with attendance data, and launched mobile self-service queries.' },
+  ],
+  relatedCases: ['boe-manufacturing'],
+};

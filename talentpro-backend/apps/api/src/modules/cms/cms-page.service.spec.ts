@@ -135,12 +135,12 @@ describe('CmsPageService', () => {
     });
 
     it('deletePage should delete with page repository', async () => {
-      repoMockMap.page.delete.mockResolvedValue({ message: '删除成功' });
+      repoMockMap.page.delete.mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deletePage('p1');
 
       expect(repoMockMap.page.delete).toHaveBeenCalledWith('p1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -203,12 +203,12 @@ describe('CmsPageService', () => {
     });
 
     it('deleteSection should delete with section repository', async () => {
-      repoMockMap.section.delete.mockResolvedValue({ message: '删除成功' });
+      repoMockMap.section.delete.mockResolvedValue({ message: 'Deleted successfully' });
 
       const result = await service.deleteSection('s1');
 
       expect(repoMockMap.section.delete).toHaveBeenCalledWith('s1');
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('batchUpdateSections should run transaction with section updates', async () => {
@@ -430,7 +430,7 @@ describe('CmsPageService', () => {
       const result = await service.deleteTranslation('1');
 
       expect(prisma.translation.delete).toHaveBeenCalledWith({ where: { id: '1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 });

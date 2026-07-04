@@ -123,7 +123,7 @@ describe('BlogPostService', () => {
       const result = await service.deleteCategory('c1');
 
       expect(prisma.blogCategory.delete).toHaveBeenCalledWith({ where: { id: 'c1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -282,7 +282,7 @@ describe('BlogPostService', () => {
       jest.spyOn(prisma.blogPost, 'findFirst').mockResolvedValue(null);
 
       await expect(service.findPostBySlug('not-found')).rejects.toThrow(NotFoundException);
-      await expect(service.findPostBySlug('not-found')).rejects.toThrow('文章不存在');
+      await expect(service.findPostBySlug('not-found')).rejects.toThrow('Post not found');
     });
   });
 
@@ -442,7 +442,7 @@ describe('BlogPostService', () => {
       jest.spyOn(prisma.blogPost, 'findFirst').mockResolvedValue(null);
 
       await expect(service.updatePost('p1', { title: 'X' }, 'w1')).rejects.toThrow(NotFoundException);
-      await expect(service.updatePost('p1', { title: 'X' }, 'w1')).rejects.toThrow('文章不存在或无权访问');
+      await expect(service.updatePost('p1', { title: 'X' }, 'w1')).rejects.toThrow('Post not found or no access');
     });
   });
 
@@ -454,7 +454,7 @@ describe('BlogPostService', () => {
 
       expect(prisma.blogPost.findFirst).not.toHaveBeenCalled();
       expect(prisma.blogPost.delete).toHaveBeenCalledWith({ where: { id: 'p1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should delete a post with workspaceId when it exists', async () => {
@@ -465,14 +465,14 @@ describe('BlogPostService', () => {
 
       expect(prisma.blogPost.findFirst).toHaveBeenCalledWith({ where: { id: 'p1', workspaceId: 'w1' } });
       expect(prisma.blogPost.delete).toHaveBeenCalledWith({ where: { id: 'p1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
 
     it('should throw NotFoundException when workspace post not found', async () => {
       jest.spyOn(prisma.blogPost, 'findFirst').mockResolvedValue(null);
 
       await expect(service.deletePost('p1', 'w1')).rejects.toThrow(NotFoundException);
-      await expect(service.deletePost('p1', 'w1')).rejects.toThrow('文章不存在或无权访问');
+      await expect(service.deletePost('p1', 'w1')).rejects.toThrow('Post not found or no access');
     });
   });
 
@@ -518,7 +518,7 @@ describe('BlogPostService', () => {
       const result = await service.deleteTag('t1');
 
       expect(prisma.tag.delete).toHaveBeenCalledWith({ where: { id: 't1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 });

@@ -34,6 +34,8 @@ vi.mock('@/components/ui/Pagination/Pagination.vue', () => ({
 vi.mock('@/data/forum', () => ({
   FORUM_CATEGORIES: [],
   FORUM_TOPICS: [],
+  getForumCategories: () => [],
+  getForumTopics: () => [],
 }));
 
 const mockTopics = [

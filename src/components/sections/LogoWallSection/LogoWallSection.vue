@@ -12,7 +12,7 @@
             :class="[s.filterBtn, activeFilter === f.id ? s.filterActive : '']"
             @click="activeFilter = f.id"
           >
-            {{ f.label }}
+            {{ t(f.label) }}
           </button>
         </div>
       </RevealWrapper>
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
-import { LOGO_FILTERS } from '@/data/logos';
+import { getLogoFilters } from '@/data/logos';
 import { useCmsDataByKey } from '@/composables/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
@@ -53,8 +53,10 @@ interface LogoItem {
   industry: string;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const activeFilter = ref('all');
+
+const LOGO_FILTERS = computed(() => getLogoFilters(locale.value));
 
 const { displayItems: rawDisplayLogos, isLoading: loading } = useCmsDataByKey('logos', {
   transform: (active: unknown[]) => (active || []).map((item: any) => ({
@@ -70,14 +72,23 @@ const { displayItems: rawDisplayLogos, isLoading: loading } = useCmsDataByKey('l
 });
 const displayLogos = computed(() => rawDisplayLogos.value as unknown as LogoItem[]);
 
+const INDUSTRY_LABEL_MAP: Record<string, string> = {
+  all: 'logoWall.filterAll',
+  '先进制造': 'logoWall.industries.mfg',
+  '消费零售': 'logoWall.industries.retail',
+  '互联网': 'logoWall.industries.internet',
+  '新能源': 'logoWall.industries.energy',
+  '金融': 'logoWall.industries.finance',
+};
+
 const displayFilters = computed(() => {
   const industries = new Set<string>(['all']);
   (displayLogos.value || []).forEach((l) => {
     if (l.industry) industries.add(l.industry);
   });
   return Array.from(industries).map((id) => {
-    const existing = LOGO_FILTERS.find((f) => f.id === id);
-    return existing || { id, label: id };
+    const existing = LOGO_FILTERS.value.find((f) => f.id === id);
+    return existing || { id, label: INDUSTRY_LABEL_MAP[id] || id };
   });
 });
 

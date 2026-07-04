@@ -32,3 +32,38 @@ export const CASE_BOE = {
   ],
   relatedCases: ['haier-manufacturing'],
 };
+
+export const CASE_BOE_EN = {
+  id: 'case-boe',
+  slug: 'boe-manufacturing',
+  featured: false,
+  industry: 'Electronics Manufacturing',
+  clientName: 'BOE',
+  title: 'BOE: Integrated HR & Organization Powers Global Talent Strategy',
+  excerpt: 'TalentPro HR & Organization system helped BOE unify HR data across 80+ countries, supporting global expansion.',
+  challenge: 'Operations span 80+ countries with varying labor laws. HR data was scattered across systems, making it hard for headquarters to monitor global workforce status in real time.',
+  solution: 'TalentPro HR & Organization system delivered multi-language, multi-currency, and multi-time-zone support, with pre-built labor-law compliance templates for 80+ countries and real-time global HR data aggregation.',
+  results: 'Global HR data unification reached 100%, overseas employee onboarding shortened from 14 days to 3 days, and compliance audits passed on the first attempt.',
+  metrics: [
+    { id: 'm1', value: '80+', label: 'Countries Covered' },
+    { id: 'm2', value: '3 days', label: 'Overseas Onboarding' },
+    { id: 'm3', value: '100%', label: 'Data Unification' },
+  ],
+  tags: ['Electronics Manufacturing', 'Globalization', 'HR & Organization'],
+  products: ['org', 'payroll', 'analytics'],
+  quote: 'Global workforce data is now visible in real time on a single platform, giving headquarters a solid data foundation for strategic decisions.',
+  author: 'Gordon Wu',
+  authorTitle: 'Global HR Director',
+  coverImage: "linear-gradient(135deg, #64748B 0%, #334155 100%)",
+  date: '2026-03-05',
+  teamSize: '35-person global HR team',
+  projectDuration: '8 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Discovery', title: 'Global HR Management Assessment', desc: 'Assessed HR management across 80+ countries, identifying data fragmentation, compliance risk, and system silos as core issues.' },
+    { phase: 'Config', title: 'Global Templates & Compliance Setup', desc: 'Configured labor-law compliance templates for 80+ countries and set multi-language, multi-currency, and multi-time-zone parameters.' },
+    { phase: 'Migration', title: 'Historical Data Cleansing & Migration', desc: 'Cleaned global HR historical data, defined unified data standards, and migrated in batches to the new system.' },
+    { phase: 'Launch', title: 'Global Rollout & Ongoing Operations', desc: 'Rolled out by region, established a global HR operations center, and continuously optimized country compliance strategies and analytics.' },
+  ],
+  relatedCases: ['haier-manufacturing'],
+};

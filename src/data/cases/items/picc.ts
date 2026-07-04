@@ -32,3 +32,38 @@ export const CASE_PICC = {
   ],
   relatedCases: [],
 };
+
+export const CASE_PICC_EN = {
+  id: 'case-picc',
+  slug: 'picc-finance',
+  featured: false,
+  industry: 'Finance',
+  clientName: 'PICC',
+  title: 'PICC: Digital Agent Management Cuts Attrition 35%',
+  excerpt: 'TalentPro agent management digitized recruiting, tiering, productivity analysis, and attrition early warning for PICC.',
+  challenge: 'With over one million agents and annual attrition above 40%, recruiting costs were high and high-performing teams were hard to replicate. Headquarters had limited visibility into the front line.',
+  solution: 'TalentPro Agent Management and Learning systems digitized the full recruiting workflow, enabled tiered development, and used AI to predict attrition risk and trigger early interventions.',
+  results: 'Agent attrition fell from 40% to 26%, per-capita productivity rose 20%, recruiting efficiency improved 45%, and compliance training coverage reached 100%.',
+  metrics: [
+    { id: 'm1', value: '-35%', label: 'Attrition Reduction' },
+    { id: 'm2', value: '+20%', label: 'Per-Capita Productivity' },
+    { id: 'm3', value: '100%', label: 'Training Coverage' },
+  ],
+  tags: ['Insurance', 'Agent Management', 'Compliance Training'],
+  products: ['org', 'learning', 'analytics'],
+  quote: 'Digitalization let us truly see the real-time state of our million-agent sales force for the first time, turning management from reactive to proactive.',
+  author: 'David Zhao',
+  authorTitle: 'General Manager of Human Resources',
+  coverImage: "linear-gradient(135deg, #F59E0B 0%, #1E3A8A 100%)",
+  date: '2026-02-28',
+  teamSize: '80-person IT + HR team',
+  projectDuration: '8 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Analysis', title: 'Agent Management Assessment', desc: 'Analyzed pain points across the million-agent sales force, identifying recruiting, tiering, productivity, and attrition as the four core issues.' },
+    { phase: 'Build', title: 'System Build & Data Migration', desc: 'Built agent management and learning systems, cleaning and migrating historical data to ensure accuracy.' },
+    { phase: 'Pilot', title: 'Provincial Branch Pilot', desc: 'Piloted at 5 provincial branches to validate the tiered development model and attrition early-warning algorithm.' },
+    { phase: 'Scale', title: 'National Rollout & Optimization', desc: 'Scaled nationwide, continuously optimized AI prediction models, and established a full-lifecycle agent management mechanism.' },
+  ],
+  relatedCases: [],
+};

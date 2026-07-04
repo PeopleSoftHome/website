@@ -1,20 +1,20 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">评论审核</h2>
+    <h2 style="margin-bottom:20px">{{ t('commentModeration.title') }}</h2>
 
     <el-card shadow="hover">
       <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane label="待审核" name="PENDING">
+        <el-tab-pane :label="t('commentModeration.tabPending')" name="PENDING">
           <el-alert
             v-if="activeTab === 'PENDING'"
-            title="新提交的评论需要审核后才能展示"
+            :title="t('commentModeration.pendingAlert')"
             type="info"
             :closable="false"
             style="margin-bottom:16px"
           />
         </el-tab-pane>
-        <el-tab-pane label="已通过" name="APPROVED" />
-        <el-tab-pane label="已拒绝" name="REJECTED" />
+        <el-tab-pane :label="t('commentModeration.tabApproved')" name="APPROVED" />
+        <el-tab-pane :label="t('commentModeration.tabRejected')" name="REJECTED" />
       </el-tabs>
 
       <div style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
@@ -24,7 +24,7 @@
           :disabled="selectedIds.length === 0"
           @click="batchApprove"
         >
-          批量通过 ({{ selectedIds.length }})
+          {{ t('commentModeration.batchApprove', { count: selectedIds.length }) }}
         </el-button>
         <el-button
           type="danger"
@@ -32,7 +32,7 @@
           :disabled="selectedIds.length === 0"
           @click="batchReject"
         >
-          批量拒绝 ({{ selectedIds.length }})
+          {{ t('commentModeration.batchReject', { count: selectedIds.length }) }}
         </el-button>
         <el-button
           type="danger"
@@ -41,7 +41,7 @@
           :disabled="selectedIds.length === 0"
           @click="batchDelete"
         >
-          批量删除
+          {{ t('commentModeration.batchDelete') }}
         </el-button>
       </div>
 
@@ -52,15 +52,15 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column label="评论内容" min-width="280">
+        <el-table-column :label="t('commentModeration.commentContent')" min-width="280">
           <template #default="{ row }">
             <div>
               <p style="margin:0 0 4px;line-height:1.5">{{ row.content }}</p>
-              <el-tag v-if="row.parent" size="small" type="info">回复 @{{ row.parent.author?.name }}</el-tag>
+              <el-tag v-if="row.parent" size="small" type="info">{{ t('commentModeration.replyTo', { name: row.parent.author?.name }) }}</el-tag>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="作者" width="120">
+        <el-table-column :label="t('commentModeration.author')" width="120">
           <template #default="{ row }">
             <div style="display:flex;align-items:center;gap:8px">
               <el-avatar :size="28" :src="row.author?.avatar">{{ row.author?.name?.[0] }}</el-avatar>
@@ -68,12 +68,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="entityType" label="类型" width="100">
+        <el-table-column prop="entityType" :label="t('commentModeration.type')" width="100">
           <template #default="{ row }">
             <el-tag size="small">{{ row.entityType }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="AI审核" width="120">
+        <el-table-column :label="t('commentModeration.aiReview')" width="120">
           <template #default="{ row }">
             <el-tag v-if="row.aiRiskScore != null" :type="row.aiRiskScore > 0.5 ? 'danger' : row.aiRiskScore > 0.3 ? 'warning' : 'success'" size="small">
               {{ (row.aiRiskScore * 100).toFixed(0) }}%
@@ -83,14 +83,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="提交时间" width="160">
+        <el-table-column prop="createdAt" :label="t('commentModeration.submitTime')" width="160">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column :label="t('commentModeration.operation')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button v-if="row.status !== 'APPROVED'" link type="success" size="small" @click="moderate(row.id, 'APPROVED')">通过</el-button>
-            <el-button v-if="row.status !== 'REJECTED'" link type="warning" size="small" @click="moderate(row.id, 'REJECTED')">拒绝</el-button>
-            <el-button link type="danger" size="small" @click="remove(row.id)">删除</el-button>
+            <el-button v-if="row.status !== 'APPROVED'" link type="success" size="small" @click="moderate(row.id, 'APPROVED')">{{ t('commentModeration.approve') }}</el-button>
+            <el-button v-if="row.status !== 'REJECTED'" link type="warning" size="small" @click="moderate(row.id, 'REJECTED')">{{ t('commentModeration.reject') }}</el-button>
+            <el-button link type="danger" size="small" @click="remove(row.id)">{{ t('commentModeration.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,8 +110,11 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import client from '@/api/client.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
+
+const { t } = useI18n();
 
 const activeTab = ref('PENDING');
 const comments = ref([]);
@@ -131,7 +134,7 @@ const fetchComments = async () => {
     comments.value = res.data || [];
     total.value = res.meta?.total || 0;
   } catch (e) {
-    ElMessage.error('加载失败');
+    ElMessage.error(t('commentModeration.loadFailed'));
   }
   loading.value = false;
 };
@@ -149,10 +152,10 @@ const handleSelectionChange = (selection) => {
 const moderate = async (id, status) => {
   try {
     await client.patch(`/blogs/comments/${id}/moderate`, { status });
-    ElMessage.success(status === 'APPROVED' ? '已通过' : '已拒绝');
+    ElMessage.success(status === 'APPROVED' ? t('commentModeration.approved') : t('commentModeration.rejected'));
     fetchComments();
   } catch (e) {
-    ElMessage.error('操作失败');
+    ElMessage.error(t('commentModeration.operationFailed'));
   }
 };
 
@@ -162,63 +165,63 @@ const batchApprove = async () => {
       ids: selectedIds.value,
       status: 'APPROVED',
     });
-    ElMessage.success(`已批量通过 ${selectedIds.value.length} 条评论`);
+    ElMessage.success(t('commentModeration.batchApproveSuccess', { count: selectedIds.value.length }));
     selectedIds.value = [];
     fetchComments();
   } catch (e) {
-    ElMessage.error('批量操作失败');
+    ElMessage.error(t('commentModeration.operationFailed'));
   }
 };
 
 const batchReject = async () => {
   try {
     await ElMessageBox.confirm(
-      `确定要拒绝 ${selectedIds.value.length} 条评论吗？`,
-      '确认拒绝',
-      { confirmButtonText: '拒绝', cancelButtonText: '取消', type: 'warning' },
+      t('commentModeration.batchRejectConfirm', { count: selectedIds.value.length }),
+      t('commentModeration.confirmReject'),
+      { confirmButtonText: t('commentModeration.confirmButtonReject'), cancelButtonText: t('commentModeration.cancel'), type: 'warning' },
     );
     await client.post('/blogs/comments/batch-moderate', {
       ids: selectedIds.value,
       status: 'REJECTED',
     });
-    ElMessage.success(`已批量拒绝 ${selectedIds.value.length} 条评论`);
+    ElMessage.success(t('commentModeration.batchRejectSuccess', { count: selectedIds.value.length }));
     selectedIds.value = [];
     fetchComments();
   } catch {
-    // 取消
+    // cancel
   }
 };
 
 const batchDelete = async () => {
   try {
     await ElMessageBox.confirm(
-      `确定要删除 ${selectedIds.value.length} 条评论吗？此操作不可恢复。`,
-      '确认删除',
-      { confirmButtonText: '删除', cancelButtonText: '取消', type: 'danger' },
+      t('commentModeration.batchDeleteConfirm', { count: selectedIds.value.length }),
+      t('commentModeration.confirmDelete'),
+      { confirmButtonText: t('commentModeration.confirmButtonDelete'), cancelButtonText: t('commentModeration.cancel'), type: 'danger' },
     );
     for (const id of selectedIds.value) {
       await client.delete(`/blogs/comments/${id}`);
     }
-    ElMessage.success(`已删除 ${selectedIds.value.length} 条评论`);
+    ElMessage.success(t('commentModeration.batchDeleteSuccess', { count: selectedIds.value.length }));
     selectedIds.value = [];
     fetchComments();
   } catch {
-    // 取消
+    // cancel
   }
 };
 
 const remove = async (id) => {
   try {
-    await ElMessageBox.confirm('确定删除这条评论吗？', '确认删除', {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(t('commentModeration.deleteConfirm'), t('commentModeration.confirmDelete'), {
+      confirmButtonText: t('commentModeration.confirmButtonDelete'),
+      cancelButtonText: t('commentModeration.cancel'),
       type: 'danger',
     });
     await client.delete(`/blogs/comments/${id}`);
-    ElMessage.success('已删除');
+    ElMessage.success(t('commentModeration.deleted'));
     fetchComments();
   } catch {
-    // 取消
+    // cancel
   }
 };
 

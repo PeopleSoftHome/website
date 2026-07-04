@@ -5,13 +5,14 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:9876',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    reducedMotion: 'reduce',
   },
   projects: [
     {
@@ -36,8 +37,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npx serve .output/public -l 8080 --single',
-    url: 'http://localhost:8080',
+    command: 'node scripts/e2e-server.cjs .output/public 9876',
+    url: 'http://localhost:9876',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

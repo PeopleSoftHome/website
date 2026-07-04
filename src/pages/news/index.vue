@@ -82,17 +82,20 @@ import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news';
-import { NEWS_FALLBACK, NEWS_CATEGORIES } from '@/data/news';
+import { getNewsArticles, getNewsCategories } from '@/data/news';
 import { useListPage } from '@/composables/useListPage';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 usePageSeo({ title: t('news.title'), description: t('news.subtitle'), path: '/news' });
 const activeCategoryIndex = ref(0);
 
-const categoryTabs = computed(() => NEWS_CATEGORIES.map((c) => ({ id: c, label: c })));
-const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || NEWS_CATEGORIES[0]);
+const newsCategories = computed(() => getNewsCategories(locale.value));
+const newsFallback = computed(() => getNewsArticles(locale.value));
+
+const categoryTabs = computed(() => newsCategories.value.map((c) => ({ id: c, label: c === newsCategories.value[0] ? t('common.all') : c })));
+const activeCategory = computed(() => categoryTabs.value[activeCategoryIndex.value]?.id || newsCategories.value[0]);
 
 const filters = computed(() => ({ category: activeCategory.value }));
 
@@ -102,11 +105,11 @@ const {
   isLoading: loading,
   error: fetchError,
 } = useListPage({
-  key: 'news-list',
+  key: () => `news-list-${locale.value}`,
   fetchFn: () => newsApi.getNews({ page: 1, pageSize: NEWS_PAGE_SIZE }),
   filters,
-  fallbackData: NEWS_FALLBACK,
-  filterFn: (item, f) => f.category === '全部' || item.category === f.category,
+  fallbackData: newsFallback,
+  filterFn: (item, f) => f.category === newsCategories.value[0] || item.category === f.category,
 });
 
 const error = computed(() => {
@@ -125,11 +128,6 @@ const normalNews = computed(() => {
 });
 
 const displayNews = computed(() => news.value);
-
-const formatDate = (d: string | number | Date | undefined) => {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString();
-};
 
 onMounted(() => {
   injectJsonLd({

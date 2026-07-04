@@ -1,8 +1,10 @@
 /**
  * 公司里程碑时间线数据
  * v4.1.0-Sprint4：about 页面时间线展示
+ * v4.2.0：支持按 locale 返回对应语言数据
  */
-export const TIMELINE = [
+
+const TIMELINE_ZH = [
   { year: '2018', title: '公司成立', desc: 'TalentPro 在北京成立，创始团队来自 SAP、Workday、Oracle 等头部 HR 科技企业。' },
   { year: '2019', title: '首款产品上线', desc: '招聘管理系统 1.0 正式发布，首批 50 家种子客户入驻。' },
   { year: '2020', title: 'A 轮融资', desc: '完成 5000 万元 A 轮融资，产品线扩展至绩效、薪酬、组织人事模块。' },
@@ -13,3 +15,23 @@ export const TIMELINE = [
   { year: '2025', title: '生态广场上线', desc: 'PaaS 生态广场正式上线，汇聚 200+ 生态伙伴，打造开放 HR 生态。' },
   { year: '2026', title: 'C 轮融资', desc: '完成 2 亿美元 C 轮融资，估值 15 亿美元，加速 AI+HR 全球化布局。' },
 ];
+
+const TIMELINE_EN = [
+  { year: '2018', title: 'Company Founded', desc: 'TalentPro was founded in Beijing by a founding team from leading HR tech companies including SAP, Workday, and Oracle.' },
+  { year: '2019', title: 'First Product Launch', desc: 'Recruitment Management System 1.0 was officially released, with the first 50 seed customers onboarded.' },
+  { year: '2020', title: 'Series A Funding', desc: 'Completed a 50 million RMB Series A round, expanding the product line to performance, compensation, and HR organization modules.' },
+  { year: '2021', title: 'AI Lab Established', desc: 'Established the AI Lab and launched cutting-edge R&D projects including AI recruiting assistant and intelligent scheduling.' },
+  { year: '2022', title: 'Series B Funding', desc: 'Completed a 150 million RMB Series B round, surpassed 2,000 customers, and initiated the globalization strategy.' },
+  { year: '2023', title: 'AI Family Released', desc: 'AI Family 1.0 was officially released, covering six major AI assistants including AI recruiting, AI interviews, and AI coaching.' },
+  { year: '2024', title: 'Level-3 Security Certification', desc: 'Passed the national Class-3 cybersecurity certification, reaching financial-grade security and compliance standards.' },
+  { year: '2025', title: 'Ecosystem Marketplace Launch', desc: 'The PaaS ecosystem marketplace officially launched, gathering 200+ ecosystem partners to build an open HR ecosystem.' },
+  { year: '2026', title: 'Series C Funding', desc: 'Completed a 200 million USD Series C round at a 1.5 billion USD valuation, accelerating the global AI+HR expansion.' },
+];
+
+export function getTimeline(locale?: string) {
+  if (locale === 'zh' || locale === 'zh-TW') return TIMELINE_ZH;
+  return TIMELINE_EN;
+}
+
+/** 兼容旧直接引用：默认中文 */
+export const TIMELINE = TIMELINE_ZH;

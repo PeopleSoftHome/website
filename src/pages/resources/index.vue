@@ -90,25 +90,28 @@ definePageMeta({ title: 'resourcePage.title', description: 'resourcePage.subtitl
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
-import { RESOURCES, RESOURCE_TYPES, RESOURCE_TYPE_STYLES } from '@/data/resources';
+import { getResources, getResourceTypes, RESOURCE_TYPE_STYLES } from '@/data/resources';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const activeTabIndex = ref(0);
 const searchQuery = ref('');
 
+const resources = computed(() => getResources(locale.value));
+const resourceTypes = computed(() => getResourceTypes(locale.value));
+
 const tabItems = computed(() => [
   { id: 'all', label: t('resourcePage.all') },
-  ...RESOURCE_TYPES.map((type) => ({ id: type.value, label: type.label })),
+  ...resourceTypes.value.map((type) => ({ id: type.value, label: type.label })),
 ]);
 
 const activeType = computed(() => tabItems.value[activeTabIndex.value]?.id || '');
 
-const featuredResources = computed(() => RESOURCES.filter((r) => r.featured));
+const featuredResources = computed(() => resources.value.filter((r) => r.featured));
 
 const filteredResources = computed(() => {
-  let list = RESOURCES;
+  let list = resources.value;
   if (activeType.value && activeType.value !== 'all') {
     list = list.filter((r) => r.type === activeType.value);
   }
@@ -127,11 +130,6 @@ const filteredResources = computed(() => {
   return list;
 });
 
-const formatDate = (d: string | number | Date | undefined) => {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString();
-};
-
 const typeStyle = (type: string) => {
   const styles = RESOURCE_TYPE_STYLES as Record<string, { bg: string; color: string }>;
   const style = (styles[type] || styles['article']) as { bg: string; color: string };
@@ -142,10 +140,10 @@ onMounted(() => {
   injectJsonLd({
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'TalentPro 资源中心',
-    description: '白皮书、报告、指南与工具',
+    name: t('resourcePage.jsonLdName'),
+    description: t('resourcePage.jsonLdDesc'),
     url: 'https://talentpro.cn/resources',
-    hasPart: RESOURCES.slice(0, 6).map((r) => ({
+    hasPart: resources.value.slice(0, 6).map((r) => ({
       '@type': 'CreativeWork',
       name: r.title,
       description: r.description,

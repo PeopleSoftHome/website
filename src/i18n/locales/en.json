@@ -518,6 +518,16 @@
     "searchPlaceholder": "Search apps, features, or vendors...",
     "search": "Search",
     "allCategories": "All Categories",
+    "categories": {
+      "recruitment": "Recruitment & Talent",
+      "compensation": "Compensation & Benefits",
+      "performance": "Performance & Goals",
+      "learning": "Learning & Development",
+      "experience": "Employee Experience",
+      "compliance": "Compliance & Security",
+      "ai": "AI & Automation",
+      "analytics": "Data & Analytics"
+    },
     "pricingFilter": "Pricing",
     "allPricing": "All Pricing",
     "free": "Free",
@@ -565,6 +575,7 @@
     "resultsFor": "Search results",
     "showing": "Showing",
     "items": "apps",
+    "anonymousUser": "Anonymous User",
     "priceFree": "Free",
     "priceSubscription": "Subscription",
     "priceOneTime": "One-time",
@@ -604,7 +615,16 @@
     "viewMyApps": "View My Apps",
     "paymentCancelled": "Payment Cancelled",
     "paymentCancelledDesc": "You cancelled the payment. Contact support if you need help.",
-    "tryAgain": "Try Again"
+    "tryAgain": "Try Again",
+    "cartTitle": "Shopping Cart",
+    "cartEmpty": "Your cart is empty",
+    "cartCheckout": "Checkout",
+    "cartContinue": "Continue Shopping",
+    "orderTotal": "Total",
+    "orderSubtotal": "Subtotal",
+    "orderDiscount": "Discount",
+    "orderTax": "Tax",
+    "orderInvoices": "Invoices"
   },
   "resources": {
     "sectionTag": " Resource Hub",
@@ -784,7 +804,8 @@
     "summaryCompany": "Company",
     "summaryProducts": "Products",
     "summaryScale": "Scale",
-    "recommendTitle": "You may also need"
+    "recommendTitle": "You may also need",
+    "submitError": "Submission failed, please try again later"
   },
   "floatingBar": {
     "demo": "Book a Demo",
@@ -817,6 +838,8 @@
   "blog": {
     "title": "TalentPro Blog",
     "pageTitle": "TalentPro Blog",
+    "subtitle": "Cutting-edge insights on HR digital transformation.",
+    "detail": "Article Details",
     "back": "Back to Blog",
     "noPosts": "No posts yet",
     "jsonLdName": "TalentPro Blog",
@@ -1056,15 +1079,24 @@
     "menu": {
       "dashboard": "Dashboard",
       "orders": "My Orders",
+      "apps": "My Apps",
       "settings": "Account Settings",
       "security": "Security Center"
     },
     "activity": "Recent Activity",
+    "activityOrder": "Purchased AI Recruiter Pro",
+    "activityLogin": "Logged in on a new device",
+    "activityReview": "Posted an app review",
+    "activityInstall": "Installed Performance Management",
+    "activityUpdate": "Updated profile",
     "quick": "Quick Links",
     "goMarketplace": "Marketplace",
     "myOrders": "My Orders",
+    "myApps": "My Apps",
     "community": "Community",
     "security": "Security",
+    "noApps": "No apps yet",
+    "unknownApp": "Unknown app",
     "statOrders": "Orders",
     "statApps": "Apps",
     "statNotifications": "Notifications",
@@ -1111,6 +1143,23 @@
       "completed": "Completed",
       "refunded": "Refunded",
       "failed": "Failed"
+    },
+    "billing": "Billing & Subscriptions",
+    "billingSubscriptions": "Subscriptions",
+    "billingOrders": "Orders",
+    "billingInvoices": "Invoices",
+    "requestInvoice": "Request Invoice",
+    "invoiceTitle": "Invoice Title",
+    "invoiceTaxNo": "Tax No.",
+    "invoiceRequested": "Requested",
+    "noSubscriptions": "No subscriptions yet",
+    "noInvoices": "No invoices yet",
+    "subscriptionStatus": {
+      "active": "Active",
+      "trialing": "Trialing",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "pastDue": "Past Due"
     }
   },
   "pagination": {
@@ -1140,6 +1189,7 @@
   "productPage": {
     "title": "Products",
     "subtitle": "All-in-One HR SaaS, Accelerating Digital Transformation",
+    "jsonLdName": "TalentPro Product Suite",
     "detail": "Product Details",
     "tag": "Product",
     "all": "All",
@@ -1206,6 +1256,8 @@
     "related": "Related Resources",
     "searchPlaceholder": "Search resource titles, tags...",
     "noResults": "No matching resources found",
+    "jsonLdName": "TalentPro Resources",
+    "jsonLdDesc": "Whitepapers, reports, guides and tools",
     "demoCta": "Book a Product Demo",
     "notFound": "Resource not found",
     "contents": "Contents",
@@ -1284,6 +1336,7 @@
     "jsonLdDesc": "Join us to redefine talent management with technology",
     "pathTitle": "Growth Path",
     "testimonialTitle": "Employee Voices",
+    "joinedIn": "Joined in {year}",
     "detailLabels": {
       "department": "Department",
       "location": "Location",
@@ -1376,7 +1429,9 @@
     "other": "Other",
     "loadMore": "Load More",
     "all": "All",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "confirm": "Confirm"
   },
   "cart": {
     "title": "Cart",
@@ -1386,7 +1441,9 @@
     "total": "Total",
     "checkout": "Checkout",
     "error": "Operation failed, please try again",
-    "checkoutError": "Checkout failed, please try again"
+    "checkoutError": "Checkout failed, please try again",
+    "itemCount": "{n} items",
+    "remove": "Remove"
   },
   "errors": {
     "requestFailed": "Request failed",
@@ -1415,6 +1472,8 @@
     "backHome": "Back to Home",
     "fallback": "Failed to load component. Please try refreshing the page.",
     "unknown": "Unknown error",
-    "details": "Error details (dev mode)"
+    "details": "Error details (dev mode)",
+    "component": "Component",
+    "info": "Info"
   }
 }

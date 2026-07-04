@@ -20,7 +20,7 @@ export class NewsService {
     const data = await this.prisma.news.findFirst({
       where: { slug, status: PostStatus.PUBLISHED },
     });
-    if (!data) throw new NotFoundException('新闻不存在');
+    if (!data) throw new NotFoundException('News not found');
     await this.prisma.news.update({ where: { id: data.id }, data: { viewCount: { increment: 1 } } });
     return data;
   }

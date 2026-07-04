@@ -24,3 +24,27 @@ export const BLOG_EMPLOYEE_EXPERIENCE_2026: BlogPost = {
   tags: [{ id: 't7', name: '员工体验' }, { id: 't8', name: '敬业度' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_EMPLOYEE_EXPERIENCE_2026_EN: BlogPost = {
+  id: 'blog-4',
+  slug: 'employee-experience-2026',
+  title: 'From Onboarding to Offboarding: Designing the Full Employee Experience',
+  excerpt: 'Employee experience is not a pile of perks—it is smoothness and respect at every critical moment.',
+  content: `## The Business Value of Employee Experience
+Gallup research shows that highly engaged teams are 21% more profitable.
+
+## Key Moments
+- **Pre-boarding**: From offer experience to device preparation
+- **Day one**: Cultural immersion and mentor matching
+- **Tenure**: Growth opportunities and continuous feedback
+- **Offboarding**: Respectful farewell and alumni network
+
+## The Role of Digital Tools
+Tools should reduce friction, not add checkbox burdens.`,
+  coverImage: cover('Employee Experience'),
+  createdAt: '2026-04-28T07:00:00.000Z',
+  updatedAt: '2026-04-28T07:00:00.000Z',
+  category: { id: 'cat-practice', name: 'Best Practice', slug: 'practice' },
+  tags: [{ id: 't7', name: 'Employee Experience' }, { id: 't8', name: 'Engagement' }],
+  status: 'PUBLISHED',
+};

@@ -103,7 +103,7 @@ describe('CareersService', () => {
       jest.spyOn(prisma.job, 'findUnique').mockResolvedValue(mockJob as unknown as import('@prisma/client').Job);
 
       await expect(service.findById('j1')).rejects.toThrow(NotFoundException);
-      await expect(service.findById('j1')).rejects.toThrow('职位不存在或已关闭');
+      await expect(service.findById('j1')).rejects.toThrow('Job not found or closed');
     });
 
     it('should throw NotFoundException when job is deleted', async () => {
@@ -133,7 +133,7 @@ describe('CareersService', () => {
       jest.spyOn(prisma.job, 'findFirst').mockResolvedValue(null);
 
       await expect(service.apply('j1', { name: 'Alice', email: 'alice@example.com' })).rejects.toThrow(NotFoundException);
-      await expect(service.apply('j1', { name: 'Alice', email: 'alice@example.com' })).rejects.toThrow('职位不存在或已关闭');
+      await expect(service.apply('j1', { name: 'Alice', email: 'alice@example.com' })).rejects.toThrow('Job not found or closed');
     });
   });
 

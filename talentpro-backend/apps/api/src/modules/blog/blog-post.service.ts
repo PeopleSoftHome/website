@@ -65,7 +65,7 @@ export class BlogPostService {
         tags: true,
       },
     });
-    if (!post) throw new NotFoundException('文章不存在');
+    if (!post) throw new NotFoundException('Post not found');
     await this.prisma.blogPost.update({ where: { id: post.id }, data: { viewCount: { increment: 1 } } });
     const comments = await this.prisma.comment.findMany({
       where: { entityType: 'BlogPost', entityId: post.id, status: 'APPROVED', parentId: null },
@@ -107,7 +107,7 @@ export class BlogPostService {
   }>, workspaceId?: string) {
     if (workspaceId) {
       const existing = await this.prisma.blogPost.findFirst({ where: { id, workspaceId } });
-      if (!existing) throw new NotFoundException('文章不存在或无权访问');
+      if (!existing) throw new NotFoundException('Post not found or no access');
     }
     const { tagIds, ...rest } = data;
     const post = await this.prisma.blogPost.update({
@@ -125,11 +125,11 @@ export class BlogPostService {
   async deletePost(id: string, workspaceId?: string) {
     if (workspaceId) {
       const existing = await this.prisma.blogPost.findFirst({ where: { id, workspaceId } });
-      if (!existing) throw new NotFoundException('文章不存在或无权访问');
+      if (!existing) throw new NotFoundException('Post not found or no access');
     }
     await this.prisma.blogPost.delete({ where: { id } });
     this.eventEmitter.emit('search.index', new SearchIndexEvent('blog_post', id, 'delete'));
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   // ─── Tags ───

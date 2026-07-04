@@ -31,7 +31,7 @@
 
 /* Quick actions */
 .quick { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; }
-.quickGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.quickGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .quickCard { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--card-border); background: var(--page-bg); text-decoration: none; transition: all 0.2s; }
 .quickCard:hover { border-color: var(--primary); transform: translateY(-2px); }
 .quickIcon { font-size: 28px; }
@@ -40,7 +40,7 @@
 @media (max-width: 1023px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
   .twoCol { grid-template-columns: 1fr; }
-  .quickGrid { grid-template-columns: repeat(2, 1fr); }
+  .quickGrid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 479px) {
   .stats { grid-template-columns: 1fr 1fr; }

@@ -9,7 +9,7 @@ export enum AiGenerateType {
 }
 
 export class AiGenerateDto {
-  @IsEnum(AiGenerateType, { message: '不支持的生成类型' })
+  @IsEnum(AiGenerateType, { message: 'Unsupported generation type' })
   type: AiGenerateType;
 
   @IsString()

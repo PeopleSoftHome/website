@@ -26,6 +26,8 @@ vi.mock('@/components/ui/Pagination/Pagination.vue', () => ({
 }));
 
 vi.mock('@/data/blog', () => ({
+  getBlogPosts: vi.fn(() => []),
+  getBlogCategories: vi.fn(() => []),
   BLOG_POSTS: [],
   BLOG_CATEGORIES: [],
 }));

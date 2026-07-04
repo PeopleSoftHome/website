@@ -33,3 +33,36 @@ export const BLOG_TALENT_ANALYTICS_METRICS: BlogPost = {
   tags: [{ id: 't11', name: '数据分析' }, { id: 't12', name: 'HR 指标' }],
   status: 'PUBLISHED',
 };
+
+export const BLOG_TALENT_ANALYTICS_METRICS_EN: BlogPost = {
+  id: 'blog-6',
+  slug: 'talent-analytics-metrics',
+  title: '20 HR Analytics Metrics You Need to Know',
+  excerpt: 'From recruiting funnel to turnover prediction, let data speak and give HR decisions more confidence.',
+  content: `## Recruiting Metrics
+- Resume conversion rate
+- Channel ROI
+- Average time-to-fill
+- Offer acceptance rate
+
+## Performance Metrics
+- Goal alignment rate
+- Performance distribution health
+- High-potential identification rate
+
+## Turnover & Retention
+- Voluntary turnover rate
+- New hire attrition rate
+- Key talent retention rate
+
+## Learning & Development
+- Training coverage
+- Course completion rate
+- Skill upgrade conversion`,
+  coverImage: cover('HR Metrics'),
+  createdAt: '2026-04-02T05:00:00.000Z',
+  updatedAt: '2026-04-02T05:00:00.000Z',
+  category: { id: 'cat-insight', name: 'Industry Insight', slug: 'insight' },
+  tags: [{ id: 't11', name: 'Data Analytics' }, { id: 't12', name: 'HR Metrics' }],
+  status: 'PUBLISHED',
+};

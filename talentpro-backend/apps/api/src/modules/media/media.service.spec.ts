@@ -221,7 +221,7 @@ describe('MediaService', () => {
       jest.spyOn(prisma.media, 'findUnique').mockResolvedValue(mockMedia as unknown as Media);
       jest.spyOn(prisma.user, 'findUnique').mockResolvedValue({ workspaceId: 'ws1' } as unknown as User);
       jest.spyOn(storage, 'delete').mockResolvedValue(undefined);
-      jest.spyOn(repo, 'delete').mockResolvedValue({ message: '删除成功' } as unknown as { message: string });
+      jest.spyOn(repo, 'delete').mockResolvedValue({ message: 'Deleted successfully' } as unknown as { message: string });
 
       await service.delete('m1', 'ws1');
 
@@ -232,7 +232,7 @@ describe('MediaService', () => {
     it('should delete media without workspaceId and not call storage.delete when media not found', async () => {
       jest.spyOn(prisma.media, 'findUnique').mockResolvedValue(null);
       jest.spyOn(storage, 'delete').mockResolvedValue(undefined);
-      jest.spyOn(repo, 'delete').mockResolvedValue({ message: '删除成功' } as unknown as { message: string });
+      jest.spyOn(repo, 'delete').mockResolvedValue({ message: 'Deleted successfully' } as unknown as { message: string });
 
       await service.delete('missing');
 

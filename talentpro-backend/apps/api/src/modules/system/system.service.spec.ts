@@ -145,7 +145,7 @@ describe('SystemService', () => {
       const result = await service.deleteSetting('siteTitle');
 
       expect(prisma.setting.delete).toHaveBeenCalledWith({ where: { key: 'siteTitle' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -290,7 +290,7 @@ describe('SystemService', () => {
       const result = await service.deleteEmailTemplate('welcome');
 
       expect(prisma.emailTemplate.delete).toHaveBeenCalledWith({ where: { key: 'welcome' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 
@@ -376,7 +376,7 @@ describe('SystemService', () => {
       const result = await service.deleteSensitiveWord('w1');
 
       expect(prisma.sensitiveWord.delete).toHaveBeenCalledWith({ where: { id: 'w1' } });
-      expect(result).toEqual({ message: '删除成功' });
+      expect(result).toEqual({ message: 'Deleted successfully' });
     });
   });
 

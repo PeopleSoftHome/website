@@ -45,10 +45,10 @@ export class WorkspaceService {
   async update(userId: string, workspaceId: string, data: { name?: string; status?: WorkspaceStatus }) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (user?.workspaceId !== workspaceId) {
-      throw new ForbiddenException('无权操作该工作空间');
+      throw new ForbiddenException('No permission to operate this workspace');
     }
     if (user?.workspaceRole !== 'OWNER' && user?.workspaceRole !== 'ADMIN') {
-      throw new ForbiddenException('需要管理员权限');
+      throw new ForbiddenException('Admin permission required');
     }
 
     const workspace = await this.prisma.workspace.update({
@@ -61,10 +61,10 @@ export class WorkspaceService {
   async inviteMember(userId: string, workspaceId: string, inviteeEmail: string) {
     const inviter = await this.prisma.user.findUnique({ where: { id: userId } });
     if (inviter?.workspaceId !== workspaceId) {
-      throw new ForbiddenException('无权操作该工作空间');
+      throw new ForbiddenException('No permission to operate this workspace');
     }
     if (inviter?.workspaceRole !== 'OWNER' && inviter?.workspaceRole !== 'ADMIN') {
-      throw new ForbiddenException('需要管理员权限');
+      throw new ForbiddenException('Admin permission required');
     }
 
     const invitee = await this.prisma.user.findFirst({
@@ -74,7 +74,7 @@ export class WorkspaceService {
     // 被邀请人已注册：直接加入工作空间
     if (invitee) {
       if (invitee.workspaceId === workspaceId) {
-        throw new ConflictException('该用户已是该工作空间成员');
+        throw new ConflictException('This user is already a workspace member');
       }
 
       await this.prisma.user.update({
@@ -82,7 +82,7 @@ export class WorkspaceService {
         data: { workspaceId, workspaceRole: 'MEMBER' },
       });
 
-      return { message: '邀请成功' };
+      return { message: 'Invitation successful' };
     }
 
     // 被邀请人未注册：生成邀请码，注册时凭码加入
@@ -99,7 +99,7 @@ export class WorkspaceService {
     });
 
     return {
-      message: '邀请已发送，等待用户注册',
+      message: 'Invitation sent, waiting for user registration',
       inviteToken: invite.token,
       expiresAt: invite.expiresAt,
     };

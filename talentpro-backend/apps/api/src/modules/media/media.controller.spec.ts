@@ -168,7 +168,7 @@ describe('MediaController', () => {
 
   describe('DELETE /medias/:id', () => {
     it('should call mediaService.delete with id and workspaceId', async () => {
-      const mockResult = { message: '删除成功' };
+      const mockResult = { message: 'Deleted successfully' };
       jest.spyOn(mediaService, 'delete').mockResolvedValue(mockResult as unknown as any);
 
       const result = await controller.delete('m1', { id: 'u1', workspaceId: 'ws1' } as any);

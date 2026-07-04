@@ -48,6 +48,7 @@ import { ref, computed, onUnmounted, inject, type Ref } from 'vue';
 import { useCarousel } from '@/composables/useCarousel';
 import { useCmsDataByKey } from '@/composables/useCmsData';
 import { transformTestimonials } from '@/api/transforms';
+import { getTestimonials } from '@/data/testimonials';
 
 import Icon from '../../ui/Icon/Icon.vue';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
@@ -68,7 +69,9 @@ interface TestimonialItem {
   isActive?: boolean;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
+const fallbackTestimonials = computed(() => getTestimonials(locale.value));
 
 const GRAD_PRESETS = [
   'linear-gradient(135deg, #1B5FEB, #7C3AED)',
@@ -80,9 +83,11 @@ const GRAD_PRESETS = [
 
 const { displayItems: rawDisplayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
   transform: transformTestimonials,
-  fallbackKey: 'testimonials',
 });
-const displayItems = computed(() => rawDisplayItems.value as unknown as TestimonialItem[]);
+const displayItems = computed(() => {
+  const cms = rawDisplayItems.value as unknown as TestimonialItem[];
+  return cms.length ? cms : (fallbackTestimonials.value as unknown as TestimonialItem[]);
+});
 
 const itemCount = computed(() => displayItems.value.length);
 

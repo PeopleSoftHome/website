@@ -1,7 +1,9 @@
 /**
  * 「为什么选我们」数据（SEC-10 WhyUsSection）
+ * v4.2.0：支持按 locale 返回对应语言数据
  */
-export const WHY_US_TABS = [
+
+const WHY_US_TABS_ZH = [
   {
     id: 'product',
     label: '产品创新',
@@ -34,8 +36,41 @@ export const WHY_US_TABS = [
   },
 ];
 
+const WHY_US_TABS_EN = [
+  {
+    id: 'product',
+    label: 'Product Innovation',
+    metrics: [
+      { num: '2000+', label: 'Product Features', desc: 'Integrated HR SaaS continuously iterated annually to meet evolving business needs' },
+      { num: '200+',  label: 'Ecosystem Partners', desc: 'Connecting industry-wide partners to build an open HR ecosystem' },
+      { num: '10',    label: 'AI Agents',        desc: 'Intelligent assistants covering the full HR workflow' },
+      { num: '18',    label: 'Role Workbenches', desc: 'Personalized workspaces for every role across the employee lifecycle' },
+    ],
+  },
+  {
+    id: 'brand',
+    label: 'Brand Trust',
+    metrics: [
+      { num: '20+', label: 'Years of Expertise', desc: 'Two decades of talent management technology depth in HR SaaS' },
+      { num: '24',  label: 'Regional Offices',   desc: 'First-party implementation with localized, rapid-response service' },
+      { num: '#1',  label: 'IDC 9 Years',        desc: "China's #1 HR SaaS market share for nine consecutive years" },
+      { num: '106%', label: 'Net Dollar Retention', desc: 'Industry-leading renewal rates reflect sustained client trust' },
+    ],
+  },
+  {
+    id: 'success',
+    label: 'Customer Success',
+    metrics: [
+      { num: '5S',    label: 'Implementation Framework', desc: 'Industry-leading service model ensures stable, on-time go-live' },
+      { num: '1100+', label: 'BCA Certified',            desc: 'Growing a certified HRIS talent community' },
+      { num: '24/7',  label: 'Always-On Support',        desc: '1-hour response SLA to ensure business continuity' },
+      { num: '30K+',  label: 'Shared Resources',         desc: 'HR community with real-world templates and best practices' },
+    ],
+  },
+];
+
 /** 底部统计数字条（带 count-up） */
-export const STATS_BAR = [
+const STATS_BAR_ZH = [
   { target: 6000,  suffix: '+',   label: '中大型企业客户' },
   { target: 15,    suffix: '亿+', label: '日数据处理条数' },
   { target: 1600,  suffix: '万+', label: '年专业测评人次' },
@@ -43,3 +78,26 @@ export const STATS_BAR = [
   { target: 10,    suffix: '亿+', label: '年用户打卡量' },
   { target: 9000,  suffix: '万+', label: '年学习人次' },
 ];
+
+const STATS_BAR_EN = [
+  { target: 6000, suffix: '+',   label: 'Enterprise Clients' },
+  { target: 15,   suffix: 'B+',  label: 'Daily Data Records' },
+  { target: 1600, suffix: 'M+',  label: 'Annual Assessments' },
+  { target: 800,  suffix: 'M+',  label: 'Annual Interviews' },
+  { target: 10,   suffix: 'B+',  label: 'Annual Clock-ins' },
+  { target: 9000, suffix: 'M+',  label: 'Annual Learners' },
+];
+
+export function getWhyUs(locale?: string) {
+  if (locale === 'zh' || locale === 'zh-TW') return WHY_US_TABS_ZH;
+  return WHY_US_TABS_EN;
+}
+
+export function getStatsBar(locale?: string) {
+  if (locale === 'zh' || locale === 'zh-TW') return STATS_BAR_ZH;
+  return STATS_BAR_EN;
+}
+
+/** 兼容旧直接引用：默认中文 */
+export const WHY_US_TABS = WHY_US_TABS_ZH;
+export const STATS_BAR = STATS_BAR_ZH;

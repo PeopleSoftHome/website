@@ -74,7 +74,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPainCompare.vue';
 import SolutionCaseDeep from '@/components/sections/SolutionDetail/SolutionCaseDeep.vue';
-import { INDUSTRY_MAP } from '@/data/industries';
+import { getIndustryMap } from '@/data/industries/map';
 import { cmsApi } from '@/api/cms';
 import s from './[slug].module.css';
 
@@ -150,7 +150,7 @@ function mergeIndustry(cms: Partial<IndustryDetail> | null, fallback: Partial<In
 
 definePageMeta({ title: 'solutions.detail', description: 'solutions.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 const modalStore = useModalStore();
@@ -158,10 +158,10 @@ const modalStore = useModalStore();
 const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 
 const { data: industry } = useAsyncData<IndustryDetail | null>(
-  () => `solution-${slugStr.value}`,
+  () => `solution-${slugStr.value}-${locale.value}`,
   async () => {
     const key = slugStr.value || '';
-    const fallback = ((INDUSTRY_MAP as Record<string, unknown>)[key] as Partial<IndustryDetail> | undefined) || null;
+    const fallback = ((getIndustryMap(locale.value) as Record<string, unknown>)[key] as Partial<IndustryDetail> | undefined) || null;
     try {
       const cmsRes = await cmsApi.getIndustryBySlug(key);
       const cms = (cmsRes?.data || cmsRes) as Partial<IndustryDetail> | undefined;
@@ -178,7 +178,7 @@ const { data: industry } = useAsyncData<IndustryDetail | null>(
     }
     return fallback as IndustryDetail;
   },
-  { server: false, default: () => null, watch: [slug] }
+  { server: false, default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {

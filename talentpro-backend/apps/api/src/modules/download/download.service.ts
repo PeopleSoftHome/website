@@ -24,7 +24,7 @@ export class DownloadService {
     const resource = await this.prisma.resource.findUnique({
       where: { id: data.resourceId },
     });
-    if (!resource) throw new NotFoundException('资源不存在');
+    if (!resource) throw new NotFoundException('Resource not found');
 
     const [record] = await this.prisma.$transaction([
       this.prisma.downloadRecord.create({ data }),

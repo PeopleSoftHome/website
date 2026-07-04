@@ -97,14 +97,13 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news';
-import { NEWS_FALLBACK } from '@/data/news';
+import { getNewsArticles } from '@/data/news';
 import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
-import { useDetailPage } from '@/composables/useDetailPage';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => {
   const s = route.params.slug;
@@ -114,15 +113,43 @@ const showWxTip = ref(false);
 const subscribeEmail = ref('');
 const subscribeMsg = ref('');
 
-const NEWS_FALLBACK_MAP = Object.fromEntries(NEWS_FALLBACK.map((n) => [n.slug, n]));
+interface NewsItem {
+  id: string;
+  slug: string;
+  title: string;
+  summary?: string;
+  content: string;
+  category: string;
+  coverImage?: string;
+  author?: string;
+  authorTitle?: string;
+  publishedAt: string;
+  featured?: boolean;
+  tags?: string[];
+  [key: string]: unknown;
+}
 
-const { data: item, isLoading: loading, error: fetchError } = useDetailPage({
-  keyFn: () => `news-${slug.value}`,
-  fetchFn: (value) => newsApi.getNewsItem(value).then((res) => res.data || null),
-  param: slug,
-  fallbackMap: NEWS_FALLBACK_MAP,
-  notFoundMessage: 'News Not Found',
-});
+const newsFallback = computed(() => getNewsArticles(locale.value));
+const newsFallbackMap = computed(() => Object.fromEntries(newsFallback.value.map((n) => [n.slug, n])));
+
+const { data: item, pending: loading, error: fetchError } = useAsyncData(
+  () => `news-${locale.value}-${slug.value}`,
+  async () => {
+    let data: NewsItem | null = null;
+    try {
+      const res = await newsApi.getNewsItem(slug.value || '');
+      data = (res.data as NewsItem) || null;
+    } catch {
+      // API 失败时使用静态 fallback
+    }
+    const fallback = (newsFallbackMap.value[slug.value || ''] as NewsItem) || null;
+    if (!data && !fallback) {
+      throw createError({ statusCode: 404, statusMessage: 'News Not Found', fatal: true });
+    }
+    return data || fallback;
+  },
+  { server: false, default: () => null, watch: [slug, locale] }
+);
 
 const error = computed(() => fetchError.value || null);
 
@@ -148,16 +175,17 @@ useHead(() => {
 });
 
 const paragraphs = computed(() => {
-  if (!item.value?.content) return [];
-  return item.value.content.split('\n').filter((p) => p.trim());
+  const content = (item.value as NewsItem | null)?.content;
+  if (!content) return [];
+  return content.split('\n').filter((p: string) => p.trim());
 });
 
-const allNews = computed(() => (item.value ? [item.value] : NEWS_FALLBACK));
+const allNews = computed(() => (item.value ? [item.value] : newsFallback.value));
 
 const relatedNews = computed(() => {
   const it = item.value;
   if (!it) return [];
-  return NEWS_FALLBACK.filter(
+  return newsFallback.value.filter(
     (n) => n.category === it.category && n.id !== it.id
   ).slice(0, 3);
 });
@@ -174,11 +202,6 @@ const weiboShareUrl = computed(() => {
 const linkedinShareUrl = computed(() => {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl.value)}`;
 });
-
-const formatDate = (d: string | number | Date | undefined) => {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString();
-};
 
 const handleSubscribe = () => {
   subscribeMsg.value = '';

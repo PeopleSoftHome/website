@@ -10,10 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
-import { BRAND_LOGOS } from '@/data/stats';
+import { computed } from 'vue';
+import { getBrandLogos } from '@/data/stats';
 import s from './BrandScrollSection.module.css';
 
-const { t } = useI18n();
-const logos = [...BRAND_LOGOS, ...BRAND_LOGOS];
+const { t, locale } = useI18n();
+const brandLogos = computed(() => getBrandLogos(locale.value));
+const logos = computed(() => [...brandLogos.value, ...brandLogos.value]);
 </script>

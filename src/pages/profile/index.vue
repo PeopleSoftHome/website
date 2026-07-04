@@ -32,7 +32,7 @@
             <div v-for="(act, i) in activities" :key="i" :class="s.activityItem">
               <div :class="s.activityDot" />
               <div>
-                <div :class="s.activityText">{{ act.text }}</div>
+                <div :class="s.activityText">{{ t(act.textKey) }}</div>
                 <div :class="s.activityDate">{{ act.date }}</div>
               </div>
             </div>
@@ -52,9 +52,17 @@
             <span :class="s.quickIcon">📋</span>
             <span :class="s.quickLabel">{{ t('profile.myOrders') }}</span>
           </NuxtLink>
+          <NuxtLink to="/profile/apps" :class="s.quickCard">
+            <span :class="s.quickIcon">📱</span>
+            <span :class="s.quickLabel">{{ t('profile.myApps') }}</span>
+          </NuxtLink>
           <NuxtLink to="/forum" :class="s.quickCard">
             <span :class="s.quickIcon">💬</span>
             <span :class="s.quickLabel">{{ t('profile.community') }}</span>
+          </NuxtLink>
+          <NuxtLink to="/profile/billing" :class="s.quickCard">
+            <span :class="s.quickIcon">🧾</span>
+            <span :class="s.quickLabel">{{ t('profile.billing') }}</span>
           </NuxtLink>
           <NuxtLink to="/profile/security" :class="s.quickCard">
             <span :class="s.quickIcon">🛡️</span>
@@ -74,7 +82,7 @@ import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { formatDate } from '@/utils/date';
-import { ACTIVITIES } from '@/data/profile';
+import { getActivities } from '@/data/profile';
 import { notificationApi } from '@/api/notification';
 import { marketplaceApi } from '@/api/marketplace';
 import { paymentApi } from '@/api/marketplace';
@@ -91,7 +99,7 @@ interface UserProfile {
   createdAt: string;
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const auth = useAuthStore();
 const user = auth.user as UserProfile | null;
 
@@ -100,11 +108,11 @@ const { data: appsRes } = useAsyncData('profile-my-apps', () => marketplaceApi.g
 const { data: ordersRes } = useAsyncData('profile-orders', () => paymentApi.getOrders({}), { server: false, default: () => ({ data: [] }) });
 
 const stats = computed(() => [
-  { icon: '📦', value: (ordersRes.value as any)?.data?.length || 0, label: t('profile.statOrders') },
+  { icon: '📦', value: (ordersRes.value as any)?.data?.data?.length || 0, label: t('profile.statOrders') },
   { icon: '📱', value: (appsRes.value as any)?.data?.length || 0, label: t('profile.statApps') },
   { icon: '🔔', value: (notifRes.value as any)?.total || 0, label: t('profile.statNotifications') },
   { icon: '⭐', value: '1,280', label: t('profile.statPoints') },
 ]);
 
-const activities = ACTIVITIES;
+const activities = computed(() => getActivities(locale.value));
 </script>

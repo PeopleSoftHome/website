@@ -46,7 +46,7 @@ export class BaseCrudRepository<T = any> {
     if (select) findArgs.select = select;
     else if (include) findArgs.include = include;
     const item = await this.model.findUnique(findArgs);
-    if (!item) throw new NotFoundException(`${this.modelName} 不存在`);
+    if (!item) throw new NotFoundException(`${this.modelName} not found`);
     return item;
   }
 
@@ -55,7 +55,7 @@ export class BaseCrudRepository<T = any> {
     if (select) findArgs.select = select;
     else if (include) findArgs.include = include;
     const item = await this.model.findUnique(findArgs);
-    if (!item) throw new NotFoundException(`${this.modelName} "${slug}" 不存在`);
+    if (!item) throw new NotFoundException(`${this.modelName} "${slug}" not found`);
     return item;
   }
 
@@ -75,7 +75,7 @@ export class BaseCrudRepository<T = any> {
 
   async delete(id: string): Promise<{ message: string }> {
     await this.model.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   async upsert(where: Record<string, any>, update: Partial<T>, create: Partial<T>): Promise<T> {

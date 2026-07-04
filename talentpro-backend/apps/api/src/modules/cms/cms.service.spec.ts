@@ -31,7 +31,7 @@ describe('CmsService', () => {
             upsertTranslation: jest.fn().mockResolvedValue({}),
             findAllTranslations: jest.fn().mockResolvedValue({ data: [], meta: { total: 0 } }),
             updateTranslation: jest.fn().mockResolvedValue({}),
-            deleteTranslation: jest.fn().mockResolvedValue({ message: '删除成功' }),
+            deleteTranslation: jest.fn().mockResolvedValue({ message: 'Deleted successfully' }),
           },
         },
         {

@@ -50,7 +50,7 @@ export class LeadService {
       where,
       include: { followUps: { orderBy: { createdAt: 'desc' } } },
     });
-    if (!booking) throw new NotFoundException('预约记录不存在');
+    if (!booking) throw new NotFoundException('Booking record not found');
     return booking;
   }
 
@@ -113,11 +113,11 @@ export class LeadService {
     const where: Prisma.DemoBookingWhereInput = { id };
     if (workspaceId) where.workspaceId = workspaceId;
     const booking = await this.prisma.demoBooking.findFirst({ where });
-    if (!booking) throw new NotFoundException('预约记录不存在');
+    if (!booking) throw new NotFoundException('Booking record not found');
 
     const allowed = this.statusTransitions[booking.status];
     if (!allowed.includes(status)) {
-      throw new BadRequestException(`状态无法从 ${booking.status} 变更为 ${status}`);
+      throw new BadRequestException(`Status cannot transition from ${booking.status} to ${status}`);
     }
 
     return this.prisma.demoBooking.update({
@@ -129,7 +129,7 @@ export class LeadService {
   async addFollowUp(id: string, data: { type: string; content: string; createdBy: string }, workspaceId?: string) {
     if (workspaceId) {
       const booking = await this.prisma.demoBooking.findFirst({ where: { id, workspaceId } });
-      if (!booking) throw new NotFoundException('预约记录不存在');
+      if (!booking) throw new NotFoundException('Booking record not found');
     }
     return this.prisma.followUp.create({
       data: { bookingId: id, type: data.type, content: data.content, createdBy: data.createdBy },

@@ -27,7 +27,7 @@ export class NotificationService {
       where: { id, userId },
       data: { isRead: true },
     });
-    return { message: '已标记为已读' };
+    return { message: 'Marked as read' };
   }
 
   async markAllAsRead(userId: string) {
@@ -35,7 +35,7 @@ export class NotificationService {
       where: { userId, isRead: false },
       data: { isRead: true },
     });
-    return { message: '全部已读' };
+    return { message: 'All marked as read' };
   }
 
   async create(data: {

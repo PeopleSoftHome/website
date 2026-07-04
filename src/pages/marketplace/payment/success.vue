@@ -10,11 +10,12 @@
             <p><strong>{{ t('marketplace.orderNo') }}:</strong> {{ order.orderNo }}</p>
             <p><strong>{{ t('marketplace.amount') }}:</strong> {{ order.currency }} {{ order.total }}</p>
           </div>
+          <div v-else-if="loading" :class="s.loadingOrder">{{ t('common.loading') }}</div>
           <div :class="s.actions">
             <NuxtLink to="/marketplace" :class="s.btnPrimary">
               {{ t('marketplace.backToMarketplace') }}
             </NuxtLink>
-            <NuxtLink to="/profile" :class="s.btnSecondary">
+            <NuxtLink to="/profile/billing" :class="s.btnSecondary">
               {{ t('marketplace.viewMyApps') }}
             </NuxtLink>
           </div>
@@ -37,47 +38,102 @@ interface Order {
   status: string;
   total: number;
   currency: string;
+  providerPaymentId?: string;
 }
 
 const { t } = useI18n();
 const route = useRoute();
 
 const order = ref<Order | null>(null);
-
-onMounted(async () => {
-  const orderId = route.query.order_id;
-  if (orderId) {
-    try {
-      const res = await paymentApi.getOrder(Array.isArray(orderId) ? orderId[0] : orderId);
-      order.value = res.data as Order;
-    } catch {
-      // ignore
-    }
-  }
-});
-
-// 自动刷新订单状态（每 3 秒最多刷新 5 次）
+const loading = ref(true);
 const refreshCount = ref(0);
 let refreshTimer: ReturnType<typeof setInterval> | null = null;
 
-onMounted(() => {
+const stopPolling = () => {
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+    refreshTimer = null;
+  }
+};
+
+const queryValue = (val: unknown): string | undefined => {
+  if (Array.isArray(val)) return (val[0] as string) || undefined;
+  return (val as string) || undefined;
+};
+
+const loadOrderById = async (id: string) => {
+  try {
+    const res = await paymentApi.getOrder(id);
+    order.value = res.data as Order;
+  } catch {
+    // ignore
+  } finally {
+    loading.value = false;
+  }
+};
+
+const resolveOrderBySessionId = async (sessionId: string) => {
+  try {
+    const res = await paymentApi.getOrders({});
+    const orders = ((res.data as { data?: Order[] } | undefined)?.data) || [];
+    const matched = orders.find((o) => o.providerPaymentId === sessionId);
+    if (matched) {
+      order.value = matched;
+      return true;
+    }
+  } catch {
+    // ignore
+  }
+  return false;
+};
+
+const startPolling = () => {
+  stopPolling();
   refreshTimer = setInterval(async () => {
-    const ord = order.value;
-    if (!ord || ord.status === 'COMPLETED' || refreshCount.value >= 5) {
-      if (refreshTimer) clearInterval(refreshTimer);
+    if (refreshCount.value >= 10) {
+      stopPolling();
       return;
     }
-    try {
-      const res = await paymentApi.getOrder(ord.id);
-      order.value = res.data as Order;
-      refreshCount.value++;
-    } catch {
-      if (refreshTimer) clearInterval(refreshTimer);
+
+    const sessionId = queryValue(route.query.session_id);
+    if (sessionId) {
+      const found = await resolveOrderBySessionId(sessionId);
+      if (found && order.value?.status === 'COMPLETED') {
+        stopPolling();
+        return;
+      }
+    } else if (order.value) {
+      try {
+        const res = await paymentApi.getOrder(order.value.id);
+        order.value = res.data as Order;
+        if (order.value.status === 'COMPLETED') {
+          stopPolling();
+          return;
+        }
+      } catch {
+        stopPolling();
+        return;
+      }
     }
+    refreshCount.value++;
   }, 3000);
+};
+
+onMounted(async () => {
+  const orderId = queryValue(route.query.order_id);
+  const sessionId = queryValue(route.query.session_id);
+
+  if (orderId) {
+    await loadOrderById(orderId);
+  } else if (sessionId) {
+    await resolveOrderBySessionId(sessionId);
+    loading.value = false;
+  } else {
+    loading.value = false;
+  }
+
+  startPolling();
 });
 
-onUnmounted(() => {
-  if (refreshTimer) clearInterval(refreshTimer);
-});
+onUnmounted(stopPolling);
 </script>

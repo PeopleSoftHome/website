@@ -32,3 +32,38 @@ export const CASE_SUNING = {
   ],
   relatedCases: [],
 };
+
+export const CASE_SUNING_EN = {
+  id: 'case-suning',
+  slug: 'suning-retail',
+  featured: false,
+  industry: 'Retail & Chain',
+  clientName: 'Suning',
+  title: 'Suning: Unified HR Control for 2,000+ Stores, Store Manager Training Cut by 40%',
+  excerpt: 'TalentPro helped Suning build a three-tier HR control system across headquarters, regions, and stores, digitizing store manager recruiting and development.',
+  challenge: 'With stores nationwide, headquarters could not monitor workforce status in real time. Store managers were critical but took too long to develop, leaving new store openings short of staff.',
+  solution: 'TalentPro HR & Organization and Learning systems established a headquarters-region-store control framework. Store manager competency models were linked to AI learning paths to shorten development cycles.',
+  results: 'Store workforce data became visible in real time with automated alerts. Store manager training shortened from 10 months to 6 months, and new store staffing readiness reached 100%.',
+  metrics: [
+    { id: 'm1', value: '2,000+', label: 'Stores Covered' },
+    { id: 'm2', value: '-40%', label: 'Training Cycle' },
+    { id: 'm3', value: '100%', label: 'Staffing Readiness' },
+  ],
+  tags: ['Store Management', 'Talent Development', 'Retail & Chain'],
+  products: ['org', 'learning', 'recruit'],
+  quote: 'Headquarters can finally see workforce status at every store in real time, greatly extending our management reach.',
+  author: 'Sarah Li',
+  authorTitle: 'Director of Talent Development',
+  coverImage: "linear-gradient(135deg, #A855F7 0%, #EC4899 100%)",
+  date: '2026-03-01',
+  teamSize: '30-person HR team',
+  projectDuration: '4 months',
+  videoUrl: '',
+  timeline: [
+    { phase: 'Review', title: 'Org Structure & Headcount Review', desc: 'Mapped org structures and headcount for 2,000+ stores, defining three-tier authority and staffing policies.' },
+    { phase: 'Launch', title: 'Core System Go-Live', desc: 'HR & Organization system went live, digitizing onboarding, transfers, and exits with real-time store headcount control.' },
+    { phase: 'Develop', title: 'Store Manager Development Framework', desc: 'Built store manager competency models with AI learning paths and OJT coaching tracking.' },
+    { phase: 'Scale', title: 'Full Rollout & Data Integration', desc: 'Scaled to all stores and connected recruiting, HR, and learning data for full-lifecycle talent management.' },
+  ],
+  relatedCases: [],
+};

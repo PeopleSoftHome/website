@@ -37,7 +37,7 @@ export class UserService {
         role: { select: { id: true, name: true } },
       },
     });
-    if (!user) throw new NotFoundException('用户不存在');
+    if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
@@ -45,7 +45,7 @@ export class UserService {
     const existing = await this.prisma.user.findFirst({
       where: { email: dto.email },
     });
-    if (existing) throw new ConflictException('邮箱已被注册');
+    if (existing) throw new ConflictException('Email already registered');
 
     const hashedPassword = await bcrypt.hash(dto.password, 12);
     const user = await this.prisma.user.create({
@@ -74,7 +74,7 @@ export class UserService {
   async remove(id: string) {
     await this.findOne(id);
     await this.prisma.user.delete({ where: { id } });
-    return { message: '删除成功' };
+    return { message: 'Deleted successfully' };
   }
 
   async search(q: string, limit = 10) {

@@ -44,7 +44,32 @@
   font-size: 15px;
   color: var(--gray-500);
   line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.orderInfo {
+  background: var(--gray-50);
+  border-radius: 10px;
+  padding: 16px 20px;
   margin-bottom: 28px;
+  text-align: left;
+}
+
+.orderInfo p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.retryBtn {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.retryBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .actions {

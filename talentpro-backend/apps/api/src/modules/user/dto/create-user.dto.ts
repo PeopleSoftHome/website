@@ -2,18 +2,18 @@ import { IsEmail, IsString, MinLength, IsOptional, IsEnum, Matches } from 'class
 import { UserStatus } from '@prisma/client';
 
 export class CreateUserDto {
-  @IsEmail({}, { message: '邮箱格式不正确' })
+  @IsEmail({}, { message: 'Invalid email format' })
   email: string;
 
   @IsString()
-  @MinLength(8, { message: '密码至少8位' })
+  @MinLength(8, { message: 'Password must be at least 8 characters' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
-    message: '密码需包含大小写字母、数字和特殊字符',
+    message: 'Password must contain uppercase, lowercase, number and special character',
   })
   password: string;
 
   @IsString()
-  @MinLength(2, { message: '姓名至少2个字符' })
+  @MinLength(2, { message: 'Name must be at least 2 characters' })
   name: string;
 
   @IsOptional()

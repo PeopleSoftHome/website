@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom: 20px">Logo 墙管理</h2>
+    <h2 style="margin-bottom: 20px">{{ t('logos.title') }}</h2>
     <el-card shadow="hover">
       <CmsTable
         api-url="/cms/content/clientLogo"
@@ -13,21 +13,24 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
 import CmsTable from '@/components/CmsTable.vue';
 
+const { t } = useI18n();
+
 const columns = [
-  { prop: 'name', label: '名称' },
-  { prop: 'logo', label: 'Logo 地址', minWidth: 200 },
-  { prop: 'industry', label: '行业' },
-  { prop: 'isActive', label: '启用', width: 100, type: 'switch' },
-  { prop: 'sortOrder', label: '排序', width: 100 },
+  { prop: 'name', label: t('logos.name') },
+  { prop: 'logo', label: t('logos.logo'), minWidth: 200 },
+  { prop: 'industry', label: t('logos.industry') },
+  { prop: 'isActive', label: t('logos.isActive'), width: 100, type: 'switch' },
+  { prop: 'sortOrder', label: t('logos.sortOrder'), width: 100 },
 ];
 
 const formFields = [
-  { prop: 'name', label: '名称', type: 'input' },
-  { prop: 'logo', label: 'Logo 图片', type: 'image-upload' },
-  { prop: 'industry', label: '行业', type: 'input' },
-  { prop: 'isActive', label: '启用', type: 'switch' },
-  { prop: 'sortOrder', label: '排序', type: 'number' },
+  { prop: 'name', label: t('logos.name'), type: 'input' },
+  { prop: 'logo', label: t('logos.logoImage'), type: 'image-upload' },
+  { prop: 'industry', label: t('logos.industry'), type: 'input' },
+  { prop: 'isActive', label: t('logos.isActive'), type: 'switch' },
+  { prop: 'sortOrder', label: t('logos.sortOrder'), type: 'number' },
 ];
 </script>

@@ -25,7 +25,7 @@ export const FAQ_RULES_META = [
   {
     id: 'recruit',
     keywords: ['招聘', '校招', '社招', 'ATS', '简历', 'JD',
-               'recruit', 'hiring', 'campus', 'resume', 'cv', 'job description'],
+               'recruit', 'recruitment', 'hiring', 'campus', 'resume', 'cv', 'job description', 'ats', 'talent acquisition'],
   },
   {
     id: 'attendance',
@@ -35,12 +35,12 @@ export const FAQ_RULES_META = [
   {
     id: 'payroll',
     keywords: ['薪酬', '工资', '发薪', '个税', '社保', '五险',
-               'payroll', 'salary', 'wage', 'tax', 'social insurance', 'compensation'],
+               'payroll', 'salary', 'wage', 'tax', 'social insurance', 'compensation', 'payslip', 'benefits'],
   },
   {
     id: 'performance',
     keywords: ['绩效', 'OKR', 'KPI', '目标', '考核', '评估',
-               'performance', 'okr', 'kpi', 'goal', 'appraisal', 'evaluation'],
+               'performance', 'okr', 'kpi', 'goal', 'appraisal', 'evaluation', 'review', '360'],
   },
   {
     id: 'manufacturing',
@@ -65,7 +65,7 @@ export const FAQ_RULES_META = [
   {
     id: 'demo',
     keywords: ['演示', '预约', 'demo', 'Demo', '体验', '试用',
-               'demo', 'trial', 'book a demo', 'schedule'],
+               'demo', 'trial', 'book a demo', 'request a demo', 'schedule', 'see a demo'],
     action: 'openModal',
   },
   {
@@ -76,12 +76,12 @@ export const FAQ_RULES_META = [
   {
     id: 'security',
     keywords: ['安全', '数据安全', '等保', 'ISO', '加密', '合规',
-               'security', 'data safety', 'encryption', 'compliance', 'iso'],
+               'security', 'data safety', 'data protection', 'encryption', 'compliance', 'iso', 'gdpr'],
   },
   {
     id: 'human',
     keywords: ['人工', '转人工', '客服', '真人', '人工服务',
-               'human', 'agent', 'transfer', 'live agent', 'customer service'],
+               'human', 'agent', 'transfer', 'live agent', 'customer service', 'speak to human', 'talk to agent'],
     isHandoff: true,
   },
 ];

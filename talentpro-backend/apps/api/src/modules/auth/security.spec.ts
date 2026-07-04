@@ -78,13 +78,13 @@ describe('Auth Security', () => {
     it('should reject blacklisted bearer tokens', async () => {
       jest.spyOn(prisma.tokenBlacklist, 'findUnique').mockResolvedValue({ id: 'bl-1', token: 'bad-token' } as unknown as import('@prisma/client').TokenBlacklist);
       const ctx = buildContext({ token: 'bad-token' });
-      await expect(guard.canActivate(ctx)).rejects.toThrow('Token 已失效');
+      await expect(guard.canActivate(ctx)).rejects.toThrow('Token has expired, please log in again');
     });
 
     it('should reject blacklisted cookie tokens', async () => {
       jest.spyOn(prisma.tokenBlacklist, 'findUnique').mockResolvedValue({ id: 'bl-2', token: 'cookie-token' } as unknown as import('@prisma/client').TokenBlacklist);
       const ctx = buildContext({ cookie: 'cookie-token' });
-      await expect(guard.canActivate(ctx)).rejects.toThrow('Token 已失效');
+      await expect(guard.canActivate(ctx)).rejects.toThrow('Token has expired, please log in again');
     });
 
     it('should proceed when token is not blacklisted', async () => {

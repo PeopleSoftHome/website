@@ -73,7 +73,7 @@ import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum';
 import { renderMarkdown, renderMentions } from '@/utils/markdown';
 import { formatDate } from '@/utils/date';
-import { FORUM_TOPIC_MAP } from '@/data/forum';
+import { getForumTopics } from '@/data/forum';
 import s from './[id].module.css';
 
 definePageMeta({ title: 'forum.detail', description: 'forum.subtitle' });
@@ -95,10 +95,14 @@ interface Topic {
   posts?: Reply[];
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const id = computed(() => route.params.id);
 const auth = useAuthStore();
+
+const FORUM_TOPIC_MAP = computed(() =>
+  Object.fromEntries(getForumTopics(locale.value).map((t) => [String(t.id), t]))
+);
 const authOpen = useState('authOpen', () => false);
 
 const openAuth = () => { authOpen.value = true; };
@@ -113,7 +117,7 @@ const { data: topic, pending: loading } = useAsyncData(
     } catch (e) {
       // API 不可用时降级到静态 fallback
     }
-    return (FORUM_TOPIC_MAP as Record<string, Topic>)[id.value as string] || null;
+    return (FORUM_TOPIC_MAP.value as Record<string, Topic>)[id.value as string] || null;
   },
   { server: false, default: () => null as Topic | null, watch: [id] }
 );

@@ -110,7 +110,7 @@ describe('AuthUserService', () => {
 
       expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { email: dto.email } });
       expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 12);
-      expect(result.message).toBe('注册成功');
+      expect(result.message).toBe('Registered successfully');
       expect(result.user).toEqual(updatedUser);
     });
 
@@ -123,7 +123,7 @@ describe('AuthUserService', () => {
       jest.spyOn(prisma.user, 'findFirst').mockResolvedValue({ id: 'u1' } as unknown as User);
 
       await expect(service.register(dto)).rejects.toThrow(ConflictException);
-      await expect(service.register(dto)).rejects.toThrow('邮箱已被注册');
+      await expect(service.register(dto)).rejects.toThrow('Email already registered');
     });
 
     it('should join existing workspace with valid invite token', async () => {
@@ -171,7 +171,7 @@ describe('AuthUserService', () => {
 
       const result = await service.register(dto);
 
-      expect(result.message).toBe('注册成功');
+      expect(result.message).toBe('Registered successfully');
       expect(result.user.workspaceId).toBe('ws1');
       expect(result.user.workspaceRole).toBe('MEMBER');
     });
@@ -215,7 +215,7 @@ describe('AuthUserService', () => {
       jest.spyOn(prisma.user, 'findFirst').mockResolvedValue(null);
 
       await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
-      await expect(service.login(dto)).rejects.toThrow('邮箱或密码错误');
+      await expect(service.login(dto)).rejects.toThrow('Invalid email or password');
     });
 
     it('should throw UnauthorizedException when password does not match', async () => {
@@ -225,7 +225,7 @@ describe('AuthUserService', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
-      await expect(service.login(dto)).rejects.toThrow('邮箱或密码错误');
+      await expect(service.login(dto)).rejects.toThrow('Invalid email or password');
     });
 
     it('should throw UnauthorizedException when account is inactive', async () => {
@@ -240,7 +240,7 @@ describe('AuthUserService', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
-      await expect(service.login(dto)).rejects.toThrow('账号已被禁用');
+      await expect(service.login(dto)).rejects.toThrow('Account is disabled');
     });
   });
 
@@ -298,7 +298,7 @@ describe('AuthUserService', () => {
           data: dto,
         }),
       );
-      expect(result.message).toBe('更新成功');
+      expect(result.message).toBe('Updated successfully');
       expect(result.user).toEqual(mockUser);
     });
   });

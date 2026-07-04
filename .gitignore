@@ -24,6 +24,7 @@ npm-debug.log*
 # Admin dashboard
 talentpro-admin/node_modules
 talentpro-admin/dist
+talentpro-admin/dist-check
 
 # Test artifacts
 playwright-report/

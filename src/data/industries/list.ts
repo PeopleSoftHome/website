@@ -1,4 +1,9 @@
-export const INDUSTRY_TABS = [
+/**
+ * 行业方案 lightweight 列表数据
+ * v2.0.0: 支持按 locale 返回对应语言数据
+ */
+
+const INDUSTRY_TABS_ZH = [
   {
     id: 'mfg',
     slug: 'manufacturing',
@@ -25,55 +30,19 @@ export const INDUSTRY_TABS = [
       },
     ],
     stats: [
-      {
-        value: '5000+',
-        label: '考勤规则支持',
-      },
-      {
-        value: '200+',
-        label: '制造客户',
-      },
-      {
-        value: '99.9%',
-        label: '算薪准确率',
-      },
-      {
-        value: '< 1s',
-        label: '打卡响应',
-      },
+      { value: '5000+', label: '考勤规则支持' },
+      { value: '200+', label: '制造客户' },
+      { value: '99.9%', label: '算薪准确率' },
+      { value: '< 1s', label: '打卡响应' },
     ],
     screenshot: {
       title: '制造业 · 车间考勤看板',
       type: 'table',
       rows: [
-        {
-          name: '张三',
-          shift: '早班',
-          time: '08:01',
-          status: 'green',
-          label: '正常',
-        },
-        {
-          name: '李四',
-          shift: '早班',
-          time: '08:03',
-          status: 'green',
-          label: '正常',
-        },
-        {
-          name: '王五',
-          shift: '中班',
-          time: '—',
-          status: 'orange',
-          label: '待打卡',
-        },
-        {
-          name: '赵六',
-          shift: '夜班',
-          time: '20:00',
-          status: 'blue',
-          label: '已排班',
-        },
+        { name: '张三', shift: '早班', time: '08:01', status: 'green', label: '正常' },
+        { name: '李四', shift: '早班', time: '08:03', status: 'green', label: '正常' },
+        { name: '王五', shift: '中班', time: '—', status: 'orange', label: '待打卡' },
+        { name: '赵六', shift: '夜班', time: '20:00', status: 'blue', label: '已排班' },
       ],
       tip: '张三焊工资质将于 30 天后到期，请及时安排复训',
     },
@@ -104,47 +73,19 @@ export const INDUSTRY_TABS = [
       },
     ],
     stats: [
-      {
-        value: '500+',
-        label: '门店统一管控',
-      },
-      {
-        value: '50+',
-        label: '零售品牌客户',
-      },
-      {
-        value: '3 天',
-        label: '新店人员到位',
-      },
-      {
-        value: '15%',
-        label: '人效提升',
-      },
+      { value: '500+', label: '门店统一管控' },
+      { value: '50+', label: '零售品牌客户' },
+      { value: '3 天', label: '新店人员到位' },
+      { value: '15%', label: '人效提升' },
     ],
     screenshot: {
       title: '零售 · 门店管理看板',
       type: 'metrics',
       metrics: [
-        {
-          value: '47',
-          label: '待面试候选人',
-          color: 'var(--primary)',
-        },
-        {
-          value: '12',
-          label: '本月新入职',
-          color: 'var(--success)',
-        },
-        {
-          value: '8',
-          label: '今日培训人数',
-          color: 'var(--ai-purple)',
-        },
-        {
-          value: '96%',
-          label: '出勤完成率',
-          color: '#F59E0B',
-        },
+        { value: '47', label: '待面试候选人', color: 'var(--primary)' },
+        { value: '12', label: '本月新入职', color: 'var(--success)' },
+        { value: '8', label: '今日培训人数', color: 'var(--ai-purple)' },
+        { value: '96%', label: '出勤完成率', color: '#F59E0B' },
       ],
     },
   },
@@ -174,47 +115,19 @@ export const INDUSTRY_TABS = [
       },
     ],
     stats: [
-      {
-        value: '10,000+',
-        label: '并发面试',
-      },
-      {
-        value: '100+',
-        label: '互联网客户',
-      },
-      {
-        value: '40%',
-        label: '周期缩短',
-      },
-      {
-        value: '92%',
-        label: 'AI 匹配准确率',
-      },
+      { value: '10,000+', label: '并发面试' },
+      { value: '100+', label: '互联网客户' },
+      { value: '40%', label: '周期缩短' },
+      { value: '92%', label: 'AI 匹配准确率' },
     ],
     screenshot: {
       title: '互联网 · HRBP 工作台',
       type: 'tasks',
       tasks: [
-        {
-          text: '张总 需要复核绩效评分',
-          status: '待处理',
-          statusColor: 'var(--primary)',
-        },
-        {
-          text: '研发部 3 名员工转正申请',
-          status: '审批中',
-          statusColor: 'var(--success)',
-        },
-        {
-          text: 'P9 候选人背调报告已就绪',
-          status: '待查看',
-          statusColor: '#F59E0B',
-        },
-        {
-          text: 'Q2 OKR 对齐会议待确认',
-          status: '待处理',
-          statusColor: 'var(--primary)',
-        },
+        { text: '张总 需要复核绩效评分', status: '待处理', statusColor: 'var(--primary)' },
+        { text: '研发部 3 名员工转正申请', status: '审批中', statusColor: 'var(--success)' },
+        { text: 'P9 候选人背调报告已就绪', status: '待查看', statusColor: '#F59E0B' },
+        { text: 'Q2 OKR 对齐会议待确认', status: '待处理', statusColor: 'var(--primary)' },
       ],
     },
   },
@@ -244,52 +157,20 @@ export const INDUSTRY_TABS = [
       },
     ],
     stats: [
-      {
-        value: '50+',
-        label: '央企客户',
-      },
-      {
-        value: '100%',
-        label: '竞聘留痕',
-      },
-      {
-        value: '5 级',
-        label: '干部梯队',
-      },
-      {
-        value: '99.9%',
-        label: '系统可用性',
-      },
+      { value: '50+', label: '央企客户' },
+      { value: '100%', label: '竞聘留痕' },
+      { value: '5 级', label: '干部梯队' },
+      { value: '99.9%', label: '系统可用性' },
     ],
     screenshot: {
       title: '央国企 · 干部竞聘流程',
       type: 'timeline',
       steps: [
-        {
-          icon: 'megaphone',
-          label: '发布职位',
-          desc: '干部职位公开发布',
-        },
-        {
-          icon: 'file-text',
-          label: '报名申请',
-          desc: '在线资格初审',
-        },
-        {
-          icon: 'clipboard-list',
-          label: '笔试考核',
-          desc: '线上标准化测评',
-        },
-        {
-          icon: 'mic',
-          label: '面试答辩',
-          desc: '专家评委打分',
-        },
-        {
-          icon: 'check-circle',
-          label: '公示任命',
-          desc: '结果公开透明',
-        },
+        { icon: 'megaphone', label: '发布职位', desc: '干部职位公开发布' },
+        { icon: 'file-text', label: '报名申请', desc: '在线资格初审' },
+        { icon: 'clipboard-list', label: '笔试考核', desc: '线上标准化测评' },
+        { icon: 'mic', label: '面试答辩', desc: '专家评委打分' },
+        { icon: 'check-circle', label: '公示任命', desc: '结果公开透明' },
       ],
     },
   },
@@ -319,82 +200,253 @@ export const INDUSTRY_TABS = [
       },
     ],
     stats: [
-      {
-        value: '30+',
-        label: '金融机构客户',
-      },
-      {
-        value: '100%',
-        label: '合规培训覆盖',
-      },
-      {
-        value: '99.9%',
-        label: '系统可用性',
-      },
-      {
-        value: '等保三级',
-        label: '安全认证',
-      },
+      { value: '30+', label: '金融机构客户' },
+      { value: '100%', label: '合规培训覆盖' },
+      { value: '99.9%', label: '系统可用性' },
+      { value: '等保三级', label: '安全认证' },
     ],
     screenshot: {
       title: '金融 · 九宫格人才盘点',
       type: 'grid9',
       cells: [
-        {
-          label: '高潜',
-          bg: '#FEE2E2',
-          color: '#EF4444',
-          count: 4,
-        },
-        {
-          label: '明星',
-          bg: '#DCFCE7',
-          color: '#16A34A',
-          count: 7,
-        },
-        {
-          label: '超级',
-          bg: '#DCFCE7',
-          color: '#16A34A',
-          count: 3,
-        },
-        {
-          label: '问题',
-          bg: '#FEF9C3',
-          color: '#CA8A04',
-          count: 12,
-        },
-        {
-          label: '核心',
-          bg: '#DBEAFE',
-          color: '#2563EB',
-          count: 18,
-        },
-        {
-          label: '关键',
-          bg: '#DCFCE7',
-          color: '#16A34A',
-          count: 9,
-        },
-        {
-          label: '待转型',
-          bg: '#F3F4F6',
-          color: '#6B7280',
-          count: 8,
-        },
-        {
-          label: '稳健',
-          bg: '#F3F4F6',
-          color: '#6B7280',
-          count: 15,
-        },
-        {
-          label: '资深',
-          bg: '#DBEAFE',
-          color: '#2563EB',
-          count: 11,
-        },
+        { label: '高潜', bg: '#FEE2E2', color: '#EF4444', count: 4 },
+        { label: '明星', bg: '#DCFCE7', color: '#16A34A', count: 7 },
+        { label: '超级', bg: '#DCFCE7', color: '#16A34A', count: 3 },
+        { label: '问题', bg: '#FEF9C3', color: '#CA8A04', count: 12 },
+        { label: '核心', bg: '#DBEAFE', color: '#2563EB', count: 18 },
+        { label: '关键', bg: '#DCFCE7', color: '#16A34A', count: 9 },
+        { label: '待转型', bg: '#F3F4F6', color: '#6B7280', count: 8 },
+        { label: '稳健', bg: '#F3F4F6', color: '#6B7280', count: 15 },
+        { label: '资深', bg: '#DBEAFE', color: '#2563EB', count: 11 },
       ],
     },
   },
 ];
+
+const INDUSTRY_TABS_EN = [
+  {
+    id: 'mfg',
+    slug: 'manufacturing',
+    label: 'Manufacturing',
+    shortLabel: 'Mfg',
+    icon: 'factory',
+    heroTitle: 'HR Digital Transformation for Manufacturing',
+    heroDesc: 'Addressing labor shortages, rising costs, and stricter compliance, TalentPro provides end-to-end digital solutions for manufacturing—from blue-collar hiring to smart scheduling, qualification compliance to payroll.',
+    features: [
+      {
+        badge: 'Feature 1',
+        title: 'Smart Scheduling & Attendance',
+        desc: 'Auto-match shifts on clock-in, handle complex scheduling scenarios, 5,000+ attendance rules processed automatically, mobile instant scheduling.',
+      },
+      {
+        badge: 'Feature 2',
+        title: 'Trial Worker Management',
+        desc: 'Digital trial period management—scan-in onboarding, automated evaluations, and compliant hiring for blue-collar workers.',
+      },
+      {
+        badge: 'Feature 3',
+        title: 'Qualification Compliance Tracking',
+        desc: 'Continuously track job certifications, send renewal reminders, and digitize compliance training agreements.',
+      },
+    ],
+    stats: [
+      { value: '5000+', label: 'Attendance Rules Supported' },
+      { value: '200+', label: 'Manufacturing Clients' },
+      { value: '99.9%', label: 'Payroll Accuracy' },
+      { value: '< 1s', label: 'Clock-in Response' },
+    ],
+    screenshot: {
+      title: 'Manufacturing · Shop Floor Attendance Board',
+      type: 'table',
+      rows: [
+        { name: 'Zhang San', shift: 'Morning', time: '08:01', status: 'green', label: 'Normal' },
+        { name: 'Li Si', shift: 'Morning', time: '08:03', status: 'green', label: 'Normal' },
+        { name: 'Wang Wu', shift: 'Afternoon', time: '—', status: 'orange', label: 'Pending' },
+        { name: 'Zhao Liu', shift: 'Night', time: '20:00', status: 'blue', label: 'Scheduled' },
+      ],
+      tip: 'Zhang San\'s welding certification expires in 30 days — schedule retraining',
+    },
+  },
+  {
+    id: 'retail',
+    slug: 'retail',
+    label: 'Retail & Chain',
+    shortLabel: 'Retail',
+    icon: 'store',
+    heroTitle: 'Workforce Efficiency for Retail & Chain',
+    heroDesc: 'Fast store expansion, high turnover, and complex scheduling are retail\'s top HR challenges. TalentPro offers one-stop solutions from store manager hiring to multi-store workforce control.',
+    features: [
+      {
+        badge: 'Feature 1',
+        title: 'Store Manager Recruitment Hub',
+        desc: 'Streamline resume review, interviews, and offer management—keep stores running at full capacity.',
+      },
+      {
+        badge: 'Feature 2',
+        title: 'Store-Level Talent Development',
+        desc: 'Track employee learning progress in real time; AI Coach delivers personalized development plans.',
+      },
+      {
+        badge: 'Feature 3',
+        title: 'Multi-Store HR Management',
+        desc: 'Centrally manage hundreds of stores—fast onboarding/offboarding, flexible scheduling, on-time payroll.',
+      },
+    ],
+    stats: [
+      { value: '500+', label: 'Stores Under Unified Control' },
+      { value: '50+', label: 'Retail Brand Clients' },
+      { value: '3 Days', label: 'New Store Staffing' },
+      { value: '15%', label: 'Productivity Gain' },
+    ],
+    screenshot: {
+      title: 'Retail · Store Management Dashboard',
+      type: 'metrics',
+      metrics: [
+        { value: '47', label: 'Candidates to Interview', color: 'var(--primary)' },
+        { value: '12', label: 'New Hires This Month', color: 'var(--success)' },
+        { value: '8', label: 'Training Sessions Today', color: 'var(--ai-purple)' },
+        { value: '96%', label: 'Attendance Completion', color: '#F59E0B' },
+      ],
+    },
+  },
+  {
+    id: 'internet',
+    slug: 'internet',
+    label: 'Internet & Tech',
+    shortLabel: 'Internet',
+    icon: 'monitor',
+    heroTitle: 'Agile HR for Internet & Tech',
+    heroDesc: 'Rapid business changes, fierce talent competition, and frequent org iterations are the norm. TalentPro provides agile recruiting, OKR performance, and tech talent pipeline solutions.',
+    features: [
+      {
+        badge: 'Feature 1',
+        title: 'HRBP Workbench',
+        desc: 'A department-level command center for HRBPs—stay agile and responsive to fast-changing business needs.',
+      },
+      {
+        badge: 'Feature 2',
+        title: 'Company-Wide Recruiting Collaboration',
+        desc: 'Empower hiring managers to submit reqs, track progress, and manage approvals—all in one place.',
+      },
+      {
+        badge: 'Feature 3',
+        title: 'Tech Talent Development',
+        desc: 'Structured talent pipelines and personalized learning plans to build high-performance engineering teams.',
+      },
+    ],
+    stats: [
+      { value: '10,000+', label: 'Concurrent Interviews' },
+      { value: '100+', label: 'Internet Clients' },
+      { value: '40%', label: 'Cycle Reduction' },
+      { value: '92%', label: 'AI Match Accuracy' },
+    ],
+    screenshot: {
+      title: 'Internet & Tech · HRBP Workbench',
+      type: 'tasks',
+      tasks: [
+        { text: 'GM Zhang\'s performance score needs review', status: 'Pending', statusColor: 'var(--primary)' },
+        { text: '3 probation completions in R&D pending approval', status: 'In Review', statusColor: 'var(--success)' },
+        { text: 'P9 background check report ready', status: 'To Review', statusColor: '#F59E0B' },
+        { text: 'Q2 OKR alignment meeting needs confirmation', status: 'Pending', statusColor: 'var(--primary)' },
+      ],
+    },
+  },
+  {
+    id: 'gov',
+    slug: 'government',
+    label: 'State-owned Enterprise',
+    shortLabel: 'SOE',
+    icon: 'landmark',
+    heroTitle: 'Digital Talent Strategy for SOEs',
+    heroDesc: 'Implement talent-driven enterprise strategy, promote younger cadres, market-based selection, and digital management. TalentPro provides cadre management, competitive appointment, and young executive pipeline.',
+    features: [
+      {
+        badge: 'Feature 1',
+        title: 'Digital Campus Recruiting',
+        desc: 'Attract diverse talent with digital tools that support hybrid online/offline campus hiring.',
+      },
+      {
+        badge: 'Feature 2',
+        title: 'Young Executive Pipeline',
+        desc: 'Identify, select, develop, and review emerging leaders through a comprehensive talent pipeline program.',
+      },
+      {
+        badge: 'Feature 3',
+        title: 'Cadre Appointment & Competition',
+        desc: 'Open competition, market-based selection, and dynamic role-matching to activate organizational vitality.',
+      },
+    ],
+    stats: [
+      { value: '50+', label: 'Central SOE Clients' },
+      { value: '100%', label: 'Competition Audit Trail' },
+      { value: '5 Levels', label: 'Cadre Pipeline' },
+      { value: '99.9%', label: 'System Uptime' },
+    ],
+    screenshot: {
+      title: 'SOE · Cadre Competition Workflow',
+      type: 'timeline',
+      steps: [
+        { icon: 'megaphone', label: 'Post Published', desc: 'Open position announcement' },
+        { icon: 'file-text', label: 'Applications', desc: 'Online eligibility screening' },
+        { icon: 'clipboard-list', label: 'Written Exam', desc: 'Standardized online assessment' },
+        { icon: 'mic', label: 'Interview', desc: 'Expert panel scoring' },
+        { icon: 'check-circle', label: 'Announcement', desc: 'Results published transparently' },
+      ],
+    },
+  },
+  {
+    id: 'finance',
+    slug: 'finance',
+    label: 'Finance',
+    shortLabel: 'Finance',
+    icon: 'bank',
+    heroTitle: 'Compliance-Driven Talent Management for Finance',
+    heroDesc: 'Strict regulation, high compliance requirements, and specialized talent are core challenges. TalentPro offers compliant campus hiring, succession pools, and agent/sales force management.',
+    features: [
+      {
+        badge: 'Feature 1',
+        title: 'Innovative Campus Hiring',
+        desc: 'Define talent standards, systematize the campus hiring process, and leverage assessment tools to improve quality.',
+      },
+      {
+        badge: 'Feature 2',
+        title: 'Talent Reserve Program',
+        desc: 'Tiered talent reviews, in-pipeline coaching, and systematic succession management.',
+      },
+      {
+        badge: 'Feature 3',
+        title: 'Sales Force Expansion',
+        desc: 'Segment field teams by tier, match talent to target segments, and build high-productivity sales units.',
+      },
+    ],
+    stats: [
+      { value: '30+', label: 'Financial Institution Clients' },
+      { value: '100%', label: 'Compliance Training Coverage' },
+      { value: '99.9%', label: 'System Uptime' },
+      { value: 'Level-3', label: 'Security Certification' },
+    ],
+    screenshot: {
+      title: 'Finance · 9-Box Talent Review',
+      type: 'grid9',
+      cells: [
+        { label: 'High Potential', bg: '#FEE2E2', color: '#EF4444', count: 4 },
+        { label: 'Star', bg: '#DCFCE7', color: '#16A34A', count: 7 },
+        { label: 'Super', bg: '#DCFCE7', color: '#16A34A', count: 3 },
+        { label: 'Issue', bg: '#FEF9C3', color: '#CA8A04', count: 12 },
+        { label: 'Core', bg: '#DBEAFE', color: '#2563EB', count: 18 },
+        { label: 'Key', bg: '#DCFCE7', color: '#16A34A', count: 9 },
+        { label: 'To Transform', bg: '#F3F4F6', color: '#6B7280', count: 8 },
+        { label: 'Steady', bg: '#F3F4F6', color: '#6B7280', count: 15 },
+        { label: 'Veteran', bg: '#DBEAFE', color: '#2563EB', count: 11 },
+      ],
+    },
+  },
+];
+
+export function getIndustryList(locale?: string) {
+  if (locale === 'en') return INDUSTRY_TABS_EN;
+  return INDUSTRY_TABS_ZH;
+}
+
+/** 兼容旧直接引用：默认中文 */
+export const INDUSTRY_TABS = INDUSTRY_TABS_ZH;

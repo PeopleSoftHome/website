@@ -1,25 +1,25 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">博客管理</h2>
+    <h2 style="margin-bottom:20px">{{ t('blogs.title') }}</h2>
     <el-card shadow="hover">
       <div style="margin-bottom:16px">
-        <el-button type="primary" @click="openDialog()" v-permission="'blog:create'">+ 新建文章</el-button>
+        <el-button type="primary" @click="openDialog()" v-permission="'blog:create'">+ {{ t('blogs.createArticle') }}</el-button>
       </div>
       <el-table :data="list.items" v-loading="list.loading" size="default">
-        <el-table-column prop="title" label="标题" />
-        <el-table-column prop="category.name" label="分类" width="120" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="title" :label="t('blogs.titleCol')" />
+        <el-table-column prop="category.name" :label="t('blogs.category')" width="120" />
+        <el-table-column prop="status" :label="t('blogs.status')" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'">{{ row.status }}</el-tag>
+            <el-tag :type="row.status === 'PUBLISHED' ? 'success' : 'info'">{{ t(`blogs.statusOptions.${row.status}`, row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="创建时间" width="160">
+        <el-table-column prop="createdAt" :label="t('blogs.createdAt')" width="160">
           <template #default="{ row }">{{ formatDate(row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column :label="t('blogs.operation')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="openDialog(row)" v-permission="'blog:update'">编辑</el-button>
-            <el-button link type="danger" @click="handleDelete(row)" v-permission="'blog:delete'">删除</el-button>
+            <el-button link type="primary" @click="openDialog(row)" v-permission="'blog:update'">{{ t('blogs.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row)" v-permission="'blog:delete'">{{ t('blogs.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -34,32 +34,32 @@
     </el-card>
 
     <!-- 编辑/新建弹窗 -->
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑文章' : '新建文章'" width="600px">
+    <el-dialog v-model="dialogVisible" :title="isEdit ? t('blogs.editArticle') : t('blogs.createArticleDialog')" width="600px">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="标题">
+        <el-form-item :label="t('blogs.titleCol')">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="Slug">
+        <el-form-item :label="t('blogs.slug')">
           <el-input v-model="form.slug" />
         </el-form-item>
-        <el-form-item label="分类">
+        <el-form-item :label="t('blogs.category')">
           <el-select v-model="form.categoryId" style="width:100%">
             <el-option v-for="cat in categories" :key="cat.id" :label="cat.name" :value="cat.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="摘要">
+        <el-form-item :label="t('blogs.excerpt')">
           <el-input v-model="form.excerpt" type="textarea" :rows="2" />
         </el-form-item>
-        <el-form-item label="封面图">
+        <el-form-item :label="t('blogs.coverImage')">
           <ImageUpload v-model="form.coverImage" />
         </el-form-item>
-        <el-form-item label="内容">
+        <el-form-item :label="t('blogs.content')">
           <RichEditor v-model="form.content" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="t('blogs.status')">
           <el-select v-model="form.status" style="width:100%">
-            <el-option label="草稿" value="DRAFT" />
-            <el-option label="已发布" value="PUBLISHED" />
+            <el-option :label="t('blogs.statusOptions.DRAFT')" value="DRAFT" />
+            <el-option :label="t('blogs.statusOptions.PUBLISHED')" value="PUBLISHED" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -70,8 +70,8 @@
           :content="form.content || form.excerpt"
           @result="(p) => { aiPayload.value = p; aiVisible.value = true; }"
         />
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
+        <el-button @click="dialogVisible = false">{{ t('blogs.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSave" :loading="saving">{{ t('blogs.save') }}</el-button>
       </template>
     </el-dialog>
 
@@ -88,6 +88,9 @@
 <script setup>
 import { formatDate } from '@/utils/formatDate.js';
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 onMounted(() => {
   fetchCategories();
@@ -137,27 +140,27 @@ const handleSave = async () => {
   try {
     if (isEdit.value) {
       await client.patch(`/blogs/posts/${form.value.id}`, form.value);
-      ElMessage.success('更新成功');
+      ElMessage.success(t('blogs.updateSuccess'));
     } else {
       await client.post('/blogs/posts', { ...form.value, authorId: 'system' });
-      ElMessage.success('创建成功');
+      ElMessage.success(t('blogs.createSuccess'));
     }
     dialogVisible.value = false;
     list.fetch();
   } catch (e) {
-    ElMessage.error(e.response?.data?.message || '保存失败');
+    ElMessage.error(e.response?.data?.message || t('blogs.saveFailed'));
   }
   saving.value = false;
 };
 
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm('确认删除该文章？', '提示', { type: 'warning' });
+    await ElMessageBox.confirm(t('blogs.deleteConfirm'), t('blogs.deleteTip'), { type: 'warning' });
     await client.delete(`/blogs/posts/${row.id}`);
-    ElMessage.success('删除成功');
+    ElMessage.success(t('blogs.deleteSuccess'));
     list.fetch();
   } catch (e) {
-    if (e !== 'cancel') ElMessage.error('删除失败');
+    if (e !== 'cancel') ElMessage.error(t('blogs.deleteFailed'));
   }
 };
 
@@ -171,8 +174,9 @@ const applyAiResult = ({ action, result }, target) => {
   if (result.translation) target.content = result.translation;
   if (result.keywords && action === 'seo') {
     // 博客模型无 keywords 字段，可追加到内容或摘要
-    target.excerpt = `${result.keywords.join(' / ')}\n${target.excerpt || ''}`.trim();
+    target.excerpt = `${result.keywords.join(' / ')}
+${target.excerpt || ''}`.trim();
   }
-  ElMessage.success('已应用生成结果，请确认后再保存');
+  ElMessage.success(t('blogs.applied'));
 };
 </script>

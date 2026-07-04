@@ -13,13 +13,13 @@
  * @param {boolean} [options.server=false] - 是否服务端获取
  * @returns {Object}
  */
-import { ref, computed, watch, type Ref } from 'vue';
+import { ref, computed, watch, unref, type Ref } from 'vue';
 
 interface UseListPageOptions<T = unknown, F extends Record<string, unknown> = Record<string, unknown>> {
-  key: string;
+  key: string | (() => string);
   fetchFn: (filters: F) => Promise<unknown>;
   filters?: Ref<F>;
-  fallbackData?: T[];
+  fallbackData?: T[] | Ref<T[]>;
   transform?: (data: unknown[]) => T[];
   filterFn?: (item: T, filters: F) => boolean;
   pageSize?: number;
@@ -57,7 +57,7 @@ export function useListPage<T = unknown, F extends Record<string, unknown> = Rec
   });
 
   const items = computed(() => {
-    if (fetchError.value || apiItems.value.length === 0) return fallbackData;
+    if (fetchError.value || apiItems.value.length === 0) return unref(fallbackData);
     return apiItems.value;
   });
 

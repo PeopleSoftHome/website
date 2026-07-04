@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 style="margin-bottom:20px">媒体库</h2>
+    <h2 style="margin-bottom:20px">{{ t('media.title') }}</h2>
 
     <el-row :gutter="16" style="margin-bottom: 20px">
       <el-col :span="16">
@@ -17,21 +17,21 @@
         >
           <el-icon :size="48" color="var(--admin-text-secondary)"><Upload /></el-icon>
           <div style="margin-top: 8px; color: var(--admin-text-secondary)">
-            拖拽文件到此处，或 <em style="color: var(--admin-color-primary)">点击上传</em>
+            {{ t('media.dragUpload') }} <em style="color: var(--admin-color-primary)">{{ t('media.clickUpload') }}</em>
           </div>
           <template #tip>
             <div style="font-size: 12px; color: var(--admin-text-secondary); margin-top: 8px">
-              支持 JPG/PNG/GIF/WebP/MP4/PDF，单文件不超过 10MB
+              {{ t('media.uploadTip') }}
             </div>
           </template>
         </el-upload>
       </el-col>
       <el-col :span="8">
         <el-card shadow="hover">
-          <template #header><span>存储统计</span></template>
+          <template #header><span>{{ t('media.storageStats') }}</span></template>
           <div v-if="stats" style="display: flex; flex-direction: column; gap: 12px">
             <div style="display: flex; justify-content: space-between">
-              <span style="color: var(--admin-text-secondary)">总文件数</span>
+              <span style="color: var(--admin-text-secondary)">{{ t('media.totalFiles') }}</span>
               <span style="font-weight: 600">{{ stats.total }}</span>
             </div>
             <div
@@ -40,7 +40,7 @@
               style="display: flex; justify-content: space-between"
             >
               <span style="color: var(--admin-text-secondary)">{{ item.mimeType }}</span>
-              <span>{{ item._count.mimeType }} 个</span>
+              <span>{{ item._count.mimeType }} {{ t('media.count') }}</span>
             </div>
           </div>
           <el-skeleton v-else :rows="3" animated />
@@ -77,12 +77,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Upload } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/CmsTable.vue';
 import Picture from '@/components/Picture.vue';
 import client from '@/api/client.js';
 import { useAuthStore } from '@/stores/auth.js';
+
+const { t } = useI18n();
 
 const auth = useAuthStore();
 const uploadRef = ref(null);
@@ -94,47 +97,47 @@ const uploadHeaders = ref({
 });
 
 const columns = [
-  { prop: 'url', label: '预览', width: 100 },
-  { prop: 'originalName', label: '文件名', minWidth: 200 },
-  { prop: 'filename', label: '存储名', width: 180 },
-  { prop: 'mimeType', label: '类型', width: 120 },
-  { prop: 'size', label: '大小', width: 100 },
-  { prop: 'width', label: '尺寸', width: 100, formatter: (row) => row.width ? `${row.width}x${row.height}` : '-' },
-  { prop: 'alt', label: 'Alt 文本', width: 150 },
-  { prop: 'createdAt', label: '上传时间', width: 160 },
+  { prop: 'url', label: t('media.preview'), width: 100 },
+  { prop: 'originalName', label: t('media.fileName'), minWidth: 200 },
+  { prop: 'filename', label: t('media.storageName'), width: 180 },
+  { prop: 'mimeType', label: t('media.type'), width: 120 },
+  { prop: 'size', label: t('media.size'), width: 100 },
+  { prop: 'width', label: t('media.dimension'), width: 100, formatter: (row) => row.width ? `${row.width}x${row.height}` : '-' },
+  { prop: 'alt', label: t('media.altText'), width: 150 },
+  { prop: 'createdAt', label: t('media.uploadTime'), width: 160 },
 ];
 
 const formFields = [
-  { prop: 'originalName', label: '文件名', type: 'input' },
-  { prop: 'alt', label: 'Alt 文本', type: 'input' },
+  { prop: 'originalName', label: t('media.fileName'), type: 'input' },
+  { prop: 'alt', label: t('media.altText'), type: 'input' },
 ];
 
 const rules = {
-  originalName: [{ required: true, message: '请输入文件名', trigger: 'blur' }],
+  originalName: [{ required: true, message: t('media.fileNameRequired'), trigger: 'blur' }],
 };
 
 const beforeUpload = (file) => {
   const maxSize = 10 * 1024 * 1024;
   if (file.size > maxSize) {
-    ElMessage.error('文件大小不能超过 10MB');
+    ElMessage.error(t('media.fileTooLarge'));
     return false;
   }
   const allowed = /image\/(jpeg|png|gif|webp)|video\/mp4|application\/pdf/.test(file.type);
   if (!allowed) {
-    ElMessage.error('不支持的文件类型');
+    ElMessage.error(t('media.unsupportedType'));
     return false;
   }
   return true;
 };
 
 const handleUploadSuccess = (res) => {
-  ElMessage.success(`上传成功: ${res.originalName || ''}`);
+  ElMessage.success(`${t('media.uploadSuccess')}: ${res.originalName || ''}`);
   tableRef.value?.refresh?.();
   fetchStats();
 };
 
 const handleUploadError = (err) => {
-  const message = err?.response?.data?.message || err?.message || '上传失败';
+  const message = err?.response?.data?.message || err?.message || t('media.uploadFailed');
   ElMessage.error(message);
 };
 
