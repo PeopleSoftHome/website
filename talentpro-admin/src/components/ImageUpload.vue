@@ -28,6 +28,12 @@
       </template>
     </el-upload>
 
+    <div v-if="enableAiGenerate && !modelValue" class="ai-generate-area">
+      <el-button type="primary" size="small" text @click="openAiDialog">
+        <el-icon><MagicStick /></el-icon> {{ t('imageUpload.aiGenerate') }}
+      </el-button>
+    </div>
+
     <div v-if="modelValue" class="upload-actions">
       <el-button link type="danger" size="small" @click.stop="handleRemove">
         <el-icon><Delete /></el-icon> {{ t('imageUpload.delete') }}
@@ -40,6 +46,18 @@
     <el-dialog v-model="previewVisible" :title="t('imageUpload.previewTitle')" append-to-body>
       <img :src="modelValue" style="width: 100%; display: block;" />
     </el-dialog>
+
+    <el-dialog v-model="aiDialogVisible" :title="t('imageUpload.aiGenerate')" width="480px" append-to-body destroy-on-close>
+      <el-form label-position="top">
+        <el-form-item :label="t('imageUpload.aiGeneratePrompt')">
+          <el-input v-model="aiPrompt" type="textarea" :rows="3" :placeholder="t('imageUpload.aiGeneratePrompt')" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="aiDialogVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="aiGenerating" @click="handleAiGenerate">{{ t('imageUpload.aiGenerateConfirm') }}</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -47,19 +65,24 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import { UploadFilled, Delete, View } from '@element-plus/icons-vue';
+import { UploadFilled, Delete, View, MagicStick } from '@element-plus/icons-vue';
 import { useAuthStore } from '@/stores/auth.js';
+import { aiApi } from '@/api/ai.js';
 
 const { t } = useI18n();
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
+  enableAiGenerate: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 const auth = useAuthStore();
 const previewVisible = ref(false);
+const aiDialogVisible = ref(false);
+const aiGenerating = ref(false);
+const aiPrompt = ref('');
 
 const uploadUrl = computed(() => {
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1';
@@ -105,6 +128,34 @@ const handleRemove = () => {
 
 const handlePreview = () => {
   previewVisible.value = true;
+};
+
+const openAiDialog = () => {
+  aiPrompt.value = '';
+  aiDialogVisible.value = true;
+};
+
+const handleAiGenerate = async () => {
+  if (!aiPrompt.value.trim()) {
+    ElMessage.warning(t('imageUpload.aiGeneratePrompt'));
+    return;
+  }
+  aiGenerating.value = true;
+  try {
+    const res = await aiApi.generateImage({ prompt: aiPrompt.value.trim() });
+    const url = res?.url || res?.imageUrl;
+    if (url) {
+      emit('update:modelValue', url);
+      ElMessage.success(t('imageUpload.uploadSuccess'));
+      aiDialogVisible.value = false;
+    } else {
+      ElMessage.error(t('imageUpload.invalidResponse'));
+    }
+  } catch (e) {
+    ElMessage.error(e.message || t('imageUpload.uploadFailed'));
+  } finally {
+    aiGenerating.value = false;
+  }
 };
 </script>
 
@@ -152,5 +203,11 @@ const handlePreview = () => {
   margin-top: 8px;
   display: flex;
   gap: 12px;
+}
+
+.ai-generate-area {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
 }
 </style>

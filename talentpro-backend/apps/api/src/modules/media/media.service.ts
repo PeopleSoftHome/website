@@ -56,6 +56,39 @@ export class MediaService {
     return this.repo.create(data);
   }
 
+  async createFromBuffer(data: {
+    buffer: Buffer;
+    filename?: string;
+    originalName?: string;
+    mimeType: string;
+    alt?: string;
+    createdBy: string;
+  }) {
+    const originalName = data.originalName || data.filename || `ai-generated-${Date.now()}.png`;
+    const file: Express.Multer.File = {
+      buffer: data.buffer,
+      originalname: originalName,
+      mimetype: data.mimeType,
+      size: data.buffer.length,
+    } as Express.Multer.File;
+
+    const result = await this.storage.upload(file);
+    const media = await this.repo.create({
+      filename: result.filename,
+      originalName: result.originalName,
+      url: result.url,
+      webpUrl: result.webpUrl,
+      thumbUrl: result.thumbUrl,
+      mimeType: result.mimeType,
+      size: result.size,
+      width: result.width,
+      height: result.height,
+      alt: data.alt || result.originalName,
+      createdBy: data.createdBy,
+    });
+    return media;
+  }
+
   async update(id: string, data: Partial<{ alt: string; originalName: string }>, workspaceId?: string) {
     await this.checkWorkspaceAccessById(id, workspaceId);
     return this.repo.update(id, data);

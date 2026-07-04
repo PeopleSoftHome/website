@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.2.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.3.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -309,6 +309,15 @@ npm run build
 - **LLM 抽象**：`LlmProvider` 接口；`AiOpenAiService` 实现；模型参数环境变量驱动
 - **依赖治理**：`npm audit` 0；`overrides` 锁定安全版本
 
+### v4.3.0 Admin 配置智能化
+
+- **AI 图片生成**：`POST /ai/generate-image`（ADMIN/SUPER_ADMIN，权限 `ai:generate-image`）；DALL·E 生成后落入媒体库；环境变量 `OPENAI_IMAGE_MODEL/SIZE/QUALITY/STYLE`。
+- **Admin 配置助手**：`POST /ai/admin/chat`（权限 `ai:chat`），为配置流程提供文案/图片建议；聊天面板嵌入 `PageConfigView`。
+- **Section 配置 schema**：`sectionRegistry.js` 与 `src/utils/sectionRegistry.ts` 同步 `defaultConfig` + `configSchema`；Hero 支持背景图/标题/副标题/CTA/仪表盘开关。
+- **动态配置表单**：`SectionConfigForm.vue` 按 schema 渲染 input/textarea/switch/image-upload；`ImageUpload.vue` 支持“AI 生成图片”。
+- **门户 Hero 配置化**：`HeroSection.vue` 读取 CMS `Section.config`，未配置时回退 i18n。
+- **部署注意**：新增权限 `ai:generate-image`、`ai:chat` 在 `seed.ts` 中写入。已有数据库需重新执行 seed 或手动将这两条权限赋予 ADMIN / SUPER_ADMIN 角色。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.2.0*
+*TalentPro HR Portal · AGENTS.md v4.3.0*

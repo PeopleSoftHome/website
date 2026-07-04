@@ -7,6 +7,27 @@
   padding-top: 64px;
 }
 
+/* ── CMS 背景图层 ── */
+.bgImageWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.bgImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-overlay, rgba(0, 0, 0, 0.5));
+}
+
 /* ── 背景层：浅色网格 ── */
 .bgGrid {
   position: absolute;

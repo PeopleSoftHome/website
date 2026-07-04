@@ -5,6 +5,7 @@ import { AiRagService } from './ai-rag.service';
 import { AiPromptService } from './ai-prompt.service';
 import { LlmProviderFactory } from './ai-provider.factory';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { MediaService } from '@/modules/media/media.service';
 import { ChatMessage, StreamEvent } from './ai.types';
 
 describe('AiService', () => {
@@ -13,11 +14,13 @@ describe('AiService', () => {
   let promptService: AiPromptService;
   let providerFactory: LlmProviderFactory;
   let prisma: PrismaService;
+  let mediaService: MediaService;
   let llmMock: {
     isConfigured: jest.Mock;
     chat: jest.Mock;
     stream: jest.Mock;
     moderateContent: jest.Mock;
+    generateImage: jest.Mock;
     name: string;
   };
 
@@ -27,6 +30,7 @@ describe('AiService', () => {
     chat: jest.fn().mockResolvedValue({ content: 'LLM reply' }),
     stream: jest.fn().mockResolvedValue(undefined),
     moderateContent: jest.fn().mockResolvedValue({ riskScore: 0.1, flags: [] }),
+    generateImage: jest.fn().mockResolvedValue({ url: 'https://example.com/image.png', revisedPrompt: 'revised' }),
   });
 
   const createUnconfiguredLlm = () => ({
@@ -35,6 +39,10 @@ describe('AiService', () => {
     chat: jest.fn(),
     stream: jest.fn(),
     moderateContent: jest.fn(),
+    generateImage: jest.fn().mockResolvedValue({
+      url: 'https://placehold.co/1024x576?text=AI+Image',
+      revisedPrompt: 'prompt',
+    }),
   });
 
   beforeEach(async () => {
@@ -63,6 +71,12 @@ describe('AiService', () => {
             aiChatSession: { findUnique: jest.fn(), upsert: jest.fn() },
           },
         },
+        {
+          provide: MediaService,
+          useValue: {
+            createFromBuffer: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -71,6 +85,7 @@ describe('AiService', () => {
     promptService = module.get<AiPromptService>(AiPromptService);
     providerFactory = module.get<LlmProviderFactory>(LlmProviderFactory);
     prisma = module.get<PrismaService>(PrismaService);
+    mediaService = module.get<MediaService>(MediaService);
   });
 
   afterEach(() => {
@@ -234,6 +249,138 @@ describe('AiService', () => {
       const result = await service.generateContent({ type: 'blog' });
 
       expect(result).toEqual(expect.objectContaining({ type: 'blog', language: 'zh', tone: '专业' }));
+    });
+  });
+
+  describe('generateImage', () => {
+    const originalFetch = global.fetch;
+
+    beforeEach(() => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        arrayBuffer: jest.fn().mockResolvedValue(Buffer.from('image-data').buffer),
+      }) as unknown as typeof fetch;
+    });
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+    });
+
+    it('should persist media when LLM is configured', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+      (mediaService.createFromBuffer as jest.Mock).mockResolvedValue({
+        id: 'm1',
+        url: '/uploads/ai-image.png',
+      });
+
+      const result = await service.generateImage({ prompt: 'a cat', userId: 'u1' });
+
+      expect(llmMock.generateImage).toHaveBeenCalledWith('a cat', {});
+      expect(global.fetch).toHaveBeenCalledWith('https://example.com/image.png');
+      expect(mediaService.createFromBuffer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mimeType: 'image/png',
+          createdBy: 'u1',
+          alt: 'a cat',
+        }),
+      );
+      expect(result).toEqual({
+        url: '/uploads/ai-image.png',
+        revisedPrompt: 'revised',
+        mediaId: 'm1',
+      });
+    });
+
+    it('should pass size/quality/style options to LLM', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+      (mediaService.createFromBuffer as jest.Mock).mockResolvedValue({
+        id: 'm2',
+        url: '/uploads/ai-image-2.png',
+      });
+
+      await service.generateImage({
+        prompt: 'a dog',
+        size: '512x512',
+        quality: 'hd',
+        style: 'natural',
+        userId: 'u1',
+      });
+
+      expect(llmMock.generateImage).toHaveBeenCalledWith('a dog', {
+        size: '512x512',
+        quality: 'hd',
+        style: 'natural',
+      });
+    });
+
+    it('should return placeholder and skip persistence when LLM is not configured', async () => {
+      const result = await service.generateImage({ prompt: 'a cat', userId: 'u1' });
+
+      expect(result).toEqual({
+        url: 'https://placehold.co/1024x576?text=AI+Image',
+        revisedPrompt: 'prompt',
+      });
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(mediaService.createFromBuffer).not.toHaveBeenCalled();
+    });
+
+    it('should throw when image download fails', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 404,
+        arrayBuffer: jest.fn(),
+      });
+
+      await expect(service.generateImage({ prompt: 'a cat', userId: 'u1' })).rejects.toThrow(
+        'Failed to download generated image: 404',
+      );
+    });
+  });
+
+  describe('adminChat', () => {
+    it('should call LLM with configuration assistant system prompt', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+      const context = { page: 'home', sections: ['hero'] };
+
+      const result = await service.adminChat('生成 hero 标题', [{ role: 'user', content: 'hi' }], context, 'zh');
+
+      expect(llmMock.chat).toHaveBeenCalledWith([
+        expect.objectContaining({
+          role: 'system',
+          content: expect.stringContaining('TalentPro 门户配置助手'),
+        }),
+        { role: 'user', content: 'hi' },
+        { role: 'user', content: '生成 hero 标题' },
+      ]);
+      expect(result).toEqual({ content: 'LLM reply' });
+    });
+
+    it('should include context in system prompt when provided', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+      const context = { page: 'home' };
+
+      await service.adminChat('help', [], context);
+
+      expect(llmMock.chat).toHaveBeenCalledWith([
+        expect.objectContaining({
+          role: 'system',
+          content: expect.stringContaining('"page": "home"'),
+        }),
+        { role: 'user', content: 'help' },
+      ]);
+    });
+
+    it('should fallback when LLM is not configured', async () => {
+      const result = await service.adminChat('help');
+
+      expect(llmMock.chat).not.toHaveBeenCalled();
+      expect(result.content).toContain('AI 助手暂未配置');
     });
   });
 

@@ -4,19 +4,38 @@
  */
 
 export const REGISTERED_SECTIONS = [
-  { key: 'hero', title: 'Hero 首屏', required: true },
-  { key: 'brands', title: '品牌滚动' },
-  { key: 'stats', title: '统计数据' },
-  { key: 'products', title: '产品矩阵' },
-  { key: 'ai-family', title: 'AI Family' },
-  { key: 'industries', title: '行业方案' },
-  { key: 'testimonials', title: '客户证言' },
-  { key: 'logos', title: 'Logo 墙' },
-  { key: 'why-us', title: '为什么选我们' },
-  { key: 'resources', title: '资源中心' },
-  { key: 'roi-calculator', title: 'ROI 计算器' },
-  { key: 'cta-banner', title: 'CTA 通栏' },
+  {
+    key: 'hero',
+    title: 'Hero 首屏',
+    required: true,
+    defaultConfig: {
+      showDashboard: true,
+    },
+    configSchema: [
+      { prop: 'backgroundImage', label: '背景图', type: 'image-upload' },
+      { prop: 'title', label: '主标题', type: 'input' },
+      { prop: 'subtitle', label: '副标题', type: 'textarea', rows: 3 },
+      { prop: 'ctaPrimary', label: '主按钮文案', type: 'input' },
+      { prop: 'ctaSecondary', label: '次按钮文案', type: 'input' },
+      { prop: 'showDashboard', label: '显示仪表盘视觉', type: 'switch', default: true },
+    ],
+  },
+  { key: 'brands', title: '品牌滚动', defaultConfig: {}, configSchema: [] },
+  { key: 'stats', title: '统计数据', defaultConfig: {}, configSchema: [] },
+  { key: 'products', title: '产品矩阵', defaultConfig: {}, configSchema: [] },
+  { key: 'ai-family', title: 'AI Family', defaultConfig: {}, configSchema: [] },
+  { key: 'industries', title: '行业方案', defaultConfig: {}, configSchema: [] },
+  { key: 'testimonials', title: '客户证言', defaultConfig: {}, configSchema: [] },
+  { key: 'logos', title: 'Logo 墙', defaultConfig: {}, configSchema: [] },
+  { key: 'why-us', title: '为什么选我们', defaultConfig: {}, configSchema: [] },
+  { key: 'resources', title: '资源中心', defaultConfig: {}, configSchema: [] },
+  { key: 'roi-calculator', title: 'ROI 计算器', defaultConfig: {}, configSchema: [] },
+  { key: 'cta-banner', title: 'CTA 通栏', defaultConfig: {}, configSchema: [] },
 ];
+
+export function getSectionConfigSchema(key) {
+  return REGISTERED_SECTIONS.find((s) => s.key === key)?.configSchema || [];
+}
 
 export function resolveSections(pageConfig) {
   const sections = pageConfig?.sections || [];
@@ -27,7 +46,7 @@ export function resolveSections(pageConfig) {
       title: s.title,
       isActive: true,
       sortOrder: 0,
-      config: {},
+      config: s.defaultConfig || {},
       isUnknown: false,
     }));
   }
@@ -41,7 +60,7 @@ export function resolveSections(pageConfig) {
         title: registered?.title || s.type,
         isActive: s.isActive !== false,
         sortOrder: s.sortOrder ?? 0,
-        config: s.config || {},
+        config: s.config || registered?.defaultConfig || {},
         isUnknown: !registered,
       };
     })

@@ -1,5 +1,9 @@
 <template>
-  <section :class="s.hero" id="home">
+  <section :class="s.hero" id="home" :aria-label="displayTitle || t('hero.jsonLdName')">
+    <div v-if="backgroundImage" :class="s.bgImageWrap" aria-hidden="true">
+      <img :src="backgroundImage" :class="s.bgImage" alt="" />
+      <div :class="s.bgImageOverlay" />
+    </div>
     <div :class="s.bgGlow" aria-hidden="true" />
     <div :class="s.bgGlowAi" aria-hidden="true" />
     <div :class="[s.deco, s.decoA]" aria-hidden="true" />
@@ -14,12 +18,13 @@
             {{ t('hero.badge') }}
           </div>
           <h1 :class="s.title">
-            {{ t('hero.title1') }}<span :class="s.highlight">{{ t('hero.titleAI') }}</span>{{ t('hero.title2') }}<br />{{ t('hero.titleLine2') }}
+            <template v-if="displayTitle">{{ displayTitle }}</template>
+            <template v-else>{{ t('hero.title1') }}<span :class="s.highlight">{{ t('hero.titleAI') }}</span>{{ t('hero.title2') }}<br />{{ t('hero.titleLine2') }}</template>
           </h1>
-          <p :class="s.subtitle">{{ t('hero.subtitle') }}</p>
+          <p :class="s.subtitle">{{ displaySubtitle }}</p>
           <div :class="s.ctas">
-            <button :class="s.ctaPrimary" @click="modalStore.openModal()">{{ t('hero.cta1') }}</button>
-            <button :class="s.ctaGhost" @click="videoModalStore.openVideo()">{{ t('hero.cta2') }}</button>
+            <button :class="s.ctaPrimary" @click="modalStore.openModal()">{{ displayCtaPrimary }}</button>
+            <button :class="s.ctaGhost" @click="videoModalStore.openVideo()">{{ displayCtaSecondary }}</button>
           </div>
           <div :class="s.trust">
             <span v-for="k in ['trust1','trust2','trust3','trust4']" :key="k" :class="s.trustItem">
@@ -28,7 +33,7 @@
           </div>
         </div>
 
-        <div :class="s.visual" aria-hidden="true">
+        <div v-if="showDashboard" :class="s.visual" aria-hidden="true">
           <div :class="s.deviceFrame">
             <div :class="s.deviceBar">
               <span :class="s.dot" style="background:var(--window-red)" />
@@ -80,9 +85,27 @@ import { useModalStore } from '@/stores/modal.pinia';
 import { useVideoModalStore } from '@/stores/videoModal.pinia';
 import s from './HeroSection.module.css';
 
+interface Props {
+  backgroundImage?: string;
+  title?: string;
+  subtitle?: string;
+  ctaPrimary?: string;
+  ctaSecondary?: string;
+  showDashboard?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showDashboard: true,
+});
+
 const { t } = useI18n();
 const modalStore = useModalStore();
 const videoModalStore = useVideoModalStore();
+
+const displayTitle = computed(() => props.title?.trim() || '');
+const displaySubtitle = computed(() => props.subtitle || t('hero.subtitle'));
+const displayCtaPrimary = computed(() => props.ctaPrimary || t('hero.cta1'));
+const displayCtaSecondary = computed(() => props.ctaSecondary || t('hero.cta2'));
 
 const numRefs: (Element | null)[] = [];
 const dashStats = [

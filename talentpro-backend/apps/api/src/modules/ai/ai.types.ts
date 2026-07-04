@@ -23,4 +23,8 @@ export interface LlmProvider {
   chat(messages: ChatMessage[], config?: Partial<LlmProviderConfig>): Promise<{ content: string }>;
   stream(messages: ChatMessage[], subject: import('rxjs').Subject<StreamEvent>): Promise<void>;
   moderateContent(content: string): Promise<{ riskScore: number; flags: string[] }>;
+  generateImage(
+    prompt: string,
+    options?: { size?: string; quality?: string; style?: string },
+  ): Promise<{ url: string; revisedPrompt?: string }>;
 }

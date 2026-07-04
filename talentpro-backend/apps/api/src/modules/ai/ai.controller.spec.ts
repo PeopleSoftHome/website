@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { AiGenerateType } from './dto/ai-generate.dto';
+import { RolesGuard } from '@/common/guards/roles.guard';
 import { of } from 'rxjs';
 
 describe('AiController', () => {
@@ -21,11 +22,17 @@ describe('AiController', () => {
             generateContent: jest.fn(),
             loadChatSession: jest.fn(),
             appendChatMessage: jest.fn(),
+            generateImage: jest.fn(),
+            adminChat: jest.fn(),
           },
         },
         {
           provide: ConfigService,
           useValue: { get: jest.fn() },
+        },
+        {
+          provide: RolesGuard,
+          useValue: { canActivate: jest.fn(() => true) },
         },
       ],
     }).compile();
@@ -108,6 +115,60 @@ describe('AiController', () => {
 
       expect(aiService.generateContent).toHaveBeenCalledWith({ type: 'blog', prompt: 'AI 招聘' });
       expect(result).toEqual({ type: 'blog', content: 'post' });
+    });
+  });
+
+  describe('POST /ai/generate-image', () => {
+    it('should delegate to generateImage with userId', async () => {
+      (aiService.generateImage as jest.Mock).mockResolvedValue({
+        url: '/uploads/ai-image.png',
+        revisedPrompt: 'revised',
+        mediaId: 'm1',
+      });
+
+      const result = await controller.generateImage(
+        { prompt: 'a cat', size: '1024x1024' },
+        'u1',
+      );
+
+      expect(aiService.generateImage).toHaveBeenCalledWith({
+        prompt: 'a cat',
+        size: '1024x1024',
+        userId: 'u1',
+      });
+      expect(result).toEqual({
+        url: '/uploads/ai-image.png',
+        revisedPrompt: 'revised',
+        mediaId: 'm1',
+      });
+    });
+  });
+
+  describe('POST /ai/admin/chat', () => {
+    it('should delegate to adminChat and return sessionId', async () => {
+      (aiService.adminChat as jest.Mock).mockResolvedValue({ content: 'admin reply' });
+
+      const result = await controller.adminChat({
+        message: '生成 hero 标题',
+        history: [{ role: 'user', content: 'hi' }],
+        context: { page: 'home' },
+      });
+
+      expect(aiService.adminChat).toHaveBeenCalledWith(
+        '生成 hero 标题',
+        [{ role: 'user', content: 'hi' }],
+        { page: 'home' },
+      );
+      expect(result.content).toBe('admin reply');
+      expect(result.sessionId).toBeDefined();
+    });
+
+    it('should use empty history when not provided', async () => {
+      (aiService.adminChat as jest.Mock).mockResolvedValue({ content: 'ok' });
+
+      await controller.adminChat({ message: 'help' });
+
+      expect(aiService.adminChat).toHaveBeenCalledWith('help', [], undefined);
     });
   });
 });

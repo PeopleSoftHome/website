@@ -148,4 +148,47 @@ export class AiOpenAiService implements LlmProvider {
       subject.error(err);
     }
   }
+
+  async generateImage(
+    prompt: string,
+    options?: { size?: string; quality?: string; style?: string },
+  ): Promise<{ url: string; revisedPrompt?: string }> {
+    if (!this.client) {
+      return {
+        url: this.configService.get<string>('AI_IMAGE_PLACEHOLDER_URL') || 'https://placehold.co/1024x576?text=AI+Image',
+        revisedPrompt: prompt,
+      };
+    }
+
+    const model = this.configService.get<string>('OPENAI_IMAGE_MODEL') || 'dall-e-3';
+    const size = options?.size || this.configService.get<string>('OPENAI_IMAGE_SIZE') || '1024x1024';
+    const quality = options?.quality || this.configService.get<string>('OPENAI_IMAGE_QUALITY') || 'standard';
+    const style = options?.style || this.configService.get<string>('OPENAI_IMAGE_STYLE') || 'vivid';
+
+    try {
+      const response = await this.client.images.generate({
+        model,
+        prompt,
+        n: 1,
+        size,
+        quality: quality as 'standard' | 'hd' | 'auto' | 'low' | 'medium' | 'high' | undefined,
+        style: style as 'vivid' | 'natural' | undefined,
+        response_format: 'url',
+      });
+
+      const image = response.data?.[0];
+      if (!image?.url) {
+        throw new Error('OpenAI image generation returned no URL');
+      }
+
+      return {
+        url: image.url,
+        revisedPrompt: image.revised_prompt || prompt,
+      };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`OpenAI image generation error: ${message}`);
+      throw new Error(`OpenAI image generation error: ${message}`);
+    }
+  }
 }

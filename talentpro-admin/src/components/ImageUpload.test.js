@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ElementPlus from 'element-plus';
 import { createI18n } from 'vue-i18n';
 import zhCN from '@/i18n/locales/zh-CN.json';
 import ImageUpload from './ImageUpload.vue';
+import * as aiModule from '@/api/ai.js';
 
 const i18n = createI18n({
   legacy: false,
@@ -13,9 +14,16 @@ const i18n = createI18n({
   messages: { zh: zhCN },
 });
 
+vi.mock('@/api/ai.js', () => ({
+  aiApi: {
+    generateImage: vi.fn(),
+  },
+}));
+
 describe('ImageUpload', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    vi.clearAllMocks();
   });
 
   const mountComponent = (props = {}) =>
@@ -68,5 +76,47 @@ describe('ImageUpload', () => {
     const wrapper = mountComponent({ modelValue: 'https://cdn.example.com/old.png' });
     wrapper.vm.handleRemove();
     expect(wrapper.emitted('update:modelValue')[0]).toEqual(['']);
+  });
+
+  it('shows AI generate button when no image and enabled', () => {
+    const wrapper = mountComponent({ enableAiGenerate: true });
+    expect(wrapper.text()).toContain('AI 生成');
+  });
+
+  it('hides AI generate button when disabled', () => {
+    const wrapper = mountComponent({ enableAiGenerate: false });
+    expect(wrapper.text()).not.toContain('AI 生成');
+  });
+
+  it('hides AI generate button when image exists', () => {
+    const wrapper = mountComponent({ modelValue: 'https://cdn.example.com/old.png', enableAiGenerate: true });
+    expect(wrapper.text()).not.toContain('AI 生成');
+  });
+
+  it('opens AI generate dialog and emits generated image url', async () => {
+    const wrapper = mountComponent({ enableAiGenerate: true });
+    const url = 'https://cdn.example.com/ai-generated.png';
+    aiModule.aiApi.generateImage.mockResolvedValue({ url });
+
+    wrapper.vm.openAiDialog();
+    wrapper.vm.aiPrompt = 'a futuristic background';
+    wrapper.vm.handleAiGenerate();
+
+    expect(aiModule.aiApi.generateImage).toHaveBeenCalledWith({ prompt: 'a futuristic background' });
+    await flushPromises();
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual([url]);
+  });
+
+  it('shows error when AI generate fails', async () => {
+    const wrapper = mountComponent({ enableAiGenerate: true });
+    aiModule.aiApi.generateImage.mockRejectedValue(new Error('AI error'));
+
+    wrapper.vm.openAiDialog();
+    wrapper.vm.aiPrompt = 'prompt';
+    wrapper.vm.handleAiGenerate();
+
+    await flushPromises();
+    expect(wrapper.emitted('update:modelValue')).toBeFalsy();
   });
 });

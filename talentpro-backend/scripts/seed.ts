@@ -57,6 +57,8 @@ async function main() {
     { resource: 'export', action: 'run' },
     { resource: 'analytics', action: 'write' },
     { resource: 'ai', action: 'generate' },
+    { resource: 'ai', action: 'generate-image' },
+    { resource: 'ai', action: 'chat' },
     { resource: 'auth', action: 'logout' },
     { resource: 'workspace', action: 'invite' },
   ];

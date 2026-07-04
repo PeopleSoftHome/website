@@ -807,7 +807,41 @@
     "tooLarge": "圖片大小不能超過 5MB",
     "uploadSuccess": "上傳成功",
     "invalidResponse": "上傳響應格式異常",
-    "uploadFailed": "上傳失敗"
+    "uploadFailed": "上傳失敗",
+    "aiGenerate": "AI 生成",
+    "aiGeneratePrompt": "輸入描述，例如：科技感 HR SaaS 首頁背景，藍紫漸變，抽象數據流",
+    "aiGenerateConfirm": "生成",
+    "aiGenerating": "AI 生成中..."
+  },
+  "sectionConfig": {
+    "title": "板塊配置",
+    "fields": {
+      "backgroundImage": "背景圖",
+      "title": "主標題",
+      "subtitle": "副標題",
+      "ctaPrimary": "主按鈕文案",
+      "ctaSecondary": "次按鈕文案",
+      "showDashboard": "顯示儀表盤視覺"
+    }
+  },
+  "aiConfigAssistant": {
+    "title": "AI 配置助手",
+    "emptyHint": "輸入問題或點擊快捷操作，獲取首頁配置建議",
+    "inputPlaceholder": "詢問 AI 如何配置首頁...",
+    "send": "發送",
+    "thinking": "思考中...",
+    "sendFailed": "發送失敗，請稍後重試",
+    "applyToHeroBackground": "應用到 Hero 背景圖",
+    "applyToTitle": "應用為主標題",
+    "applyToSubtitle": "應用為副標題",
+    "applyToCtaPrimary": "應用為主按鈕",
+    "applyToCtaSecondary": "應用為次按鈕",
+    "generateHeroBackground": "生成 Hero 背景圖",
+    "generateHeroBackgroundPrompt": "請為 Hero 首屏生成一張科技感、專業的背景圖，用於 HR SaaS 官網。",
+    "optimizeHeroCopy": "優化 Hero 文案",
+    "optimizeHeroCopyPrompt": "請優化 Hero 首屏文案，突出 AI 與 HR SaaS 價值。請按以下格式輸出：\n主標題：...\n副標題：...\n主按鈕文案：...\n次按鈕文案：...",
+    "suggestSectionOrder": "建議 Section 排序",
+    "suggestSectionOrderPrompt": "請根據轉化目標，給出現有 Section 的排序建議。"
   },
   "richEditor": {
     "placeholder": "請輸入內容..."
@@ -982,6 +1016,13 @@
     "disableHint": "關閉開關可禁用板塊（不會刪除數據）",
     "skipHint": "未在 CMS 中註冊的板塊，前端將跳過渲染",
     "saveToTakeEffect": "修改後點擊「保存更改」才會生效",
+    "configure": "配置",
+    "configureTitle": "配置 {{ title }}",
+    "saveConfigSuccess": "板塊配置保存成功",
+    "saveConfigFailed": "板塊配置保存失敗",
+    "noHeroSection": "當前頁面沒有 Hero 板塊",
+    "aiImageAppliedToHero": "已應用 AI 圖片到 Hero 背景圖，請保存生效",
+    "aiCopyAppliedToHero": "已應用 AI 文案到 Hero 板塊，請保存生效",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失敗",
     "deleteConfirm": "確認刪除「{title}」板塊？",

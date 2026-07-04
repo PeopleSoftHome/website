@@ -807,7 +807,41 @@
     "tooLarge": "图片大小不能超过 5MB",
     "uploadSuccess": "上传成功",
     "invalidResponse": "上传响应格式异常",
-    "uploadFailed": "上传失败"
+    "uploadFailed": "上传失败",
+    "aiGenerate": "AI 生成",
+    "aiGeneratePrompt": "输入图片描述，例如：科技感 HR SaaS 首页背景，蓝紫渐变，抽象数据流",
+    "aiGenerateConfirm": "生成",
+    "aiGenerating": "AI 生成中..."
+  },
+  "sectionConfig": {
+    "title": "板块配置",
+    "fields": {
+      "backgroundImage": "背景图",
+      "title": "主标题",
+      "subtitle": "副标题",
+      "ctaPrimary": "主按钮文案",
+      "ctaSecondary": "次按钮文案",
+      "showDashboard": "显示仪表盘视觉"
+    }
+  },
+  "aiConfigAssistant": {
+    "title": "AI 配置助手",
+    "emptyHint": "输入问题或点击快捷操作，获取首页配置建议",
+    "inputPlaceholder": "询问 AI 如何配置首页...",
+    "send": "发送",
+    "thinking": "思考中...",
+    "sendFailed": "发送失败，请稍后重试",
+    "applyToHeroBackground": "应用到 Hero 背景图",
+    "applyToTitle": "应用为主标题",
+    "applyToSubtitle": "应用为副标题",
+    "applyToCtaPrimary": "应用为主按钮",
+    "applyToCtaSecondary": "应用为次按钮",
+    "generateHeroBackground": "生成 Hero 背景图",
+    "generateHeroBackgroundPrompt": "请为 Hero 首屏生成一张科技感、专业的背景图，用于 HR SaaS 官网。",
+    "optimizeHeroCopy": "优化 Hero 文案",
+    "optimizeHeroCopyPrompt": "请优化 Hero 首屏文案，突出 AI 与 HR SaaS 价值。请按以下格式输出：\n主标题：...\n副标题：...\n主按钮文案：...\n次按钮文案：...",
+    "suggestSectionOrder": "建议 Section 排序",
+    "suggestSectionOrderPrompt": "请根据转化目标，给出现有 Section 的排序建议。"
   },
   "richEditor": {
     "placeholder": "请输入内容..."
@@ -982,6 +1016,13 @@
     "disableHint": "关闭开关可禁用板块（不会删除数据）",
     "skipHint": "未在 CMS 中注册的板块，前端将跳过渲染",
     "saveToTakeEffect": "修改后点击「保存更改」才会生效",
+    "configure": "配置",
+    "configureTitle": "配置 {{ title }}",
+    "saveConfigSuccess": "板块配置保存成功",
+    "saveConfigFailed": "板块配置保存失败",
+    "noHeroSection": "当前页面没有 Hero 板块",
+    "aiImageAppliedToHero": "已应用 AI 图片到 Hero 背景图，请保存生效",
+    "aiCopyAppliedToHero": "已应用 AI 文案到 Hero 板块，请保存生效",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败",
     "deleteConfirm": "确认删除「{title}」板块？",

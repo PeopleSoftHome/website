@@ -807,7 +807,41 @@
     "tooLarge": "Image size cannot exceed 5MB",
     "uploadSuccess": "Upload successful",
     "invalidResponse": "Invalid upload response",
-    "uploadFailed": "Upload failed"
+    "uploadFailed": "Upload failed",
+    "aiGenerate": "AI Generate",
+    "aiGeneratePrompt": "Describe the image, e.g. futuristic HR SaaS homepage background with blue-purple gradient and abstract data flow",
+    "aiGenerateConfirm": "Generate",
+    "aiGenerating": "Generating..."
+  },
+  "sectionConfig": {
+    "title": "Section Config",
+    "fields": {
+      "backgroundImage": "Background Image",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "ctaPrimary": "Primary CTA Text",
+      "ctaSecondary": "Secondary CTA Text",
+      "showDashboard": "Show Dashboard Visual"
+    }
+  },
+  "aiConfigAssistant": {
+    "title": "AI Config Assistant",
+    "emptyHint": "Ask a question or use a quick action to get homepage configuration suggestions",
+    "inputPlaceholder": "Ask AI how to configure the homepage...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "sendFailed": "Failed to send, please try again later",
+    "applyToHeroBackground": "Apply to Hero Background",
+    "applyToTitle": "Apply as Title",
+    "applyToSubtitle": "Apply as Subtitle",
+    "applyToCtaPrimary": "Apply as Primary CTA",
+    "applyToCtaSecondary": "Apply as Secondary CTA",
+    "generateHeroBackground": "Generate Hero Background",
+    "generateHeroBackgroundPrompt": "Please generate a professional, futuristic background image for the Hero section of an HR SaaS website.",
+    "optimizeHeroCopy": "Optimize Hero Copy",
+    "optimizeHeroCopyPrompt": "Please optimize the Hero section copy to highlight AI and HR SaaS value. Output in this format:\nTitle: ...\nSubtitle: ...\nPrimary CTA: ...\nSecondary CTA: ...",
+    "suggestSectionOrder": "Suggest Section Order",
+    "suggestSectionOrderPrompt": "Please suggest an optimal order for the existing sections based on conversion goals."
   },
   "richEditor": {
     "placeholder": "Enter content..."
@@ -982,6 +1016,13 @@
     "disableHint": "Toggle off to disable a section without deleting data",
     "skipHint": "Sections not registered in CMS will be skipped by frontend",
     "saveToTakeEffect": "Click Save Changes to apply modifications",
+    "configure": "Configure",
+    "configureTitle": "Configure {{ title }}",
+    "saveConfigSuccess": "Section config saved",
+    "saveConfigFailed": "Failed to save section config",
+    "noHeroSection": "No Hero section on current page",
+    "aiImageAppliedToHero": "AI image applied to Hero background. Save to take effect.",
+    "aiCopyAppliedToHero": "AI copy applied to Hero section. Save to take effect.",
     "saveSuccess": "Saved successfully",
     "saveFailed": "Failed to save",
     "deleteConfirm": "Delete section \"{title}\"?",

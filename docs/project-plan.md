@@ -1,9 +1,9 @@
 # TalentPro HR Portal — 产品规划文档
 
 > **产出角色**：产品经理 Agent
-> **文档版本**：v4.2.0（覆盖 v2.3.0 ~ v4.2.0 完整规划）
-> **最后更新**：2026-06-19
-> **当前基线**：v4.2.0 ✅（P0/P1/P2 清理完成，CI 全绿）
+> **文档版本**：v4.3.0（覆盖 v2.3.0 ~ v4.3.0 完整规划）
+> **最后更新**：2026-07-04
+> **当前基线**：v4.3.0 ✅（Admin 配置智能化 + AI 图片生成 + Hero CMS 配置化完成，CI 全绿）
 
 ---
 
@@ -77,6 +77,10 @@ v4.2.0          ████████████████  ✅ 2026-06-19
                 Sprint 23          JWT Cookie-only 前端 + 后端双渠道认证
                                    + CSP 前后端配置 + 限流收紧 + 安全测试
                                    + BullMQ 重试/死信 + 覆盖率阈值 + 硬编码色值治理
+
+v4.3.0          ████████████████  ✅ 2026-07-04  Admin 配置智能化
+                Sprint 24          AI 图片生成 + Admin 配置助手对话
+                                   + Section schema 动态表单 + Hero CMS 配置化
 ```
 
 ---
@@ -823,6 +827,49 @@ ROI 计算器需要与销售团队对齐计算参数（行业基准数据、Tale
 ---
 
 *产品经理 Agent 产出 | v2.3.0 ~ v3.0.0 全量规划 | 2026-05-28*
+
+---
+
+## 十、下一迭代：v4.3.0 — Admin 配置能力 + AI Chat 智能化配置
+
+> 来源：迭代规划会议 · 目标：提升管理后台配置能力、门户扩展性，并引入 AI Chat 辅助自动化配置与内容生成。
+
+### 10.1 目标
+
+1. 让运营/管理员无需改代码即可调整首页 Section 配置（以 Hero 为试点）。
+2. 在 Admin 配置流程中嵌入 AI Chat 助手，支持文案优化与 Hero 图片生成。
+3. 保持向后兼容：CMS 未配置时门户继续使用 i18n 默认值。
+
+### 10.2 关键任务
+
+| 模块 | 任务 | 关键文件 |
+|------|------|---------|
+| 后端 AI | 新增 `POST /ai/generate-image` | `talentpro-backend/apps/api/src/modules/ai/*` |
+| 后端 AI | 新增 `POST /ai/admin/chat` | `talentpro-backend/apps/api/src/modules/ai/*` |
+| 后端 媒体 | `MediaModule` 导出服务；`MediaService.createFromBuffer` | `talentpro-backend/apps/api/src/modules/media/*` |
+| Admin 注册表 | Hero Section 增加 `configSchema` | `talentpro-admin/src/data/sectionRegistry.js` |
+| Admin 配置 | `SectionConfigForm.vue` + `PageConfigView` 配置入口 | `talentpro-admin/src/views/PageConfigView.vue` |
+| Admin 图片 | `ImageUpload.vue` AI 生成入口 | `talentpro-admin/src/components/ImageUpload.vue` |
+| Admin AI 助手 | `AiConfigAssistant.vue` 嵌入 PageConfigView | `talentpro-admin/src/components/AiConfigAssistant.vue` |
+| 门户 Hero | 读取 CMS config 覆盖 i18n | `src/components/sections/HeroSection/*` |
+| 门户注册表 | Hero `defaultConfig`/`configSchema` | `src/utils/sectionRegistry.ts` |
+| 权限种子 | 增加 `ai:generate-image`、`ai:chat` | `talentpro-backend/scripts/seed.ts` |
+| 文档/配置 | 更新 env example、AGENTS.md | `.env.example`、`talentpro-backend/.env.example`、`AGENTS.md` |
+
+### 10.3 验收标准
+
+- `POST /ai/generate-image` 返回可访问媒体 URL；未配置 OpenAI 时返回占位图。
+- Admin `PageConfigView` 可对 Hero 进行背景图/标题/副标题/CTA/仪表盘视觉配置。
+- `ImageUpload` 支持输入 prompt 生成图片并回填。
+- `AiConfigAssistant` 可对话并一键应用生成的 Hero 图片/文案。
+- 门户 `HeroSection` 未配置时保持原视觉；配置后按 config 渲染。
+- 后端/Admin/前台测试全绿，`npm run build` 成功。
+
+### 10.4 风险
+
+- OpenAI 图片生成成本与延迟；未配置 key 必须有 fallback。
+- `MediaModule` 被 `AiModule` 引入后需避免循环依赖。
+
 ---
 
 ## 七、v2.3.1 Hotfix — Bug 追踪看板（Sprint 13）

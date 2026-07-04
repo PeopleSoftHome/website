@@ -17,6 +17,11 @@ export default defineConfig({
     // 已通过 manualChunks 拆分 vendor，提高告警阈值避免误报。
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      // 过滤第三方 @vueuse/core 的 annotation 警告（非项目代码）
+      onLog(level, log, handler) {
+        if (log.code === 'INVALID_ANNOTATION' && log.message?.includes('@vueuse/core')) return;
+        handler(level, log);
+      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {

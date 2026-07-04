@@ -6,6 +6,8 @@ import { AiRagService } from './ai-rag.service';
 import { AiPromptService } from './ai-prompt.service';
 import { LlmProviderFactory } from './ai-provider.factory';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { MediaService } from '@/modules/media/media.service';
+import { AiGenerateImageDto } from './dto/ai-generate-image.dto';
 
 /**
  * AiService — Facade
@@ -20,6 +22,7 @@ export class AiService {
     private promptService: AiPromptService,
     private providerFactory: LlmProviderFactory,
     private prisma: PrismaService,
+    private mediaService: MediaService,
   ) {}
 
   private get llm(): LlmProvider {
@@ -72,6 +75,86 @@ export class AiService {
     }
 
     return this.fallbackGenerate(type, prompt, content, language, tone);
+  }
+
+  async generateImage(dto: AiGenerateImageDto & { userId: string }) {
+    const { prompt, userId, size, quality, style } = dto;
+    const llm = this.llm;
+    const result = await llm.generateImage(prompt, { size, quality, style });
+
+    if (!llm.isConfigured()) {
+      return { url: result.url, revisedPrompt: result.revisedPrompt };
+    }
+
+    const response = await fetch(result.url);
+    if (!response.ok) {
+      throw new Error(`Failed to download generated image: ${response.status}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const filename = `ai-image-${Date.now()}.png`;
+
+    const media = await this.mediaService.createFromBuffer({
+      buffer,
+      filename,
+      originalName: filename,
+      mimeType: 'image/png',
+      alt: prompt,
+      createdBy: userId,
+    });
+
+    return {
+      url: media.url,
+      revisedPrompt: result.revisedPrompt,
+      mediaId: media.id,
+    };
+  }
+
+  async adminChat(
+    message: string,
+    history: ChatMessage[] = [],
+    context?: unknown,
+    locale = 'zh',
+  ) {
+    const sections = [
+      'hero',
+      'brands',
+      'stats',
+      'products',
+      'ai-family',
+      'industries',
+      'testimonials',
+      'logos',
+      'why-us',
+      'resources',
+      'roi-calculator',
+      'cta-banner',
+    ];
+
+    const basePrompt = `你是 TalentPro 门户配置助手，专为管理员服务。` +
+      `你熟悉首页所有 Section：${sections.join('、')}。` +
+      `你可以根据需求生成文案、优化标题/副标题，也可以调用图片生成功能为 Section 生成配图。` +
+      `回答请简洁、可操作，优先给出能直接回填到配置表单的结果。`;
+
+    const contextBlock = context
+      ? `\n\n当前页面/区块上下文：\n${JSON.stringify(context, null, 2)}`
+      : '';
+
+    const systemPrompt = `${basePrompt}${contextBlock}\n\n当前语言：${locale}`;
+    const llm = this.llm;
+
+    if (llm.isConfigured()) {
+      return llm.chat([
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: message },
+      ]);
+    }
+
+    return {
+      content: `AI 助手暂未配置。可用的首页 Section 包括：${sections.join('、')}。您可以手动编辑这些区块的配置。`,
+    };
   }
 
   async loadChatSession(sessionId: string): Promise<ChatMessage[]> {

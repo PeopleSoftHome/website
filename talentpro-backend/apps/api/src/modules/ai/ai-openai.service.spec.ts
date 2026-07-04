@@ -13,6 +13,9 @@ const mockClient = {
   moderations: {
     create: jest.fn(),
   },
+  images: {
+    generate: jest.fn(),
+  },
 };
 
 jest.mock('openai', () => ({
@@ -33,6 +36,11 @@ describe('AiOpenAiService', () => {
         OPENAI_TEMPERATURE: env.OPENAI_TEMPERATURE ?? '0.7',
         OPENAI_MAX_TOKENS: env.OPENAI_MAX_TOKENS ?? '800',
         OPENAI_TIMEOUT_MS: env.OPENAI_TIMEOUT_MS ?? '30000',
+        OPENAI_IMAGE_MODEL: env.OPENAI_IMAGE_MODEL ?? '',
+        OPENAI_IMAGE_SIZE: env.OPENAI_IMAGE_SIZE ?? '',
+        OPENAI_IMAGE_QUALITY: env.OPENAI_IMAGE_QUALITY ?? '',
+        OPENAI_IMAGE_STYLE: env.OPENAI_IMAGE_STYLE ?? '',
+        AI_IMAGE_PLACEHOLDER_URL: env.AI_IMAGE_PLACEHOLDER_URL ?? '',
       };
       return map[key] || fallback;
     });
@@ -287,6 +295,74 @@ describe('AiOpenAiService', () => {
 
       await service.stream([], subject);
       expect(error).toHaveBeenCalledWith(expect.any(Error));
+    });
+  });
+
+  describe('generateImage', () => {
+    it('should return placeholder when client is not configured', async () => {
+      const unconfigured = await createService({});
+      const result = await unconfigured.generateImage('a cat');
+
+      expect(result.url).toBe('https://placehold.co/1024x576?text=AI+Image');
+      expect(result.revisedPrompt).toBe('a cat');
+    });
+
+    it('should call OpenAI images.generate and return URL', async () => {
+      mockClient.images.generate.mockResolvedValue({
+        data: [
+          {
+            url: 'https://example.com/image.png',
+            revised_prompt: 'a cute cat',
+          },
+        ],
+      });
+
+      const result = await service.generateImage('a cat', { size: '1024x1024', quality: 'hd', style: 'natural' });
+
+      expect(mockClient.images.generate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: 'dall-e-3',
+          prompt: 'a cat',
+          n: 1,
+          size: '1024x1024',
+          quality: 'hd',
+          style: 'natural',
+          response_format: 'url',
+        }),
+      );
+      expect(result.url).toBe('https://example.com/image.png');
+      expect(result.revisedPrompt).toBe('a cute cat');
+    });
+
+    it('should use env defaults for image options', async () => {
+      mockClient.images.generate.mockResolvedValue({
+        data: [{ url: 'https://example.com/image2.png' }],
+      });
+
+      const custom = await createService({
+        OPENAI_API_KEY: 'key',
+        OPENAI_IMAGE_MODEL: 'dall-e-2',
+        OPENAI_IMAGE_SIZE: '512x512',
+        OPENAI_IMAGE_QUALITY: 'hd',
+        OPENAI_IMAGE_STYLE: 'natural',
+      });
+
+      await custom.generateImage('prompt');
+
+      expect(mockClient.images.generate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: 'dall-e-2',
+          size: '512x512',
+          quality: 'hd',
+          style: 'natural',
+        }),
+      );
+    });
+
+    it('should throw when OpenAI image generation fails', async () => {
+      mockClient.images.generate.mockRejectedValue(new Error('rate-limit'));
+
+      await expect(service.generateImage('prompt')).rejects.toThrow('OpenAI image generation error: rate-limit');
     });
   });
 });

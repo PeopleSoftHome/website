@@ -65,6 +65,16 @@
                 @change="hasChanges = true"
               />
               <el-button
+                v-if="getSectionConfigSchema(s.key).length"
+                type="primary"
+                size="small"
+                text
+                style="margin-left:8px"
+                @click="openConfigDialog(s)"
+              >
+                {{ t('pageConfig.configure') }}
+              </el-button>
+              <el-button
                 type="danger"
                 size="small"
                 text
@@ -75,6 +85,15 @@
               </el-button>
             </div>
           </div>
+
+          <!-- Section 配置弹窗 -->
+          <el-dialog v-model="configDialogVisible" :title="configDialogTitle" width="600px" destroy-on-close>
+            <SectionConfigForm v-model="editingConfig" :schema="editingSchema" />
+            <template #footer>
+              <el-button @click="configDialogVisible = false">{{ t('common.cancel') }}</el-button>
+              <el-button type="primary" :loading="savingConfig" @click="saveConfig">{{ t('common.save') }}</el-button>
+            </template>
+          </el-dialog>
 
           <!-- 添加 Section -->
           <div v-if="page && availableSections.length > 0" style="margin-top:16px;display:flex;gap:8px;align-items:center">
@@ -106,9 +125,16 @@
         </el-card>
       </el-col>
 
-      <!-- 右侧：插件注册表 -->
+      <!-- 右侧：AI 配置助手 + 插件注册表 -->
       <el-col :xs="24" :md="8" style="margin-top:16px">
-        <el-card shadow="hover">
+        <AiConfigAssistant
+          :page="page"
+          :sections="sections"
+          @apply-image="onApplyAiImage"
+          @apply-copy="onApplyAiCopy"
+        />
+
+        <el-card shadow="hover" style="margin-top:16px">
           <template #header>
             <span>{{ t('pageConfig.registryCount', { count: REGISTERED_SECTIONS.length }) }}</span>
           </template>
@@ -145,7 +171,9 @@ import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Rank } from '@element-plus/icons-vue';
 import client from '@/api/client.js';
-import { REGISTERED_SECTIONS } from '@/data/sectionRegistry.js';
+import { REGISTERED_SECTIONS, getSectionConfigSchema } from '@/data/sectionRegistry.js';
+import SectionConfigForm from '@/components/SectionConfigForm.vue';
+import AiConfigAssistant from '@/components/AiConfigAssistant.vue';
 
 const { t } = useI18n();
 
@@ -157,6 +185,15 @@ const creating = ref(false);
 const hasChanges = ref(false);
 const selectedToAdd = ref('');
 const dragIndex = ref(-1);
+
+const configDialogVisible = ref(false);
+const savingConfig = ref(false);
+const editingSection = ref(null);
+const editingConfig = ref({});
+const editingSchema = ref([]);
+const configDialogTitle = computed(() =>
+  editingSection.value ? t('pageConfig.configureTitle', { title: editingSection.value.title }) : t('pageConfig.configure'),
+);
 
 const isInCms = (key) => sections.value.some((s) => s.key === key);
 
@@ -319,6 +356,53 @@ const autoCreateSections = async () => {
 const refresh = () => {
   fetchPage();
   ElMessage.success(t('pageConfig.refreshed'));
+};
+
+const openConfigDialog = (s) => {
+  editingSection.value = s;
+  editingSchema.value = getSectionConfigSchema(s.key);
+  editingConfig.value = { ...(s.config || {}) };
+  configDialogVisible.value = true;
+};
+
+const saveConfig = async () => {
+  if (!editingSection.value) return;
+  savingConfig.value = true;
+  try {
+    await client.patch(`/cms/sections/${editingSection.value.id}`, { config: editingConfig.value });
+    ElMessage.success(t('pageConfig.saveConfigSuccess'));
+    configDialogVisible.value = false;
+    fetchPage();
+  } catch (e) {
+    ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.saveConfigFailed'));
+  }
+  savingConfig.value = false;
+};
+
+const onApplyAiImage = (url) => {
+  const hero = sections.value.find((s) => s.key === 'hero');
+  if (!hero) {
+    ElMessage.warning(t('pageConfig.noHeroSection'));
+    return;
+  }
+  editingSection.value = hero;
+  editingSchema.value = getSectionConfigSchema('hero');
+  editingConfig.value = { ...(hero.config || {}), backgroundImage: url };
+  configDialogVisible.value = true;
+  ElMessage.info(t('pageConfig.aiImageAppliedToHero'));
+};
+
+const onApplyAiCopy = ({ field, value }) => {
+  const hero = sections.value.find((s) => s.key === 'hero');
+  if (!hero) {
+    ElMessage.warning(t('pageConfig.noHeroSection'));
+    return;
+  }
+  editingSection.value = hero;
+  editingSchema.value = getSectionConfigSchema('hero');
+  editingConfig.value = { ...(hero.config || {}), [field]: value };
+  configDialogVisible.value = true;
+  ElMessage.info(t('pageConfig.aiCopyAppliedToHero'));
 };
 
 onMounted(fetchPage);

@@ -18,10 +18,21 @@ import type { Component } from 'vue';
  *   // sections = [{ key, component, config, sortOrder, isActive }]
  */
 
+interface ConfigSchemaField {
+  prop: string;
+  label?: string;
+  type: string;
+  placeholder?: string;
+  rows?: number;
+  options?: unknown[];
+  default?: unknown;
+}
+
 interface SectionPlugin {
   title?: string;
   icon?: string;
   defaultConfig?: Record<string, unknown>;
+  configSchema?: ConfigSchemaField[];
   required?: boolean;
   component?: Component;
 }
@@ -65,6 +76,7 @@ export function registerSection(key: string, plugin: SectionPlugin) {
     title: plugin.title || key,
     icon: plugin.icon || 'box',
     defaultConfig: plugin.defaultConfig || {},
+    configSchema: plugin.configSchema || [],
     required: plugin.required || false,
     component: plugin.component,
   });
@@ -154,6 +166,15 @@ registerSection('hero', {
   title: 'Hero 首屏',
   icon: 'home',
   required: true,
+  defaultConfig: { showDashboard: true },
+  configSchema: [
+    { prop: 'backgroundImage', label: '背景图', type: 'image-upload' },
+    { prop: 'title', label: '主标题', type: 'input', placeholder: '输入主标题' },
+    { prop: 'subtitle', label: '副标题', type: 'textarea', placeholder: '输入副标题', rows: 3 },
+    { prop: 'ctaPrimary', label: '主要按钮', type: 'input', placeholder: '输入按钮文案' },
+    { prop: 'ctaSecondary', label: '次要按钮', type: 'input', placeholder: '输入按钮文案' },
+    { prop: 'showDashboard', label: '显示 Dashboard 视觉', type: 'switch' },
+  ],
   component: defineAsyncComponent(() => import('@/components/sections/HeroSection/HeroSection.vue')),
 });
 
