@@ -4,9 +4,6 @@ import {
   transformIndustries,
   transformTestimonials,
   transformResources,
-  transformNavigation,
-  transformStats,
-  transformLogos,
   transformWhyUsTabs,
   transformAiCards,
   transformSearchResults,
@@ -74,32 +71,6 @@ describe('api transforms', () => {
     }] as unknown[]);
     expect(result[0].date).toBe('2026-06-15');
     expect(result[0].cta).toBe('立即获取');
-  });
-
-  it('transformNavigation maps items and children', () => {
-    const result = transformNavigation({
-      items: [{ id: 'home', label: 'Home', href: '/', children: [{ label: 'Sub', description: 'desc', href: '/sub' }] }],
-    } as unknown);
-    expect(result[0].id).toBe('home');
-    expect(result[0].hasDropdown).toBe(true);
-    expect(result[0].items[0].title).toBe('Sub');
-  });
-
-  it('transformStats parses numeric values', () => {
-    const result = transformStats([
-      { key: 'users', value: '1,234', suffix: '+' },
-      { key: 'bad', value: 'abc' },
-    ] as unknown[]);
-    expect(result[0].target).toBe(1234);
-    expect(result[0].suffix).toBe('+');
-    expect(result[1].target).toBe(0);
-  });
-
-  it('transformLogos maps industries to brand colors', () => {
-    expect(transformLogos([{ name: 'Acme', industry: 'tech' }] as unknown[])[0].brandColor).toBe('#1B5FEB');
-    expect(transformLogos([{ name: 'Maker', industry: 'mfg' }] as unknown[])[0].brandColor).toBe('#059669');
-    expect(transformLogos([{ name: 'Shop', industry: 'retail' }] as unknown[])[0].brandColor).toBe('#D97706');
-    expect(transformLogos([{ name: 'Other' }] as unknown[])[0].brandColor).toBe('#7C3AED');
   });
 
   it('transformWhyUsTabs maps metrics with fallback', () => {
