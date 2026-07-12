@@ -151,6 +151,22 @@ import { useCrud } from '@/composables/useCrud.js';
 
 const { t } = useI18n();
 
+/**
+ * 声明式 CMS CRUD 表格组件
+ * @prop {string} apiUrl - REST API 基础路径，如 '/api/v1/admin/blogs'
+ * @prop {Array<{prop:string,label:string,type?:string,width?:string}>} columns - 表格列配置
+ * @prop {Array<{prop:string,label:string,type?:string}>} formFields - 表单字段配置
+ * @prop {Function} [responseAdapter] - 列表响应适配器：({ data, meta }) => { items, total }
+ * @prop {Object} [rules] - ElForm 校验规则
+ * @prop {boolean} [selection=false] - 是否开启批量选择
+ * @prop {number} [pageSize=20] - 每页条数
+ * @prop {Object} [apiParams] - 固定查询参数
+ * @prop {boolean|Object|string} [aiAssist=false] - 是否显示 AI 辅助按钮；传对象可配置 { type }
+ * @expose {Function} setParams - 设置查询参数并刷新
+ * @expose {Object} params - 当前查询参数
+ * @expose {Function} fetch - 手动拉取数据
+ * @expose {Function} refresh - 刷新当前页
+ */
 const props = defineProps({
   apiUrl: { type: String, required: true },
   columns: { type: Array, required: true },
