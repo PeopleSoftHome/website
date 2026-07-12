@@ -566,4 +566,4 @@ npm run build:all        # 构建前端 + 后端 + Admin
 
 ---
 
-*TalentPro HR Portal · v3.0.0 · 使用教程*
+*TalentPro HR Portal · v4.3.0 · 使用教程*
