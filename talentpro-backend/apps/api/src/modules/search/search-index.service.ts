@@ -4,8 +4,7 @@ import { MeiliSearch } from 'meilisearch';
 import { PrismaService } from '@/common/prisma/prisma.service';
 import { PostStatus } from '@prisma/client';
 import { MEILISEARCH_CLIENT } from '../meilisearch/meilisearch.module';
-
-type SearchDocument = Record<string, unknown>;
+import { SearchDocument } from './search.types';
 
 @Injectable()
 export class SearchIndexService {

@@ -1,6 +1,6 @@
 # TalentPro 文档中心
 
-> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md v4.2.0` 为权威规范源。
+> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md v4.3.0` 为权威规范源。
 
 ## 目录结构
 
@@ -13,8 +13,13 @@ docs/
 ├── project-plan.md              # 产品路线图与迭代计划（活跃）
 ├── test-plan.md                 # 测试策略与自动化矩阵（活跃）
 ├── getting-started.md           # 本地开发、Docker 与部署入门（活跃）
-├── project-spec.md              # 产品规格与项目管理（待重写）
-├── risk-register.md             # 风险登记册（待重写）
+├── project-spec.md              # 产品规格与项目管理（活跃）
+├── risk-register.md             # 风险登记册（活跃）
+├── environment-variables.md     # 三项目环境变量总表（活跃）
+├── admin-components.md          # Admin 可复用组件 API（活跃）
+├── reusable-assets.md           # 前后端可复用资产清单（活跃）
+├── section-registry-sync.md     # Section Registry 同步指南（活跃）
+├── i18n-guide.md                # 国际化贡献指南（活跃）
 └── archive/                     # 历史归档（只读参考）
     ├── migrations/              # 技术迁移计划与状态
     ├── evaluations/             # 技术选型评估报告
@@ -32,6 +37,11 @@ docs/
 | `project-plan.md` | 路线图、Sprint 规划、功能清单 | 每轮规划 |
 | `test-plan.md` | 测试策略、覆盖率阈值、CI 矩阵 | 测试策略变更时 |
 | `getting-started.md` | 环境搭建、本地开发、常见问题 | 构建/部署流程变更时 |
+| `environment-variables.md` | 根/backend/Admin 环境变量总表 | 新增/变更 env 时 |
+| `admin-components.md` | Admin 可复用组件 API | 新增/变更 Admin 组件时 |
+| `reusable-assets.md` | 前后端可复用模块清单 | 提取/迁移 shared 层时 |
+| `section-registry-sync.md` | Admin 与 Portal Section 同步规则 | 新增 Section 时 |
+| `i18n-guide.md` | 新增 key、三语言对齐、Admin locale | 新增用户可见文本时 |
 
 ## 归档文档
 
