@@ -43,10 +43,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted, inject, type Ref } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformTestimonials } from '@/api/transforms';
 import { getTestimonials } from '@/data/testimonials';
 
@@ -73,15 +73,7 @@ const { t, locale } = useI18n();
 
 const fallbackTestimonials = computed(() => getTestimonials(locale.value));
 
-const GRAD_PRESETS = [
-  'linear-gradient(135deg, #1B5FEB, #7C3AED)',
-  'linear-gradient(135deg, #059669, #1B5FEB)',
-  'linear-gradient(135deg, #D97706, #EF4444)',
-  'linear-gradient(135deg, #7C3AED, #EC4899)',
-  'linear-gradient(135deg, #0284C7, #1B5FEB)',
-];
-
-const { displayItems: rawDisplayItems, isLoading: loading } = useCmsDataByKey('testimonials', {
+const { displayItems: rawDisplayItems } = useCmsDataByKey('testimonials', {
   transform: transformTestimonials,
 });
 const displayItems = computed(() => {

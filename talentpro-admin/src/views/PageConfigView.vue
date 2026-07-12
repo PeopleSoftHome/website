@@ -1,3 +1,8 @@
+<!--
+  Page Config View 组件
+
+  位于: views/PageConfigView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('pageConfig.title') }}</h2>
@@ -88,7 +93,7 @@ import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
 import { REGISTERED_SECTIONS, getSectionConfigSchema } from '@/data/sectionRegistry.js';
-import SectionConfigForm from '@/components/SectionConfigForm.vue';
+import SectionConfigForm from '@/components/page-config/SectionConfigForm.vue';
 import PageConfigSectionList from '@/components/page-config/PageConfigSectionList.vue';
 import PageConfigAddSection from '@/components/page-config/PageConfigAddSection.vue';
 import PageConfigMetaCard from '@/components/page-config/PageConfigMetaCard.vue';

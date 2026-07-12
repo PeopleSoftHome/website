@@ -34,12 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { useAnalyticsStore } from '@/stores/analytics.pinia';
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap';
 import { useTabs } from '@/composables/useTabs';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformProductTabs } from '@/api/transforms';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';
@@ -74,7 +74,7 @@ const trackedSelectTab = (idx: number) => {
   analyticsStore.track('product_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('products', {
+const { displayItems: rawTabs } = useCmsDataByKey('products', {
   transform: transformProductTabs,
   fallbackKey: 'products',
 });

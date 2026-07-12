@@ -60,8 +60,8 @@
 
 <script setup lang="ts">
 import { computed, markRaw } from 'vue';
-import { useNavigation } from '@/composables/useNavigation';
-import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useNavigation } from '@/shared/composables/useNavigation';
+import { useSiteConfig } from '@/shared/composables/useSiteConfig';
 import { getHotTags } from '@/data/navigation';
 import QrPlaceholder from '@/components/ui/Icon/QrPlaceholder.vue';
 import ZhihuIcon from '@/components/ui/Icon/ZhihuIcon.vue';

@@ -1,8 +1,6 @@
-/**
- * 可复用 Prisma 扩展
- * 实际实现位于 apps/api/src/common/prisma，此处 re-export 供跨项目复用识别。
- */
-export { PrismaService } from '@/common/prisma/prisma.service';
-export { softDeleteExtension } from '@/common/prisma/soft-delete.extension';
-export { fieldEncryptionExtension } from '@/common/prisma/field-encryption.extension';
-export { hashEmail } from '@/common/prisma/email-hash.util';
+export { PrismaService } from './prisma.service';
+export { PrismaModule } from './prisma.module';
+export { softDeleteExtension } from './soft-delete.extension';
+export { fieldEncryptionExtension } from './field-encryption.extension';
+export { hashEmail } from './email-hash.util';
+export { workspaceStorage } from './workspace.storage';

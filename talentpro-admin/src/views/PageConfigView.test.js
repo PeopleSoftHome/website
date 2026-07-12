@@ -37,7 +37,7 @@ vi.mock('@/api/client.js', () => ({
   },
 }));
 
-vi.mock('@/components/SectionConfigForm.vue', () => ({
+vi.mock('@/components/page-config/SectionConfigForm.vue', () => ({
   default: {
     name: 'SectionConfigForm',
     template: '<div class="section-config-form-stub">SectionConfigForm</div>',
@@ -46,7 +46,7 @@ vi.mock('@/components/SectionConfigForm.vue', () => ({
   },
 }));
 
-vi.mock('@/components/AiConfigAssistant.vue', () => ({
+vi.mock('@/components/ai/AiConfigAssistant.vue', () => ({
   default: {
     name: 'AiConfigAssistant',
     template: '<div class="ai-config-assistant-stub">AiConfigAssistant</div>',

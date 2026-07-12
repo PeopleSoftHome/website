@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import Avatar from '../Avatar/Avatar.vue';
 import CommentForm from '../CommentForm/CommentForm.vue';
 import s from './CommentSection.module.css';

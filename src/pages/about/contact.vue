@@ -84,7 +84,7 @@ definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle'
 import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getContactFaq } from '@/data/contact';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './contact.module.css';
 
 const { t, locale } = useI18n();

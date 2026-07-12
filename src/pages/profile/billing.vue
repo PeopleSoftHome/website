@@ -111,7 +111,7 @@ import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import BaseModal from '@/components/ui/BaseModal/BaseModal.vue';
 import { paymentApi, marketplaceApi } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
-import { formatDate } from '@/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import s from './billing.module.css';
 
 definePageMeta({ title: 'profile.billing', requiresAuth: true });

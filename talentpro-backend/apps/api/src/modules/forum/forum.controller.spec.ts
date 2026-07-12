@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ForumController } from './forum.controller';
 import { ForumService } from './forum.service';
-import { UserContext } from '@/common/types';
+import { UserContext } from '@shared/types';
 import { CreateForumTopicDto } from './dto/create-forum-topic.dto';
 import { UpdateForumTopicDto } from './dto/update-forum-topic.dto';
 import { CreateForumPostDto } from './dto/create-forum-post.dto';

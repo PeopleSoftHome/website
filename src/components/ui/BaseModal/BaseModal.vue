@@ -19,8 +19,8 @@
 <script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue';
 import type { Ref } from 'vue';
-import { useScrollLock } from '@/composables/useScrollLock';
-import { useFocusTrap } from '@/composables/useFocusTrap';
+import { useScrollLock } from '@/shared/composables/useScrollLock';
+import { useFocusTrap } from '@/shared/composables/useFocusTrap';
 
 const props = defineProps({
   isOpen:           { type: Boolean, required: true },

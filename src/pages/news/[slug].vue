@@ -98,7 +98,7 @@ import { computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news';
 import { getNewsArticles } from '@/data/news';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
@@ -179,8 +179,6 @@ const paragraphs = computed(() => {
   if (!content) return [];
   return content.split('\n').filter((p: string) => p.trim());
 });
-
-const allNews = computed(() => (item.value ? [item.value] : newsFallback.value));
 
 const relatedNews = computed(() => {
   const it = item.value;

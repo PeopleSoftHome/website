@@ -15,11 +15,11 @@ import { IncomingMessage, IncomingHttpHeaders } from 'http';
 
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
-import { PrismaModule } from './common/prisma/prisma.module';
-import { RedisModule } from './common/redis/redis.module';
+import { PrismaModule } from '@shared/prisma/prisma.module';
+import { RedisModule } from '@shared/redis/redis.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { MeilisearchModule } from './modules/meilisearch/meilisearch.module';
-import { MetricsModule } from './common/metrics/metrics.module';
+import { MetricsModule } from '@shared/metrics/metrics.module';
 import { MiddlewareModule } from './common/middleware/middleware.module';
 import {
   FEATURE_MODULES,
@@ -27,16 +27,16 @@ import {
   PROCESSORS,
 } from './common/modules/module-registry';
 
-import { CacheInterceptor } from './common/interceptors/cache.interceptor';
+import { CacheInterceptor } from '@shared/interceptors/cache.interceptor';
 import { TimingInterceptor } from './common/interceptors/timing.interceptor';
-import { CacheControlInterceptor } from './common/interceptors/cache-control.interceptor';
+import { CacheControlInterceptor } from '@shared/interceptors/cache-control.interceptor';
 import { WorkspaceInterceptor } from './common/interceptors/workspace.interceptor';
-import { AuditInterceptor } from './common/interceptors/audit.interceptor';
-import { MetricsInterceptor } from './common/interceptors/metrics.interceptor';
+import { AuditInterceptor } from '@shared/interceptors/audit.interceptor';
+import { MetricsInterceptor } from '@shared/interceptors/metrics.interceptor';
 import { SentryInterceptor } from './common/interceptors/sentry.interceptor';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
-import { PermissionGuard } from './common/guards/permission.guard';
-import { IpFilterGuard } from './common/guards/ip-filter.guard';
+import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
+import { PermissionGuard } from '@shared/guards/permission.guard';
+import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
 
 @Module({
   imports: [

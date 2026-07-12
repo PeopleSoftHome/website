@@ -100,7 +100,7 @@ import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
 import { getCareerTestimonials, getCareerPath } from '@/data/careers';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 

@@ -1,3 +1,8 @@
+<!--
+  Blog Manager View 组件
+
+  位于: views/BlogManagerView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('blogs.title') }}</h2>
@@ -97,11 +102,11 @@ onMounted(() => {
 });
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
-import RichEditor from '@/components/RichEditor.vue';
-import ImageUpload from '@/components/ImageUpload.vue';
+import RichEditor from '@/components/ui/RichEditor.vue';
+import ImageUpload from '@/components/ui/ImageUpload.vue';
 import { useList } from '@/composables/useList.js';
-import AiAssistButton from '@/components/AiAssistButton.vue';
-import AiAssistDialog from '@/components/AiAssistDialog.vue';
+import AiAssistButton from '@/components/ai/AiAssistButton.vue';
+import AiAssistDialog from '@/components/ai/AiAssistDialog.vue';
 
 const aiVisible = ref(false);
 const aiPayload = ref({ type: 'blog', title: '', content: '' });

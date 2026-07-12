@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationType, Prisma } from '@prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip } from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { getSkip } from '@shared/helpers/pagination.helper';
 
 @Injectable()
 export class NotificationService {

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
 @Injectable()
 export class DownloadService {

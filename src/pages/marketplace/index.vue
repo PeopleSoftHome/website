@@ -90,7 +90,7 @@ import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getMarketplaceApps, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, transformMarketplaceApp, transformMarketplaceCategory, type MarketplaceApp, type MarketplaceCategory } from '@/api/marketplace';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
@@ -108,19 +108,19 @@ const iconMap = {
 
 const categoryIcon = (icon?: string) => (icon ? iconMap[icon as keyof typeof iconMap] || '•' : '•');
 
-const { data: apiCategories, error: categoriesError } = useAsyncData('marketplace-categories', async () => {
+const { data: apiCategories } = useAsyncData('marketplace-categories', async () => {
   const res = await marketplaceApi.getCategories();
   const list = (res?.data?.data || res?.data || res || []) as any[];
   return list.map(transformMarketplaceCategory).filter((c) => c.slug);
 }, { default: () => [] as MarketplaceCategory[] });
 
-const { data: apiApps, error: appsError } = useAsyncData('marketplace-apps', async () => {
+const { data: apiApps } = useAsyncData('marketplace-apps', async () => {
   const res = await marketplaceApi.getApps({ pageSize: 100 });
   const list = (res?.data?.data || res?.data || res || []) as any[];
   return list.map(transformMarketplaceApp);
 }, { default: () => [] as MarketplaceApp[] });
 
-const { data: apiFeatured, error: featuredError } = useAsyncData('marketplace-featured', async () => {
+const { data: apiFeatured } = useAsyncData('marketplace-featured', async () => {
   const res = await marketplaceApi.getFeaturedApps();
   const list = (res?.data || res || []) as any[];
   return list.map(transformMarketplaceApp);
@@ -140,8 +140,6 @@ const appList = computed<MarketplaceApp[]>(() =>
 const featuredList = computed<MarketplaceApp[]>(() =>
   apiFeatured.value?.length ? apiFeatured.value : (fallbackApps.value as MarketplaceApp[]).filter((a) => a.featured)
 );
-
-const isLoading = computed(() => !apiApps.value?.length && !appsError.value);
 
 const categories = computed<Array<{ id: string; label: string; icon?: string }>>(() => [
   { id: 'all', label: t('common.all') },

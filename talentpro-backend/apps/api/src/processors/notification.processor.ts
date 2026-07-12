@@ -1,7 +1,7 @@
 import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
-import { PrismaService } from '../common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { NotificationService } from '../modules/notification/notification.service';
 import { NotificationSseService } from '../modules/notification/notification-sse.service';
 

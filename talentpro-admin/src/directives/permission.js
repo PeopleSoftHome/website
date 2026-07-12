@@ -1,3 +1,8 @@
+/**
+ * permission 模块
+ *
+ * 位于: directives/permission.js
+ */
 import { useAuthStore } from '@/stores/auth.js';
 
 /**

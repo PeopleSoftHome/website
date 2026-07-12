@@ -1,3 +1,8 @@
+<!--
+  Email Template View 组件
+
+  位于: views/EmailTemplateView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('emailTemplates.title') }}</h2>
@@ -59,8 +64,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client.js';
-import AiAssistButton from '@/components/AiAssistButton.vue';
-import AiAssistDialog from '@/components/AiAssistDialog.vue';
+import AiAssistButton from '@/components/ai/AiAssistButton.vue';
+import AiAssistDialog from '@/components/ai/AiAssistDialog.vue';
 
 const { t } = useI18n();
 

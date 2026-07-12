@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { ForumCategoryRepository } from './forum-category.repository';
 import { ForumTopicRepository } from './forum-topic.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';

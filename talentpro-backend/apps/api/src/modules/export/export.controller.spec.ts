@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExportController } from './export.controller';
 import { ExportService } from './export.service';
-import { UserContext } from '@/common/types';
+import { UserContext } from '@shared/types';
 import { LeadStatus } from '@prisma/client';
 
 describe('ExportController', () => {

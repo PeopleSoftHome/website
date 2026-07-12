@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import Redis, { Cluster } from 'ioredis';
-import { RedisModule, REDIS_CLIENT } from '@/common/redis/redis.module';
+import { RedisModule, REDIS_CLIENT } from '@shared/redis/redis.module';
 
 export function createBullRootOptions(
   redisClient: Redis | Cluster,

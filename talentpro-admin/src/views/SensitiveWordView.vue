@@ -1,3 +1,8 @@
+<!--
+  Sensitive Word View 组件
+
+  位于: views/SensitiveWordView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('sensitiveWords.title') }}</h2>

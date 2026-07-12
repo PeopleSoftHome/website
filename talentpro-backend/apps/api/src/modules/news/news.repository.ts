@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { BaseCrudRepository } from '@/common/repositories/base-crud.repository';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { BaseCrudRepository } from '@shared/repositories/base-crud.repository';
 
 @Injectable()
 export class NewsRepository extends BaseCrudRepository {

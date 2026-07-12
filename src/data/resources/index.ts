@@ -1,20 +1,14 @@
+import { createLocalizedData } from '../../utils/localizedData';
 import { RESOURCES_ZH, RESOURCES_EN } from './items';
-import { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN, RESOURCE_TYPE_STYLES } from './types';
+import { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN } from './types';
 import type { Resource, ResourceType } from './types';
 
-export { RESOURCES_ZH, RESOURCES_EN } from './items';
-export { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN, RESOURCE_TYPE_STYLES } from './types';
+const resourcesData = createLocalizedData<Resource>({ zh: RESOURCES_ZH, en: RESOURCES_EN });
+const resourceTypesData = createLocalizedData<ResourceType>({ zh: RESOURCE_TYPES_ZH, en: RESOURCE_TYPES_EN });
 
-export function getResources(locale?: string): Resource[] {
-  if (locale === 'zh' || locale === 'zh-TW') return RESOURCES_ZH;
-  return RESOURCES_EN;
-}
-
-export function getResourceTypes(locale?: string): ResourceType[] {
-  if (locale === 'zh' || locale === 'zh-TW') return RESOURCE_TYPES_ZH;
-  return RESOURCE_TYPES_EN;
-}
+export const getResources = resourcesData.getItems;
+export const getResourceTypes = resourceTypesData.getItems;
 
 /** 兼容旧直接引用：默认中文 */
 export { RESOURCES_ZH as RESOURCES } from './items';
-export { RESOURCE_TYPES_ZH as RESOURCE_TYPES } from './types';
+export { RESOURCE_TYPES_ZH as RESOURCE_TYPES, RESOURCE_TYPE_STYLES } from './types';

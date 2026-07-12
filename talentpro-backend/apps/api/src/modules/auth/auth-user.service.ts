@@ -1,8 +1,8 @@
 import { Injectable, ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { hashEmail } from '@/common/prisma/email-hash.util';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { hashEmail } from '@shared/prisma/email-hash.util';
 
 @Injectable()
 export class AuthUserService {

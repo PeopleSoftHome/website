@@ -1,3 +1,8 @@
+<!--
+  Experiment View 组件
+
+  位于: views/ExperimentView.vue
+-->
 <template>
   <div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">

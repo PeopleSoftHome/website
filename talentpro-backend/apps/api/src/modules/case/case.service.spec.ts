@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { PostStatus } from '@prisma/client';
 import { CaseService } from './case.service';
 import { CaseStudyRepository } from './case-study.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('CaseService', () => {
   let service: CaseService;

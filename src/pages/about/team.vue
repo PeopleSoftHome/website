@@ -42,7 +42,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { aboutApi } from '@/api/about';
 import { getTeamCategories, getTeam } from '@/data/team';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './team.module.css';
 

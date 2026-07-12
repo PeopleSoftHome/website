@@ -2,8 +2,8 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@n
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 

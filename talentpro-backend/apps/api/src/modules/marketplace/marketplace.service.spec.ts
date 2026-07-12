@@ -3,7 +3,7 @@ import { NotFoundException, ConflictException } from '@nestjs/common';
 import { AppStatus, PricingModel, SubscriptionStatus, App, AppCategory, AppReview, AppVendor, Subscription } from '@prisma/client';
 import { MarketplaceService } from './marketplace.service';
 import { MarketplaceRepository } from './marketplace.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/create-vendor.dto';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/create-category.dto';

@@ -1,27 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
-
-@Injectable()
-export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
-
-  canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!requiredRoles || requiredRoles.length === 0) {
-      return true;
-    }
-    const { user } = context.switchToHttp().getRequest();
-    if (!user || !user.role) {
-      throw new ForbiddenException('Insufficient permissions');
-    }
-    const hasRole = requiredRoles.includes(user.role.name);
-    if (!hasRole) {
-      throw new ForbiddenException('Insufficient permissions, required roles: ' + requiredRoles.join(', '));
-    }
-    return true;
-  }
-}
+/**
+ * @deprecated 已迁移至 libs/shared/src/guards，请优先从 @shared/guards 导入。
+ * 保留此文件作为兼容性 re-export。
+ */
+export { RolesGuard } from '@shared/guards/roles.guard';

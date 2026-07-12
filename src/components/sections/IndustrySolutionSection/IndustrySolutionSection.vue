@@ -40,13 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { useModalStore } from '@/stores/modal.pinia';
 import { useAnalyticsStore } from '@/stores/analytics.pinia';
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap';
 import { useTabs } from '@/composables/useTabs';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformIndustries } from '@/api/transforms';
 
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
@@ -79,7 +79,7 @@ const trackedSelectTab = (idx: number) => {
   analyticsStore.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('industries', {
+const { displayItems: rawTabs } = useCmsDataByKey('industries', {
   transform: transformIndustries,
   fallbackKey: 'industries',
 });

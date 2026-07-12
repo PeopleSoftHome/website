@@ -24,7 +24,7 @@
 import { computed } from 'vue';
 import { getMarketplaceReviews } from '@/data/marketplace';
 import { marketplaceApi } from '@/api/marketplace';
-import { formatDate } from '@/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import s from './AppReviews.module.css';
 
 interface Review {

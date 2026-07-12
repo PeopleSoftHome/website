@@ -1,3 +1,8 @@
+/**
+ * use Crud 模块
+ *
+ * 位于: composables/useCrud.js
+ */
 import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useList } from './useList.js';

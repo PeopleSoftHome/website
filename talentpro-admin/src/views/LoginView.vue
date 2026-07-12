@@ -1,3 +1,8 @@
+<!--
+  Login View 组件
+
+  位于: views/LoginView.vue
+-->
 <template>
   <div class="login-page">
     <el-card class="login-card" shadow="hover">

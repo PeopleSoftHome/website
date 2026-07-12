@@ -1,3 +1,8 @@
+<!--
+  Page Config Section List 组件
+
+  位于: components/page-config/PageConfigSectionList.vue
+-->
 <template>
   <div class="section-list">
     <div

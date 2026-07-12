@@ -1,3 +1,8 @@
+<!--
+  Ai Assistant View 组件
+
+  位于: views/AiAssistantView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom: 20px">{{ t('aiAssistant.title') }}</h2>

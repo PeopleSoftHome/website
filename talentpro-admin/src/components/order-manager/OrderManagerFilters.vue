@@ -1,3 +1,8 @@
+<!--
+  Order Manager Filters 组件
+
+  位于: components/order-manager/OrderManagerFilters.vue
+-->
 <template>
   <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap">
     <el-select

@@ -115,7 +115,7 @@ import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getTimeline } from '@/data/timeline';
 import { getCertifications, getPartnerLogos } from '@/data/contact';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();

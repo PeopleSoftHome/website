@@ -4,3 +4,6 @@ export * from './helpers';
 export * from './guards';
 export * from './decorators';
 export * from './interceptors';
+export * from './redis';
+export * from './metrics';
+export * from './types';

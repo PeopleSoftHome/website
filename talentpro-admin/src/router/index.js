@@ -1,3 +1,8 @@
+/**
+ * index 模块
+ *
+ * 位于: router/index.js
+ */
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.js';
 import { buildRoutes } from '@/config/menu.config.js';

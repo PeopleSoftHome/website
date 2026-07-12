@@ -1,6 +1,6 @@
 {
   "name": "talentpro-backend",
-  "version": "4.3.0",
+  "version": "4.3.2",
   "description": "TalentPro HR Portal — Enterprise Backend API",
   "author": "TalentPro Team",
   "private": true,
@@ -143,10 +143,12 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/"
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/apps/api/src/$1"
+      "^@/(.*)$": "<rootDir>/apps/api/src/$1",
+      "^@shared/(.*)$": "<rootDir>/libs/shared/src/$1"
     }
   },
   "overrides": {

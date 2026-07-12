@@ -37,7 +37,7 @@ vi.mock('@/api/client.js', () => ({
   },
 }));
 
-vi.mock('@/components/CmsTable.vue', () => ({
+vi.mock('@/components/ui/CmsTable.vue', () => ({
   default: {
     name: 'CmsTable',
     template: '<div class="cms-table-stub"><slot /></div>',

@@ -1,6 +1,6 @@
 /**
  * SSR-safe 工具函数
- * 实际实现位于 @/utils，此处 re-export 供跨项目复用识别。
+ * 实际实现已物理迁移到本目录，可直接本地导出。
  */
-export { injectJsonLd, removeJsonLd, useJsonLd } from '@/utils/jsonld';
-export { formatDate, formatRelativeTime } from '@/utils/date';
+export { injectJsonLd, removeJsonLd, useJsonLd } from './jsonld';
+export { formatDate, formatRelativeTime } from './date';

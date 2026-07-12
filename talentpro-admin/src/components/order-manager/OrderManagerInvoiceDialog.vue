@@ -1,3 +1,8 @@
+<!--
+  Order Manager Invoice Dialog 组件
+
+  位于: components/order-manager/OrderManagerInvoiceDialog.vue
+-->
 <template>
   <el-dialog
     :model-value="modelValue"

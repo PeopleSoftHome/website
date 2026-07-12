@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, PostStatus } from '@prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';

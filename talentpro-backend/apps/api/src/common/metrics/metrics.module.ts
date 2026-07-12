@@ -1,11 +1,5 @@
-import { Module, Global } from '@nestjs/common';
-import { PrometheusService } from './prometheus.service';
-import { MetricsController } from './metrics.controller';
-
-@Global()
-@Module({
-  providers: [PrometheusService],
-  controllers: [MetricsController],
-  exports: [PrometheusService],
-})
-export class MetricsModule {}
+/**
+ * @deprecated Metrics 模块已迁移至 libs/shared/src/metrics，请优先从 @shared/metrics 导入。
+ * 保留此文件作为兼容性 re-export。
+ */
+export { MetricsModule } from '@shared/metrics/metrics.module';

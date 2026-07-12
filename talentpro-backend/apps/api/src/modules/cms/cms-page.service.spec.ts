@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { CmsPageService } from './cms-page.service';
 import { CmsContentRepository } from './cms-content.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('CmsPageService', () => {
   let service: CmsPageService;

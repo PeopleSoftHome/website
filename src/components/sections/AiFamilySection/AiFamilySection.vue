@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import { AI_CARD_KEY_MAP } from '@/i18n/keyMap';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformAiCards } from '@/api/transforms';
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import AiCard from './AiCard.vue';

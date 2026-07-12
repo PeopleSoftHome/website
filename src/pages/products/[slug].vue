@@ -103,7 +103,7 @@ import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeat
 import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScenarioTabs.vue';
 import { getProductMap } from '@/data/products/map';
 import { cmsApi } from '@/api/cms';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
 function mergeProduct(cms: any, fallback: any) {

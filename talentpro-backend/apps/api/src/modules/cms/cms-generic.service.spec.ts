@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { CmsGenericService } from './cms-generic.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import * as paginationHelper from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import * as paginationHelper from '@shared/helpers/pagination.helper';
 
 describe('CmsGenericService', () => {
   let service: CmsGenericService;

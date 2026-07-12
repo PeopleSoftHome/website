@@ -3,11 +3,11 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { BlogService } from './blog.service';
 import { PostStatus } from '@prisma/client';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
-import { Public } from '@/common/decorators/public.decorator';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { UserContext } from '@/common/types';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
+import { Public } from '@shared/decorators/public.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { UserContext } from '@shared/types';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { CreateBlogCategoryDto } from './dto/create-blog-category.dto';

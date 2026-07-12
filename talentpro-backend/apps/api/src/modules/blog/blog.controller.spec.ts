@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PostStatus, CommentStatus } from '@prisma/client';
 import { BlogController } from './blog.controller';
 import { BlogService } from './blog.service';
-import { UserContext } from '@/common/types';
+import { UserContext } from '@shared/types';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { CreateBlogCategoryDto } from './dto/create-blog-category.dto';

@@ -25,13 +25,13 @@ export function useCmsPageAsync(pageKey: string) {
     async () => {
       try {
         const page = await cmsApi.getPage(pageKey);
-        return sectionRegistry.resolve(page).map(({ component, ...rest }) => rest as SerializableSection);
+        return sectionRegistry.resolve(page).map(({ component: _component, ...rest }) => rest as SerializableSection);
       } catch (e) {
         const err = e as Error;
         if (import.meta.env.DEV && !/page.*不存在|not found/i.test(err.message || '')) {
           console.warn(`[CmsPage] CMS page config load failed for ${pageKey}:`, err.message);
         }
-        return sectionRegistry.resolve(null).map(({ component, ...rest }) => rest as SerializableSection);
+        return sectionRegistry.resolve(null).map(({ component: _component, ...rest }) => rest as SerializableSection);
       }
     },
     { default: () => [] }

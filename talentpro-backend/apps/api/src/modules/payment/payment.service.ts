@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { PaymentStatus, PaymentProvider, SubscriptionStatus, Prisma } from '@prisma/client';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 import Stripe from 'stripe';
 import type { Stripe as StripeTypes } from 'stripe/cjs/stripe.core.js';
 

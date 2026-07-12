@@ -1,3 +1,8 @@
+/**
+ * ai 模块
+ *
+ * 位于: api/ai.js
+ */
 import client from './client.js';
 
 export const aiApi = {

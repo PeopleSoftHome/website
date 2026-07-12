@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed } from 'vue';
 
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';
@@ -42,7 +42,7 @@ interface StatItemData {
 
 const { t } = useI18n();
 
-const { displayItems: rawDisplayStats, isLoading: loading } = useCmsDataByKey('stats', {
+const { displayItems: rawDisplayStats } = useCmsDataByKey('stats', {
   transform: (active: unknown[]) => (active || []).map((item) => {
     const it = item as CmsStatItem;
     return {

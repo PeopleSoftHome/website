@@ -3,10 +3,10 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommentStatus, Comment } from '@prisma/client';
 import { BlogCommentService } from './blog-comment.service';
 import { CommentModerationService } from './comment-moderation.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
-jest.mock('@/common/helpers/pagination.helper', () => ({
+jest.mock('@shared/helpers/pagination.helper', () => ({
   getSkip: jest.fn((page: number, pageSize: number) => (page - 1) * pageSize),
   buildPaginatedResponse: jest.fn((data, page, pageSize, total) => ({
     data,

@@ -1,3 +1,8 @@
+<!--
+  Order Manager Detail Dialog 组件
+
+  位于: components/order-manager/OrderManagerDetailDialog.vue
+-->
 <template>
   <el-dialog
     :model-value="modelValue"

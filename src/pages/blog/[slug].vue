@@ -52,8 +52,8 @@ import { computed } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog';
 import { renderMarkdown } from '@/utils/markdown';
-import { formatDate } from '@/utils/date';
-import { useJsonLd } from '@/utils/jsonld';
+import { formatDate } from '@/shared/utils/date';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { getBlogPostMap } from '@/data/blog';
 import s from './[slug].module.css';
 
@@ -71,7 +71,7 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
       const res = await blogApi.getPost(slug.value);
       const data = res.data || res || null;
       if (data) return data;
-    } catch (e) {
+    } catch (_e) {
       // API 不可用时降级到静态 fallback
     }
     const fallback = blogPostMap.value[slug.value as string] || null;

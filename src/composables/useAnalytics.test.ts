@@ -3,7 +3,7 @@ import { useAnalytics } from './useAnalytics';
 
 const { mockPost } = vi.hoisted(() => ({ mockPost: vi.fn().mockResolvedValue({}) }));
 
-vi.mock('@/api/client', () => ({
+vi.mock('@/shared/api/client', () => ({
   apiClient: {
     post: (...args: unknown[]) => mockPost(...args),
     defaults: { baseURL: 'http://localhost:4000/api/v1' },

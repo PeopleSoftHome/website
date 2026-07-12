@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { AppStatus, PricingModel, SubscriptionStatus, Prisma } from '@prisma/client';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 import { MarketplaceRepository } from './marketplace.repository';
 import { CreateReviewDto } from './dto/create-review.dto';
 

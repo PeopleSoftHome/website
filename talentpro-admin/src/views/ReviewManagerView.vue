@@ -1,3 +1,8 @@
+<!--
+  Review Manager View 组件
+
+  位于: views/ReviewManagerView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom: 20px">{{ t('reviews.title') }}</h2>
@@ -29,7 +34,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import CmsTable from '@/components/CmsTable.vue';
+import CmsTable from '@/components/ui/CmsTable.vue';
 
 const { t } = useI18n();
 

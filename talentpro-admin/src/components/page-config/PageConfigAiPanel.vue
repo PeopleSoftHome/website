@@ -1,3 +1,8 @@
+<!--
+  Page Config Ai Panel 组件
+
+  位于: components/page-config/PageConfigAiPanel.vue
+-->
 <template>
   <div>
     <AiConfigAssistant
@@ -39,7 +44,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import AiConfigAssistant from '@/components/AiConfigAssistant.vue';
+import AiConfigAssistant from '@/components/ai/AiConfigAssistant.vue';
 import { REGISTERED_SECTIONS } from '@/data/sectionRegistry.js';
 
 const { t } = useI18n();

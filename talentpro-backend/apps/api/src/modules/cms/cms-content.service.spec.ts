@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CmsContentService } from './cms-content.service';
 import { CmsContentRepository } from './cms-content.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { SearchIndexEvent } from '@/events/search-index.event';
 
 describe('CmsContentService', () => {

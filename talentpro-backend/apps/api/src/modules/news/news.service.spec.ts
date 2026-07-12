@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { PostStatus } from '@prisma/client';
 import { NewsService } from './news.service';
 import { NewsRepository } from './news.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('NewsService', () => {
   let service: NewsService;

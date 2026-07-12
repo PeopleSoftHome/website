@@ -34,7 +34,7 @@
 definePageMeta({ title: 'profile.menu.apps', requiresAuth: true });
 import { computed } from 'vue';
 import { marketplaceApi } from '@/api/marketplace';
-import { formatDate } from '@/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import s from './apps.module.css';
 
 interface AppItem {

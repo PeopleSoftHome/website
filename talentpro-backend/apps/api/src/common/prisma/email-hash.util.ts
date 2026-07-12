@@ -1,10 +1,5 @@
-import { createHmac } from 'crypto';
-
-const HMAC_KEY = process.env.PII_HMAC_KEY || process.env.PII_ENCRYPTION_KEY || '';
-
-export function hashEmail(email: string): string {
-  if (!HMAC_KEY) {
-    throw new Error('PII_HMAC_KEY or PII_ENCRYPTION_KEY is required to compute email hash.');
-  }
-  return createHmac('sha256', HMAC_KEY).update(email.toLowerCase().trim()).digest('hex');
-}
+/**
+ * @deprecated 已迁移至 libs/shared/src/prisma，请优先从 @shared/prisma 导入。
+ * 保留此文件作为兼容性 re-export。
+ */
+export { hashEmail } from '@shared/prisma/email-hash.util';

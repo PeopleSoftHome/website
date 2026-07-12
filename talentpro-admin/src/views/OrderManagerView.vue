@@ -1,3 +1,8 @@
+<!--
+  Order Manager View 组件
+
+  位于: views/OrderManagerView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom: 20px">{{ t('orders.title') }}</h2>
@@ -86,7 +91,7 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import CmsTable from '@/components/CmsTable.vue';
+import CmsTable from '@/components/ui/CmsTable.vue';
 import client from '@/api/client.js';
 import { formatDate } from '@/utils/formatDate.js';
 import OrderManagerFilters from '@/components/order-manager/OrderManagerFilters.vue';

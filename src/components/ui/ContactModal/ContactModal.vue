@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
 import Icon from '../Icon/Icon.vue';
 import BaseModal from '../BaseModal/BaseModal.vue';
 import s from './ContactModal.module.css';

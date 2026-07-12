@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 
 /**
  * 在 Nuxt 应用启动时，将 axios 实例的 baseURL 设置为 runtimeConfig.public.apiBaseUrl。

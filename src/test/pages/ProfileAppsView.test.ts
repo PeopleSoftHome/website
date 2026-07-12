@@ -10,7 +10,7 @@ vi.mock('@/api/marketplace', () => ({
   },
 }));
 
-vi.mock('@/utils/date', () => ({
+vi.mock('@/shared/utils/date', () => ({
   formatDate: vi.fn((date: string) => date),
 }));
 

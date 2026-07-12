@@ -82,12 +82,12 @@
 definePageMeta({ title: 'forum.pageTitle' });
 import { ref, computed } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum';
-import { formatDate } from '@/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import { getForumCategories, getForumTopics } from '@/data/forum';
 import s from './index.module.css';
 

@@ -9,7 +9,7 @@ import type { Request, Response, NextFunction } from 'express';
 import * as Sentry from '@sentry/nestjs';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

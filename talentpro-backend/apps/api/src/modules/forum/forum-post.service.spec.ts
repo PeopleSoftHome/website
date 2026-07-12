@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ForumPost, ForumTopic } from '@prisma/client';
 import { ForumPostService } from './forum-post.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('ForumPostService', () => {
   let service: ForumPostService;

@@ -1,18 +1,5 @@
-import { SetMetadata } from '@nestjs/common';
-
-export const PERMISSIONS_KEY = 'permissions';
-
-export type PermissionMode = 'any' | 'all';
-
-export interface PermissionMetadata {
-  permissions: string[];
-  mode: PermissionMode;
-}
-
-export const Permission = (
-  permissions: string | string[],
-  mode: PermissionMode = 'all',
-) => {
-  const perms = Array.isArray(permissions) ? permissions : [permissions];
-  return SetMetadata(PERMISSIONS_KEY, { permissions: perms, mode });
-};
+/**
+ * @deprecated 已迁移至 libs/shared/src/decorators，请优先从 @shared/decorators 导入。
+ * 保留此文件作为兼容性 re-export。
+ */
+export { Permission, PermissionMode } from '@shared/decorators/permission.decorator';

@@ -1,3 +1,8 @@
+/**
+ * env.d 模块
+ *
+ * 位于: env.d.ts
+ */
 /// <reference types="vite/client" />
 
 declare module '*.vue' {

@@ -17,8 +17,8 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'pageTitle', description: 'pageDesc' });
-import { inject, computed } from 'vue';
-import { useJsonLd } from '@/utils/jsonld';
+import { computed } from 'vue';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 import { resolveSectionComponent } from '@/composables/useCmsPageAsync';
 

@@ -1,3 +1,8 @@
+<!--
+  Page Config Add Section 组件
+
+  位于: components/page-config/PageConfigAddSection.vue
+-->
 <template>
   <div style="margin-top:16px;display:flex;gap:8px;align-items:center">
     <el-select v-model="selected" :placeholder="t('pageConfig.selectSection')" size="small" style="width:220px">

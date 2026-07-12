@@ -2,14 +2,14 @@ import {
   Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, ValidationPipe,
   NotFoundException,
 } from '@nestjs/common';
-import { Cacheable, CacheEvict } from '@/common/decorators/cache.decorator';
+import { Cacheable, CacheEvict } from '@shared/decorators/cache.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CmsService } from './cms.service';
 import { CmsGenericService } from './cms-generic.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
-import { Public } from '@/common/decorators/public.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreatePageDto } from './dto/create-page.dto';
 import { CreateProductTabDto } from './dto/create-product-tab.dto';

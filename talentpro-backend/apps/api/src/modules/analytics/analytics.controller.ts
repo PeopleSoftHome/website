@@ -4,10 +4,10 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler';
 import { AnalyticsService } from './analytics.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
-import { Public } from '@/common/decorators/public.decorator';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
+import { Public } from '@shared/decorators/public.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { TrackPageViewDto } from './dto/track-page-view.dto';
 
 import { TrackEventsBatchDto } from './dto/track-events-batch.dto';

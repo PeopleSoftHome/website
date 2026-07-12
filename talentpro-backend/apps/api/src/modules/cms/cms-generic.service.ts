@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
 interface CmsModel {
   findMany: (args: unknown) => Promise<unknown[]>;

@@ -1,3 +1,8 @@
+/**
+ * auth 模块
+ *
+ * 位于: stores/auth.js
+ */
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import client from '@/api/client.js';

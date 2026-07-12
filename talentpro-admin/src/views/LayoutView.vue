@@ -1,3 +1,8 @@
+<!--
+  Layout View 组件
+
+  位于: views/LayoutView.vue
+-->
 <template>
   <el-container class="layout">
     <!-- 桌面端侧边栏 -->
@@ -106,7 +111,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth.js';
 import { Fold, ArrowDown, Management } from '@element-plus/icons-vue';
-import NotificationBell from '@/components/NotificationBell.vue';
+import NotificationBell from '@/components/ui/NotificationBell.vue';
 import { menuConfig, hasMenuPermission } from '@/config/menu.config.js';
 
 const route = useRoute();

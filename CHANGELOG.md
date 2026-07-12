@@ -1,5 +1,24 @@
 # Changelog
 
+## [v4.3.2] - 2026-07-13 (全量清理与工程化改进)
+
+### 🧹 工程化清理
+
+- **版本与配置收口**: 三项目 `package.json` 统一升级至 `4.3.2`；`talentpro-backend/.env.example` 补全 `APP_CORS_ORIGINS`（含 3000/3001/3002/8080/3457）
+- **ESLint 死代码检测恢复**: 恢复 `no-undef` / `no-unused-vars` 规则，修复 39 处未使用导入/变量；前端 `npm run lint` 0 errors
+- **共享层物理迁移**: 前端将 `api/client`、CMS composables、主题/搜索/导航/焦点 trap/滚动锁、JSON-LD/日期等工具函数迁入 `src/shared/`；后端将 decorators/guards/helpers/interceptors/prisma/repositories/redis/metrics/types 迁入 `libs/shared/`，业务代码统一 `@shared/*` 导入，旧路径保留兼容性 re-export
+- **Admin 组件工程化**: 组件按 `ui/ai/page-config/order-manager` 分目录；新增 `permission.config.js` 权限矩阵并接入菜单/路由；为所有视图/组件/工具补全 JSDoc
+- **前端数据层抽象**: 新增 `createLocalizedData` / `createLocalizedEntry` 工厂重构 blog/cases/news/resources fallback；新增 `searchIndexFactory` 统一搜索索引结构
+
+### ✅ 验证结果
+
+- 前端 Vitest：`36 files, 172 tests` 全部通过
+- 前端 Nuxt 生产构建：成功
+- 后端 Jest：`83 files, 990 tests` 全部通过，不再超时
+- 后端 NestJS 生产构建：成功
+- Admin Vitest：`12 files, 77 tests` 全部通过
+- Admin Vite 生产构建：成功
+
 ## [v4.3.1] - 2026-07-06 (项目整理与重构)
 
 ### 🧹 项目整理
