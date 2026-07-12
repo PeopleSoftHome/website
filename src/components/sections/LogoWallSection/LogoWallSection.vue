@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { getLogoFilters } from '@/data/logos';
 import { useCmsDataByKey } from '@/composables/useCmsData';
 
@@ -58,7 +58,7 @@ const activeFilter = ref('all');
 
 const LOGO_FILTERS = computed(() => getLogoFilters(locale.value));
 
-const { displayItems: rawDisplayLogos, isLoading: loading } = useCmsDataByKey('logos', {
+const { displayItems: rawDisplayLogos } = useCmsDataByKey('logos', {
   transform: (active: unknown[]) => (active || []).map((item: any) => ({
     id: item.name
       ? item.name.toLowerCase().replace(/\s+/g, '-')

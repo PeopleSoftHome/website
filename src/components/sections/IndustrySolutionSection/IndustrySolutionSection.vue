@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import { useModalStore } from '@/stores/modal.pinia';
 import { useAnalyticsStore } from '@/stores/analytics.pinia';
@@ -79,7 +79,7 @@ const trackedSelectTab = (idx: number) => {
   analyticsStore.track('industry_tab_click', { tab: tabs.value?.[idx]?.id, index: idx });
 };
 
-const { displayItems: rawTabs, isLoading: loading } = useCmsDataByKey('industries', {
+const { displayItems: rawTabs } = useCmsDataByKey('industries', {
   transform: transformIndustries,
   fallbackKey: 'industries',
 });

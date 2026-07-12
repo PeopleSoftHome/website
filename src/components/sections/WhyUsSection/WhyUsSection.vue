@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs';
 import { useCmsDataByKey } from '@/composables/useCmsData';
 import { transformWhyUsTabs } from '@/api/transforms';

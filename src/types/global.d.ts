@@ -3,8 +3,6 @@
  * These declarations extend third-party types used across the project.
  */
 
-import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-
 // Axios: custom `silent` flag used by response interceptor to suppress error logs
 declare module 'axios' {
   interface AxiosRequestConfig {

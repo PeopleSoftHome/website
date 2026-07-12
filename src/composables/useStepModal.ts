@@ -12,7 +12,7 @@ export interface UseStepModalOptions<T> {
 }
 
 export function useStepModal<T extends Record<string, unknown>>(options: UseStepModalOptions<T>) {
-  const { steps, initialData, closeDelay = 0, resetDelay = 350 } = options;
+  const { steps, initialData, resetDelay = 350 } = options;
 
   const isOpen = ref(false);
   const step = ref(0);

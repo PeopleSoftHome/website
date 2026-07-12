@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
 import s from './RoiCalculatorSection.module.css';
 
 const props = defineProps({

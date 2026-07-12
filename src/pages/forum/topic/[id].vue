@@ -113,7 +113,7 @@ const { data: topic, pending: loading } = useAsyncData(
       const res = await forumApi.getTopic(id.value as string);
       const data = res.data || res;
       if (data) return data as Topic;
-    } catch (e) {
+    } catch (_e) {
       // API 不可用时降级到静态 fallback
     }
     return (FORUM_TOPIC_MAP.value as Record<string, Topic>)[id.value as string] || null;

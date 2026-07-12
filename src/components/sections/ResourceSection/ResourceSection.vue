@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useCmsDataByKey } from '@/composables/useCmsData';
 import { transformResources } from '@/api/transforms';

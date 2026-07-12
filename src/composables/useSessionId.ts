@@ -2,8 +2,6 @@
  * useSessionId — 通用会话 ID 管理
  * 自动从 storage 读取已有 ID，不存在则生成并持久化。
  */
-import { STORAGE_KEYS } from '@/constants/storage';
-
 export interface UseSessionIdOptions {
   key: string;
   storage?: 'localStorage' | 'sessionStorage';

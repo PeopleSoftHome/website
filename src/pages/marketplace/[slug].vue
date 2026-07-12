@@ -130,7 +130,7 @@ const modalStore = useModalStore();
 const fallbackAppMap = computed(() => getMarketplaceAppMap(locale.value));
 const fallbackCategories = computed(() => getMarketplaceCategories(locale.value));
 
-const { data: apiApp, error: appError } = useAsyncData(
+const { data: apiApp } = useAsyncData(
   () => `marketplace-app-${slugStr.value}-${locale.value}`,
   async () => {
     if (!slugStr.value) return null;

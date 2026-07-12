@@ -1,9 +1,9 @@
 import { RESOURCES_ZH, RESOURCES_EN } from './items';
-import { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN, RESOURCE_TYPE_STYLES } from './types';
+import { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN } from './types';
 import type { Resource, ResourceType } from './types';
 
 export { RESOURCES_ZH, RESOURCES_EN } from './items';
-export { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN, RESOURCE_TYPE_STYLES } from './types';
+export { RESOURCE_TYPES_ZH, RESOURCE_TYPES_EN } from './types';
 
 export function getResources(locale?: string): Resource[] {
   if (locale === 'zh' || locale === 'zh-TW') return RESOURCES_ZH;

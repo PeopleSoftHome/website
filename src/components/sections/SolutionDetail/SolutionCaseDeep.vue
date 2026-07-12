@@ -79,7 +79,7 @@ interface RoiItem {
   desc: string;
 }
 
-const props = defineProps({
+defineProps({
   caseStudy: { type: Object, default: null },
   roi: { type: Array as () => RoiItem[], default: () => [] },
 });

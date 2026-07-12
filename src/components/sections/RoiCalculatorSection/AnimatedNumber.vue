@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onUnmounted, inject } from 'vue';
+import { ref, watch, onUnmounted } from 'vue';
 
 const props = defineProps({
   value:   { type: Number, required: true },

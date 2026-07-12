@@ -180,8 +180,6 @@ const paragraphs = computed(() => {
   return content.split('\n').filter((p: string) => p.trim());
 });
 
-const allNews = computed(() => (item.value ? [item.value] : newsFallback.value));
-
 const relatedNews = computed(() => {
   const it = item.value;
   if (!it) return [];

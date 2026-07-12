@@ -71,7 +71,7 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
       const res = await blogApi.getPost(slug.value);
       const data = res.data || res || null;
       if (data) return data;
-    } catch (e) {
+    } catch (_e) {
       // API 不可用时降级到静态 fallback
     }
     const fallback = blogPostMap.value[slug.value as string] || null;

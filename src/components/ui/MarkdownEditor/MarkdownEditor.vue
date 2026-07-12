@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onUnmounted } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import { userApi } from '@/api/user';
 import { renderMarkdown } from '@/utils/markdown';
 import Avatar from '../Avatar/Avatar.vue';
