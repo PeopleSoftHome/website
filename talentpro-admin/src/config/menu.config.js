@@ -9,7 +9,10 @@
  * 新增页面只需在此文件添加一条配置，无需改 LayoutView.vue 或 router/index.js
  *
  * v3.1.0: label 改为 i18n key，实际显示文本由 locale 文件提供
+ * v4.3.2: 接入 permission.config.js 权限矩阵，自动为菜单项附加 permissions
  */
+
+import { getRoutePermissions } from './permission.config.js';
 
 export const menuConfig = [
   {
@@ -130,6 +133,21 @@ export const menuConfig = [
     roles: ['SUPER_ADMIN', 'ADMIN', 'USER'],
   },
 ];
+
+/**
+ * 为 menuConfig 自动附加权限矩阵配置
+ */
+function enrichPermissions(items) {
+  for (const item of items) {
+    const cfg = getRoutePermissions(item.path);
+    if (cfg) {
+      item.permissions = cfg.permissions;
+      item.permissionMode = cfg.mode;
+    }
+    if (item.children) enrichPermissions(item.children);
+  }
+}
+enrichPermissions(menuConfig);
 
 /**
  * 路由组件映射（非菜单项也需要在此注册，如 /login）

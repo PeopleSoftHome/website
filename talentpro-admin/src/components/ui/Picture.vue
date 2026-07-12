@@ -1,3 +1,8 @@
+<!--
+  Picture 组件
+
+  位于: components/ui/Picture.vue
+-->
 <template>
   <picture>
     <source

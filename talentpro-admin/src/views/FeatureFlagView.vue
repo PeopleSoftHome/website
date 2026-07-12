@@ -1,3 +1,8 @@
+<!--
+  Feature Flag View 组件
+
+  位于: views/FeatureFlagView.vue
+-->
 <template>
   <div>
     <h2 style="margin-top: 0">{{ t('featureFlags.title') }}</h2>

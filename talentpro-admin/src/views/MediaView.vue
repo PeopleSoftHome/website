@@ -1,3 +1,8 @@
+<!--
+  Media View 组件
+
+  位于: views/MediaView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('media.title') }}</h2>
@@ -80,8 +85,8 @@ import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Upload } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import CmsTable from '@/components/CmsTable.vue';
-import Picture from '@/components/Picture.vue';
+import CmsTable from '@/components/ui/CmsTable.vue';
+import Picture from '@/components/ui/Picture.vue';
 import client from '@/api/client.js';
 
 const { t } = useI18n();

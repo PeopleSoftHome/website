@@ -1,3 +1,8 @@
+<!--
+  News Manager View 组件
+
+  位于: views/NewsManagerView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom: 20px">{{ t('news.title') }}</h2>
@@ -33,7 +38,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import CmsTable from '@/components/CmsTable.vue';
+import CmsTable from '@/components/ui/CmsTable.vue';
 
 const { t } = useI18n();
 

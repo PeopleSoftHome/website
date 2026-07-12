@@ -1,3 +1,8 @@
+<!--
+  Users View 组件
+
+  位于: views/UsersView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('users.title') }}</h2>

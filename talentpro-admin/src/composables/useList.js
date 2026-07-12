@@ -1,3 +1,8 @@
+/**
+ * use List 模块
+ *
+ * 位于: composables/useList.js
+ */
 import { ref, watch, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { normalizePaginationResponse } from '@/api/client.js';

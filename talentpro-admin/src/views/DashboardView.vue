@@ -1,3 +1,8 @@
+<!--
+  Dashboard View 组件
+
+  位于: views/DashboardView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('dashboard.title') }}</h2>

@@ -1,3 +1,8 @@
+<!--
+  Analytics View 组件
+
+  位于: views/AnalyticsView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('analytics.title') }}</h2>

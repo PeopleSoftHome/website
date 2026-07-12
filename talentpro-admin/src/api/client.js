@@ -1,3 +1,8 @@
+/**
+ * client 模块
+ *
+ * 位于: api/client.js
+ */
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth.js';
 import router from '@/router';

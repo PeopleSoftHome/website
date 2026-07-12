@@ -1,3 +1,8 @@
+<!--
+  App 组件
+
+  位于: App.vue
+-->
 <template>
   <router-view />
 </template>

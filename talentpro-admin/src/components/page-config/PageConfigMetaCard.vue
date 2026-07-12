@@ -1,3 +1,8 @@
+<!--
+  Page Config Meta Card 组件
+
+  位于: components/page-config/PageConfigMetaCard.vue
+-->
 <template>
   <el-card shadow="hover" style="margin-top:16px">
     <template #header>

@@ -1,3 +1,8 @@
+/**
+ * main 模块
+ *
+ * 位于: main.ts
+ */
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import ElementPlus from 'element-plus';

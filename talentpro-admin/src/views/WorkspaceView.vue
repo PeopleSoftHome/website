@@ -1,3 +1,8 @@
+<!--
+  Workspace View 组件
+
+  位于: views/WorkspaceView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('workspaces.title') }}</h2>

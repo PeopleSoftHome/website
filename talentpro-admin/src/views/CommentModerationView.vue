@@ -1,3 +1,8 @@
+<!--
+  Comment Moderation View 组件
+
+  位于: views/CommentModerationView.vue
+-->
 <template>
   <div>
     <h2 style="margin-bottom:20px">{{ t('commentModeration.title') }}</h2>
