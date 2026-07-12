@@ -3,10 +3,10 @@ import { Prisma, DemoBookingScale, LeadSource } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { LeadStatus } from '@prisma/client';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
 @Injectable()
 export class LeadService {

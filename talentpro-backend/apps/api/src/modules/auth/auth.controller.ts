@@ -11,9 +11,9 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DevLoginDto } from './dto/dev-login.dto';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Public } from '@/common/decorators/public.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { Public } from '@shared/decorators/public.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 
 @ApiTags('认证')
 @Controller('auth')

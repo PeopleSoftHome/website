@@ -138,7 +138,7 @@ import { computed, ref } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getResources, RESOURCE_TYPE_STYLES } from '@/data/resources';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { useScrollProgress } from '@/composables/useScrollProgress';
 import { useSpyScroll } from '@/composables/useSpyScroll';
 import s from './[slug].module.css';

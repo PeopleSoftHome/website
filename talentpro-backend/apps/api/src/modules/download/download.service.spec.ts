@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { DownloadService } from './download.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 
 describe('DownloadService', () => {

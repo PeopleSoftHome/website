@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { CareersService } from './careers.service';
 import { JobRepository } from './job.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('CareersService', () => {
   let service: CareersService;

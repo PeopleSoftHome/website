@@ -90,7 +90,7 @@ import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getMarketplaceApps, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, transformMarketplaceApp, transformMarketplaceCategory, type MarketplaceApp, type MarketplaceCategory } from '@/api/marketplace';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();

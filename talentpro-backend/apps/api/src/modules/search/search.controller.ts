@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { SearchService } from './search.service';
-import { Public } from '@/common/decorators/public.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 
 @ApiTags('搜索')
 @Controller('search')

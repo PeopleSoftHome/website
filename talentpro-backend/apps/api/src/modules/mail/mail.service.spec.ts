@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { EmailTemplate } from '@prisma/client';
 import { MailService, MailPayload } from './mail.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 jest.mock('nodemailer', () => ({
   createTransport: jest.fn().mockReturnValue({

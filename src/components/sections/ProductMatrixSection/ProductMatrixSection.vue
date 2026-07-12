@@ -39,7 +39,7 @@ import { computed } from 'vue';
 import { useAnalyticsStore } from '@/stores/analytics.pinia';
 import { PRODUCT_KEY_MAP, TAB_KEY_MAP } from '@/i18n/keyMap';
 import { useTabs } from '@/composables/useTabs';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformProductTabs } from '@/api/transforms';
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';
 import TabNav from '../../ui/TabNav/TabNav.vue';

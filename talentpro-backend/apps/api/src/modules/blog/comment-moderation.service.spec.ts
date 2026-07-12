@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommentStatus } from '@prisma/client';
 import { CommentModerationService } from './comment-moderation.service';
 import { AiService } from '@/modules/ai/ai.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
-jest.mock('@/common/helpers/pagination.helper', () => ({
+jest.mock('@shared/helpers/pagination.helper', () => ({
   getSkip: jest.fn((page: number, pageSize: number) => (page - 1) * pageSize),
   buildPaginatedResponse: jest.fn((data, page, pageSize, total) => ({
     data,

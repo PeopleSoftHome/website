@@ -7,7 +7,7 @@ import {
 import { Inject } from '@nestjs/common';
 import { Observable, Subject, finalize } from 'rxjs';
 import Redis from 'ioredis';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
+import { REDIS_CLIENT } from '@shared/redis/redis.module';
 
 @Injectable()
 export class NotificationSseService implements OnModuleInit, OnModuleDestroy {

@@ -81,7 +81,7 @@ definePageMeta({ title: 'profile.title', requiresAuth: true });
 import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
-import { formatDate } from '@/utils/date';
+import { formatDate } from '@/shared/utils/date';
 import { getActivities } from '@/data/profile';
 import { notificationApi } from '@/api/notification';
 import { marketplaceApi } from '@/api/marketplace';

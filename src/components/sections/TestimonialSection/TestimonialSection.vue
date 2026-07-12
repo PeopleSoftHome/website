@@ -46,7 +46,7 @@
 import { ref, computed, onUnmounted } from 'vue';
 
 import { useCarousel } from '@/composables/useCarousel';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformTestimonials } from '@/api/transforms';
 import { getTestimonials } from '@/data/testimonials';
 

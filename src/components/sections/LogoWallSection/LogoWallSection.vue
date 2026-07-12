@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { getLogoFilters } from '@/data/logos';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import s from './LogoWallSection.module.css';

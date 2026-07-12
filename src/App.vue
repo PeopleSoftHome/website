@@ -40,11 +40,11 @@ import { useAbTest } from '@/composables/useAbTest';
 import { useRum } from '@/composables/useRum';
 import { useCookieConsent } from '@/composables/useCookieConsent';
 import { useCmsTranslations } from '@/composables/useCmsTranslations';
-import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useSiteConfig } from '@/shared/composables/useSiteConfig';
 import { useGlobalErrorReporter } from '@/composables/useGlobalErrorReporter';
 import { usePageMetaSync } from '@/composables/usePageMetaSync';
 import { usePrefetchModals } from '@/composables/usePrefetchModals';
-import { setDateLocale } from '@/utils/date';
+import { setDateLocale } from '@/shared/utils/date';
 import { useLifecycleAnalytics } from '@/composables/useLifecycleAnalytics';
 import { useGlobalRevealObserver } from '@/composables/useGlobalRevealObserver';
 

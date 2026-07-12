@@ -4,8 +4,8 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 
 @ApiTags('用户管理')

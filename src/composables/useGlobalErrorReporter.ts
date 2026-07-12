@@ -3,7 +3,7 @@
  * 仅在客户端生效，生产环境通过 sendBeacon/fetch 上报到 /analytics/client-errors
  */
 import { onErrorCaptured, onMounted, onUnmounted } from 'vue';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { ENDPOINTS } from '@/constants/endpoints';
 
 export function useGlobalErrorReporter() {

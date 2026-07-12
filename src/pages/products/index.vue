@@ -61,7 +61,7 @@ import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getProductList } from '@/data/products/list';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();

@@ -143,10 +143,12 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/"
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/apps/api/src/$1"
+      "^@/(.*)$": "<rootDir>/apps/api/src/$1",
+      "^@shared/(.*)$": "<rootDir>/libs/shared/src/$1"
     }
   },
   "overrides": {

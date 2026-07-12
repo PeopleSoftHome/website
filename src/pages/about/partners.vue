@@ -42,7 +42,7 @@ definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
 import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './partners.module.css';
 

@@ -3,7 +3,7 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentStatus, PaymentProvider, App, Order } from '@prisma/client';
 import { PaymentService } from './payment.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('PaymentService', () => {
   let service: PaymentService;

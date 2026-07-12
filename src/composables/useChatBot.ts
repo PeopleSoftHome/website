@@ -1,5 +1,5 @@
 import { ref, computed, onMounted, type Ref } from 'vue';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { usePublicConfig } from '@/composables/usePublicConfig';
 import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData';
 import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils';

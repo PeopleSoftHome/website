@@ -98,7 +98,7 @@ import { computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news';
 import { getNewsArticles } from '@/data/news';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });

@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthTokenService } from './auth-token.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response, Request } from 'express';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';

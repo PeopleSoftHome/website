@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { Public } from '@/common/decorators/public.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 import { CareersService } from './careers.service';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 

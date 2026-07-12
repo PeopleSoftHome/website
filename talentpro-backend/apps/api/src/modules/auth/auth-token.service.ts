@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { randomUUID } from 'crypto';
 import { TokenType } from '@prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 @Injectable()
 export class AuthTokenService {

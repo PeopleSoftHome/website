@@ -164,8 +164,8 @@ interface UserInfo {
 }
 
 import { useNavScroll } from '@/composables/useNavScroll';
-import { useNavigation } from '@/composables/useNavigation';
-import { useSiteConfig } from '@/composables/useSiteConfig';
+import { useNavigation } from '@/shared/composables/useNavigation';
+import { useSiteConfig } from '@/shared/composables/useSiteConfig';
 import { useThemeStore } from '@/stores/theme.pinia';
 import { useSearchStore } from '@/stores/search.pinia';
 import { useModalStore } from '@/stores/modal.pinia';

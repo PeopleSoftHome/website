@@ -100,7 +100,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
 import { getJobMap } from '@/data/jobs';

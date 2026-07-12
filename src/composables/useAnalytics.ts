@@ -5,7 +5,7 @@
  * 开发模式打印日志，生产模式写入 window.tp_analytics 队列。
  */
 import { ref, readonly } from 'vue';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
 import { getOrCreateSessionId } from '@/composables/useSessionId';

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { CommentStatus } from '@prisma/client';
 import { CommentCreatedEvent } from '../../events/comment-created.event';
 import { CommentModerationService } from './comment-moderation.service';
-import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
+import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
 @Injectable()
 export class BlogCommentService {

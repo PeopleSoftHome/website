@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { TokenType } from '@prisma/client';
 import { AuthTokenService } from './auth-token.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('AuthTokenService', () => {
   let service: AuthTokenService;

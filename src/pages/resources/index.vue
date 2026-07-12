@@ -91,7 +91,7 @@ import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { getResources, getResourceTypes, RESOURCE_TYPE_STYLES } from '@/data/resources';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();

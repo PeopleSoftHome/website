@@ -5,7 +5,7 @@ import { getQueueToken } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { LeadStatus, DemoBookingScale, LeadSource, DemoBooking } from '@prisma/client';
 import { LeadService } from './lead.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 
 describe('LeadService', () => {

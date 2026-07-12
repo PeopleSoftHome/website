@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { Public } from '@/common/decorators/public.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 import { AboutService } from './about.service';
 
 @ApiTags('了解我们')

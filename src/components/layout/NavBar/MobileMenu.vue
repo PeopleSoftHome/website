@@ -62,7 +62,7 @@
 import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import { useAuthStore } from '@/stores/auth.pinia';
-import { useNavigation } from '@/composables/useNavigation';
+import { useNavigation } from '@/shared/composables/useNavigation';
 import Icon from '../../ui/Icon/Icon.vue';
 import Button from '../../ui/Button/Button.vue';
 import s from './MobileMenu.module.css';

@@ -46,7 +46,7 @@ import { useModalStore } from '@/stores/modal.pinia';
 import { useAnalyticsStore } from '@/stores/analytics.pinia';
 import { INDUSTRY_KEY_MAP } from '@/i18n/keyMap';
 import { useTabs } from '@/composables/useTabs';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformIndustries } from '@/api/transforms';
 
 import SectionHeader from '../../ui/SectionHeader/SectionHeader.vue';

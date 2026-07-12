@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { WorkspaceService } from './workspace.service';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { InviteMemberDto } from './dto/invite-member.dto';

@@ -2,11 +2,11 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } f
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { ForumService } from './forum.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
-import { Public } from '@/common/decorators/public.decorator';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { UserContext } from '@/common/types';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
+import { Public } from '@shared/decorators/public.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { UserContext } from '@shared/types';
 
 import { CreateForumTopicDto } from './dto/create-forum-topic.dto';
 import { UpdateForumTopicDto } from './dto/update-forum-topic.dto';

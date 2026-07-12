@@ -60,7 +60,7 @@ definePageMeta({ title: 'careers.socialSubtitle', description: 'careers.subtitle
 import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './social.module.css';
 
 const { t } = useI18n();

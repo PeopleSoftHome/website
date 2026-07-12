@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 
 import RevealWrapper from '../../ui/RevealWrapper/RevealWrapper.vue';
 import StatItem from './StatItem.vue';

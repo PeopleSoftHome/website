@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { Cacheable } from '@/common/decorators/cache.decorator';
+import { Cacheable } from '@shared/decorators/cache.decorator';
 import { SystemService } from './system.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
-import { Public } from '@/common/decorators/public.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { UpsertSettingDto } from './dto/upsert-setting.dto';

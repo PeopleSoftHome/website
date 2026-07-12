@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import Redis, { Cluster } from 'ioredis';
 import { QueueModule, createBullRootOptions } from './queue.module';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
+import { REDIS_CLIENT } from '@shared/redis/redis.module';
 
 jest.mock('ioredis', () => {
   return {

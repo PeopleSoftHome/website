@@ -1,7 +1,5 @@
 /**
- * 后端 API 基础地址（fallback 默认值）
- *
- * 实际运行时由 Nuxt 3 runtimeConfig.public.apiBaseUrl 覆盖，
- * 插件位置：src/plugins/api-base-url.ts
+ * @deprecated 实际实现已迁移至 src/shared/api/baseUrl.ts，请优先从 @/shared/api/baseUrl 导入。
+ * 保留此文件作为兼容性 re-export。
  */
-export const API_BASE_URL = 'http://localhost:4000/api/v1';
+export { API_BASE_URL } from '@/shared/api/baseUrl';

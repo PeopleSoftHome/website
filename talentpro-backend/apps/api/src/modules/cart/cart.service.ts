@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import Redis from 'ioredis';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
+import { REDIS_CLIENT } from '@shared/redis/redis.module';
 
 const CART_TTL = 7 * 24 * 60 * 60; // 7 days
 

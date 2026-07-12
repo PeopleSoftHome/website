@@ -1,6 +1,6 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { workspaceStorage } from '../prisma/workspace.storage';
+import { workspaceStorage } from '@shared/prisma/workspace.storage';
 
 @Injectable()
 export class WorkspaceInterceptor implements NestInterceptor<unknown, unknown> {

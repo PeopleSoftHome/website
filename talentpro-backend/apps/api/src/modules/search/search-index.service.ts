@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import { MeiliSearch } from 'meilisearch';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { PostStatus } from '@prisma/client';
 import { MEILISEARCH_CLIENT } from '../meilisearch/meilisearch.module';
 import { SearchDocument } from './search.types';

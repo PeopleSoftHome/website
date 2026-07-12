@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MediaService } from './media.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MediaRepository } from './media.repository';
 import { StorageService } from './storage.service';
 import { NotFoundException } from '@nestjs/common';
 import { Media, User } from '@prisma/client';
-import { PaginatedResult } from '@/common/helpers/pagination.helper';
+import { PaginatedResult } from '@shared/helpers/pagination.helper';
 
 describe('MediaService', () => {
   let service: MediaService;

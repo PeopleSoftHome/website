@@ -14,9 +14,9 @@ import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { NotificationSseService } from './notification-sse.service';
 import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Public } from '@/common/decorators/public.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { Public } from '@shared/decorators/public.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 
 @ApiTags('通知中心')

@@ -4,7 +4,7 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
 

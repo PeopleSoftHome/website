@@ -52,8 +52,8 @@ import { computed } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog';
 import { renderMarkdown } from '@/utils/markdown';
-import { formatDate } from '@/utils/date';
-import { useJsonLd } from '@/utils/jsonld';
+import { formatDate } from '@/shared/utils/date';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { getBlogPostMap } from '@/data/blog';
 import s from './[slug].module.css';
 

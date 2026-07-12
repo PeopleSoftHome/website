@@ -1,9 +1,9 @@
 import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { DownloadService } from './download.service';
-import { Public } from '@/common/decorators/public.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreateDownloadRecordDto } from './dto/create-download-record.dto';
 

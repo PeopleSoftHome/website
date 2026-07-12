@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { CartService } from './cart.service';
 import { AddCartItemDto, UpdateCartItemDto } from './dto/cart-item.dto';
 

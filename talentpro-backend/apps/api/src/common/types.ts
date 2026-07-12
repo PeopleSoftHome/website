@@ -1,27 +1,5 @@
 /**
- * Shared common types used across the API layer.
+ * @deprecated 通用类型已迁移至 libs/shared/src/types，请优先从 @shared/types 导入。
+ * 保留此文件作为兼容性 re-export。
  */
-
-export interface UserPermission {
-  resource: string;
-  action: string;
-}
-
-export interface UserRoleContext {
-  name: string;
-  permissions?: UserPermission[];
-}
-
-/**
- * JWT-authenticated user payload attached to requests by Passport.
- */
-export interface UserContext {
-  id: string;
-  workspaceId?: string;
-  role?: UserRoleContext;
-}
-
-/**
- * Generic plain object shape for dynamic JSON/config fields.
- */
-export type JsonObject = Record<string, unknown>;
+export type { UserPermission, UserRoleContext, UserContext, JsonObject } from '@shared/types';

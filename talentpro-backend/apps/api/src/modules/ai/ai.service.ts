@@ -5,7 +5,7 @@ import { ChatMessage, StreamEvent, LlmProvider } from './ai.types';
 import { AiRagService } from './ai-rag.service';
 import { AiPromptService } from './ai-prompt.service';
 import { LlmProviderFactory } from './ai-provider.factory';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { MediaService } from '@/modules/media/media.service';
 import { AiGenerateImageDto } from './dto/ai-generate-image.dto';
 

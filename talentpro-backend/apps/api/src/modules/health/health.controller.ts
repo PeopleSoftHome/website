@@ -2,8 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService, PrismaHealthIndicator, MemoryHealthIndicator } from '@nestjs/terminus';
-import { Public } from '@/common/decorators/public.decorator';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { Public } from '@shared/decorators/public.decorator';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 @ApiTags('健康检查')
 @Controller('health')

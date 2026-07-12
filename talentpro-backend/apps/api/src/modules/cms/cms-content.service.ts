@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, ResourceType } from '@prisma/client';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { CmsContentRepository } from './cms-content.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';
 

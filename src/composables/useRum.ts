@@ -13,7 +13,7 @@
 import { onMounted, onUnmounted } from 'vue';
 import { onLCP, onINP, onCLS, onTTFB, onFCP } from 'web-vitals';
 import type { Metric } from 'web-vitals';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
 import { getOrCreateSessionId } from '@/composables/useSessionId';

@@ -95,7 +95,7 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { caseApi } from '@/api/case';
 import { getCases, getCaseIndustries } from '@/data/cases';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import { coverStyle } from '@/utils/coverStyle';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';

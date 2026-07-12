@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ExperimentService } from './experiment.service';
-import { Public } from '@/common/decorators/public.decorator';
+import { Public } from '@shared/decorators/public.decorator';
 import { RolesGuard } from '@/common/guards/roles.guard';
-import { Roles } from '@/common/decorators/roles.decorator';
-import { Permission } from '@/common/decorators/permission.decorator';
+import { Roles } from '@shared/decorators/roles.decorator';
+import { Permission } from '@shared/decorators/permission.decorator';
 import { CreateExperimentDto } from './dto/create-experiment.dto';
 import { UpdateExperimentStatusDto } from './dto/update-experiment-status.dto';
 import { RecordExperimentEventDto } from './dto/record-experiment-event.dto';

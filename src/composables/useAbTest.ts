@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue';
-import { apiClient } from '@/api/client';
+import { apiClient } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
 import { getOrCreateSessionId } from '@/composables/useSessionId';

@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue';
 import { useVideoModalStore } from '@/stores/videoModal.pinia';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';

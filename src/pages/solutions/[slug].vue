@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPainCompare.vue';

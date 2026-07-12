@@ -5,7 +5,7 @@ import { ForumTopic } from '@prisma/client';
 import { ForumTopicService } from './forum-topic.service';
 import { ForumCategoryRepository } from './forum-category.repository';
 import { ForumTopicRepository } from './forum-topic.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('ForumTopicService', () => {
   let service: ForumTopicService;

@@ -78,7 +78,7 @@
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
 import { computed, ref } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news';

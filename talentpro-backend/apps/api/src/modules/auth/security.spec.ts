@@ -3,8 +3,8 @@ import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 
 // Mock passport AuthGuard so JwtAuthGuard.canActivate can focus on blacklist logic

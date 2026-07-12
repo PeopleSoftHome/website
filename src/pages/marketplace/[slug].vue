@@ -116,7 +116,7 @@ import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
 import { getMarketplaceApps, getMarketplaceAppMap, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, paymentApi, cartApi, transformMarketplaceApp, type MarketplaceApp } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
-import { useJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });

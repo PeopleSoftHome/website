@@ -5,7 +5,7 @@ import { PostStatus, BlogPost, Comment } from '@prisma/client';
 import { BlogPostService } from './blog-post.service';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
-import { PrismaService } from '@/common/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('BlogPostService', () => {
   let service: BlogPostService;

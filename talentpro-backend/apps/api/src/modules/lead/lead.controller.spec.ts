@@ -5,7 +5,7 @@ import { LeadController } from './lead.controller';
 import { LeadService } from './lead.service';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
-import { UserContext } from '@/common/types';
+import { UserContext } from '@shared/types';
 import { PaginationDto } from '@/common/dto/pagination.dto';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadStatusDto } from './dto/update-lead-status.dto';

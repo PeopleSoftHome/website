@@ -1,13 +1,5 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserContext } from '../types';
-
-export const currentUserFactory = (
-  data: keyof UserContext | undefined,
-  ctx: ExecutionContext,
-) => {
-  const request = ctx.switchToHttp().getRequest();
-  const user = request.user as UserContext | undefined;
-  return data ? user?.[data] : user;
-};
-
-export const CurrentUser = createParamDecorator(currentUserFactory);
+/**
+ * @deprecated 已迁移至 libs/shared/src/decorators，请优先从 @shared/decorators 导入。
+ * 保留此文件作为兼容性 re-export。
+ */
+export { currentUserFactory, CurrentUser } from '@shared/decorators/current-user.decorator';

@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { useTabs } from '@/composables/useTabs';
-import { useCmsDataByKey } from '@/composables/useCmsData';
+import { useCmsDataByKey } from '@/shared/cms/useCmsData';
 import { transformWhyUsTabs } from '@/api/transforms';
 import { getStatsBar } from '@/data/whyUs';
 import { getSecurityCerts } from '@/data/security';

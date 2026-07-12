@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
-import { PrismaService } from '@/common/prisma/prisma.service';
-import { hashEmail } from '@/common/prisma/email-hash.util';
+import { PrismaService } from '@shared/prisma/prisma.service';
+import { hashEmail } from '@shared/prisma/email-hash.util';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashed-password'),

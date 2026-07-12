@@ -3,6 +3,6 @@
  * 包装 useTheme composable 为全局单例 Store
  */
 import { defineStore } from 'pinia';
-import { useTheme } from '@/composables/useTheme';
+import { useTheme } from '@/shared/composables/useTheme';
 
 export const useThemeStore = defineStore('theme', () => useTheme());
