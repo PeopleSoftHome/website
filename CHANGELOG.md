@@ -1,5 +1,15 @@
 # Changelog
 
+## [v4.3.1] - 2026-07-06 (项目整理与重构)
+
+### 🧹 项目整理
+
+- **代码复用层**: 前端建立 `src/shared/`，后端建立 `libs/shared/`，将 API 客户端、CMS 数据层、认证/主题/搜索、CRUD 仓库、Prisma 扩展等可复用能力显性化
+- **死代码清理**: 删除未引用组件 `AppCard`、未使用模块 `manifest-loader`、`module-loader`，合并后端重复 `SearchDocument` 定义
+- **依赖治理**: 移除 `vite-plugin-checker`、`rollup-plugin-visualizer`、`vite-plugin-pwa` 等未使用/重复依赖；将 `happy-dom` 归位到 `talentpro-admin`
+- **目录重构**: 归档 `MEMORY.md`、`app-marketplace-plan.md`、根目录 `project-plan.md`、`website_架构与产品评估报告.md`；合并重复项目计划文档
+- **文档整理**: 统一 README 与 docs 版本号为 v4.3.0；新增 `environment-variables.md`、`admin-components.md`、`reusable-assets.md`、`section-registry-sync.md`、`i18n-guide.md`
+
 ## [v4.3.0] - 2026-07-05 (技术债清零 + 高价值迭代)
 
 ### 🐛 缺陷修复
