@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateSensitiveWordDto {
   @IsString()
-  word: string;
+  word!: string;
 
   @IsOptional()
   @IsString()

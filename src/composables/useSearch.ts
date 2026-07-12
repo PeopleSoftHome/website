@@ -142,6 +142,7 @@ export function useSearch(onClose?: (() => void) | undefined) {
 
   /* ── 跳转到 Section ── */
   const goToSection = (sectionId: string) => {
+    if (typeof document === 'undefined') return;
     const el = document.getElementById(sectionId);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };

@@ -1,13 +1,88 @@
 import { defineNuxtConfig } from 'nuxt/config';
+import { getBlogPosts } from './src/data/blog';
+import { getCases } from './src/data/cases';
+import { getNewsArticles } from './src/data/news';
+import { getResources } from './src/data/resources';
+import { getMarketplaceApps } from './src/data/marketplace';
+import { getIndustryMap } from './src/data/industries/map';
+import { getForumTopics } from './src/data/forum';
+import { getJobs } from './src/data/jobs';
+
+/**
+ * 构建动态路由全量预渲染列表
+ * 优先使用 src/data/ 静态 fallback 数据，不依赖后端 API
+ * 兼容 i18n prefix_except_default 策略：zh 无前缀，en / zh-TW 有前缀
+ */
+function buildPrerenderRoutes(): string[] {
+  // products/list.ts 顶层导入 Vue 组件，无法在 Node 构建期直接导入；
+  // slug 列表由 lightweight 产品数据推导，与 list.ts 保持一致
+  const PRODUCT_SLUGS = [
+    'recruit', 'performance', 'org', 'attendance', 'payroll', 'learning', 'talent', 'analytics',
+    'ai-recruit', 'ai-interview', 'ai-coach', 'ai-course',
+    'assess-recruit', 'assess-360', 'assess-exam', 'assess-model',
+    'paas-lowcode', 'paas-api', 'paas-eco', 'paas-sec',
+  ];
+
+  const locales = [
+    { code: 'zh', prefix: '' },
+    { code: 'en', prefix: '/en' },
+    { code: 'zh-TW', prefix: '/zh-TW' },
+  ];
+
+  const routes: string[] = [];
+
+  for (const { code, prefix } of locales) {
+    const dataLocale = code === 'en' ? 'en' : 'zh';
+
+    getBlogPosts(dataLocale).forEach((p) => routes.push(`${prefix}/blog/${p.slug}`));
+    getCases(dataLocale).forEach((c) => routes.push(`${prefix}/cases/${c.slug}`));
+    getNewsArticles(dataLocale).forEach((n) => routes.push(`${prefix}/news/${n.slug}`));
+    getResources(dataLocale).forEach((r) => routes.push(`${prefix}/resources/${r.slug}`));
+    getMarketplaceApps(dataLocale).forEach((app) => routes.push(`${prefix}/marketplace/${app.slug}`));
+    Object.keys(getIndustryMap(dataLocale)).forEach((slug) => routes.push(`${prefix}/solutions/${slug}`));
+    PRODUCT_SLUGS.forEach((slug) => routes.push(`${prefix}/products/${slug}`));
+    getForumTopics(dataLocale).forEach((t) => routes.push(`${prefix}/forum/topic/${t.id}`));
+    getJobs(dataLocale).forEach((j) => routes.push(`${prefix}/careers/${j.id}`));
+  }
+
+  return routes;
+}
+
+function getApiOrigin(): string {
+  try {
+    return new URL(process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1').origin;
+  } catch {
+    return 'http://localhost:4000';
+  }
+}
+
+function buildCsp(): string {
+  const appEnv = process.env.NUXT_PUBLIC_APP_ENV || 'development';
+  const apiOrigin = getApiOrigin();
+  const connectSrc = new Set(["'self'", apiOrigin]);
+  if (appEnv === 'development') {
+    connectSrc.add('http://localhost:4000');
+    connectSrc.add('http://127.0.0.1:4000');
+  }
+  const sentryDsn = process.env.NUXT_PUBLIC_SENTRY_DSN || '';
+  if (sentryDsn) {
+    try {
+      connectSrc.add(new URL(sentryDsn).origin);
+    } catch {
+      // ignore invalid DSN
+    }
+  }
+  return `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src ${Array.from(connectSrc).join(' ')}; frame-src 'none'; object-src 'none'; base-uri 'self';`;
+}
 
 export default defineNuxtConfig({
   // ── 源码目录 ──
   srcDir: 'src',
 
   // ── 渲染模式 ──
-  // 开发：SPA 模式（减少开发摩擦）
-  // 生产构建：由 nitro.preset 控制，当前使用 static（SSG）
-  ssr: false,
+  // 生产构建使用 static preset 生成真实 SSG；开发同样走 SSR 渲染，
+  // 保证 SSR 不兼容代码在开发阶段即可暴露。
+  ssr: true,
 
   // ── 运行时配置 ──
   runtimeConfig: {
@@ -51,7 +126,7 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'static',
     prerender: {
-      routes: ['/'],
+      routes: buildPrerenderRoutes(),
       crawlLinks: true,
     },
     // 注：Nuxt 4 + static preset + Windows 下 compressPublicAssets 与资源复制存在竞态，
@@ -122,10 +197,31 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      // 仅预缓存核心资源，避免全部 HTML 页面进入 precache 导致首次 SW 安装过大。
+      globPatterns: ['offline.html', 'icon-*.png', '**/*.{js,css}'],
       navigateFallback: '/offline.html',
       navigateFallbackDenylist: [/^\/api\//, /^\/.well-known/],
       runtimeCaching: [
+        {
+          // 本地字体运行时缓存
+          urlPattern: /.*\/fonts\/.*\.(woff2?|ttf|otf)$/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'local-fonts-cache',
+            expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
+        {
+          // 页面 HTML 运行时缓存，首次访问后支持离线
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'pages-cache',
+            expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            cacheableResponse: { statuses: [0, 200] },
+          },
+        },
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
           handler: 'CacheFirst',
@@ -202,7 +298,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案' },
         {
           'http-equiv': 'Content-Security-Policy',
-          content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 https://*.sentry.io; frame-src 'none'; object-src 'none'; base-uri 'self';",
+          content: buildCsp(),
         },
       ],
       link: [

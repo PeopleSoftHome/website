@@ -116,13 +116,53 @@ import { Cache } from 'cache-manager';
 - [ ] 缓存命中率在切换前后波动 < 5%。
 - [ ] 购物车在 TTL 周期内数据保持一致。
 
+### 2.7 Sentinel 故障切换自动化演练
+
+项目已提供本地一键演练环境，用于验证 BullMQ 在 Redis 主从切换时队列消费不中断。
+
+**启动演练环境**：
+
+```bash
+cd talentpro-backend
+docker compose -f ../docker/docker-compose.redis-sentinel.yml up -d
+```
+
+**运行演练脚本**：
+
+```bash
+node scripts/redis-bullmq-failover-drill.cjs
+```
+
+脚本行为：
+
+1. 通过 Sentinel 连接 Redis 并启动 BullMQ Worker；
+2. 投递前半段任务；
+3. 停止 `redis-master` 容器触发故障转移；
+4. 等待 Sentinel 选举新主节点；
+5. 投递后半段任务；
+6. 验证全部任务被消费，无丢失。
+
+**预期结果**：
+
+```text
+✅ Redis/BullMQ failover drill passed: all jobs processed without data loss.
+```
+
+**清理环境**：
+
+```bash
+docker compose -f ../docker/docker-compose.redis-sentinel.yml down
+```
+
 ---
 
 ## 3. Meilisearch 高可用配置
 
+> **重要提示**：与 Redis 不同，应用代码**不感知 Meilisearch 拓扑**。Meilisearch 的高可用完全依赖基础设施层（反向代理、主从复制、多实例负载、快照备份）实现。以下方案均为运维层配置建议，应用侧仅通过单一 `MEILISEARCH_HOST` 接入，由基础设施负责路由与故障转移。
+
 ### 3.1 部署形态
 
-Meilisearch 官方目前为**单进程 + 单写**架构，高可用通常通过以下方式实现：
+Meilisearch 官方目前为**单进程 + 单写**架构，应用代码不内置集群发现或多实例路由能力。高可用通常通过以下方式实现：
 
 | 方案 | 说明 | 适用场景 |
 |------|------|---------|

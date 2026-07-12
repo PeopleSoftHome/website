@@ -3,18 +3,18 @@ import { Type } from 'class-transformer';
 
 class SectionOrderItem {
   @IsString()
-  id: string;
+  id!: string;
 
   @IsNumber()
-  sortOrder: number;
+  sortOrder!: number;
 
   @IsBoolean()
-  isActive: boolean;
+  isActive!: boolean;
 }
 
 export class BatchUpdateSectionsDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SectionOrderItem)
-  sections: SectionOrderItem[];
+  sections!: SectionOrderItem[];
 }

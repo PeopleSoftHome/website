@@ -47,7 +47,7 @@
 .hotTitle {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-on-dark-tertiary);
+  color: var(--text-on-dark-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 10px;
@@ -101,7 +101,7 @@
   padding-top: 24px;
   border-top: 1px solid var(--surface-on-dark-hover);
   font-size: 12px;
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-dark-muted);
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -111,7 +111,7 @@
   gap: 20px;
 }
 .bottomLinks a {
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-dark-muted);
   transition: color 0.2s;
 }
 .bottomLinks a:hover { color: var(--text-on-dark-secondary); }
@@ -130,9 +130,9 @@
   gap: 6px;
 }
 
-.qrItem span {
+ .qrItem span {
   font-size: 11px;
-  color: var(--text-on-dark-tertiary);
+  color: var(--text-on-dark-muted);
   white-space: nowrap;
 }
 

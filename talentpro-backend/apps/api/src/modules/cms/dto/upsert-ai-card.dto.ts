@@ -2,13 +2,13 @@ import { IsString, IsOptional, IsArray, IsInt } from 'class-validator';
 
 export class UpsertAiCardDto {
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  tagline: string;
+  tagline!: string;
 
   @IsOptional()
   @IsString()

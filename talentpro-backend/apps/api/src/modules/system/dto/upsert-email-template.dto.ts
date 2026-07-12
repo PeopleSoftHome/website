@@ -2,13 +2,13 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class UpsertEmailTemplateDto {
   @IsString()
-  key: string;
+  key!: string;
 
   @IsString()
-  subject: string;
+  subject!: string;
 
   @IsString()
-  body: string;
+  body!: string;
 
   @IsOptional()
   @IsString()

@@ -8,7 +8,7 @@
           ref="uploadRef"
           drag
           action="/api/v1/medias/upload"
-          :headers="uploadHeaders"
+          :with-credentials="true"
           :on-success="handleUploadSuccess"
           :on-error="handleUploadError"
           :before-upload="beforeUpload"
@@ -83,18 +83,13 @@ import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/CmsTable.vue';
 import Picture from '@/components/Picture.vue';
 import client from '@/api/client.js';
-import { useAuthStore } from '@/stores/auth.js';
 
 const { t } = useI18n();
 
-const auth = useAuthStore();
 const uploadRef = ref(null);
 const tableRef = ref(null);
 const stats = ref(null);
 
-const uploadHeaders = ref({
-  Authorization: auth.token ? `Bearer ${auth.token}` : '',
-});
 
 const columns = [
   { prop: 'url', label: t('media.preview'), width: 100 },

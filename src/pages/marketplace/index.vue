@@ -85,12 +85,12 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'marketplace.title', description: 'marketplace.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getMarketplaceApps, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, transformMarketplaceApp, transformMarketplaceCategory, type MarketplaceApp, type MarketplaceCategory } from '@/api/marketplace';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
@@ -112,19 +112,19 @@ const { data: apiCategories, error: categoriesError } = useAsyncData('marketplac
   const res = await marketplaceApi.getCategories();
   const list = (res?.data?.data || res?.data || res || []) as any[];
   return list.map(transformMarketplaceCategory).filter((c) => c.slug);
-}, { server: false, default: () => [] as MarketplaceCategory[] });
+}, { default: () => [] as MarketplaceCategory[] });
 
 const { data: apiApps, error: appsError } = useAsyncData('marketplace-apps', async () => {
   const res = await marketplaceApi.getApps({ pageSize: 100 });
   const list = (res?.data?.data || res?.data || res || []) as any[];
   return list.map(transformMarketplaceApp);
-}, { server: false, default: () => [] as MarketplaceApp[] });
+}, { default: () => [] as MarketplaceApp[] });
 
 const { data: apiFeatured, error: featuredError } = useAsyncData('marketplace-featured', async () => {
   const res = await marketplaceApi.getFeaturedApps();
   const list = (res?.data || res || []) as any[];
   return list.map(transformMarketplaceApp);
-}, { server: false, default: () => [] as MarketplaceApp[] });
+}, { default: () => [] as MarketplaceApp[] });
 
 const fallbackCategories = computed(() => getMarketplaceCategories(locale.value));
 const fallbackApps = computed(() => getMarketplaceApps(locale.value));
@@ -189,15 +189,12 @@ const formatInstallCount = (n: number) => {
   return String(n);
 };
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: t('marketplace.jsonLdName'),
-    itemListElement: appList.value.slice(0, 8).map((app, i) => ({
-      '@type': 'ListItem', position: i + 1, name: app.name, description: app.tagline,
-    })),
-  });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: t('marketplace.jsonLdName'),
+  itemListElement: appList.value.slice(0, 8).map((app, i) => ({
+    '@type': 'ListItem', position: i + 1, name: app.name, description: app.tagline,
+  })),
+})));
 </script>

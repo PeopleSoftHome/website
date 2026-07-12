@@ -51,6 +51,7 @@ export function useCarousel(itemCount: number, { autoPlayInterval = 4500 }: UseC
 
   // ── resize 防抖 200ms ──
   const onResize = () => {
+    if (typeof window === 'undefined') return;
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       const max = Math.max(0, itemCount - getColCount());

@@ -26,11 +26,19 @@ for (const pageConfig of pages) {
     test.setTimeout(120000);
     await page.goto(pageConfig.path);
     await waitForAppReady(page);
+    // 禁用 reveal / card 入场动效，避免扫描时元素处于半透明状态导致 color-contrast 误报
+    await page.addStyleTag({
+      content: `
+        * { animation: none !important; transition: none !important; }
+        .reveal, .reveal.is-visible { opacity: 1 !important; transform: none !important; }
+      `,
+    });
+    await page.waitForTimeout(200);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
       .exclude('.skip-link') // Skip Link 在焦点前不可见，axe 可能误判
-      .disableRules(['color-contrast']) // 营销站设计系统大量使用浅灰次要文字，1700+ violations 属于已知设计取舍
+      // color-contrast 已修复：--gray-400 从 #94A3B8 调整为 #64748B，满足 WCAG 2.1 AA
       .analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);
@@ -41,6 +49,14 @@ test('A11y: DemoModal should be accessible when opened', async ({ page }) => {
   test.setTimeout(120000);
   await page.goto('/');
   await waitForAppReady(page);
+  // 禁用 reveal / card 入场动效，避免扫描时元素处于半透明状态导致 color-contrast 误报
+  await page.addStyleTag({
+    content: `
+      * { animation: none !important; transition: none !important; }
+      .reveal, .reveal.is-visible { opacity: 1 !important; transform: none !important; }
+    `,
+  });
+  await page.waitForTimeout(200);
 
   // 打开预约演示弹窗
   const demoBtn = page.locator('header').getByText(/预约演示|预约/).first();
@@ -60,6 +76,14 @@ test('A11y: Dark mode should maintain color contrast', async ({ page }) => {
   test.setTimeout(120000);
   await page.goto('/');
   await waitForAppReady(page);
+  // 禁用 reveal / card 入场动效，避免扫描时元素处于半透明状态导致 color-contrast 误报
+  await page.addStyleTag({
+    content: `
+      * { animation: none !important; transition: none !important; }
+      .reveal, .reveal.is-visible { opacity: 1 !important; transform: none !important; }
+    `,
+  });
+  await page.waitForTimeout(200);
 
   // 切换暗色模式
   const themeBtn = page.locator('[data-testid="theme-toggle"], [aria-label*="theme"], [aria-label*="主题"]').first();

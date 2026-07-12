@@ -2,10 +2,10 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreateBlogCategoryDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsOptional()
   @IsString()

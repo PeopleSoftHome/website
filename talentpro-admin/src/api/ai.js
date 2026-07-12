@@ -12,4 +12,8 @@ export const aiApi = {
   adminChat(data) {
     return client.post('/ai/admin/chat', data);
   },
+
+  getProviderStatus() {
+    return client.get('/ai/provider-status');
+  },
 };

@@ -2,6 +2,7 @@ import { Injectable, ConflictException, ForbiddenException } from '@nestjs/commo
 import { WorkspaceStatus } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 
 @Injectable()
 export class WorkspaceService {
@@ -68,7 +69,7 @@ export class WorkspaceService {
     }
 
     const invitee = await this.prisma.user.findFirst({
-      where: { email: inviteeEmail },
+      where: { emailHash: hashEmail(inviteeEmail) },
     });
 
     // 被邀请人已注册：直接加入工作空间

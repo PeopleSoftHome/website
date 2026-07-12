@@ -24,7 +24,7 @@
             </div>
           </div>
           <div :class="s.heroVisual" :style="{background:product.iconBg||'var(--primary-light)',color:product.iconColor||'var(--primary)'}">
-            <component :is="product.icon" v-if="product.icon" />
+            <component :is="productIcon" v-if="productIcon" />
             <span v-else>{{ product.name.charAt(0) }}</span>
           </div>
         </div>
@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
@@ -103,19 +103,21 @@ import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeat
 import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScenarioTabs.vue';
 import { getProductMap } from '@/data/products/map';
 import { cmsApi } from '@/api/cms';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 function mergeProduct(cms: any, fallback: any) {
   if (!cms && !fallback) return null;
   const base = fallback || {};
+  // 注意：fallback.icon 是 Vue 组件函数，无法被 SSR payload 序列化，
+  // 因此从 useAsyncData 返回值中排除，改为通过 productIcon computed 读取。
+  const { icon: _fallbackIcon, ...serializableBase } = base;
   return {
-    ...base,
+    ...serializableBase,
     ...cms,
     name: cms?.name ?? base.name,
     tagline: cms?.tagline ?? base.tagline,
     desc: cms?.description ?? base.desc,
-    icon: base.icon || cms?.icon,
     iconBg: base.iconBg || cms?.iconBg,
     iconColor: base.iconColor || cms?.iconColor,
     tabLabel: base.tabLabel || cms?.tabLabel,
@@ -157,9 +159,10 @@ const { data: product } = useAsyncData(
     if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true });
     }
-    return fallback;
+    const { icon: _fallbackIcon, ...serializableFallback } = fallback;
+    return serializableFallback;
   },
-  { server: false, default: () => null, watch: [slugStr, locale] }
+  { default: () => null, watch: [slugStr, locale] }
 );
 
 useHead(() => {
@@ -177,6 +180,11 @@ useHead(() => {
   };
 });
 
+const productIcon = computed(() => {
+  const key = slugStr.value || '';
+  return (productMap.value as Record<string, any>)[key]?.icon;
+});
+
 const relatedProducts = computed(() => {
   if (!product.value?.related) return [];
   return product.value.related.map((s: string) => (productMap.value as Record<string, any>)[s]).filter(Boolean);
@@ -187,19 +195,16 @@ const scrollRelated = (dir: number) => {
   relatedRef.value.scrollBy({ left: dir * 280, behavior: 'smooth' });
 };
 
-onMounted(() => {
-  watch(product, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'Product',
-        name: val.name,
-        description: val.tagline,
-        brand: { '@type': 'Brand', name: 'TalentPro' },
-        offers: { '@type': 'Offer', availability: 'https://schema.org/InStock' },
-      });
-    }
-  }, { immediate: true });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = product.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: val.name,
+    description: val.tagline,
+    brand: { '@type': 'Brand', name: 'TalentPro' },
+    offers: { '@type': 'Offer', availability: 'https://schema.org/InStock' },
+  };
+}));
 </script>

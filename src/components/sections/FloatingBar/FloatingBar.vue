@@ -47,5 +47,8 @@ const { showBackTop } = useNavScroll();
 const modalStore = useModalStore();
 const { t } = useI18n();
 
-const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+const scrollToTop = () => {
+  if (typeof window === 'undefined') return;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 </script>

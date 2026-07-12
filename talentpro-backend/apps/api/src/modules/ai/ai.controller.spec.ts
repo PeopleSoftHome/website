@@ -24,6 +24,7 @@ describe('AiController', () => {
             appendChatMessage: jest.fn(),
             generateImage: jest.fn(),
             adminChat: jest.fn(),
+            getProviderStatus: jest.fn(),
           },
         },
         {
@@ -169,6 +170,21 @@ describe('AiController', () => {
       await controller.adminChat({ message: 'help' });
 
       expect(aiService.adminChat).toHaveBeenCalledWith('help', [], undefined);
+    });
+  });
+
+  describe('GET /ai/provider-status', () => {
+    it('should delegate to getProviderStatus', async () => {
+      const status = [
+        { provider: 'openai', configured: true, active: true },
+        { provider: 'azure', configured: false, active: false },
+      ];
+      (aiService.getProviderStatus as jest.Mock).mockReturnValue(status);
+
+      const result = controller.getProviderStatus();
+
+      expect(aiService.getProviderStatus).toHaveBeenCalled();
+      expect(result).toEqual(status);
     });
   });
 });

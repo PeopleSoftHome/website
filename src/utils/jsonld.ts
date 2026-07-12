@@ -1,13 +1,15 @@
-/**
- * JSON-LD 结构化数据注入工具
- * 用于 SPA 路由切换时动态注入/移除 schema.org 标记
- */
+import { computed, toValue } from 'vue';
+import type { MaybeRefOrGetter } from 'vue';
+import { useHead } from '#imports';
 
 const SCRIPT_ID = 'dynamic-jsonld';
 
+/**
+ * @deprecated Use `useJsonLd()` in `<script setup>` instead.
+ * Client-only helper kept for any external callers.
+ */
 export function injectJsonLd(schema: unknown) {
   if (typeof document === 'undefined') return;
-  // 开发环境也注入，便于调试
 
   let el = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
   if (!el) {
@@ -19,8 +21,36 @@ export function injectJsonLd(schema: unknown) {
   el.textContent = JSON.stringify(schema);
 }
 
+/**
+ * @deprecated Use `useJsonLd()` in `<script setup>` instead.
+ * Client-only helper kept for any external callers.
+ */
 export function removeJsonLd() {
   if (typeof document === 'undefined') return;
   const el = document.getElementById(SCRIPT_ID);
   if (el) el.remove();
+}
+
+/**
+ * SSR-safe composable that renders JSON-LD via Nuxt `useHead`.
+ * Pass a static schema, a ref, or a getter. The script is removed automatically
+ * when the resolved schema becomes null/undefined.
+ */
+export function useJsonLd(schemaOrGetter: MaybeRefOrGetter<unknown | null | undefined>) {
+  const schema = computed(() => toValue(schemaOrGetter));
+
+  useHead(() => {
+    const value = schema.value;
+    if (!value) return {};
+
+    return {
+      script: [
+        {
+          key: 'jsonld',
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify(value),
+        },
+      ],
+    };
+  });
 }

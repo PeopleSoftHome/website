@@ -61,10 +61,10 @@ export const RESOURCE_TYPES_EN: ResourceType[] = [
 ];
 
 export const RESOURCE_TYPE_STYLES = {
-  report:          { bg: '#FFF7ED', color: '#EA580C' },  // 橙
-  case:            { bg: '#F0FDF4', color: '#16A34A' },  // 绿
+  report:          { bg: '#FFF7ED', color: '#C2410C' },  // 深橙，满足 WCAG AA
+  case:            { bg: '#F0FDF4', color: '#15803D' },  // 深绿，满足 WCAG AA
   article:         { bg: '#EBF1FF', color: '#1B5FEB' },  // 蓝
-  guide:           { bg: '#F0F9FF', color: '#0284C7' },  // 天蓝
+  guide:           { bg: '#F0F9FF', color: '#0369A1' },  // 天蓝，满足 WCAG AA
   video:           { bg: '#FDF4FF', color: '#7C3AED' },  // 紫
   'product-manual':{ bg: '#F0FDF4', color: '#15803D' },  // 深绿
   troubleshooting: { bg: '#FFF7ED', color: '#C2410C' },  // 深橙

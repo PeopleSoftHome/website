@@ -11,7 +11,7 @@ import { REDIS_CLIENT } from '@/common/redis/redis.module';
 
 @Injectable()
 export class NotificationSseService implements OnModuleInit, OnModuleDestroy {
-  private subscriber: Redis;
+  private subscriber!: Redis;
   private userStreams = new Map<string, Subject<MessageEvent>>();
 
   constructor(@Inject(REDIS_CLIENT) private redis: Redis) {}

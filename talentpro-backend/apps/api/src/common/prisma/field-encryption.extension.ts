@@ -2,6 +2,7 @@
 // Prisma $extends query callbacks are inherently dynamic: args/query shapes vary per model.
 import { Prisma } from '@prisma/client';
 import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+import { hashEmail } from './email-hash.util';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
@@ -11,17 +12,25 @@ const PREFIX = 'enc:';
  * PII 字段级加密配置
  * 模型名 -> 需要加密的字段列表
  *
- * 注意：被用于 where 等式查询的字段（如 User.email、WorkspaceInvite.email）
- * 目前未列入，因为当前实现使用随机 IV 加密，无法直接支持等值查询。
- * 后续如需加密这些字段，应引入确定性加密或增加 hash 查询列。
+ * 注：User.email / WorkspaceInvite.email 通过增加 HMAC-SHA256 hash 列支持等值查询。
  */
 export const ENCRYPTED_FIELDS: Record<string, string[]> = {
-  User: ['phone'],
+  User: ['phone', 'email'],
+  WorkspaceInvite: ['email'],
   DemoBooking: ['phone', 'email'],
   DownloadRecord: ['email', 'phone'],
   JobApplication: ['email', 'phone', 'resumeUrl'],
   AppVendor: ['contactEmail', 'contactPhone'],
   TeamMember: ['email'],
+};
+
+/**
+ * 需要额外维护 hash 索引列的字段映射
+ * 模型名 -> { 原字段: hash 字段名 }
+ */
+const HASHED_FIELDS: Record<string, Record<string, string>> = {
+  User: { email: 'emailHash' },
+  WorkspaceInvite: { email: 'emailHash' },
 };
 
 function deriveKey(secret: string): Buffer {
@@ -87,6 +96,18 @@ export function fieldEncryptionExtension(secret: string) {
     if (!fields || !data || typeof data !== 'object') return data;
 
     const encrypted = { ...data };
+
+    // 1) 先为需要 hash 索引的字段计算 HMAC（在加密前基于明文计算）
+    const hashedFields = HASHED_FIELDS[model];
+    if (hashedFields) {
+      for (const [plainField, hashField] of Object.entries(hashedFields)) {
+        if (plainField in encrypted && encrypted[plainField] != null && typeof encrypted[plainField] === 'string') {
+          encrypted[hashField] = hashEmail(encrypted[plainField]);
+        }
+      }
+    }
+
+    // 2) 再加密 PII 字段
     for (const field of fields) {
       if (field in encrypted && encrypted[field] != null) {
         encrypted[field] = encryptValue(encrypted[field]);

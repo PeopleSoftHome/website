@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateCategoryDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsOptional()
   @IsString()

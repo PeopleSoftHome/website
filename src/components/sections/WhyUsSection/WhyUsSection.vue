@@ -76,7 +76,7 @@ interface StatsBarItem {
   label: string;
 }
 
-const { t, locale } = useI18n();
+const { t, tm, locale } = useI18n();
 const { activeIndex, selectTab } = useTabs(0);
 
 const STATS_BAR = computed(() => getStatsBar(locale.value));
@@ -97,8 +97,8 @@ const currentTabId = computed(() => tabs.value[activeIndex.value]?.id || 'produc
 const currentMetrics = computed<WhyUsMetric[]>(() => {
   const apiTab = apiTabs.value[activeIndex.value];
   if (apiTab?.metrics?.length) return apiTab.metrics;
-  const i18nMetrics = t(`whyUs.metrics.${currentTabId.value}`) as unknown as WhyUsMetric[];
-  return i18nMetrics || [];
+  const i18nMetrics = tm(`whyUs.metrics.${currentTabId.value}`) as unknown as WhyUsMetric[];
+  return (Array.isArray(i18nMetrics) ? i18nMetrics : []) as WhyUsMetric[];
 });
 
 const barRefs: (Element | null)[] = [];

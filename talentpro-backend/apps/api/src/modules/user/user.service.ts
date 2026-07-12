@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { getSkip, buildPaginatedResponse } from '@/common/helpers/pagination.helper';
@@ -43,7 +44,7 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     const existing = await this.prisma.user.findFirst({
-      where: { email: dto.email },
+      where: { emailHash: hashEmail(dto.email) },
     });
     if (existing) throw new ConflictException('Email already registered');
 
@@ -78,13 +79,18 @@ export class UserService {
   }
 
   async search(q: string, limit = 10) {
+    const orConditions: Prisma.UserWhereInput[] = [
+      { name: { contains: q, mode: 'insensitive' } },
+    ];
+    // email 已加密存储，无法做模糊匹配；若查询串像邮箱则按 HMAC 哈希精确匹配
+    if (q.includes('@')) {
+      orConditions.push({ emailHash: hashEmail(q) });
+    }
+
     const users = await this.prisma.user.findMany({
       where: {
         status: 'ACTIVE',
-        OR: [
-          { name: { contains: q, mode: 'insensitive' } },
-          { email: { contains: q, mode: 'insensitive' } },
-        ],
+        OR: orConditions,
       },
       select: { id: true, name: true, email: true, avatar: true },
       take: limit,

@@ -1,0 +1,87 @@
+# Redis Sentinel 本地故障切换演练环境
+# 1 主 + 1 从 + 3 Sentinel，用于验证 BullMQ 在 Redis 主从切换时队列消费不中断。
+#
+# 启动：docker compose -f docker/redis-ha/docker-compose.yml up -d
+# 停止：docker compose -f docker/redis-ha/docker-compose.yml down
+
+services:
+  redis-master:
+    image: redis:7-alpine
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --repl-diskless-sync yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    networks:
+      - redis-ha
+
+  redis-replica:
+    image: redis:7-alpine
+    container_name: redis-replica
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+      --replicaof redis-master 6379
+      --appendonly yes
+      --repl-diskless-sync yes
+    depends_on:
+      - redis-master
+    networks:
+      - redis-ha
+
+  redis-sentinel-1:
+    image: redis:7-alpine
+    container_name: redis-sentinel-1
+    ports:
+      - "26379:26379"
+    command: >
+      redis-sentinel
+      /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
+    depends_on:
+      - redis-master
+      - redis-replica
+    networks:
+      - redis-ha
+
+  redis-sentinel-2:
+    image: redis:7-alpine
+    container_name: redis-sentinel-2
+    ports:
+      - "26380:26379"
+    command: >
+      redis-sentinel
+      /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
+    depends_on:
+      - redis-master
+      - redis-replica
+    networks:
+      - redis-ha
+
+  redis-sentinel-3:
+    image: redis:7-alpine
+    container_name: redis-sentinel-3
+    ports:
+      - "26381:26379"
+    command: >
+      redis-sentinel
+      /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
+    depends_on:
+      - redis-master
+      - redis-replica
+    networks:
+      - redis-ha
+
+networks:
+  redis-ha:
+    driver: bridge

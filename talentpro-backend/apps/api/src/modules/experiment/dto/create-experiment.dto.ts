@@ -2,18 +2,18 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateExperimentDto {
   @IsString()
-  key: string;
+  key!: string;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  variantA: Record<string, unknown>;
+  variantA!: Record<string, unknown>;
 
-  variantB: Record<string, unknown>;
+  variantB!: Record<string, unknown>;
 
   @IsOptional()
   @IsNumber()

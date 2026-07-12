@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsArray, IsInt } from 'class-validator';
 
 export class UpsertWhyUsTabDto {
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  label: string;
+  label!: string;
 
   @IsOptional()
   @IsString()

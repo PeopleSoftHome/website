@@ -9,6 +9,7 @@ export function useScrollProgress() {
   const progress = ref(0);
 
   const updateProgress = () => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     progress.value = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;

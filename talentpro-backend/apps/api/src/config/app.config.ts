@@ -6,7 +6,7 @@ export default registerAs('app', () => ({
   frontendUrl: process.env.APP_FRONTEND_URL || 'http://localhost:3000',
   corsOrigins:
     process.env.APP_CORS_ORIGINS ||
-    `${process.env.APP_FRONTEND_URL || 'http://localhost:3000'},http://localhost:8080`,
+    `${process.env.APP_FRONTEND_URL || 'http://localhost:3000'},http://localhost:8080,http://localhost:3457`,
   cacheKeyPrefix:
     process.env.CACHE_KEY_PREFIX ||
     (process.env.APP_ENV && process.env.APP_ENV !== 'development'

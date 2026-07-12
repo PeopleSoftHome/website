@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsNumber, IsBoolean, IsObject } from 'class-valid
 
 export class CreateSectionDto {
   @IsString()
-  pageId: string;
+  pageId!: string;
 
   @IsString()
-  type: string;
+  type!: string;
 
   @IsOptional()
   @IsNumber()

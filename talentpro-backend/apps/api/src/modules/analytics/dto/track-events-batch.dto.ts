@@ -6,5 +6,5 @@ export class TrackEventsBatchDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TrackEventDto)
-  events: TrackEventDto[];
+  events!: TrackEventDto[];
 }

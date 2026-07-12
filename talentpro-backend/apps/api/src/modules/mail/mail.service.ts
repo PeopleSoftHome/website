@@ -16,7 +16,7 @@ export interface MailPayload {
 @Injectable()
 export class MailService implements OnModuleDestroy {
   private readonly logger = new Logger(MailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter!: nodemailer.Transporter;
 
   constructor(
     private readonly config: ConfigService,

@@ -108,6 +108,7 @@ enum NotificationType {
 model User {
   id            String         @id @default(uuid())
   email         String
+  emailHash     String?
   password      String
   name          String?
   avatar        String?
@@ -138,8 +139,8 @@ model User {
   updatedSettings  Setting[]
   ownedWorkspaces  Workspace[]      @relation("WorkspaceOwner")
 
-  @@unique([email, workspaceId])
-  @@index([email])
+  @@unique([emailHash, workspaceId])
+  @@index([emailHash])
   @@index([workspaceId])
   @@index([roleId])
   @@map("users")
@@ -185,6 +186,7 @@ model Workspace {
 model WorkspaceInvite {
   id          String    @id @default(uuid())
   email       String
+  emailHash   String?
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   token       String    @unique
@@ -192,7 +194,7 @@ model WorkspaceInvite {
   expiresAt   DateTime
   createdAt   DateTime  @default(now())
 
-  @@index([email])
+  @@index([emailHash])
   @@index([workspaceId])
   @@map("workspace_invites")
 }
@@ -1097,10 +1099,10 @@ model App {
   tagline           String
   description       String         @db.Text
   categoryId        String
-  category          AppCategory    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category          AppCategory    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   tags              String[]       @default([])
   vendorId          String
-  vendor            AppVendor      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  vendor            AppVendor      @relation(fields: [vendorId], references: [id], onDelete: Restrict)
   iconUrl           String
   coverImages       String[]       @default([])
   demoVideoUrl      String?

@@ -87,11 +87,11 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'resourcePage.title', description: 'resourcePage.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { getResources, getResourceTypes, RESOURCE_TYPE_STYLES } from '@/data/resources';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
@@ -136,19 +136,16 @@ const typeStyle = (type: string) => {
   return { background: style.bg, color: style.color };
 };
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: t('resourcePage.jsonLdName'),
-    description: t('resourcePage.jsonLdDesc'),
-    url: 'https://talentpro.cn/resources',
-    hasPart: resources.value.slice(0, 6).map((r) => ({
-      '@type': 'CreativeWork',
-      name: r.title,
-      description: r.description,
-    })),
-  });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: t('resourcePage.jsonLdName'),
+  description: t('resourcePage.jsonLdDesc'),
+  url: 'https://talentpro.cn/resources',
+  hasPart: resources.value.slice(0, 6).map((r) => ({
+    '@type': 'CreativeWork',
+    name: r.title,
+    description: r.description,
+  })),
+})));
 </script>

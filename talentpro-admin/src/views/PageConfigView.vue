@@ -35,56 +35,18 @@
           </el-empty>
 
           <!-- Section 拖拽列表 -->
-          <div v-else class="section-list">
-            <div
-              v-for="(s, i) in sections"
-              :key="s.id"
-              class="section-item"
-              :class="{ 'is-inactive': !s.isActive, 'is-dragging': dragIndex === i }"
-              draggable="true"
-              @dragstart="onDragStart($event, i)"
-              @dragover.prevent="onDragOver($event, i)"
-              @drop="onDrop($event, i)"
-              @dragend="onDragEnd"
-            >
-              <el-icon class="drag-handle"><Rank /></el-icon>
-              <span class="section-index">{{ i + 1 }}</span>
-              <span class="section-title" :class="{ 'is-unknown': s.isUnknown }">
-                {{ s.title }}
-              </span>
-              <el-tag size="small" :type="s.isUnknown ? 'danger' : 'primary'" effect="plain">
-                {{ s.key }}
-              </el-tag>
-              <el-switch
-                v-model="s.isActive"
-                size="small"
-                inline-prompt
-                :active-text="t('pageConfig.enable')"
-                :inactive-text="t('pageConfig.disable')"
-                style="margin-left:auto"
-                @change="hasChanges = true"
-              />
-              <el-button
-                v-if="getSectionConfigSchema(s.key).length"
-                type="primary"
-                size="small"
-                text
-                style="margin-left:8px"
-                @click="openConfigDialog(s)"
-              >
-                {{ t('pageConfig.configure') }}
-              </el-button>
-              <el-button
-                type="danger"
-                size="small"
-                text
-                style="margin-left:8px"
-                @click="removeSection(i)"
-              >
-                {{ t('pageConfig.delete') }}
-              </el-button>
-            </div>
-          </div>
+          <PageConfigSectionList
+            v-else
+            :sections="sections"
+            :drag-index="dragIndex"
+            @toggle="onToggle"
+            @config="openConfigDialog"
+            @remove="removeSection"
+            @drag-start="onDragStart"
+            @drag-over="onDragOver"
+            @drop="onDrop"
+            @drag-end="onDragEnd"
+          />
 
           <!-- Section 配置弹窗 -->
           <el-dialog v-model="configDialogVisible" :title="configDialogTitle" width="600px" destroy-on-close>
@@ -96,70 +58,25 @@
           </el-dialog>
 
           <!-- 添加 Section -->
-          <div v-if="page && availableSections.length > 0" style="margin-top:16px;display:flex;gap:8px;align-items:center">
-            <el-select v-model="selectedToAdd" :placeholder="t('pageConfig.selectSection')" size="small" style="width:220px">
-              <el-option
-                v-for="rs in availableSections"
-                :key="rs.key"
-                :label="rs.title"
-                :value="rs.key"
-              />
-            </el-select>
-            <el-button type="primary" size="small" @click="addSection" :disabled="!selectedToAdd">
-              {{ t('pageConfig.add') }}
-            </el-button>
-          </div>
+          <PageConfigAddSection
+            v-if="page && availableSections.length > 0"
+            :available-sections="availableSections"
+            @add="addSection"
+          />
         </el-card>
 
         <!-- Page 元信息 -->
-        <el-card shadow="hover" style="margin-top:16px" v-if="page">
-          <template #header>
-            <span>{{ t('pageConfig.pageMeta') }}</span>
-          </template>
-          <el-descriptions :column="2" border size="small">
-            <el-descriptions-item :label="t('pageConfig.slug')">{{ page.slug }}</el-descriptions-item>
-            <el-descriptions-item :label="t('pageConfig.pageTitle')">{{ page.title }}</el-descriptions-item>
-            <el-descriptions-item :label="t('pageConfig.metaTitle')">{{ page.metaTitle || '-' }}</el-descriptions-item>
-            <el-descriptions-item :label="t('pageConfig.metaDesc')">{{ page.metaDesc || '-' }}</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
+        <PageConfigMetaCard v-if="page" :page="page" />
       </el-col>
 
       <!-- 右侧：AI 配置助手 + 插件注册表 -->
       <el-col :xs="24" :md="8" style="margin-top:16px">
-        <AiConfigAssistant
+        <PageConfigAiPanel
           :page="page"
           :sections="sections"
           @apply-image="onApplyAiImage"
           @apply-copy="onApplyAiCopy"
         />
-
-        <el-card shadow="hover" style="margin-top:16px">
-          <template #header>
-            <span>{{ t('pageConfig.registryCount', { count: REGISTERED_SECTIONS.length }) }}</span>
-          </template>
-
-          <el-table :data="REGISTERED_SECTIONS" size="small" :border="true">
-            <el-table-column :label="t('pageConfig.key')" width="110" prop="key" />
-            <el-table-column :label="t('pageConfig.name')" prop="title" />
-            <el-table-column :label="t('pageConfig.inCms')" width="70" align="center">
-              <template #default="{ row }">
-                <el-tag :type="isInCms(row.key) ? 'success' : 'info'" size="small">
-                  {{ isInCms(row.key) ? t('pageConfig.yes') : t('pageConfig.no') }}
-                </el-tag>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <el-alert :title="t('pageConfig.tip')" type="info" :closable="false" style="margin-top:16px">
-            <p style="margin:0;font-size:13px;line-height:1.6">
-              • {{ t('pageConfig.dragHint') }}<br>
-              • {{ t('pageConfig.disableHint') }}<br>
-              • {{ t('pageConfig.skipHint') }}<br>
-              • {{ t('pageConfig.saveToTakeEffect') }}
-            </p>
-          </el-alert>
-        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -169,11 +86,13 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Rank } from '@element-plus/icons-vue';
 import client from '@/api/client.js';
 import { REGISTERED_SECTIONS, getSectionConfigSchema } from '@/data/sectionRegistry.js';
 import SectionConfigForm from '@/components/SectionConfigForm.vue';
-import AiConfigAssistant from '@/components/AiConfigAssistant.vue';
+import PageConfigSectionList from '@/components/page-config/PageConfigSectionList.vue';
+import PageConfigAddSection from '@/components/page-config/PageConfigAddSection.vue';
+import PageConfigMetaCard from '@/components/page-config/PageConfigMetaCard.vue';
+import PageConfigAiPanel from '@/components/page-config/PageConfigAiPanel.vue';
 
 const { t } = useI18n();
 
@@ -183,7 +102,6 @@ const loading = ref(false);
 const saving = ref(false);
 const creating = ref(false);
 const hasChanges = ref(false);
-const selectedToAdd = ref('');
 const dragIndex = ref(-1);
 
 const configDialogVisible = ref(false);
@@ -195,10 +113,8 @@ const configDialogTitle = computed(() =>
   editingSection.value ? t('pageConfig.configureTitle', { title: editingSection.value.title }) : t('pageConfig.configure'),
 );
 
-const isInCms = (key) => sections.value.some((s) => s.key === key);
-
 const availableSections = computed(() =>
-  REGISTERED_SECTIONS.filter((rs) => !isInCms(rs.key)),
+  REGISTERED_SECTIONS.filter((rs) => !sections.value.some((s) => s.key === rs.key)),
 );
 
 const fetchPage = async () => {
@@ -291,19 +207,18 @@ const removeSection = async (i) => {
   }
 };
 
-const addSection = async () => {
-  if (!selectedToAdd.value || !page.value) return;
-  const reg = REGISTERED_SECTIONS.find((r) => r.key === selectedToAdd.value);
+const addSection = async (key) => {
+  if (!key || !page.value) return;
+  const reg = REGISTERED_SECTIONS.find((r) => r.key === key);
   try {
     await client.post('/cms/sections', {
       pageId: page.value.id,
-      type: selectedToAdd.value,
+      type: key,
       sortOrder: sections.value.length,
       config: reg?.defaultConfig || {},
       isActive: true,
     });
     ElMessage.success(t('pageConfig.addSuccess'));
-    selectedToAdd.value = '';
     fetchPage();
   } catch (e) {
     ElMessage.error(e?.response?.data?.message || e.message || t('pageConfig.addFailed'));
@@ -379,6 +294,11 @@ const saveConfig = async () => {
   savingConfig.value = false;
 };
 
+const onToggle = ({ index, value }) => {
+  sections.value[index].isActive = value;
+  hasChanges.value = true;
+};
+
 const onApplyAiImage = (url) => {
   const hero = sections.value.find((s) => s.key === 'hero');
   if (!hero) {
@@ -407,67 +327,3 @@ const onApplyAiCopy = ({ field, value }) => {
 
 onMounted(fetchPage);
 </script>
-
-<style scoped>
-.section-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.section-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--admin-border-light);
-  border-radius: 6px;
-  background: var(--admin-white);
-  cursor: move;
-  transition: background 0.15s, box-shadow 0.15s;
-}
-
-.section-item:hover {
-  background: var(--admin-bg-base);
-}
-
-.section-item.is-dragging {
-  opacity: 0.5;
-  box-shadow: 0 4px 12px var(--admin-black-alpha-10);
-}
-
-.section-item.is-inactive {
-  opacity: 0.6;
-  background: var(--admin-bg-overlay);
-}
-
-.drag-handle {
-  color: var(--admin-text-secondary);
-  cursor: grab;
-}
-
-.section-index {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--admin-color-primary-light-1);
-  color: var(--admin-color-primary);
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.section-title {
-  font-size: 14px;
-  font-weight: 500;
-  min-width: 100px;
-}
-
-.section-title.is-unknown {
-  color: var(--admin-color-danger);
-  text-decoration: line-through;
-}
-</style>

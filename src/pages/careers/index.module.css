@@ -59,7 +59,7 @@
 .benefitDesc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
 
 .loading { text-align: center; padding: 60px 0; color: var(--gray-400); }
-.error { text-align: center; padding: 60px 0; color: var(--error); }
+.error { text-align: center; padding: 60px 0; color: var(--error-dark); }
 
 @media (max-width: 1023px) {
   .channels { grid-template-columns: 1fr; }

@@ -1,8 +1,8 @@
 # TalentPro HR Portal — 产品需求文档 (PRD)
 
-> **版本**：v4.1.0
+> **版本**：v4.3.0
 > **状态**：已同步最新实现
-> **最后更新**：2026-06-15
+> **最后更新**：2026-07-05
 > **唯一真相来源**：本文档与实现代码必须保持同步
 
 ---
@@ -14,6 +14,7 @@
 | v0.1.0 | 2026-03-15 | 项目经理 Agent | 文档框架初始化 |
 | v3.0.0 | 2026-05-28 | 开发 Agent | 重写核心章节，同步 v3.0.0 全部功能 |
 | v4.1.0 | 2026-06-15 | 开发 Agent | 新增 Marketplace / Payment / Cart，同步 Admin 能力，调整部署产物路径 |
+| v4.3.0 | 2026-07-05 | 开发 Agent | Admin 配置智能化、AI 图片生成、门户 Hero 配置化、Marketplace 深化、站点配置/翻译/ChatBot 后端化、JWT Cookie-only、PII 加密扩展、审计日志、功能开关 |
 
 ---
 
@@ -117,10 +118,13 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 ### 2.11 CMS 内容管理
 
-- 首页板块动态配置（Hero / 产品矩阵 / 行业方案 / 资源中心等）
-- 内容区块 CRUD
+- 首页 Section 配置化：`src/utils/sectionRegistry.ts` 注册 `defaultConfig` + `configSchema`，CMS 无配置时按默认顺序渲染
+- 门户 Hero 配置化：支持 CMS 覆盖背景图、标题、副标题、CTA 文案、Dashboard 开关，未配置时回退 i18n
+- Admin `SectionConfigForm.vue` 按 schema 动态渲染 `input`/`textarea`/`switch`/`image-upload`
+- 页面 Section 排序、启停、批量更新
+- 内容区块 CRUD + 通用内容类型 `/cms/content/:type`
 - 发布/草稿状态
-- Admin 后台可视化编辑
+- 翻译后端化：`/cms/translations` 支持 Admin 管理并按 locale/context 覆盖前端 i18n
 
 ### 2.12 多租户 Workspace
 
@@ -136,12 +140,29 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 - 用户级频道：`sse:notifications:{userId}`
 - 全局仅 1 个 Redis psubscribe 连接
 
-### 2.14 应用广场、支付与购物车（v4.1.0）
+### 2.14 应用广场、支付与购物车（v4.1.0 → v4.3.0 深化）
 
-- **应用广场（Marketplace）**：App 列表 / 分类 / 供应商 / 评分 / 精选推荐
+- **应用广场（Marketplace）**：App 列表 / 分类 / 供应商 / 评分 / 精选推荐 / 应用安装（创建试用订阅）
 - **购物车（Cart）**：Redis 存储，TTL 7 天，支持增删改查
-- **支付（Payment）**：Stripe Checkout 收银台，Webhook 处理订单生命周期
-- **管理后台**：App / Category / Vendor / Review / Subscription 管理
+- **支付（Payment）**：Stripe + 支付宝 收银台，Webhook/异步通知处理订单生命周期，支持发票申请
+- **订阅管理**：Workspace 订阅列表、状态流转、Admin 订阅审核
+- **收入分析**：`GET /payments/analytics/revenue` 按天聚合收入/订单/退款，Admin `RevenueAnalyticsView` 可视化
+- **管理后台**：App / Category / Vendor / Review / Subscription / Order / RevenueAnalytics 管理
+
+### 2.15 AI 能力（v4.3.0）
+
+- **AI 内容生成**：`POST /ai/generate` 支持 `blog`/`product`/`seo`/`translate`/`moderate`，生成草稿供运营确认
+- **AI 图片生成**：`POST /ai/generate-image`（ADMIN/SUPER_ADMIN，权限 `ai:generate-image`），DALL·E 生成后落入媒体库
+- **Admin 配置助手**：`POST /ai/admin/chat`（权限 `ai:chat`），为 PageConfig / 内容运营提供文案与图片建议
+- **ChatBot 后端化**：`ChatBotConfig` + `AiChatSession` 模型；`GET /system/chatbot-config` 公开配置；`POST /ai/chat` 多轮对话持久化
+
+### 2.16 站点治理与安全（v4.3.0）
+
+- **站点配置后端化**：`GET /system/config/public` 统一返回 `sitePhone`/`copyright`/`featureFlags`/`hotTags`/`socialLinks`/`siteTitle`/`siteDescription`/`recaptchaSiteKey`/`sentryDsn`
+- **功能开关**：后端 Setting 维护 `featureFlags`，前端 `useFeatureFlag(key)` 按 key 灰度启停模块
+- **JWT Cookie-only**：登录/刷新写入 httpOnly Cookie，前端 `withCredentials`，不再读写 `localStorage` token
+- **PII 加密扩展**：AES-256-GCM Prisma 扩展，覆盖 User / DemoBooking / JobApplication / AppVendor / TeamMember 等 phone/email/contact/resumeUrl 字段
+- **审计日志**：`AuditInterceptor` 全局记录已认证用户 POST/PATCH/PUT/DELETE，包含 oldValue/newValue，敏感字段自动脱敏
 
 ---
 
@@ -162,11 +183,12 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 | 类别 | 技术 | 版本 |
 |------|------|------|
-| 框架 | Vue | 3.5.0 |
+| 框架 | Nuxt | 4.4.8 |
+| 底层框架 | Vue | 3.5 |
 | 构建工具 | Vite | 8.0.14 |
-| 路由 | Vue Router | 5.0.7 |
+| 路由 | Nuxt 文件路由（自动生成）| — |
 | 样式 | CSS Modules + CSS 自定义属性 | 原生 |
-| 语言 | JavaScript | ES Module |
+| 语言 | TypeScript | ES Module |
 
 ### 4.2 后端 API
 
@@ -179,9 +201,9 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 | 缓存 | Redis | 7 |
 | 搜索 | Meilisearch | — |
 | 存储 | MinIO / Local | — |
-| 认证 | JWT + bcrypt | — |
+| 认证 | JWT + bcrypt + httpOnly Cookie | — |
 | 队列 | BullMQ | — |
-| 监控 | Sentry | — |
+| 监控 | Sentry + nestjs-pino | — |
 
 ### 4.3 Admin 管理后台
 
@@ -189,8 +211,9 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 |------|------|------|
 | 框架 | Vue | 3.5 |
 | 构建工具 | Vite | 8 |
+| 语言 | TypeScript | ES Module |
 | UI 库 | Element Plus | 2.8 |
-| 状态管理 | Pinia | 2.2 |
+| 状态管理 | Pinia | 3.x |
 | 路由 | Vue Router | 4.4 |
 
 ---
@@ -221,14 +244,14 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 ### 5.4 安全
 
-- PII 字段级加密（AES-256-GCM，Prisma 扩展自动处理 phone/email）
+- PII 字段级加密（AES-256-GCM，Prisma 扩展自动处理 User/DemoBooking/JobApplication/AppVendor/TeamMember 的 phone/email/contact/resumeUrl）
 - 全局限流（ThrottlerGuard，默认 500/min，认证 10/min，搜索 30/min）
 - CORS 白名单控制
-- Helmet 安全响应头
+- Helmet 安全响应头 + CSP
 - IP 黑白名单（IpFilterGuard）
 - reCAPTCHA v3 后端校验
-- JWT 黑名单（logout 失效）
-- 审计日志（AuditInterceptor，写操作全记录）
+- JWT Cookie-only（httpOnly, sameSite lax, secure 生产）+ JWT 黑名单（logout 失效）
+- 审计日志（AuditInterceptor，写操作全记录，oldValue/newValue + 敏感字段脱敏）
 - Sentry 错误监控
 
 ---
@@ -270,4 +293,4 @@ TalentPro HR Portal 是面向中大型企业的一体化 HR SaaS 平台官方营
 
 ---
 
-*TalentPro HR Portal · PRD v4.1.0 · 2026-06-15*
+*TalentPro HR Portal · PRD v4.3.0 · 2026-07-05*

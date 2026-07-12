@@ -5,13 +5,12 @@ import router from '@/router';
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1',
   timeout: 15000,
+  withCredentials: true,
 });
 
 client.interceptors.request.use((config) => {
-  const auth = useAuthStore();
-  if (auth.token) {
-    config.headers.Authorization = `Bearer ${auth.token}`;
-  }
+  // 认证信息通过后端 httpOnly Cookie 自动携带，不在前端保存/发送 token
+  config.withCredentials = true;
   return config;
 });
 
@@ -21,42 +20,40 @@ client.interceptors.response.use(
     const originalConfig = err.config;
     const status = err.response?.status;
 
-    // 401 自动刷新 token（仅一次重试）
-    if (status === 401 && originalConfig && !originalConfig._retry) {
+    // 401 自动刷新 token（仅一次重试，跳过刷新/登出请求自身避免递归）
+    if (status === 401 && originalConfig && !originalConfig._retry && !originalConfig._skipRefresh) {
       originalConfig._retry = true;
       try {
-        const auth = useAuthStore();
-        const rt = auth.refreshToken;
-        if (!rt) throw new Error('无刷新令牌');
-        const refreshRes = await axios.post(
+        await axios.post(
           `${client.defaults.baseURL}/auth/refresh`,
-          { refreshToken: rt },
-          { headers: { 'Content-Type': 'application/json' } },
+          {},
+          { withCredentials: true, headers: { 'Content-Type': 'application/json' } },
         );
-        const data = refreshRes.data?.data || refreshRes.data;
-        if (data?.accessToken) {
-          auth.setToken(data.accessToken);
-          if (data.refreshToken) auth.setRefreshToken(data.refreshToken);
-          originalConfig.headers.Authorization = `Bearer ${data.accessToken}`;
-          return client(originalConfig);
-        }
+        // 新 token 已通过 Set-Cookie 写入，直接重试原请求
+        return client(originalConfig);
       } catch {
-        // 刷新失败，静默登出并跳转
+        // 刷新失败，执行登出并跳转
       }
     }
 
-    if (status === 401) {
+    if (status === 401 && originalConfig && !originalConfig._skipRefresh) {
       const auth = useAuthStore();
-      auth.logout();
+      try {
+        await auth.logout();
+      } catch {
+        // 登出请求失败也强制清理
+        auth.setUser(null);
+      }
       router.push('/login');
     }
 
-    const message = err.response?.data?.error?.message || err.message || '网络请求失败';
+    const message =
+      err.response?.data?.error?.message || err.message || '网络请求失败';
     const error = new Error(message);
     error.response = err.response;
     error.status = err.response?.status;
     return Promise.reject(error);
-  }
+  },
 );
 
 /**

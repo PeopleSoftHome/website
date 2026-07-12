@@ -80,9 +80,9 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'forum.pageTitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import { FORUM_PAGE_SIZE } from '@/constants/pagination';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
@@ -107,7 +107,7 @@ const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopi
     pageSize,
     categoryId: activeCategory.value || undefined,
   }),
-  { server: false, default: () => ({ data: [], meta: { total: 0 } }) }
+  { default: () => ({ data: [], meta: { total: 0 } }) }
 );
 
 const fallbackTopics = computed(() => {
@@ -130,7 +130,7 @@ const error = computed(() => {
 const { data: catRes } = useAsyncData(
   'forum-categories',
   () => forumApi.getCategories(),
-  { server: false, default: () => ({ data: FORUM_CATEGORIES }) }
+  { default: () => ({ data: FORUM_CATEGORIES }) }
 );
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
 const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : FORUM_CATEGORIES.value);
@@ -145,8 +145,5 @@ const goToTopic = (id: string | number) => {
   navigateTo(`/forum/topic/${id}`);
 };
 
-onMounted(() => {
-  injectJsonLd({ '@context': 'https://schema.org', '@type': 'DiscussionForumPosting', name: t('forum.title') });
-});
-onUnmounted(removeJsonLd);
+useJsonLd({ '@context': 'https://schema.org', '@type': 'DiscussionForumPosting', name: t('forum.title') });
 </script>

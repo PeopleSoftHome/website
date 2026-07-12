@@ -30,6 +30,7 @@ function getSessionId() {
 }
 
 function sendToAnalytics(metric: Metric) {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return;
   const payload = {
     event: 'web_vital',
     properties: {

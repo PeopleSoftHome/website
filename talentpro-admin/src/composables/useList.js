@@ -1,4 +1,4 @@
-import { ref, reactive, watch, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { normalizePaginationResponse } from '@/api/client.js';
 
@@ -71,7 +71,7 @@ export function useList(options) {
     onMounted(fetch);
   }
 
-  return reactive({
+  return {
     items,
     total,
     page,
@@ -82,5 +82,5 @@ export function useList(options) {
     fetch,
     refresh,
     setParams,
-  });
+  };
 }

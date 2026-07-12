@@ -6,10 +6,10 @@ export class CreateAuditLogDto {
   userId?: string;
 
   @IsString()
-  action: string;
+  action!: string;
 
   @IsString()
-  resource: string;
+  resource!: string;
 
   @IsOptional()
   @IsString()

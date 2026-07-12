@@ -3,7 +3,7 @@ import { LeadStatus } from '@prisma/client';
 
 export class UpdateLeadStatusDto {
   @IsEnum(LeadStatus)
-  status: LeadStatus;
+  status!: LeadStatus;
 
   @IsOptional()
   @IsString()

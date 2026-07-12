@@ -10,7 +10,7 @@ export enum AiGenerateType {
 
 export class AiGenerateDto {
   @IsEnum(AiGenerateType, { message: 'Unsupported generation type' })
-  type: AiGenerateType;
+  type!: AiGenerateType;
 
   @IsString()
   @IsOptional()

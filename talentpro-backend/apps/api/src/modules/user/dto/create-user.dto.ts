@@ -3,18 +3,18 @@ import { UserStatus } from '@prisma/client';
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Invalid email format' })
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
     message: 'Password must contain uppercase, lowercase, number and special character',
   })
-  password: string;
+  password!: string;
 
   @IsString()
   @MinLength(2, { message: 'Name must be at least 2 characters' })
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()

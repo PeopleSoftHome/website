@@ -66,9 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onUnmounted, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth.pinia';
-import { removeJsonLd } from '@/utils/jsonld';
 import Avatar from '@/components/ui/Avatar/Avatar.vue';
 import { forumApi } from '@/api/forum';
 import { renderMarkdown, renderMentions } from '@/utils/markdown';
@@ -119,7 +118,7 @@ const { data: topic, pending: loading } = useAsyncData(
     }
     return (FORUM_TOPIC_MAP.value as Record<string, Topic>)[id.value as string] || null;
   },
-  { server: false, default: () => null as Topic | null, watch: [id] }
+  { default: () => null as Topic | null, watch: [id] }
 );
 
 useHead(() => {
@@ -161,5 +160,4 @@ const submitReply = async () => {
   replySubmitting.value = false;
 };
 
-onUnmounted(removeJsonLd);
 </script>

@@ -2,10 +2,10 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreateForumPostDto {
   @IsString()
-  topicId: string;
+  topicId!: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsOptional()
   @IsString()

@@ -1,7 +1,7 @@
 # TalentPro HR Portal — 系统架构文档
 
-> **版本**：v4.2.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
-> **最后更新**：2026-06-09
+> **版本**：v4.3.0 | **负责角色**：架构师 Agent | **状态**：✅ 已同步最新实现
+> **最后更新**：2026-07-05
 > **输入依据**：`AGENTS.md` + 实际代码库
 
 ---
@@ -12,7 +12,7 @@
 2. [系统架构概览](#2-系统架构概览)
 3. [组件树](#3-组件树)
 4. [目录结构](#4-目录结构)
-5. [Hooks 架构](#5-hooks-架构)
+5. [Composables 架构](#5-composables-架构)
 6. [数据层架构](#6-数据层架构)
 7. [样式架构](#7-样式架构)
 8. [组件规范](#8-组件规范)
@@ -27,14 +27,14 @@
 
 | 维度 | 决策 | 原因 |
 |------|------|------|
-| **框架** | Nuxt 3.4.6 | 基于 Vue 3.5 SFC + `<script setup>`，文件路由 + 自动导入 + Nitro 引擎 |
+| **框架** | Nuxt 4.4.8 | 基于 Vue 3.5 SFC + `<script setup>`，文件路由 + 自动导入 + Nitro 引擎 |
 | **构建工具** | Vite 8.0.14（Nuxt 内置）| 冷启动 < 500ms，HMR 毫秒级，Rolldown 引擎，Nuxt 统一封装 |
 | **语言** | TypeScript | 营销门户已全量迁移至 TypeScript（.ts + .vue） |
 | **样式方案** | CSS Modules + CSS 自定义属性 | 零运行时开销，原生支持 Design Token，与现有变量体系无缝迁移 |
 | **动效** | CSS Keyframes + IntersectionObserver（原生）| 无需引入动效库，视觉还原度最高 |
 | **状态管理** | Pinia 3.x + `provide/inject` 兼容层 | `@pinia/nuxt` 模块自动注册，`useAuthStore` 替代 legacy `createAuth()` |
 | **路由** | Nuxt 文件路由 | `src/pages/` 目录自动生成路由表，`[slug].vue` 动态路由，`[...slug].vue` 404 |
-| **部署** | SSG 静态生成（Nuxt build → .output/public/）| Nitro prerender 20 条路由为静态 HTML，Vercel / Nginx / OSS+CDN 均可托管 |
+| **部署** | SSG 静态生成（Nuxt build → .output/public/）| Nitro prerender 3 语言动态路由为静态 HTML，Vercel / Nginx / OSS+CDN 均可托管 |
 
 **后端技术栈**
 
@@ -59,7 +59,7 @@
 │                     TalentPro 系统架构                           │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │               营销门户（Nuxt 3 SSG）                       │  │
+│  │               营销门户（Nuxt 4 SSG）                       │  │
 │  │  App.vue → NuxtLayout → NuxtPage                          │  │
 │  │  ├── 全局 IntersectionObserver（滚动入场动画）              │  │
 │  │  ├── MutationObserver（Tab 切换后重新扫描 reveal）          │  │
@@ -96,22 +96,32 @@
 │                           ↑ HTTP API (REST)                    │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │               后端服务（NestJS 11 + Prisma 6）              │  │
-│  │  ├── Auth Module      注册/登录/JWT/刷新/权限              │  │
+│  │  ├── Auth Module      注册/登录/JWT Cookie/刷新/权限       │  │
 │  │  ├── Blog Module      文章/分类/标签 CRUD                  │  │
 │  │  ├── Forum Module     话题/回复/置顶/锁定                  │  │
 │  │  ├── Lead Module      演示预约线索管理                     │  │
 │  │  ├── Analytics Module 页面浏览/事件/转化漏斗               │  │
-│  │  └── User Module      用户管理                             │  │
+│  │  ├── User Module      用户管理 + PII 加密                  │  │
+│  │  ├── CMS Module       页面/Section/导航/翻译 配置化        │  │
+│  │  ├── Marketplace Module 应用/分类/厂商/订阅/评价           │  │
+│  │  ├── Payment Module   Stripe/支付宝 订单与收入分析         │  │
+│  │  ├── System Module    公开配置/审计日志/ChatBot 配置       │  │
+│  │  └── AI Module        生成内容/图片/Admin 配置助手         │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                           ↑ HTTP API (REST + JWT)              │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │               管理后台（Vue 3 + Element Plus）              │  │
-│  │  ├── LoginView.vue        登录页                           │  │
+│  │  ├── LoginView.vue        登录页（TS）                     │  │
 │  │  ├── LayoutView.vue       侧边栏 + 顶部栏布局              │  │
 │  │  ├── DashboardView.vue    仪表盘                           │  │
 │  │  ├── BlogManagerView.vue  博客管理                         │  │
 │  │  ├── ForumManagerView.vue 论坛管理                         │  │
 │  │  ├── AnalyticsView.vue    数据分析                         │  │
+│  │  ├── RevenueAnalyticsView.vue 收入分析（Marketplace）       │  │
+│  │  ├── AiAssistantView.vue  AI 配置助手                      │  │
+│  │  ├── FeatureFlagView.vue  功能开关                         │  │
+│  │  ├── TranslationManagerView.vue 翻译管理                   │  │
+│  │  ├── PageConfigView.vue   首页 Section 配置                │  │
 │  │  ├── UsersView.vue        用户管理                         │  │
 │  │  └── LeadsView.vue        线索管理                         │  │
 │  └──────────────────────────────────────────────────────────┘  │
@@ -273,19 +283,20 @@ talentpro/
 │   │   └── ...
 │   │
 │   ├── stores/
-│   │   ├── auth.pinia.ts           # Pinia auth store（SSR-safe，推荐）
-│   │   ├── theme.pinia.ts                # 暗色模式（localStorage + prefers-color-scheme）
-│   │   ├── modal.pinia.ts                # DemoModal 状态
-│   │   ├── videoModal.pinia.ts           # VideoModal 状态
-│   │   ├── search.pinia.ts               # 全局搜索开关
-│   │   └── analytics.pinia.ts            # 埋点队列
+│   │   ├── auth.pinia.ts           # Pinia auth store（SSR-safe，Cookie-only）
+│   │   ├── theme.pinia.ts          # 暗色模式（localStorage + prefers-color-scheme）
+│   │   ├── modal.pinia.ts          # DemoModal 状态
+│   │   ├── videoModal.pinia.ts     # VideoModal 状态
+│   │   ├── search.pinia.ts         # 全局搜索开关
+│   │   └── analytics.pinia.ts      # 埋点队列
 │   │
 │   ├── api/
-│   │   ├── client.ts               # Axios 实例（含 token 拦截器 + 401 自动刷新）
+│   │   ├── client.ts               # Axios 实例（Cookie-only，401 自动刷新）
 │   │   ├── index.ts                # Barrel 导出（所有 API 模块聚合）
 │   │   ├── blog.ts / forum.ts / case.ts / news.ts / about.ts / careers.ts
-│   │   ├── cms.ts / lead.ts / search.pinia.ts / ai.ts
-│   │   └── marketplace.ts          # marketplaceApi + paymentApi + cartApi
+│   │   ├── cms.ts / lead.ts / search.ts / ai.ts / system.ts
+│   │   ├── marketplace.ts          # marketplaceApi + paymentApi + cartApi
+│   │   └── notification.ts / user.ts / comment.ts
 │   │
 │   ├── tokens/
 │   │   └── index.ts                # ⭐ Design Token TS 常量（唯一真相来源）
@@ -305,19 +316,26 @@ talentpro/
 │   │   ├── useTheme.ts             # 主题切换（data-theme + localStorage）
 │   │   ├── useSearch.ts            # 搜索算法 + 防抖 + 键盘导航
 │   │   ├── useApiData.ts           # API 数据加载（loading/error/retry）
-│   │   └── ...                     # 共 22 个 composables
+│   │   ├── useCmsPageAsync.ts      # CMS 页面配置（Section 驱动）
+│   │   ├── useNavigation.ts        # 导航 CMS 化
+│   │   ├── useSiteConfig.ts        # 站点公开配置
+│   │   ├── useFeatureFlag.ts       # 功能开关
+│   │   ├── useChatBot.ts           # ChatBot AI 对话
+│   │   └── ...                     # 共 22+ 个 composables
 │   │
 │   ├── data/
-│   │   ├── navigation.ts           # NAV_LINKS + FOOTER_LINKS（导航与页脚）
-│   │   ├── stats.ts                # STATS_DATA（统计数字）
+│   │   ├── navigation.ts           # NAV_LINKS + FOOTER_LINKS（导航与页脚 fallback）
+│   │   ├── stats.ts                # STATS_DATA（统计数字 fallback）
 │   │   ├── products.ts             # PRODUCT_TABS（4 Tab × 20 产品）+ PRODUCT_MAP
-│   │   ├── aiFamily.ts             # AI_CARDS（AI 专区卡片）
+│   │   ├── aiFamily.ts             # AI_CARDS（AI 专区卡片 fallback）
 │   │   ├── industries.ts           # INDUSTRY_TABS（5 行业方案）+ INDUSTRY_MAP
 │   │   ├── cases.ts                # CASES（8 客户案例）+ CASE_INDUSTRIES
 │   │   ├── testimonials.ts         # TESTIMONIALS（客户证言 4 条）
 │   │   ├── logos.ts                # LOGO_ITEMS + LOGO_FILTERS
 │   │   ├── whyUs.ts                # WHY_US_TABS + STATS_BAR
 │   │   ├── resources.ts            # RESOURCES（16 条，8 种类型）+ RESOURCE_TYPES
+│   │   ├── marketplace.ts          # Marketplace 应用/分类/厂商 fallback
+│   │   ├── blog.ts / forum.ts      # 博客/论坛空库 fallback
 │   │   ├── security.ts             # 安全认证数据
 │   │   └── searchIndex.ts          # 50 条搜索索引
 │   │
@@ -621,16 +639,17 @@ export const PRODUCT_TABS = [
 
 | 数据文件 | 导出 | 消费组件 |
 |---------|------|---------|
-| `navigation.ts` | `NAV_LINKS`, `FOOTER_LINKS` | NavBar, MobileMenu, Footer |
-| `stats.ts` | `STATS_DATA` | StatsSection |
+| `navigation.ts` | `NAV_LINKS`, `FOOTER_LINKS` | NavBar, MobileMenu, Footer（CMS 失败 fallback） |
+| `stats.ts` | `STATS_DATA` | StatsSection（CMS 失败 fallback） |
 | `products.ts` | `PRODUCT_TABS`, `PRODUCT_MAP` | ProductMatrixSection, ProductListView, ProductDetailView |
-| `aiFamily.ts` | `AI_CARDS` | AiFamilySection |
+| `aiFamily.ts` | `AI_CARDS` | AiFamilySection（CMS 失败 fallback） |
 | `industries.ts` | `INDUSTRY_TABS`, `INDUSTRY_MAP` | IndustrySolutionSection, SolutionListView, SolutionDetailView |
 | `cases.ts` | `CASES`, `CASE_INDUSTRIES` | CaseListView, CaseDetailView |
 | `testimonials.ts` | `TESTIMONIALS` | TestimonialSection |
-| `logos.ts` | `LOGO_ITEMS`, `LOGO_FILTERS` | LogoWallSection |
-| `whyUs.ts` | `WHY_US_TABS`, `STATS_BAR` | WhyUsSection |
+| `logos.ts` | `LOGO_ITEMS`, `LOGO_FILTERS` | LogoWallSection（CMS 失败 fallback） |
+| `whyUs.ts` | `WHY_US_TABS`, `STATS_BAR` | WhyUsSection（CMS 失败 fallback） |
 | `resources.ts` | `RESOURCES`, `RESOURCE_TYPES` | ResourceSection, ResourceListView, ResourceDetailView |
+| `marketplace.ts` | `MARKETPLACE_APPS`, `CATEGORIES`, `VENDORS` | MarketplaceListView, MarketplaceDetailView |
 | `searchIndex.ts` | `SEARCH_INDEX` | SearchModal |
 
 ---
@@ -755,11 +774,14 @@ Vue 版本通过 `useCarousel` Composable 的 resize 监听，在宽度变化后
 ```ts
 export default defineNuxtConfig({
   srcDir: 'src',
-  ssr: false,                          // 开发 SPA 模式
+  ssr: true,                           // 开发/生产均走 SSR，提前暴露 SSR 不兼容代码
   nitro: {
     preset: 'static',                  // 生产 SSG 静态生成
-    prerender: { routes: ['/'], crawlLinks: true },
-    compressPublicAssets: true,        // gzip + brotli 预压缩
+    prerender: {
+      routes: buildPrerenderRoutes(),  // 3 语言动态路由全量预渲染
+      crawlLinks: true,
+    },
+    compressPublicAssets: false,       // Windows static preset 下避免资源复制竞态，由 CDN/Nginx 压缩
   },
   modules: [
     '@pinia/nuxt',
@@ -792,8 +814,8 @@ export default defineNuxtConfig({
 ---
 
 > 📌 **确认项**：
-> 1. 技术栈：Nuxt 3.4.6 + Nitro 2.13.4 + Vue 3.5 + Pinia + @nuxtjs/i18n + CSS Modules（无 TypeScript，无 UI 库）
-> 2. 数据策略：营销门户纯静态 TS 常量；博客/论坛/认证接入后端 NestJS API
+> 1. 技术栈：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + Pinia + @nuxtjs/i18n + CSS Modules（无通用 UI 库）
+> 2. 数据策略：首页 Section / 导航 / 站点配置 / 翻译优先 CMS/API，失败回退静态 TS 常量；博客/论坛/认证/支付/Marketplace 接入后端 NestJS API
 > 3. 部署平台：Vercel / Nginx / OSS+CDN（产物路径 `.output/public/`）
 
 ---
@@ -817,7 +839,7 @@ export default defineNuxtConfig({
 
 ```
 talentpro-backend/apps/api/src/modules/
-├── auth/          # 注册/登录/JWT/刷新/黑名单
+├── auth/          # 注册/登录/JWT Cookie-only/刷新/黑名单
 ├── user/          # 用户管理 + PII 加密
 ├── role/          # 角色与权限管理
 ├── workspace/     # 多租户 Workspace 管理
@@ -825,12 +847,12 @@ talentpro-backend/apps/api/src/modules/
 ├── forum/         # 话题/回复/置顶/锁定
 ├── lead/          # 演示预约线索 + 状态流转
 ├── analytics/     # 页面浏览/事件/转化漏斗
-├── cms/           # 首页板块动态配置
+├── cms/           # 页面/Section/导航/翻译/通用内容 CRUD
 ├── search/        # Meilisearch 搜索索引管理
 ├── media/         # 文件上传/MinIO 存储
 ├── notification/  # SSE 实时通知
 ├── mail/          # 邮件发送
-├── ai/            # AI 服务集成
+├── ai/            # AI 内容生成/图片生成/对话/Admin 配置助手
 ├── experiment/    # A/B 测试实验管理
 ├── export/        # 数据导出
 ├── download/      # 资源下载追踪
@@ -839,18 +861,19 @@ talentpro-backend/apps/api/src/modules/
 ├── careers/       # 招聘职位管理
 ├── about/         # 关于我们内容
 ├── marketplace/   # 应用广场（App / Category / Vendor / Review / Subscription）
-├── payment/       # Stripe 支付（Checkout / Webhook / 订单生命周期）
+├── payment/       # Stripe/支付宝 订单/订阅/收入分析/Webhook
 ├── cart/          # Redis 购物车（TTL 7天）
-├── system/        # 系统配置/IP 黑白名单
+├── system/        # 公开站点配置/审计日志/ChatBot 配置/IP 黑白名单
 └── health/        # 健康检查端点
 ```
 
 ### 11.3 认证与权限流程
 
 1. **注册**：`POST /auth/register` → bcrypt 哈希 → reCAPTCHA 校验 → 默认 `USER` 角色
-2. **登录**：`POST /auth/login` → 验证密码 → 签发 accessToken（15m）+ refreshToken（7d）
-3. **刷新**：`POST /auth/refresh` → 验证 refreshToken → 删除旧令牌 → 签发新令牌对
-4. **登出**：`POST /auth/logout` → Access Token 写入 TokenBlacklist → 即时失效
+2. **登录**：`POST /auth/login` → 验证密码 → 签发 accessToken（15m）+ refreshToken（7d）→ 写入 httpOnly Cookie
+3. **刷新**：`POST /auth/refresh` → 从 Cookie 读取 refreshToken → 删除旧令牌 → 签发新令牌对并刷新 Cookie
+4. **登出**：`POST /auth/logout` → 清除 Cookie + Access Token 写入 TokenBlacklist → 即时失效
+5. **前端**：`withCredentials: true`，不再读写 `localStorage` token；同时兼容 Bearer Header
 5. **权限**：`@Roles('ADMIN', 'SUPER_ADMIN')` + `RolesGuard` → JWT 解码 → 角色校验
 6. **细粒度权限**：`@Permissions('cms:write', 'user:read')` + `PermissionGuard` → 权限点校验
 7. **IP 过滤**：`IpFilterGuard` → 请求 IP 匹配黑白名单 → 拦截/放行
@@ -898,8 +921,8 @@ talentpro-backend/apps/api/src/modules/
 
 - **加密算法**：AES-256-GCM
 - **密钥来源**：`PII_ENCRYPTION_KEY` 环境变量 → `JWT_SECRET` fallback（记录警告日志）
-- **自动字段**：User.phone / User.email / DemoBooking.phone / DemoBooking.email
-- **实现方式**：Prisma 扩展（`encryptionExtension`），读写自动加解密，业务代码无感知
+- **自动字段**：User.phone / email、DemoBooking.phone / email、JobApplication.phone / email / resumeUrl、AppVendor.contact / email / phone、TeamMember.email / phone 等
+- **实现方式**：Prisma 扩展（`encryptionExtension`），读写自动加解密，业务代码无感知；查询字段 email 暂为明文
 
 ### 11.10 SSE 实时通知
 
@@ -913,6 +936,42 @@ talentpro-backend/apps/api/src/modules/
 - **SentryInterceptor**：全局拦截器，catchError 中上报异常
 - **上下文信息**：userId、url、method、body（脱敏，去掉 password）
 
+### 11.12 AI 服务（v4.3.0）
+
+- **`POST /ai/generate`**：ADMIN/SUPER_ADMIN 权限 `ai:generate`，支持 `blog`/`product`/`seo`/`translate`/`moderate` 类型草稿生成
+- **`POST /ai/generate-image`**：权限 `ai:generate-image`，DALL·E 生成图片后落入媒体库；环境变量 `OPENAI_IMAGE_MODEL/SIZE/QUALITY/STYLE`
+- **`POST /ai/admin/chat`**：权限 `ai:chat`，Admin 配置助手，为 PageConfig/内容运营提供文案与图片建议
+- **`POST /ai/chat` / `/ai/chat-stream`**：公开 ChatBot 对话，RAG + 多轮会话持久化到 `AiChatSession`
+- **LLM 抽象**：`LlmProvider` 接口 + `AiOpenAiService` 实现，模型参数环境变量驱动
+
+### 11.13 站点配置与功能开关（v4.3.0）
+
+- **`GET /system/config/public`**：返回 `recaptchaSiteKey`、`sentryDsn`、`sitePhone`、`copyright`、`featureFlags`、`hotTags`、`socialLinks`、`siteTitle`、`siteDescription`
+- **功能开关**：前端 `useFeatureFlag(key)` 读取 `featureFlags`，按 key 灰度启停模块
+- **翻译后端化**：`GET /cms/translations` 按 locale/context 返回翻译覆盖层；Admin `/cms/translations` 管理多语言 key
+
+### 11.14 ChatBot 后端化（v4.3.0）
+
+- **模型**：`ChatBotConfig`（默认 key）+ `AiChatSession`（多轮对话）
+- **`GET /system/chatbot-config`**：公开配置（intents / quickReplies / fallbackCopy）
+- **`POST /system/chatbot-config`**：Admin 更新 ChatBot 配置
+- **前端 `useChatBot`**：`POST /ai/chat` 非流式对话，加载配置与历史会话
+
+### 11.15 审计日志（v4.3.0）
+
+- **`AuditInterceptor`** 全局注册，审计已认证用户的 POST/PATCH/PUT/DELETE
+- 变更前自动快照（`oldValue`），响应后记录 `newValue`
+- 敏感字段（password/token/secret 等）自动 `[REDACTED]`
+- **`GET /system/audit-logs`**：ADMIN/SUPER_ADMIN 查询；**`POST /system/audit-logs`** 仅 SUPER_ADMIN
+
+### 11.16 Marketplace 深化（v4.3.0）
+
+- **订阅模型**：`Subscription` 关联 Workspace 与 App，状态 `ACTIVE`/`EXPIRED`/`CANCELLED`
+- **应用安装**：`POST /marketplace/apps/:slug/install` 创建试用订阅
+- **厂商管理**：`admin/marketplace/vendors` CRUD，权限 `marketplace_vendor:*`
+- **订阅管理**：`admin/marketplace/subscriptions` 列表/状态更新，权限 `marketplace_subscription:update`
+- **收入分析**：`GET /payments/analytics/revenue` 按天聚合收入、订单、退款
+
 ---
 
 ## 12. Admin 后台架构（v2.6.0 新增）
@@ -922,9 +981,10 @@ talentpro-backend/apps/api/src/modules/
 | 维度 | 技术 | 版本 |
 |------|------|------|
 | 框架 | Vue | 3.5 |
-| 构建 | Vite | 5.4.0 |
-| UI 库 | Element Plus | 2.8.0 |
-| 状态 | Pinia | 2.2 |
+| 构建 | Vite | 8 |
+| 语言 | TypeScript | ES Module |
+| UI 库 | Element Plus | 2.8 |
+| 状态 | Pinia | 3.x |
 | 路由 | Vue Router | 4.4 |
 | 图标 | @element-plus/icons-vue | 2.3 |
 
@@ -933,18 +993,20 @@ talentpro-backend/apps/api/src/modules/
 ```
 talentpro-admin/
 ├── src/
-│   ├── main.js                  # createApp + Pinia + Router + ElementPlus
+│   ├── main.ts                  # createApp + Pinia + Router + ElementPlus
 │   ├── App.vue
 │   ├── router/
-│   │   └── index.js             # 路由守卫（JWT 校验 + 角色/权限拦截）
+│   │   └── index.ts             # 路由守卫（JWT Cookie 校验 + 角色/权限拦截）
 │   ├── stores/
-│   │   └── auth.js              # token + user + login/logout + 权限判断
+│   │   └── auth.ts              # token + user + login/logout + 权限判断
 │   ├── api/
-│   │   └── client.js            # Axios + Bearer 拦截器 + 401 刷新/登出
+│   │   └── client.ts            # Axios + Cookie withCredentials + 401 刷新/登出
 │   ├── components/
 │   │   ├── CmsTable.vue         # 通用 CMS CRUD 表格
-│   │   ├── ImageUpload.vue      # 图片上传组件（对接 /medias/upload）
+│   │   ├── SectionConfigForm.vue # 按 schema 渲染 Section 配置表单
+│   │   ├── ImageUpload.vue      # 图片上传组件（对接 /medias/upload，支持 AI 生成）
 │   │   ├── RichEditor.vue       # TipTap 富文本编辑器
+│   │   ├── AiAssistButton.vue   # AI 文案/图片建议按钮
 │   │   ├── NotificationBell.vue # SSE 通知角标
 │   │   └── Picture.vue          # 图片预览
 │   ├── composables/
@@ -952,37 +1014,43 @@ talentpro-admin/
 │   │   └── useCrud.js           # 弹窗表单 CRUD 逻辑
 │   └── views/
 │       ├── LoginView.vue
-│       ├── LayoutView.vue           # 侧边栏 + 顶部栏 + 面包屑
-│       ├── DashboardView.vue        # 数据仪表盘（ECharts）
-│       ├── BlogManagerView.vue      # 博客文章管理
-│       ├── ForumManagerView.vue     # 论坛话题/回复管理
-│       ├── CommentModerationView.vue# 评论审核
-│       ├── AnalyticsView.vue        # 数据分析
-│       ├── UsersView.vue            # 用户管理
-│       ├── LeadsView.vue            # 线索管理
-│       ├── ContentsView.vue         # CMS 内容只读总览
-│       ├── ProductsView.vue         # 产品矩阵管理
-│       ├── IndustriesView.vue       # 行业方案管理
-│       ├── TestimonialsView.vue     # 客户证言管理
-│       ├── LogosView.vue            # Logo 墙管理
-│       ├── StatsView.vue            # 统计数据管理
-│       ├── PageConfigView.vue       # 首页板块配置
-│       ├── WorkspaceView.vue        # Workspace 租户管理
-│       ├── RolesView.vue            # 角色与权限管理
-│       ├── SettingsView.vue         # 系统参数
-│       ├── SensitiveWordView.vue    # 敏感词/IP 黑白名单
-│       ├── AuditLogView.vue         # 审计日志
-│       ├── EmailTemplateView.vue    # 邮件模板
-│       ├── MediaView.vue            # 媒体库
-│       ├── CaseManagerView.vue      # 客户案例管理
-│       ├── NewsManagerView.vue      # 新闻管理
-│       ├── JobManagerView.vue       # 招聘管理
-│       ├── AppManagerView.vue       # 应用广场管理
-│       ├── CategoryManagerView.vue  # 应用分类管理
-│       ├── VendorManagerView.vue    # 供应商管理
-│       ├── ReviewManagerView.vue    # 应用评价管理
-│       ├── DownloadRecordView.vue   # 下载记录
-│       └── ExperimentView.vue       # A/B 实验管理
+│       ├── LayoutView.vue              # 侧边栏 + 顶部栏 + 面包屑
+│       ├── DashboardView.vue           # 数据仪表盘（ECharts）
+│       ├── BlogManagerView.vue         # 博客文章管理
+│       ├── ForumManagerView.vue        # 论坛话题/回复管理
+│       ├── CommentModerationView.vue   # 评论审核
+│       ├── AnalyticsView.vue           # 数据分析
+│       ├── RevenueAnalyticsView.vue    # Marketplace 收入分析
+│       ├── UsersView.vue               # 用户管理
+│       ├── LeadsView.vue               # 线索管理
+│       ├── ContentsView.vue            # CMS 内容只读总览
+│       ├── ProductsView.vue            # 产品矩阵管理
+│       ├── IndustriesView.vue          # 行业方案管理
+│       ├── TestimonialsView.vue        # 客户证言管理
+│       ├── LogosView.vue               # Logo 墙管理
+│       ├── StatsView.vue               # 统计数据管理
+│       ├── PageConfigView.vue          # 首页 Section 配置（嵌入 AI 助手）
+│       ├── TranslationManagerView.vue  # 翻译管理
+│       ├── FeatureFlagView.vue         # 功能开关
+│       ├── AiAssistantView.vue         # AI 配置助手面板
+│       ├── WorkspaceView.vue           # Workspace 租户管理
+│       ├── RolesView.vue               # 角色与权限管理
+│       ├── SettingsView.vue            # 系统参数
+│       ├── SensitiveWordView.vue       # 敏感词/IP 黑白名单
+│       ├── AuditLogView.vue            # 审计日志
+│       ├── EmailTemplateView.vue       # 邮件模板
+│       ├── MediaView.vue               # 媒体库
+│       ├── CaseManagerView.vue         # 客户案例管理
+│       ├── NewsManagerView.vue         # 新闻管理
+│       ├── JobManagerView.vue          # 招聘管理
+│       ├── AppManagerView.vue          # 应用广场管理
+│       ├── CategoryManagerView.vue     # 应用分类管理
+│       ├── VendorManagerView.vue       # 供应商管理
+│       ├── ReviewManagerView.vue       # 应用评价管理
+│       ├── SubscriptionManagerView.vue # 订阅管理
+│       ├── OrderManagerView.vue        # 订单管理
+│       ├── DownloadRecordView.vue      # 下载记录
+│       └── ExperimentView.vue          # A/B 实验管理
 ├── eslint.config.mjs          # Flat config ESLint
 └── vitest.config.js           # Vitest + happy-dom
 ```
@@ -991,7 +1059,20 @@ talentpro-admin/
 
 - 登录页（`public`）：无需认证
 - 所有后台页面：路由守卫检查 `auth.isLoggedIn` → 未登录跳转 `/login`
-- API 请求：Axios 拦截器自动附加 `Authorization: Bearer ${token}`
+- API 请求：Axios `withCredentials: true`，后端优先读取 httpOnly Cookie，兼容 Bearer Header
 - 401 响应：自动 logout + 跳转登录页
 
-*架构师 Agent 产出 | 2026-03-15 | v4.1.0 更新 2026-06-15*
+### 12.4 首页 Section 配置化（v4.3.0）
+
+- **`src/utils/sectionRegistry.ts`** 与 Admin `sectionRegistry.js` 同步维护 `defaultConfig` + `configSchema`
+- **Hero Section 配置化**：支持背景图、主标题、副标题、CTA 文案、Dashboard 显示开关；未配置时回退 i18n
+- **`SectionConfigForm.vue`**：按 schema 渲染 `input`/`textarea`/`switch`/`image-upload`，ImageUpload 支持 AI 生成图片
+- **`PageConfigView`**：拖拽排序 Section、启停开关、AI 配置助手侧边栏
+
+### 12.5 AI 能力集成（v4.3.0）
+
+- **Admin `AiAssistButton`**：在博客/新闻/案例/产品/行业/邮件模板等表单中接入 `POST /ai/generate`
+- **图片 AI 生成**：`ImageUpload.vue` 调用 `POST /ai/generate-image`，生成后自动回填 URL
+- **配置助手**：`AiAssistantView.vue` / `PageConfigView` 侧边栏调用 `POST /ai/admin/chat`
+
+*架构师 Agent 产出 | 2026-03-15 | v4.1.0 更新 2026-06-15 | v4.3.0 更新 2026-07-05*

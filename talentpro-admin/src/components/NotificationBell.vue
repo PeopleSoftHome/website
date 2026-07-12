@@ -131,7 +131,7 @@ let sseHasOpened = false;
 let reconnectTimer = null;
 
 const connectSSE = () => {
-  if (!auth.token) return;
+  if (!auth.isLoggedIn) return;
   if (eventSource) {
     eventSource.close();
   }
@@ -142,9 +142,9 @@ const connectSSE = () => {
     return;
   }
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1';
-  const url = `${baseURL}/notifications/stream?token=${encodeURIComponent(auth.token)}`;
+  const url = `${baseURL}/notifications/stream`;
   sseHasOpened = false;
-  eventSource = new EventSource(url);
+  eventSource = new EventSource(url, { withCredentials: true });
 
   eventSource.addEventListener('open', () => {
     sseRetryCount = 0;

@@ -4,11 +4,11 @@ import { Type } from 'class-transformer';
 export class CheckoutCartItemDto {
   @IsString()
   @IsNotEmpty()
-  appId: string;
+  appId!: string;
 
   @IsString()
   @IsNotEmpty()
-  tierName: string;
+  tierName!: string;
 
   @IsString()
   @IsOptional()
@@ -16,7 +16,7 @@ export class CheckoutCartItemDto {
 
   @IsNumber()
   @Min(0)
-  amount: number;
+  amount!: number;
 
   @IsString()
   @IsOptional()
@@ -31,5 +31,5 @@ export class CheckoutCartDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CheckoutCartItemDto)
-  items: CheckoutCartItemDto[];
+  items!: CheckoutCartItemDto[];
 }

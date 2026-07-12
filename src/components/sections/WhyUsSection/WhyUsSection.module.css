@@ -75,7 +75,7 @@
 
 .statLabel {
   font-size: 11px;
-  color: var(--text-on-dark-tertiary);
+  color: var(--text-on-dark-muted);
   margin-top: 6px;
   white-space: nowrap;
 }
@@ -91,7 +91,7 @@
 .certTitle {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-dark-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 20px;
@@ -136,7 +136,7 @@
 
 .certDesc {
   font-size: 11px;
-  color: var(--text-on-dark-tertiary);
+  color: var(--text-on-dark-muted);
   white-space: nowrap;
   /* 桌面显示描述，移动端隐藏 */
 }

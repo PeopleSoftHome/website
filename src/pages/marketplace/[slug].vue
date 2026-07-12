@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import AppPricing from '@/components/sections/Marketplace/AppPricing.vue';
@@ -116,7 +116,7 @@ import AppReviews from '@/components/sections/Marketplace/AppReviews.vue';
 import { getMarketplaceApps, getMarketplaceAppMap, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, paymentApi, cartApi, transformMarketplaceApp, type MarketplaceApp } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });
@@ -137,7 +137,7 @@ const { data: apiApp, error: appError } = useAsyncData(
     const res = await marketplaceApi.getApp(slugStr.value);
     return transformMarketplaceApp(res?.data || res);
   },
-  { server: false, default: () => null as MarketplaceApp | null, watch: [slugStr, locale] }
+  { default: () => null as MarketplaceApp | null, watch: [slugStr, locale] }
 );
 
 const { data: apiApps } = useAsyncData(
@@ -147,7 +147,7 @@ const { data: apiApps } = useAsyncData(
     const list = (res?.data?.data || res?.data || res || []) as any[];
     return list.map(transformMarketplaceApp);
   },
-  { server: false, default: () => [] as MarketplaceApp[] }
+  { default: () => [] as MarketplaceApp[] }
 );
 
 const app = computed(() => apiApp.value || (fallbackAppMap.value as Record<string, MarketplaceApp>)[slugStr.value || ''] || null);
@@ -192,6 +192,7 @@ const formatInstallCount = (n: number) => {
 };
 
 const scrollToPricing = () => {
+  if (typeof document === 'undefined') return;
   document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -237,13 +238,14 @@ const handleSubscribe = async (tier: { name: string; priceMonthly: number }) => 
       provider: 'STRIPE',
     });
     const order = orderRes.data;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://talentpro.cn';
     const checkoutRes = await paymentApi.createStripeCheckout({
       orderId: order.id,
-      successUrl: `${window.location.origin}/marketplace/payment/success?order_id=${order.id}`,
-      cancelUrl: `${window.location.origin}/marketplace/payment/cancel?order_id=${order.id}`,
+      successUrl: `${origin}/marketplace/payment/success?order_id=${order.id}`,
+      cancelUrl: `${origin}/marketplace/payment/cancel?order_id=${order.id}`,
     });
     if (checkoutRes.data?.url) {
-      window.location.href = checkoutRes.data.url;
+      if (typeof window !== 'undefined') window.location.href = checkoutRes.data.url;
     }
   } catch (e) {
     const err = e as { response?: { data?: { message?: string } } };
@@ -259,21 +261,18 @@ const relatedApps = computed(() => {
   return list.filter((a) => a.category === current.category && a.slug !== current.slug).slice(0, 3);
 });
 
-onMounted(() => {
-  watch(app, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        name: val.name,
-        description: val.tagline,
-        applicationCategory: 'BusinessApplication',
-        operatingSystem: 'Web',
-        offers: val.pricingTiers?.map((t) => ({ '@type': 'Offer', name: t.name, price: t.priceMonthly, priceCurrency: 'CNY' })) || [],
-        aggregateRating: { '@type': 'AggregateRating', ratingValue: val.ratingAvg, ratingCount: val.ratingCount },
-      });
-    }
-  }, { immediate: true });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = app.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: val.name,
+    description: val.tagline,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    offers: val.pricingTiers?.map((t) => ({ '@type': 'Offer', name: t.name, price: t.priceMonthly, priceCurrency: 'CNY' })) || [],
+    aggregateRating: { '@type': 'AggregateRating', ratingValue: val.ratingAvg, ratingCount: val.ratingCount },
+  };
+}));
 </script>

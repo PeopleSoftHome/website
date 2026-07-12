@@ -111,11 +111,11 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'about.title', description: 'about.subtitle' });
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getTimeline } from '@/data/timeline';
 import { getCertifications, getPartnerLogos } from '@/data/contact';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
@@ -138,22 +138,19 @@ const stats = [
   { value: '12', label: t('about.countries') },
 ];
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: t('about.jsonLdName'),
-    description: t('about.jsonLdDesc'),
-    url: 'https://talentpro.cn/about',
-    logo: 'https://talentpro.cn/logo.png',
-    foundingDate: '2018',
-    numberOfEmployees: { '@type': 'QuantitativeValue', value: '500+' },
-    areaServed: { '@type': 'Country', name: 'CN' },
-    sameAs: [
-      'https://www.linkedin.com/company/talentpro',
-      'https://twitter.com/talentpro',
-    ],
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: t('about.jsonLdName'),
+  description: t('about.jsonLdDesc'),
+  url: 'https://talentpro.cn/about',
+  logo: 'https://talentpro.cn/logo.png',
+  foundingDate: '2018',
+  numberOfEmployees: { '@type': 'QuantitativeValue', value: '500+' },
+  areaServed: { '@type': 'Country', name: 'CN' },
+  sameAs: [
+    'https://www.linkedin.com/company/talentpro',
+    'https://twitter.com/talentpro',
+  ],
 });
-onUnmounted(removeJsonLd);
 </script>

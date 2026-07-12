@@ -3,5 +3,5 @@ import { CommentStatus } from '@prisma/client';
 
 export class ModerateCommentDto {
   @IsEnum(CommentStatus)
-  status: CommentStatus;
+  status!: CommentStatus;
 }

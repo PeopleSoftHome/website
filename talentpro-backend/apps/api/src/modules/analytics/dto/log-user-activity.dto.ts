@@ -2,7 +2,7 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class LogUserActivityDto {
   @IsString()
-  action: string;
+  action!: string;
 
   @IsOptional()
   metadata?: Record<string, unknown>;

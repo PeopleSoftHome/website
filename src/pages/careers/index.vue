@@ -79,7 +79,7 @@
         </div>
 
         <div :class="s.benefits" class="reveal">
-          <h2 :class="s.benefitsTitle">{{ t('careers.benefits') }}</h2>
+          <h2 :class="s.benefitsTitle">{{ t('careers.benefitsTitle') }}</h2>
           <p :class="s.benefitsDesc">{{ t('careers.benefitsDesc') }}</p>
           <div :class="s.benefitGrid">
             <div v-for="(b, i) in benefits" :key="i" :class="s.benefitCard">
@@ -96,11 +96,11 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'careers.title', description: 'careers.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
 import { getCareerTestimonials, getCareerPath } from '@/data/careers';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
 
@@ -125,7 +125,7 @@ interface Job {
 const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   'careers-jobs',
   () => careersApi.getJobs({ department: activeDept.value || undefined }),
-  { server: false, watch: [activeDept], default: () => ({ data: [] as Job[] }) }
+  { watch: [activeDept], default: () => ({ data: [] as Job[] }) }
 );
 
 const filteredJobs = computed(() => {
@@ -165,15 +165,12 @@ const benefits = [
 const careerPath = computed(() => getCareerPath(locale.value));
 const testimonials = computed(() => getCareerTestimonials(locale.value));
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: t('careers.jsonLdName'),
-    description: t('careers.jsonLdDesc'),
-    url: 'https://talentpro.cn/careers',
-    publisher: { '@type': 'Organization', name: 'TalentPro', logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' } },
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: t('careers.jsonLdName'),
+  description: t('careers.jsonLdDesc'),
+  url: 'https://talentpro.cn/careers',
+  publisher: { '@type': 'Organization', name: 'TalentPro', logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' } },
 });
-onUnmounted(removeJsonLd);
 </script>

@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsInt } from 'class-validator';
 
 export class CreateLogoDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  logo: string;
+  logo!: string;
 
   @IsOptional()
   @IsString()

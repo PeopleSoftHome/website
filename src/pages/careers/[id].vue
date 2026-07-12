@@ -82,7 +82,7 @@
               </div>
             </div>
             <div :class="s.section">
-              <h2 :class="s.sectionTitle">{{ t('careers.benefits') }}</h2>
+              <h2 :class="s.sectionTitle">{{ t('careers.benefitsTitle') }}</h2>
               <p :class="s.sectionBody">{{ t('careers.benefitsDesc') }}</p>
             </div>
           </div>
@@ -99,17 +99,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { computed } from 'vue';
+import { useJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
+import { getJobMap } from '@/data/jobs';
 import s from './[id].module.css';
 
 definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const route = useRoute();
 const id = computed(() => route.params.id);
+const jobMap = computed(() => getJobMap(locale.value));
 
 useHead(() => {
   if (!job.value) return {};
@@ -132,16 +134,26 @@ useHead(() => {
 });
 
 const { data: job, pending: loading, error: fetchError } = useAsyncData(
-  () => `career-${id.value}`,
+  () => `career-${id.value}-${locale.value}`,
   async () => {
-    const res = await careersApi.getJob(id.value as string);
-    const data = res.data || null;
-    if (!data) {
+    const fallback = jobMap.value[id.value as string] || null;
+    try {
+      const res = await careersApi.getJob(id.value as string);
+      const data = res.data || null;
+      if (data) return data;
+    } catch (e) {
+      // API 不可用时降级到静态 fallback
+      if (import.meta.env.DEV) {
+        const err = e as Error;
+        console.warn(`[CareerDetail] CMS load failed for ${id.value}, using fallback`, err.message);
+      }
+    }
+    if (!fallback) {
       throw createError({ statusCode: 404, statusMessage: 'Job Not Found', fatal: true });
     }
-    return data;
+    return fallback;
   },
-  { server: false, default: () => null, watch: [id] }
+  { default: () => null, watch: [id, locale] }
 );
 
 const error = computed(() => {
@@ -178,10 +190,10 @@ const handleApply = () => {
   import('@/utils/toast').then(({ showToast }) => showToast(t('careers.applyPrompt'), 'success'));
 };
 
-onMounted(() => {
-  if (!job.value) return;
+useJsonLd(computed(() => {
   const j = job.value;
-  injectJsonLd({
+  if (!j) return null;
+  return {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: j.title,
@@ -190,8 +202,6 @@ onMounted(() => {
     jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressLocality: j.location, addressCountry: 'CN' } },
     employmentType: j.type,
     datePosted: j.createdAt,
-  });
-});
-
-onUnmounted(removeJsonLd);
+  };
+}));
 </script>

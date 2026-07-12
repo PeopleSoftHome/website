@@ -3,13 +3,13 @@ import { PostStatus } from '@prisma/client';
 
 export class CreateBlogPostDto {
   @IsString()
-  title: string;
+  title!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsOptional()
   @IsString()
@@ -20,7 +20,7 @@ export class CreateBlogPostDto {
   coverImage?: string;
 
   @IsString()
-  categoryId: string;
+  categoryId!: string;
 
   @IsOptional()
   @IsArray()

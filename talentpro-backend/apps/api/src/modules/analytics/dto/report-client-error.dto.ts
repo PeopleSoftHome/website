@@ -2,10 +2,10 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class ReportClientErrorDto {
   @IsString()
-  type: string;
+  type!: string;
 
   @IsString()
-  message: string;
+  message!: string;
 
   @IsOptional()
   @IsString()

@@ -3,7 +3,7 @@ import { ChatMessage } from '../ai.types';
 
 export class AiChatDto {
   @IsString()
-  message: string;
+  message!: string;
 
   @IsOptional()
   @IsArray()

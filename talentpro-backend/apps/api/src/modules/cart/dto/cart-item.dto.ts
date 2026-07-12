@@ -3,23 +3,23 @@ import { IsString, IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator
 export class AddCartItemDto {
   @IsString()
   @IsNotEmpty()
-  appId: string;
+  appId!: string;
 
   @IsString()
   @IsNotEmpty()
-  slug: string;
+  slug!: string;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
-  tierName: string;
+  tierName!: string;
 
   @IsNumber()
   @Min(0)
-  price: number;
+  price!: number;
 
   @IsString()
   @IsOptional()
@@ -34,5 +34,5 @@ export class AddCartItemDto {
 export class UpdateCartItemDto {
   @IsNumber()
   @Min(1)
-  quantity: number;
+  quantity!: number;
 }

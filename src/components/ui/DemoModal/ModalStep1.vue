@@ -141,6 +141,7 @@ const handlePhoneInput = (e: Event) => {
 
 /* ── 聚焦时滚动到顶部（解决移动端键盘遮挡）── */
 const scrollToTop = () => {
+  if (typeof document === 'undefined') return;
   const modal = document.querySelector(`.${s.modal}`);
   if (modal) {
     modal.scrollTo({ top: 0, behavior: 'smooth' });
@@ -169,6 +170,7 @@ declare global {
 }
 
 const autoFillPhone = async () => {
+  if (typeof window === 'undefined') return;
   try {
     if (navigator.contacts && 'ContactsManager' in window) {
       const props = ['tel'];
@@ -230,7 +232,9 @@ const handleNext = () => {
   }
   Object.keys(errors).forEach(k => delete errors[k as keyof FormErrors]);
   // 保存手机号供下次自动填入
-  sessionStorage.setItem(STORAGE_KEYS.DEMO_LAST_PHONE, fields.phone);
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.setItem(STORAGE_KEYS.DEMO_LAST_PHONE, fields.phone);
+  }
   emit('next');
 };
 

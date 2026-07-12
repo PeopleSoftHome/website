@@ -12,6 +12,7 @@ export function useNavScroll() {
   const showBackTop = ref(false);
 
   const handler = () => {
+    if (typeof window === 'undefined') return;
     scrolled.value = window.scrollY > 60;
     showBackTop.value = window.scrollY > 500;
   };

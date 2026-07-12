@@ -39,10 +39,10 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'partners.title', description: 'partners.subtitle' });
-import { onMounted, onUnmounted, computed } from 'vue';
+import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { aboutApi } from '@/api/about';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './partners.module.css';
 
@@ -55,7 +55,7 @@ const { data: partners, pending: loading, error: asyncError } = useAsyncData(
     const res = await aboutApi.getPartners({});
     return res.data || [];
   },
-  { server: false, default: () => [] as any[] }
+  { default: () => [] as any[] }
 );
 
 const error = computed(() => {
@@ -64,19 +64,16 @@ const error = computed(() => {
   return err.response?.data?.message || err.message || t('common.loadError');
 });
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: t('partners.jsonLdName'),
-    description: t('partners.jsonLdDesc'),
-    url: 'https://talentpro.cn/about/partners',
-    publisher: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-    },
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: t('partners.jsonLdName'),
+  description: t('partners.jsonLdDesc'),
+  url: 'https://talentpro.cn/about/partners',
+  publisher: {
+    '@type': 'Organization',
+    name: 'TalentPro',
+    logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+  },
 });
-onUnmounted(removeJsonLd);
 </script>

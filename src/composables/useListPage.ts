@@ -37,7 +37,7 @@ export function useListPage<T = unknown, F extends Record<string, unknown> = Rec
     transform = (data: unknown[]): T[] => data as T[],
     filterFn = () => true,
     pageSize,
-    server = false,
+    server = true,
   } = options;
 
   const displayLimit = ref(pageSize || Infinity);

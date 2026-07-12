@@ -61,10 +61,10 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'careers.campusSubtitle', description: 'careers.subtitle' });
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './campus.module.css';
 
 const { t } = useI18n();
@@ -72,7 +72,7 @@ const { t } = useI18n();
 const { data: jobsRes, pending: loading, error: fetchError } = useAsyncData(
   'careers-campus-jobs',
   () => careersApi.getJobs({ type: t('careersType.campus') }),
-  { server: false, default: () => ({ data: [] }) }
+  { default: () => ({ data: [] }) }
 );
 
 const jobs = computed(() => {
@@ -85,19 +85,16 @@ const error = computed(() => {
   return err.response?.data?.message || err.message || t('common.loadError');
 });
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: t('careers.jsonLdName'),
-    description: t('careers.campusSubtitle'),
-    url: 'https://talentpro.cn/careers/campus',
-    publisher: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-    },
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: t('careers.jsonLdName'),
+  description: t('careers.campusSubtitle'),
+  url: 'https://talentpro.cn/careers/campus',
+  publisher: {
+    '@type': 'Organization',
+    name: 'TalentPro',
+    logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+  },
 });
-onUnmounted(removeJsonLd);
 </script>

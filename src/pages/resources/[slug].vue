@@ -134,11 +134,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getResources, RESOURCE_TYPE_STYLES } from '@/data/resources';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import { useScrollProgress } from '@/composables/useScrollProgress';
 import { useSpyScroll } from '@/composables/useSpyScroll';
 import s from './[slug].module.css';
@@ -168,7 +168,7 @@ const { data: resource } = useAsyncData(
     }
     return data;
   },
-  { server: false, default: () => null, watch: [slug, locale] }
+  { default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -210,6 +210,7 @@ const typeStyle = (type: string) => {
 };
 
 const scrollToSection = (id: string) => {
+  if (typeof document === 'undefined') return;
   const el = document.getElementById(`section-${id}`);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
@@ -218,7 +219,7 @@ const handleDownload = () => {
   if (resource.value?.formRequired) {
     showForm.value = true;
   } else if (resource.value?.url) {
-    window.open(resource.value.url, '_blank');
+    if (typeof window !== 'undefined') window.open(resource.value.url, '_blank');
   }
 };
 
@@ -228,7 +229,7 @@ const submitForm = () => {
   if (!form.value.email.trim() || !/\S+@\S+\.\S+/.test(form.value.email)) { formError.value = t('resourcePage.formEmailRequired'); return; }
   if (!form.value.company.trim()) { formError.value = t('resourcePage.formCompanyRequired'); return; }
   showForm.value = false;
-  if (resource.value?.url) window.open(resource.value.url, '_blank');
+  if (resource.value?.url && typeof window !== 'undefined') window.open(resource.value.url, '_blank');
 };
 
 const handleFeedback = (type: string) => {
@@ -236,18 +237,15 @@ const handleFeedback = (type: string) => {
   setTimeout(() => { feedbackMsg.value = ''; }, 3000);
 };
 
-onMounted(() => {
-  watch(resource, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'DigitalDocument',
-        name: val.title,
-        description: val.description,
-        publisher: { '@type': 'Organization', name: 'TalentPro' },
-      });
-    }
-  }, { immediate: true });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = resource.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DigitalDocument',
+    name: val.title,
+    description: val.description,
+    publisher: { '@type': 'Organization', name: 'TalentPro' },
+  };
+}));
 </script>

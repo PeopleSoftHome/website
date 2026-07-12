@@ -2,12 +2,12 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class TrackPageViewDto {
   @IsString()
-  path: string;
+  path!: string;
 
   @IsOptional()
   @IsString()
   referrer?: string;
 
   @IsString()
-  sessionId: string;
+  sessionId!: string;
 }

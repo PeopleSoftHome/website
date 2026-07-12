@@ -39,7 +39,7 @@ export function useDemoBooking() {
     modal.setError('');
     try {
       let recaptchaToken = '';
-      if (recaptchaSiteKey && window.grecaptcha) {
+      if (recaptchaSiteKey && typeof window !== 'undefined' && window.grecaptcha) {
         try {
           recaptchaToken = await window.grecaptcha.execute(
             recaptchaSiteKey,

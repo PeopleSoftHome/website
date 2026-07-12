@@ -2,17 +2,17 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class RecordExperimentEventDto {
   @IsString()
-  variant: string;
+  variant!: string;
 
   @IsString()
-  eventType: string;
+  eventType!: string;
 
   @IsOptional()
   @IsString()
   userId?: string;
 
   @IsString()
-  sessionId: string;
+  sessionId!: string;
 
   @IsOptional()
   properties?: Record<string, unknown>;

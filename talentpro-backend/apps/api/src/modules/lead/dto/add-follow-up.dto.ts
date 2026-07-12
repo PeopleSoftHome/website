@@ -2,11 +2,11 @@ import { IsString } from 'class-validator';
 
 export class AddFollowUpDto {
   @IsString()
-  type: string;
+  type!: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsString()
-  createdBy: string;
+  createdBy!: string;
 }

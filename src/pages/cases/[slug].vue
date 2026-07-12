@@ -65,9 +65,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch, type Component } from 'vue';
+import { computed, type Component } from 'vue';
 import { useVideoModalStore } from '@/stores/videoModal.pinia';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';
@@ -143,7 +143,7 @@ const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
     }
     return data || staticCase;
   },
-  { server: false, default: () => null, watch: [slug, locale] }
+  { default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -184,20 +184,16 @@ const relatedCases = computed<CaseItem[]>(() => {
 
 const handlePlayVideo = () => videoModalStore.openVideo();
 
-onMounted(() => {
-  watch(caseStudy, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: val.title,
-        description: val.excerpt,
-        author: { '@type': 'Organization', name: val.clientName },
-        publisher: { '@type': 'Organization', name: 'TalentPro' },
-      });
-    }
-  }, { immediate: true });
-});
-
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = caseStudy.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: val.title,
+    description: val.excerpt,
+    author: { '@type': 'Organization', name: val.clientName },
+    publisher: { '@type': 'Organization', name: 'TalentPro' },
+  };
+}));
 </script>

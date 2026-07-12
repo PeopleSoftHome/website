@@ -72,12 +72,12 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'blog.pageTitle' });
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, computed } from 'vue';
 import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog';
 import { formatDate } from '@/utils/date';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination';
 import { getBlogPosts, getBlogCategories } from '@/data/blog';
@@ -99,7 +99,7 @@ const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyn
     category: activeCategory.value || undefined,
     status: 'PUBLISHED',
   }),
-  { server: false, default: () => ({ data: [], meta: { total: 0 } }), watch: [page, activeCategory, locale] }
+  { default: () => ({ data: [], meta: { total: 0 } }), watch: [page, activeCategory, locale] }
 );
 
 const fallbackPosts = computed(() => {
@@ -116,7 +116,7 @@ const total = computed(() => hasApiPosts.value ? ((postsRes.value as any)?.meta?
 const { data: catRes } = useAsyncData(
   () => `blog-categories-${locale.value}`,
   () => blogApi.getCategories(),
-  { server: false, default: () => ({ data: blogCategories.value }), watch: [locale] }
+  { default: () => ({ data: blogCategories.value }), watch: [locale] }
 );
 const apiCategories = computed(() => catRes.value?.data || catRes.value || []);
 const categories = computed(() => apiCategories.value.length > 0 ? apiCategories.value : blogCategories.value);
@@ -136,19 +136,16 @@ const truncate = (text: string, len: number): string => {
   return text.length > len ? text.slice(0, len) + '...' : text;
 };
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'Blog',
-    name: t('blog.jsonLdName'),
-    description: t('blog.jsonLdDesc'),
-    url: 'https://talentpro.cn/blog',
-    publisher: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-    },
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: t('blog.jsonLdName'),
+  description: t('blog.jsonLdDesc'),
+  url: 'https://talentpro.cn/blog',
+  publisher: {
+    '@type': 'Organization',
+    name: 'TalentPro',
+    logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+  },
 });
-onUnmounted(removeJsonLd);
 </script>

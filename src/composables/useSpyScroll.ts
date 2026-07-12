@@ -12,6 +12,7 @@ export function useSpyScroll(selector = '[data-section]') {
   const sectionsRef = ref<Element[]>([]);
 
   onMounted(() => {
+    if (typeof document === 'undefined') return;
     sectionsRef.value = Array.from(document.querySelectorAll(selector));
   });
 

@@ -2,10 +2,10 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreatePageDto {
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()

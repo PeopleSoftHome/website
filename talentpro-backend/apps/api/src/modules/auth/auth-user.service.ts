@@ -2,6 +2,7 @@ import { Injectable, ConflictException, UnauthorizedException, BadRequestExcepti
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 
 @Injectable()
 export class AuthUserService {
@@ -16,7 +17,7 @@ export class AuthUserService {
     inviteToken?: string;
   }) {
     const existing = await this.prisma.user.findFirst({
-      where: { email: dto.email },
+      where: { emailHash: hashEmail(dto.email) },
     });
     if (existing) {
       throw new ConflictException('Email already registered');
@@ -148,7 +149,7 @@ export class AuthUserService {
 
   async login(dto: { email: string; password: string }) {
     const user = await this.prisma.user.findFirst({
-      where: { email: dto.email },
+      where: { emailHash: hashEmail(dto.email) },
       include: { role: true, workspace: true },
     });
     if (!user) {
@@ -184,7 +185,7 @@ export class AuthUserService {
   async devLogin(email?: string, roleName?: string) {
     let user = email
       ? await this.prisma.user.findFirst({
-          where: { email },
+          where: { emailHash: hashEmail(email) },
           include: { role: true, workspace: true },
         })
       : await this.prisma.user.findFirst({

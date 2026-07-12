@@ -90,7 +90,7 @@ export class StorageService {
           .toFile(webpPath);
         webpUrl = `${this.baseUrl}/${webpFilename}`;
       } catch (err) {
-        this.logger.warn(`图片处理失败: ${err.message}`);
+        this.logger.warn(`图片处理失败: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
@@ -119,7 +119,7 @@ export class StorageService {
       if (fs.existsSync(thumbPath)) await fs.promises.unlink(thumbPath);
       if (fs.existsSync(webpPath)) await fs.promises.unlink(webpPath);
     } catch (err) {
-      this.logger.warn(`删除文件失败: ${err.message}`);
+      this.logger.warn(`删除文件失败: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 }

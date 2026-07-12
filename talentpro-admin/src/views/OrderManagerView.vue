@@ -2,14 +2,13 @@
   <div>
     <h2 style="margin-bottom: 20px">{{ t('orders.title') }}</h2>
     <el-card shadow="hover">
-      <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap">
-        <el-select v-model="filterStatus" :placeholder="t('orders.allStatus')" clearable style="width: 140px" @change="handleFilterChange">
-          <el-option v-for="(label, key) in statusMap" :key="key" :label="label" :value="key" />
-        </el-select>
-        <el-select v-model="filterProvider" :placeholder="t('orders.allProviders')" clearable style="width: 140px" @change="handleFilterChange">
-          <el-option v-for="(label, key) in providerMap" :key="key" :label="label" :value="key" />
-        </el-select>
-      </div>
+      <OrderManagerFilters
+        v-model:filterStatus="filterStatus"
+        v-model:filterProvider="filterProvider"
+        :statusMap="statusMap"
+        :providerMap="providerMap"
+        @change="handleFilterChange"
+      />
 
       <CmsTable
         ref="tableRef"
@@ -54,72 +53,32 @@
     </el-card>
 
     <!-- 订单详情 -->
-    <el-dialog v-model="detailVisible" :title="t('orders.detailDialog')" width="560px" destroy-on-close>
-      <el-descriptions :column="2" border size="small">
-        <el-descriptions-item :label="t('orders.orderNo')" :span="2">{{ detail.orderNo }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.appName')">{{ detail.appName }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.userId')">{{ detail.userId }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.total')">¥ {{ detail.total }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.status')">
-          <el-tag :type="statusType(detail.status)" size="small">{{ statusLabel(detail.status) }}</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('orders.provider')">{{ providerLabel(detail.provider) }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.paidAt')">{{ formatDate(detail.paidAt) }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.createdAt')">{{ formatDate(detail.createdAt) }}</el-descriptions-item>
-        <el-descriptions-item :label="t('orders.invoiceRequested')">
-          <el-tag :type="detail.invoiceRequested ? 'warning' : 'info'" size="small">
-            {{ detail.invoiceRequested ? t('orders.requested') : t('orders.notRequested') }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('orders.invoiceNo')">{{ detail.invoiceNo || '-' }}</el-descriptions-item>
-      </el-descriptions>
-      <template #footer>
-        <el-button @click="detailVisible = false">{{ t('orders.close') }}</el-button>
-      </template>
-    </el-dialog>
+    <OrderManagerDetailDialog
+      v-model:modelValue="detailVisible"
+      :detail="detail"
+      :statusType="statusType"
+      :statusLabel="statusLabel"
+      :providerLabel="providerLabel"
+    />
 
     <!-- 更新状态 -->
-    <el-dialog v-model="statusDialogVisible" :title="t('orders.updateOrderStatusDialog')" width="500px" destroy-on-close>
-      <el-form :model="statusForm" label-width="100px">
-        <el-form-item :label="t('orders.orderNo')">
-          <span>{{ statusForm.orderNo }}</span>
-        </el-form-item>
-        <el-form-item :label="t('orders.currentStatus')">
-          <el-tag :type="statusType(statusForm.currentStatus)" size="small">{{ statusLabel(statusForm.currentStatus) }}</el-tag>
-        </el-form-item>
-        <el-form-item :label="t('orders.newStatus')">
-          <el-select v-model="statusForm.status" style="width: 100%">
-            <el-option v-for="(label, key) in statusMap" :key="key" :label="label" :value="key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('orders.reason')">
-          <el-input v-model="statusForm.reason" type="textarea" :rows="3" :placeholder="t('orders.reasonOptional')" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="statusDialogVisible = false">{{ t('orders.cancel') }}</el-button>
-        <el-button type="primary" :loading="statusSaving" @click="handleStatusSave">{{ t('orders.save') }}</el-button>
-      </template>
-    </el-dialog>
+    <OrderManagerStatusDialog
+      v-model:modelValue="statusDialogVisible"
+      v-model:form="statusForm"
+      :statusMap="statusMap"
+      :statusType="statusType"
+      :statusLabel="statusLabel"
+      :saving="statusSaving"
+      @save="handleStatusSave"
+    />
 
     <!-- 发票信息 -->
-    <el-dialog v-model="invoiceDialogVisible" :title="t('orders.invoiceDialog')" width="500px" destroy-on-close>
-      <el-form :model="invoiceForm" label-width="100px">
-        <el-form-item :label="t('orders.orderNo')">
-          <span>{{ invoiceForm.orderNo }}</span>
-        </el-form-item>
-        <el-form-item :label="t('orders.isInvoiceRequested')">
-          <el-switch v-model="invoiceForm.invoiceRequested" :active-text="t('orders.requested')" :inactive-text="t('orders.notRequested')" />
-        </el-form-item>
-        <el-form-item :label="t('orders.invoiceNo')">
-          <el-input v-model="invoiceForm.invoiceNo" :placeholder="t('orders.invoiceNoOptional')" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="invoiceDialogVisible = false">{{ t('orders.cancel') }}</el-button>
-        <el-button type="primary" :loading="invoiceSaving" @click="handleInvoiceSave">{{ t('orders.save') }}</el-button>
-      </template>
-    </el-dialog>
+    <OrderManagerInvoiceDialog
+      v-model:modelValue="invoiceDialogVisible"
+      v-model:form="invoiceForm"
+      :saving="invoiceSaving"
+      @save="handleInvoiceSave"
+    />
   </div>
 </template>
 
@@ -130,6 +89,10 @@ import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/CmsTable.vue';
 import client from '@/api/client.js';
 import { formatDate } from '@/utils/formatDate.js';
+import OrderManagerFilters from '@/components/order-manager/OrderManagerFilters.vue';
+import OrderManagerDetailDialog from '@/components/order-manager/OrderManagerDetailDialog.vue';
+import OrderManagerStatusDialog from '@/components/order-manager/OrderManagerStatusDialog.vue';
+import OrderManagerInvoiceDialog from '@/components/order-manager/OrderManagerInvoiceDialog.vue';
 
 const { t } = useI18n();
 

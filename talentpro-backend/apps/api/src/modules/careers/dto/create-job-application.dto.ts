@@ -2,10 +2,10 @@ import { IsString, IsEmail, IsOptional, IsUrl } from 'class-validator';
 
 export class CreateJobApplicationDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsOptional()
   @IsString()

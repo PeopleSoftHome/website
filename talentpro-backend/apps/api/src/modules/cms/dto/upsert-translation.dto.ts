@@ -3,15 +3,15 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class UpsertTranslationDto {
   @IsNotEmpty()
   @IsString()
-  locale: string;
+  locale!: string;
 
   @IsNotEmpty()
   @IsString()
-  key: string;
+  key!: string;
 
   @IsNotEmpty()
   @IsString()
-  value: string;
+  value!: string;
 
   @IsOptional()
   @IsString()

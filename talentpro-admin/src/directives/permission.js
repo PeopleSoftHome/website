@@ -21,10 +21,30 @@ const checkPermission = (el, binding) => {
     hasAccess = auth.hasPermission(perms);
   }
 
-  el.style.display = hasAccess ? '' : 'none';
+  if (hasAccess) {
+    if (el.__permissionAnchor && el.__permissionRemoved) {
+      el.__permissionAnchor.parentNode?.insertBefore(el, el.__permissionAnchor);
+      el.__permissionRemoved = false;
+    }
+    el.style.display = '';
+  } else {
+    if (!el.__permissionRemoved && el.parentNode) {
+      const anchor = document.createTextNode('');
+      el.parentNode.insertBefore(anchor, el);
+      el.parentNode.removeChild(el);
+      el.__permissionAnchor = anchor;
+      el.__permissionRemoved = true;
+    }
+  }
 };
 
 export const permissionDirective = {
   mounted: checkPermission,
   updated: checkPermission,
+  beforeUnmount: (el) => {
+    if (el.__permissionAnchor && el.__permissionAnchor.parentNode) {
+      el.__permissionAnchor.parentNode.removeChild(el.__permissionAnchor);
+    }
+    el.__permissionAnchor = null;
+  },
 };

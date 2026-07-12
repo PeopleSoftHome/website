@@ -2,6 +2,24 @@
   <div>
     <h2 style="margin-bottom: 20px">{{ t('aiAssistant.title') }}</h2>
 
+    <el-card v-if="providerStatus.length" shadow="never" style="margin-bottom: 16px">
+      <div style="font-weight: 600; margin-bottom: 12px">{{ t('aiAssistant.providerStatus') }}</div>
+      <el-space wrap>
+        <el-tag
+          v-for="p in providerStatus"
+          :key="p.provider"
+          :type="p.active ? 'primary' : p.configured ? 'success' : 'info'"
+          effect="dark"
+        >
+          {{ p.provider }}
+          <span v-if="p.active"> · {{ t('aiAssistant.providerActive') }}</span>
+          <span v-else-if="p.configured"> · {{ t('aiAssistant.providerConfigured') }}</span>
+          <span v-else> · {{ t('aiAssistant.providerNotConfigured') }}</span>
+          <span v-if="p.fallback"> · {{ t('aiAssistant.providerFallback') }}</span>
+        </el-tag>
+      </el-space>
+    </el-card>
+
     <el-row :gutter="16">
       <el-col :span="10">
         <el-card shadow="hover">
@@ -93,7 +111,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { aiApi } from '@/api/ai.js';
@@ -102,6 +120,20 @@ const { t } = useI18n();
 
 const loading = ref(false);
 const result = ref(null);
+const providerStatus = ref([]);
+
+const loadProviderStatus = async () => {
+  try {
+    const data = await aiApi.getProviderStatus();
+    providerStatus.value = Array.isArray(data) ? data : data?.data || [];
+  } catch {
+    providerStatus.value = [];
+  }
+};
+
+onMounted(() => {
+  loadProviderStatus();
+});
 
 const form = reactive({
   type: 'blog',

@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsBoolean, IsNumber, Min, Max } from 'class-valid
 
 export class CreateVendorDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsOptional()
   @IsString()
@@ -20,7 +20,7 @@ export class CreateVendorDto {
   website?: string;
 
   @IsString()
-  contactEmail: string;
+  contactEmail!: string;
 
   @IsOptional()
   @IsString()

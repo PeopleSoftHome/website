@@ -3,25 +3,25 @@ import { PricingModel } from '@prisma/client';
 
 export class CreateAppDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  tagline: string;
+  tagline!: string;
 
   @IsString()
-  description: string;
+  description!: string;
 
   @IsString()
-  categoryId: string;
+  categoryId!: string;
 
   @IsString()
-  vendorId: string;
+  vendorId!: string;
 
   @IsString()
-  iconUrl: string;
+  iconUrl!: string;
 
   @IsOptional()
   @IsArray()
@@ -29,14 +29,14 @@ export class CreateAppDto {
   coverImages?: string[];
 
   @IsEnum(PricingModel)
-  pricingModel: PricingModel;
+  pricingModel!: PricingModel;
 
   @IsOptional()
   @IsObject()
   pricingTiers?: Record<string, unknown>;
 
   @IsString()
-  version: string;
+  version!: string;
 
   @IsOptional()
   @IsArray()

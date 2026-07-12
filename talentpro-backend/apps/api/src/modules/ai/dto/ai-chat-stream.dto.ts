@@ -3,10 +3,10 @@ import { ChatMessage } from '../ai.types';
 
 export class AiChatStreamDto {
   @IsString()
-  message: string;
+  message!: string;
 
   @IsString()
-  recaptchaToken: string;
+  recaptchaToken!: string;
 
   @IsOptional()
   @IsString()

@@ -2,13 +2,13 @@ import { IsString, IsOptional, IsInt } from 'class-validator';
 
 export class UpsertStatDto {
   @IsString()
-  key: string;
+  key!: string;
 
   @IsString()
-  label: string;
+  label!: string;
 
   @IsString()
-  value: string;
+  value!: string;
 
   @IsOptional()
   @IsString()

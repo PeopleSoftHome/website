@@ -117,17 +117,20 @@ const drawerVisible = ref(false);
 
 /**
  * 根据当前用户角色过滤可见菜单
+ * 注意：必须返回新数组/对象，禁止直接修改 menuConfig，否则 el-menu 在权限变化时会出现 parentNode 为 null 的渲染错误
  */
 const visibleMenu = computed(() => {
   const userRole = auth.role;
-  return menuConfig.filter((item) => {
-    if (!hasMenuPermission(item, userRole, auth)) return false;
-    if (item.children) {
-      item.children = item.children.filter((child) => hasMenuPermission(child, userRole, auth));
-      return item.children.length > 0;
-    }
-    return true;
-  });
+  return menuConfig
+    .map((item) => ({ ...item, children: item.children ? [...item.children] : undefined }))
+    .filter((item) => {
+      if (!hasMenuPermission(item, userRole, auth)) return false;
+      if (item.children) {
+        item.children = item.children.filter((child) => hasMenuPermission(child, userRole, auth));
+        return item.children.length > 0;
+      }
+      return true;
+    });
 });
 
 /**
@@ -165,9 +168,9 @@ const breadcrumbs = computed(() => {
   return result;
 });
 
-const handleCommand = (cmd) => {
+const handleCommand = async (cmd) => {
   if (cmd === 'logout') {
-    auth.logout();
+    await auth.logout();
     router.push('/login');
   }
 };

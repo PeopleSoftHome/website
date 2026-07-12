@@ -157,6 +157,10 @@ export class AiService {
     };
   }
 
+  getProviderStatus() {
+    return this.providerFactory.getProviderStatus();
+  }
+
   async loadChatSession(sessionId: string): Promise<ChatMessage[]> {
     if (!sessionId) return [];
     try {

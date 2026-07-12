@@ -2,7 +2,7 @@
   <div class="image-upload">
     <el-upload
       :action="uploadUrl"
-      :headers="uploadHeaders"
+      :with-credentials="true"
       :show-file-list="false"
       :on-success="handleSuccess"
       :on-error="handleError"
@@ -78,7 +78,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const auth = useAuthStore();
 const previewVisible = ref(false);
 const aiDialogVisible = ref(false);
 const aiGenerating = ref(false);
@@ -88,10 +87,6 @@ const uploadUrl = computed(() => {
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api/v1';
   return `${baseURL.replace(/\/$/, '')}/medias/upload`;
 });
-
-const uploadHeaders = computed(() => ({
-  Authorization: auth.token ? `Bearer ${auth.token}` : '',
-}));
 
 const beforeUpload = (file) => {
   const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];

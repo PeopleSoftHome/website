@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
@@ -85,5 +85,15 @@ export class AiController {
       dto.context,
     );
     return { ...result, sessionId };
+  }
+
+  @Get('provider-status')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('ai:generate')
+  @ApiOperation({ summary: 'LLM Provider 可用性状态' })
+  getProviderStatus() {
+    return this.aiService.getProviderStatus();
   }
 }

@@ -2,7 +2,7 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class AiGenerateImageDto {
   @IsString()
-  prompt: string;
+  prompt!: string;
 
   @IsString()
   @IsOptional()

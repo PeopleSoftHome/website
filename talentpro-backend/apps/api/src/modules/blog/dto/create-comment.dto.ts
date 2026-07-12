@@ -2,13 +2,13 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreateCommentDto {
   @IsString()
-  entityType: string;
+  entityType!: string;
 
   @IsString()
-  entityId: string;
+  entityId!: string;
 
   @IsString()
-  content: string;
+  content!: string;
 
   @IsOptional()
   @IsString()

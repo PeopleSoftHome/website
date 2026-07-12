@@ -3,6 +3,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthUserService } from './auth-user.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 import { Role, User, WorkspaceInvite } from '@prisma/client';
 
 jest.mock('bcrypt', () => ({
@@ -93,7 +94,7 @@ describe('AuthUserService', () => {
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
       // Override $transaction to return our mocked data
-      jest.spyOn(prisma, '$transaction').mockImplementation(async (cb: (tx: Record<string, unknown>) => unknown) => {
+      jest.spyOn(prisma, '$transaction').mockImplementation((async (cb: (tx: Record<string, unknown>) => unknown) => {
         const tx = {
           user: {
             create: jest.fn().mockResolvedValue(mockUser),
@@ -104,11 +105,11 @@ describe('AuthUserService', () => {
           },
         };
         return cb(tx);
-      });
+      }) as any);
 
       const result = await service.register(dto);
 
-      expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { email: dto.email } });
+      expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { emailHash: hashEmail(dto.email) } });
       expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 12);
       expect(result.message).toBe('Registered successfully');
       expect(result.user).toEqual(updatedUser);
@@ -157,7 +158,7 @@ describe('AuthUserService', () => {
       jest.spyOn(prisma.role, 'findUnique').mockResolvedValue(mockRole as unknown as Role);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
-      jest.spyOn(prisma, '$transaction').mockImplementation(async (cb: (tx: Record<string, unknown>) => unknown) => {
+      jest.spyOn(prisma, '$transaction').mockImplementation((async (cb: (tx: Record<string, unknown>) => unknown) => {
         const tx = {
           user: {
             create: jest.fn().mockResolvedValue(mockUser),
@@ -167,7 +168,7 @@ describe('AuthUserService', () => {
           },
         };
         return cb(tx);
-      });
+      }) as any);
 
       const result = await service.register(dto);
 
@@ -197,7 +198,7 @@ describe('AuthUserService', () => {
       const result = await service.login(dto);
 
       expect(prisma.user.findFirst).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { email: dto.email } }),
+        expect.objectContaining({ where: { emailHash: hashEmail(dto.email) } }),
       );
       expect(bcrypt.compare).toHaveBeenCalledWith(dto.password, mockUser.password);
       expect(result.user).toEqual(

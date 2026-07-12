@@ -2,9 +2,9 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class UpsertSettingDto {
   @IsString()
-  key: string;
+  key!: string;
 
-  value: unknown;
+  value!: unknown;
 
   @IsOptional()
   @IsString()

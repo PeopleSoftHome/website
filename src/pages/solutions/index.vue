@@ -48,15 +48,13 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'solutions.title', description: 'solutions.subtitle' });
-import { computed, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getIndustryList } from '@/data/industries/list';
-import { removeJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
 const modalStore = useModalStore();
 const industries = computed(() => getIndustryList(locale.value));
-onUnmounted(removeJsonLd);
 </script>

@@ -182,7 +182,7 @@ const handleSubmit = async () => {
     } else {
       // 注册时获取 reCAPTCHA token
       let recaptchaToken = '';
-      if (recaptchaSiteKey && window.grecaptcha) {
+      if (recaptchaSiteKey && typeof window !== 'undefined' && window.grecaptcha) {
         try {
           recaptchaToken = await window.grecaptcha.execute(
             recaptchaSiteKey,

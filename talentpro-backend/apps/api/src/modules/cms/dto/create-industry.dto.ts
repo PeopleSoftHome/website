@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsArray } from 'class-validator';
 
 export class CreateIndustryDto {
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  label: string;
+  label!: string;
 
   @IsOptional()
   @IsString()

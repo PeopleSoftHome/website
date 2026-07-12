@@ -49,6 +49,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       '~': resolve(__dirname, 'src'),
+      '#imports': resolve(__dirname, 'src/test/imports-stub.ts'),
     },
   },
 });

@@ -2,10 +2,10 @@ import { IsString, IsNumber, IsOptional, IsObject } from 'class-validator';
 
 export class TrackWebVitalDto {
   @IsString()
-  event: string;
+  event!: string;
 
   @IsObject()
-  properties: {
+  properties!: {
     name: string;
     value: number;
     rating: string;
@@ -17,7 +17,7 @@ export class TrackWebVitalDto {
   };
 
   @IsString()
-  sessionId: string;
+  sessionId!: string;
 
   @IsNumber()
   @IsOptional()

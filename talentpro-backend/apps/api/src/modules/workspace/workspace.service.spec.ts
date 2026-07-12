@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User, Workspace, WorkspaceInvite } from '@prisma/client';
 import { WorkspaceService } from './workspace.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -75,13 +76,13 @@ describe('WorkspaceService', () => {
       jest.spyOn(prisma.workspace, 'create').mockResolvedValue(mockWorkspace as unknown as Workspace);
       jest.spyOn(prisma.user, 'update').mockResolvedValue({ id: 'u1', workspaceId: 'ws1' } as unknown as User);
 
-      jest.spyOn(prisma, '$transaction').mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => {
+      jest.spyOn(prisma, '$transaction').mockImplementation((async (callback: (tx: unknown) => Promise<unknown>) => {
         const tx = {
           workspace: { create: jest.fn().mockResolvedValue(mockWorkspace) },
           user: { update: jest.fn().mockResolvedValue({}) },
         };
         return callback(tx);
-      });
+      }) as any);
 
       const result = await service.create('u1', { name: 'New Workspace' });
 
@@ -94,13 +95,13 @@ describe('WorkspaceService', () => {
       jest.spyOn(prisma.workspace, 'create').mockResolvedValue(mockWorkspace as unknown as Workspace);
       jest.spyOn(prisma.user, 'update').mockResolvedValue({ id: 'u1', workspaceId: 'ws2' } as unknown as User);
 
-      jest.spyOn(prisma, '$transaction').mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => {
+      jest.spyOn(prisma, '$transaction').mockImplementation((async (callback: (tx: unknown) => Promise<unknown>) => {
         const tx = {
           workspace: { create: jest.fn().mockResolvedValue(mockWorkspace) },
           user: { update: jest.fn().mockResolvedValue({}) },
         };
         return callback(tx);
-      });
+      }) as any);
 
       const result = await service.create('u1', { name: 'Second Workspace' });
 
@@ -119,6 +120,7 @@ describe('WorkspaceService', () => {
 
       const result = await service.inviteMember('u1', 'ws1', 'new@example.com');
 
+      expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { emailHash: hashEmail('new@example.com') } });
       expect(result.message).toBe('Invitation successful');
     });
 

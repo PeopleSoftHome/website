@@ -22,7 +22,7 @@ export const colors = {
   gray200: '#E2E8F0',
   gray300: '#CBD5E1',
   gray350: '#D1D5DB',
-  gray400: '#94A3B8',
+  gray400: '#64748B',
   gray500: '#6B7280',
   gray600: '#475569',
   gray700: '#334155',
@@ -52,7 +52,9 @@ export const colors = {
 
   // 标签辅助色
   tagBlueBg:   '#EFF6FF',
-  tagBlueText: '#3B82F6',
+  tagBlueText: '#1D4ED8',
+
+  errorDark: '#B91C1C',
 
   // Marketplace 扩展色
   indigo400:        '#818CF8',

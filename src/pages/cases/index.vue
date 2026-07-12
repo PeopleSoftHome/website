@@ -90,12 +90,12 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'cases.title', description: 'cases.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { caseApi } from '@/api/case';
 import { getCases, getCaseIndustries } from '@/data/cases';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import { coverStyle } from '@/utils/coverStyle';
 import { usePageSeo } from '@/composables/usePageSeo';
 import s from './index.module.css';
@@ -130,7 +130,7 @@ const { data: casesRes, pending: loading, error: fetchError } = useAsyncData(
     const params = activeIndustry.value !== '' ? { industry: activeIndustry.value } : {};
     return caseApi.getCases(params);
   },
-  { server: false, watch: [activeIndustry, locale], default: () => ({ data: [] }) }
+  { watch: [activeIndustry, locale], default: () => ({ data: [] }) }
 );
 
 const cases = computed(() => {
@@ -161,18 +161,15 @@ function loadMore() {
   displayLimit.value += PAGE_SIZE;
 }
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: t('cases.jsonLdName'),
-    itemListElement: caseList.value.slice(0, 6).map((c, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: c.title,
-      description: c.excerpt,
-    })),
-  });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: t('cases.jsonLdName'),
+  itemListElement: caseList.value.slice(0, 6).map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.title,
+    description: c.excerpt,
+  })),
+})));
 </script>

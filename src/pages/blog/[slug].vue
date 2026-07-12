@@ -48,12 +48,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed } from 'vue';
 import CommentSection from '@/components/ui/CommentSection/CommentSection.vue';
 import { blogApi } from '@/api/blog';
 import { renderMarkdown } from '@/utils/markdown';
 import { formatDate } from '@/utils/date';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import { getBlogPostMap } from '@/data/blog';
 import s from './[slug].module.css';
 
@@ -80,7 +80,7 @@ const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = 
     }
     return fallback;
   },
-  { server: false, default: () => null, watch: [slug, locale] }
+  { default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -103,25 +103,22 @@ const error = computed(() => {
   return err.response?.data?.message || err.message || t('common.loadError');
 });
 
-onMounted(() => {
-  watch(post, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        headline: val.title,
-        description: val.excerpt?.slice(0, 160) || val.title,
-        author: { '@type': 'Organization', name: 'TalentPro' },
-        datePublished: val.createdAt,
-        dateModified: val.updatedAt || val.createdAt,
-        publisher: {
-          '@type': 'Organization',
-          name: 'TalentPro',
-          logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-        },
-      });
-    }
-  }, { immediate: true });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = post.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: val.title,
+    description: val.excerpt?.slice(0, 160) || val.title,
+    author: { '@type': 'Organization', name: 'TalentPro' },
+    datePublished: val.createdAt,
+    dateModified: val.updatedAt || val.createdAt,
+    publisher: {
+      '@type': 'Organization',
+      name: 'TalentPro',
+      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+    },
+  };
+}));
 </script>

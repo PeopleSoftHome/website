@@ -94,11 +94,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
+import { computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news';
 import { getNewsArticles } from '@/data/news';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'news.detail', description: 'news.subtitle' });
@@ -148,7 +148,7 @@ const { data: item, pending: loading, error: fetchError } = useAsyncData(
     }
     return data || fallback;
   },
-  { server: false, default: () => null, watch: [slug, locale] }
+  { default: () => null, watch: [slug, locale] }
 );
 
 const error = computed(() => fetchError.value || null);
@@ -213,21 +213,17 @@ const handleSubscribe = () => {
   subscribeEmail.value = '';
 };
 
-onMounted(() => {
-  watch(item, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
-        headline: val.title,
-        description: val.summary || val.title,
-        datePublished: val.publishedAt,
-        author: { '@type': 'Organization', name: val.author || 'TalentPro' },
-        publisher: { '@type': 'Organization', name: 'TalentPro' },
-      });
-    }
-  }, { immediate: true });
-});
-
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = item.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: val.title,
+    description: val.summary || val.title,
+    datePublished: val.publishedAt,
+    author: { '@type': 'Organization', name: val.author || 'TalentPro' },
+    publisher: { '@type': 'Organization', name: 'TalentPro' },
+  };
+}));
 </script>

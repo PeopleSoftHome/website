@@ -48,7 +48,8 @@ onErrorCaptured((err, instance, info) => {
 });
 
 const handleRetry = () => {
-  location.reload();
+  if (typeof window === 'undefined') return;
+  window.location.reload();
 };
 
 const handleReset = () => {

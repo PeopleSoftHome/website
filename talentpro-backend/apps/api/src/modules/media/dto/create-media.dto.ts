@@ -2,19 +2,19 @@ import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateMediaDto {
   @IsString()
-  filename: string;
+  filename!: string;
 
   @IsString()
-  originalName: string;
+  originalName!: string;
 
   @IsString()
-  url: string;
+  url!: string;
 
   @IsString()
-  mimeType: string;
+  mimeType!: string;
 
   @IsNumber()
-  size: number;
+  size!: number;
 
   @IsOptional()
   @IsNumber()

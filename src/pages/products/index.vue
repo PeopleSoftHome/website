@@ -57,11 +57,11 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'productPage.title', description: 'productPage.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getProductList } from '@/data/products/list';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './index.module.css';
 
 const { t, locale } = useI18n();
@@ -100,18 +100,15 @@ const filteredProducts = computed(() => {
   return allProducts.value.filter((p) => p.tabId === activeTab.value);
 });
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: t('productPage.jsonLdName'),
-    itemListElement: allProducts.value.map((p, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: p.name,
-      description: p.tagline,
-    })),
-  });
-});
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: t('productPage.jsonLdName'),
+  itemListElement: allProducts.value.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.name,
+    description: p.tagline,
+  })),
+})));
 </script>

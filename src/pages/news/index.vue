@@ -76,9 +76,9 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'news.title', description: 'news.subtitle' });
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref } from 'vue';
 import { NEWS_PAGE_SIZE } from '@/constants/pagination';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import TabNav from '@/components/ui/TabNav/TabNav.vue';
 import { newsApi } from '@/api/news';
@@ -129,12 +129,9 @@ const normalNews = computed(() => {
 
 const displayNews = computed(() => news.value);
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: t('news.title'),
-  });
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: t('news.title'),
 });
-onUnmounted(removeJsonLd);
 </script>

@@ -2,10 +2,10 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreateProductTabDto {
   @IsString()
-  label: string;
+  label!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsOptional()
   @IsString()

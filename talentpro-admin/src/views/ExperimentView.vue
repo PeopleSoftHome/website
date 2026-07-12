@@ -13,7 +13,7 @@
             <el-table-column prop="name" :label="t('experiments.name')" />
             <el-table-column :label="t('experiments.trafficAllocation')" width="100">
               <template #default="{ row }">
-                <span>A: {{ (1 - (row.trafficSplit || 0.5)).toFixed(1) }}% / B: {{ ((row.trafficSplit || 0.5) * 100).toFixed(0) }}%</span>
+                <span>A: {{ ((1 - (row.trafficSplit || 0.5)) * 100).toFixed(1) }}% / B: {{ ((row.trafficSplit || 0.5) * 100).toFixed(0) }}%</span>
               </template>
             </el-table-column>
             <el-table-column prop="status" :label="t('experiments.status')" width="100">

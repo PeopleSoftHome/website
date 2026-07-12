@@ -1,6 +1,6 @@
 <template>
   <main id="main-content">
-    <template v-for="section in sections" :key="section.key">
+    <template v-for="section in sectionComponents" :key="section.key">
       <Suspense>
         <template #fallback>
           <SectionSkeleton :height="sectionSkeletonHeight(section.key)" />
@@ -17,9 +17,10 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'pageTitle', description: 'pageDesc' });
-import { onMounted, onUnmounted, inject } from 'vue';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { inject, computed } from 'vue';
+import { useJsonLd } from '@/utils/jsonld';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
+import { resolveSectionComponent } from '@/composables/useCmsPageAsync';
 
 // Section 骨架屏默认高度映射
 const SKELETON_HEIGHTS = {
@@ -45,28 +46,32 @@ const { t } = useI18n();
 
 const { sections } = useCmsPageAsync('home');
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: t('hero.jsonLdName') || 'TalentPro — Redefine Talent Management with AI',
-    description: t('hero.jsonLdDesc') || t('hero.subtitle'),
-    url: 'https://talentpro.cn/',
-    publisher: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
-      sameAs: [
-        'https://www.linkedin.com/company/talentpro',
-        'https://twitter.com/talentpro',
-      ],
-    },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: 'https://talentpro.cn/search?q={search_term_string}' },
-      'query-input': 'required name=search_term_string',
-    },
-  });
+const sectionComponents = computed(() =>
+  (sections.value || []).map((s) => ({
+    ...s,
+    component: resolveSectionComponent(s.key),
+  })),
+);
+
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: t('hero.jsonLdName') || 'TalentPro — Redefine Talent Management with AI',
+  description: t('hero.jsonLdDesc') || t('hero.subtitle'),
+  url: 'https://talentpro.cn/',
+  publisher: {
+    '@type': 'Organization',
+    name: 'TalentPro',
+    logo: { '@type': 'ImageObject', url: 'https://talentpro.cn/logo.png' },
+    sameAs: [
+      'https://www.linkedin.com/company/talentpro',
+      'https://twitter.com/talentpro',
+    ],
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: 'https://talentpro.cn/search?q={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
 });
-onUnmounted(removeJsonLd);
 </script>

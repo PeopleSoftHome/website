@@ -4,8 +4,8 @@ import { CommentStatus } from '@prisma/client';
 export class BatchModerateCommentsDto {
   @IsArray()
   @IsString({ each: true })
-  ids: string[];
+  ids!: string[];
 
   @IsEnum(CommentStatus)
-  status: CommentStatus;
+  status!: CommentStatus;
 }

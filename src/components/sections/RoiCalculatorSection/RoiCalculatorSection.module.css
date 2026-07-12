@@ -267,7 +267,7 @@
   padding: 14px 24px;
   border-radius: var(--radius-pill);
   background: var(--primary);
-  color: var(--text-on-dark-primary);
+  color: var(--white);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;

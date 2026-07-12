@@ -2,13 +2,13 @@ import { IsString, IsOptional, IsArray, IsEmail } from 'class-validator';
 
 export class CreateLeadDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  company: string;
+  company!: string;
 
   @IsString()
-  phone: string;
+  phone!: string;
 
   @IsOptional()
   @IsEmail()
@@ -20,7 +20,7 @@ export class CreateLeadDto {
   products?: string[];
 
   @IsString()
-  scale: string;
+  scale!: string;
 
   @IsOptional()
   @IsString()

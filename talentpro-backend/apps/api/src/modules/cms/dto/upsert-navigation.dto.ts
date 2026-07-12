@@ -2,10 +2,10 @@ import { IsString, IsOptional, IsArray } from 'class-validator';
 
 export class UpsertNavigationDto {
   @IsString()
-  key: string;
+  key!: string;
 
   @IsString()
-  label: string;
+  label!: string;
 
   @IsOptional()
   @IsString()

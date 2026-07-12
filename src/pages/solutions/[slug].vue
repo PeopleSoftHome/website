@@ -67,9 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPainCompare.vue';
@@ -178,7 +178,7 @@ const { data: industry } = useAsyncData<IndustryDetail | null>(
     }
     return fallback as IndustryDetail;
   },
-  { server: false, default: () => null, watch: [slug, locale] }
+  { default: () => null, watch: [slug, locale] }
 );
 
 useHead(() => {
@@ -193,19 +193,15 @@ useHead(() => {
   };
 });
 
-onMounted(() => {
-  watch(industry, (val) => {
-    if (val) {
-      injectJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'Service',
-        name: val.label,
-        description: val.heroDesc,
-        provider: { '@type': 'Organization', name: 'TalentPro' },
-      });
-    }
-  }, { immediate: true });
-});
-
-onUnmounted(removeJsonLd);
+useJsonLd(computed(() => {
+  const val = industry.value;
+  if (!val) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: val.label,
+    description: val.heroDesc,
+    provider: { '@type': 'Organization', name: 'TalentPro' },
+  };
+}));
 </script>

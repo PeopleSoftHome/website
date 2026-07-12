@@ -81,10 +81,10 @@
 
 <script setup lang="ts">
 definePageMeta({ title: 'contactPage.title', description: 'contactPage.subtitle' });
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getContactFaq } from '@/data/contact';
-import { injectJsonLd, removeJsonLd } from '@/utils/jsonld';
+import { useJsonLd } from '@/utils/jsonld';
 import s from './contact.module.css';
 
 const { t, locale } = useI18n();
@@ -101,27 +101,24 @@ const faq = computed(() => getContactFaq(locale.value));
 const form = ref({ name: '', email: '', company: '', inquiryType: '', message: '' });
 const submitting = ref(false);
 
-onMounted(() => {
-  injectJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    name: t('contactPage.jsonLdName'),
-    description: t('contactPage.jsonLdDesc'),
-    url: 'https://talentpro.cn/about/contact',
-    mainEntity: {
-      '@type': 'Organization',
-      name: 'TalentPro',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+86-400-888-8888',
-        contactType: 'sales',
-        areaServed: 'CN',
-        availableLanguage: ['Chinese', 'English'],
-      },
+useJsonLd({
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: t('contactPage.jsonLdName'),
+  description: t('contactPage.jsonLdDesc'),
+  url: 'https://talentpro.cn/about/contact',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'TalentPro',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+86-400-888-8888',
+      contactType: 'sales',
+      areaServed: 'CN',
+      availableLanguage: ['Chinese', 'English'],
     },
-  });
+  },
 });
-onUnmounted(removeJsonLd);
 
 const handleSubmit = async () => {
   submitting.value = true;

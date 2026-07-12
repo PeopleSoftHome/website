@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PrismaService } from '@/common/prisma/prisma.service';
+import { hashEmail } from '@/common/prisma/email-hash.util';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn().mockResolvedValue('hashed-password'),
@@ -99,7 +100,7 @@ describe('UserService', () => {
         name: 'A',
       });
 
-      expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { email: 'a@example.com' } });
+      expect(prisma.user.findFirst).toHaveBeenCalledWith({ where: { emailHash: hashEmail('a@example.com') } });
       expect(prisma.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ email: 'a@example.com', name: 'A', password: 'hashed-password' }),
@@ -178,10 +179,7 @@ describe('UserService', () => {
         expect.objectContaining({
           where: {
             status: 'ACTIVE',
-            OR: [
-              { name: { contains: 'ali', mode: 'insensitive' } },
-              { email: { contains: 'ali', mode: 'insensitive' } },
-            ],
+            OR: [{ name: { contains: 'ali', mode: 'insensitive' } }],
           },
           select: { id: true, name: true, email: true, avatar: true },
           take: 5,

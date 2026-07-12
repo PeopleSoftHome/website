@@ -106,8 +106,10 @@ export class SearchIndexService {
         await this.meili.index(indexName).addDocuments(documents);
         this.logger.log(`Batch indexed ${documents.length} ${entityType} documents`);
       } catch (e) {
-        this.logger.error(`Failed to index ${entityType} documents`, e);
-        throw new Error(`MeiliSearch indexing failed: ${e.message}`);
+        const message = e instanceof Error ? e.message : String(e);
+        const stack = e instanceof Error ? e.stack : String(e);
+        this.logger.error(`Failed to index ${entityType} documents`, stack);
+        throw new Error(`MeiliSearch indexing failed: ${message}`);
       }
     }
   }

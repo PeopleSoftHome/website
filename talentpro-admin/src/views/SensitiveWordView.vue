@@ -17,9 +17,9 @@
               <el-option :label="t('sensitiveWords.categories.political')" value="political" />
             </el-select>
             <el-select v-model="newWord.severity" :placeholder="t('sensitiveWords.severityPlaceholder')" size="small" style="width:90px">
-              <el-option :label="severityOptions[0]" :value="1" />
-              <el-option :label="severityOptions[1]" :value="2" />
-              <el-option :label="severityOptions[2]" :value="3" />
+              <el-option :label="t('sensitiveWords.severityLow')" :value="1" />
+              <el-option :label="t('sensitiveWords.severityMedium')" :value="2" />
+              <el-option :label="t('sensitiveWords.severityHigh')" :value="3" />
             </el-select>
             <el-button type="primary" size="small" @click="addWord" v-permission="'sensitive-word:create'">{{ t('sensitiveWords.add') }}</el-button>
           </div>
@@ -33,7 +33,7 @@
             </el-table-column>
             <el-table-column prop="severity" :label="t('sensitiveWords.severity')" width="80">
               <template #default="{ row }">
-                <el-tag size="small" :type="severityType(row.severity)">{{ severityOptions[row.severity - 1] }}</el-tag>
+                <el-tag size="small" :type="severityType(row.severity)">{{ severityLabel(row.severity) }}</el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="t('common.actions')" width="80" fixed="right">
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import client from '@/api/client.js';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -91,7 +91,14 @@ const newWord = reactive({ word: '', category: 'spam', severity: 2 });
 const testContent = ref('');
 const testResult = ref(null);
 
-const severityOptions = computed(() => t('sensitiveWords.severityOptions'));
+const severityLabel = (level) => {
+  const map = {
+    1: t('sensitiveWords.severityLow'),
+    2: t('sensitiveWords.severityMedium'),
+    3: t('sensitiveWords.severityHigh'),
+  };
+  return map[level] || '';
+};
 
 const fetchWords = async () => {
   loading.value = true;

@@ -186,14 +186,12 @@ async function run() {
   });
 
   // Marketplace
-  // NOTE: 当前 migrations 与 schema 存在漂移（apps.tags 等字段缺失），
-  // 该用例在 schema 同步前跳过。
-  // await assert('Marketplace apps list', async () => {
-  //   const res = await request(server).get('/api/v1/marketplace/apps');
-  //   if (res.status !== 200) {
-  //     throw new Error(`status=${res.status}`);
-  //   }
-  // });
+  await assert('Marketplace apps list', async () => {
+    const res = await request(server).get('/api/v1/marketplace/apps');
+    if (res.status !== 200) {
+      throw new Error(`status=${res.status}`);
+    }
+  });
 
   console.log(`\nResults: ${passed} passed, ${failed} failed`);
   process.exit(failed > 0 ? 1 : 0);

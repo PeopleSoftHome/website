@@ -2,13 +2,13 @@ import { IsString, IsOptional } from 'class-validator';
 
 export class CreateDownloadRecordDto {
   @IsString()
-  resourceId: string;
+  resourceId!: string;
 
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  email: string;
+  email!: string;
 
   @IsOptional()
   @IsString()

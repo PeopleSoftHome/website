@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] - 2026-06-15 (技术债清零 + 高价值迭代)
+## [v4.3.0] - 2026-07-05 (技术债清零 + 高价值迭代)
 
 ### 🐛 缺陷修复
 
@@ -38,21 +38,46 @@
 - **功能开关体系**: 后端 `GET /system/config/public` 返回 `featureFlags`；前端新增 `useFeatureFlag(key)`，支持按 key 灰度开启/关闭模块
 - **AI 内容生成端点**: 后端 `POST /ai/generate` 支持 `blog`/`product`/`seo`/`translate`/`moderate` 类型；结果作为草稿返回，需运营确认后发布
 
+### 🔧 P3 技术债修复（2026-07-06）
+
+- **PII email 加密与 HMAC 哈希索引（P3-04）**
+  - Prisma schema：`User` / `WorkspaceInvite` 新增 `emailHash` 列；`User` 唯一约束与两者索引改为基于 `emailHash`
+  - 字段级加密扩展 `field-encryption.extension.ts`：在 AES-GCM 加密前自动计算 `HMAC-SHA256(email)` 并写入 `emailHash`
+  - `auth-user.service.ts` / `user.service.ts` / `workspace.service.ts` 的 email 等值查询改为按 `emailHash` 查找
+  - 新增 migration `20260706100000_add_email_hash_columns`；`.env.example` 增加 `PII_HMAC_KEY`
+  - 用户搜索保留按姓名模糊匹配；含 `@` 的查询串改为按 `emailHash` 精确匹配
+
+- **后端启用完整 TypeScript 严格模式（P3-01）**
+  - `talentpro-backend/tsconfig.json` 开启 `"strict": true`
+  - 约 65 个 DTO 的字段补充 definite assignment assertion（`email!: string` 等）
+  - 修复 catch 变量 `unknown`、Prisma `$transaction` mock 类型、服务属性初始化等 strict 错误
+  - `npx tsc --noEmit` 通过，生产行为未变更
+
+- **Admin 启用完整 TypeScript 严格模式（P3-02）**
+  - `talentpro-admin/tsconfig.json` 开启 `"strict": true` 并添加 `ignoreDeprecations`
+  - `vue-tsc --noEmit` 与生产构建通过
+
+- **Admin 超行视图拆分（P3-06）**
+  - 拆分 `PageConfigView.vue`（473 → 329 行）：`PageConfigSectionList.vue` / `PageConfigAddSection.vue` / `PageConfigMetaCard.vue` / `PageConfigAiPanel.vue`
+  - 拆分 `OrderManagerView.vue`（287 → 250 行）：`OrderManagerFilters.vue` / `OrderManagerDetailDialog.vue` / `OrderManagerStatusDialog.vue` / `OrderManagerInvoiceDialog.vue`
+  - 保留测试依赖的 `wrapper.vm` 属性与方法；Admin 测试与构建通过
+
 ### ✅ 验证结果
 
 | 检查项 | 结果 |
 |--------|------|
 | 前端 `npm run lint` | ✅ 通过 |
-| 前端 `npm run test:run` | ✅ 27 套件 / 113 测试通过 |
-| 前端 `npm run build` | ✅ 25 条路由预渲染成功 |
-| Playwright E2E (chromium 57 用例) | ✅ 全部通过 |
-| Playwright E2E (5 浏览器 × 285 用例) | ✅ 284 passed；1 条 webkit 用例偶发 15s timeout，单独重跑通过 |
-| 后端 `npm run lint` | ✅ 0 errors / 9 warnings |
-| 后端 `npm run test` | ✅ 17 套件 / 131 测试通过 |
+| 前端 `npm run test:run` | ✅ 36 套件 / 175 测试通过 |
+| 前端 `npm run build` | ✅ 647 条路由预渲染成功 |
+| Playwright E2E | 未在当前迭代重跑 |
+| 后端 `npm run lint` | ✅ 0 errors / 135 warnings（`any` 警告为历史遗留） |
+| 后端 `npm run test` | ✅ 83 套件 / 990 测试通过 |
 | 后端 `npm run test:e2e` | 未在当前迭代重跑 |
 | Admin `npm run lint` | ✅ 通过 |
-| Admin `npm run test` | ✅ 1 套件 / 6 测试通过 |
+| Admin `npm test` | ✅ 12 套件 / 77 测试通过 |
 | Admin `npm run build` | ✅ 通过 |
+| 后端 `npx tsc --noEmit` | ✅ 通过 |
+| Admin `npx vue-tsc --noEmit` | ✅ 通过 |
 
 ### 📝 文档同步
 

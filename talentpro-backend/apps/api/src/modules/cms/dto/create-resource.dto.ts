@@ -3,13 +3,13 @@ import { ResourceType } from '@prisma/client';
 
 export class CreateResourceDto {
   @IsString()
-  categoryId: string;
+  categoryId!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()

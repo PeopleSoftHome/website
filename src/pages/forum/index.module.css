@@ -20,7 +20,7 @@
 .forumLoading { display: flex; flex-direction: column; gap: 12px; }
 .skeletonRow { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); }
 .tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; margin-right: 6px; vertical-align: middle; }
-.tagDanger { background: var(--error-bg); color: var(--error); }
+.tagDanger { background: var(--error-bg); color: var(--error-dark); }
 .tagInfo { background: var(--gray-100); color: var(--gray-500); }
 [data-theme="dark"] .tagDanger { background: var(--error-alpha-15); color: var(--error-light); }
 [data-theme="dark"] .tagInfo { background: var(--gray-500-alpha-15); color: var(--gray-350); }

@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsInt } from 'class-validator';
 
 export class CreateForumCategoryDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()

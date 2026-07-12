@@ -65,13 +65,14 @@ const handleRetry = async () => {
   }
   retrying.value = true;
   try {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://talentpro.cn';
     const checkoutRes = await paymentApi.createStripeCheckout({
       orderId: order.value.id,
-      successUrl: `${window.location.origin}/marketplace/payment/success?order_id=${order.value.id}`,
-      cancelUrl: `${window.location.origin}/marketplace/payment/cancel?order_id=${order.value.id}`,
+      successUrl: `${origin}/marketplace/payment/success?order_id=${order.value.id}`,
+      cancelUrl: `${origin}/marketplace/payment/cancel?order_id=${order.value.id}`,
     });
     if (checkoutRes.data?.url) {
-      window.location.href = checkoutRes.data.url;
+      if (typeof window !== 'undefined') window.location.href = checkoutRes.data.url;
     } else {
       showToast(t('marketplace.paymentError'), 'error');
     }

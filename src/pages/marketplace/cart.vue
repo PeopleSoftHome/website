@@ -175,7 +175,7 @@ const handleCheckout = async () => {
 
     const res = await paymentApi.checkoutCart({ items: checkoutItems });
     if (res.data?.url) {
-      window.location.href = res.data.url;
+      if (typeof window !== 'undefined') window.location.href = res.data.url;
     } else {
       showToast(t('cart.checkoutError'), 'error');
     }

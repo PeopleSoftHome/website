@@ -47,8 +47,8 @@ npm run generate
 
 ### 2.3 构建配置要点
 
-- `srcDir: 'src'`, `ssr: false`（开发），`nitro.preset: 'static'`
-- `nitro.prerender: { routes: ['/'], crawlLinks: true }`
+- `srcDir: 'src'`, `ssr: true`, `nitro.preset: 'static'`
+- `nitro.prerender: { routes: buildPrerenderRoutes(), crawlLinks: true }`，`buildPrerenderRoutes()` 在 `nuxt.config.ts` 中按 `prefix_except_default` 生成 3 语言全部动态路由
 - `nitro.compressPublicAssets: false`（Windows static preset 下避免资源复制竞态）
 - 模块：`@nuxtjs/i18n`, `@pinia/nuxt`, `@vite-pwa/nuxt`, `@nuxt/image`
 - 自动导入：`components/`（`pathPrefix: false`）、`composables/`、`stores/`、`utils/`
@@ -283,8 +283,8 @@ npm run build
 
 ### v4.2.0 配置治理与安全加固
 
-- **JWT Cookie-only**：前端 `withCredentials: true`，不再读写 `localStorage` token；后端优先 httpOnly Cookie，兼容 Bearer
-- **Cookie**：`httpOnly: true`, `sameSite: 'lax'`, `secure: true`（生产）；`TokenBlacklist` 记录注销 token
+- **JWT Cookie-only**：前端与 Admin 均 `withCredentials: true`，不再读写 `localStorage` token；后端优先 httpOnly Cookie，兼容 Bearer
+- **Cookie**：`httpOnly: true`, `sameSite: 'lax'`, `secure: true`（生产）；`TokenBlacklist` 记录注销 token；Admin `logout` 调用后端 `/auth/logout`
 - **PII 加密扩展**：覆盖 `User/DemoBooking/DownloadRecord/JobApplication/AppVendor/TeamMember` 的 phone/email/resumeUrl/contact 等；查询字段 email 暂为明文
 - **审计**：`AuditInterceptor` 记录 `oldValue/newValue`；`POST /system/audit-logs` 仅 SUPER_ADMIN
 - **IP 过滤**：`TRUSTED_PROXIES` 支持 CIDR/IPv6；`APP_ALLOWED_IPS` / `APP_BLOCKED_IPS`
@@ -306,7 +306,7 @@ npm run build
 - **ErrorBoundary**：`App.vue` 包裹 `<ErrorBoundary>`
 - **Redis 缓存隔离**：`CACHE_KEY_PREFIX` 前缀；`Cache-Control` 精确正则匹配
 - **AI 审核**：`CommentModerationService` 叠加 OpenAI Moderation API
-- **LLM 抽象**：`LlmProvider` 接口；`AiOpenAiService` 实现；模型参数环境变量驱动
+- **LLM 抽象**：`LlmProvider` 接口；已接入 `AiOpenAiService` / `AiAzureOpenAiService` / `AiAnthropicService`；`LlmProviderFactory` 按 `AI_PROVIDER` 选择真实实现，未配置或 `openrouter` 时显式报错；模型参数环境变量驱动
 - **依赖治理**：`npm audit` 0；`overrides` 锁定安全版本
 
 ### v4.3.0 Admin 配置智能化

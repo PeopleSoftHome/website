@@ -3,7 +3,7 @@ import { PaymentStatus } from '@prisma/client';
 
 export class UpdateOrderStatusDto {
   @IsEnum(PaymentStatus)
-  status: PaymentStatus;
+  status!: PaymentStatus;
 
   @IsOptional()
   @IsString()

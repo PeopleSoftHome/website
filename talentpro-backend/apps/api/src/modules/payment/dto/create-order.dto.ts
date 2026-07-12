@@ -4,11 +4,11 @@ import { PaymentProvider } from '@prisma/client';
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
-  appId: string;
+  appId!: string;
 
   @IsString()
   @IsNotEmpty()
-  tierName: string;
+  tierName!: string;
 
   @IsString()
   @IsOptional()
@@ -16,7 +16,7 @@ export class CreateOrderDto {
 
   @IsNumber()
   @Min(0)
-  amount: number;
+  amount!: number;
 
   @IsNumber()
   @Min(1)
@@ -35,7 +35,7 @@ export class CreateOrderDto {
 export class CreateStripeCheckoutDto {
   @IsString()
   @IsNotEmpty()
-  orderId: string;
+  orderId!: string;
 
   @IsString()
   @IsOptional()

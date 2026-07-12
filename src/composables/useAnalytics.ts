@@ -25,6 +25,7 @@ interface AnalyticsQueue {
 }
 
 function readConsent() {
+  if (typeof localStorage === 'undefined') return false;
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.COOKIE_CONSENT);
     if (raw) return JSON.parse(raw).analytics === true;
@@ -47,6 +48,11 @@ function flushQueue() {
     },
     _queue: q,
   } as Window['tp_analytics'];
+}
+
+// 初始化全局队列（仅客户端；避免 SSR 构建时访问 window）
+if (typeof window !== 'undefined') {
+  flushQueue();
 }
 
 const MAX_QUEUE_SIZE = 100;
@@ -93,9 +99,10 @@ export function useAnalytics() {
 
   const track = (event: string, props: Record<string, unknown> = {}) => {
     if (!enabled.value) return;
+    const url = typeof location !== 'undefined' ? location.href : '';
     const payload: AnalyticsPayload = {
       event,
-      properties: { ...props, ts: Date.now(), url: location.href },
+      properties: { ...props, ts: Date.now(), url },
       sessionId: getSessionId(),
     };
     enqueue(payload);
@@ -124,6 +131,3 @@ export function useAnalytics() {
 
   return { enabled: readonly(enabled), track, refreshConsent };
 }
-
-// 初始化全局队列
-flushQueue();

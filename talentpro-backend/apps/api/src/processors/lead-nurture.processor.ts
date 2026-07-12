@@ -31,7 +31,9 @@ export class LeadNurtureProcessor extends WorkerHost {
           this.logger.warn(`Unknown job name: ${job.name}`);
       }
     } catch (err) {
-      this.logger.error(`Job ${job.id} failed: ${err.message}`, err.stack);
+      const message = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack : undefined;
+      this.logger.error(`Job ${job.id} failed: ${message}`, stack);
       throw err;
     }
   }
