@@ -79,9 +79,15 @@ services:
       - "4000:4000"
     environment:
       NODE_ENV: production
+      APP_PORT: 4000
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:3000}
+      APP_CORS_ORIGINS: ${APP_CORS_ORIGINS:-http://localhost:3000,http://localhost:8080,http://localhost:3457}
       DATABASE_URL: postgresql://talentpro:talentpro_dev@postgres:5432/talentpro?schema=public
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION:-15m}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-7d}
+      PII_ENCRYPTION_KEY: ${PII_ENCRYPTION_KEY:-change-me-to-a-random-string-at-least-32-chars}
       MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_API_KEY: talentpro_meili_master_key
       MINIO_ENDPOINT: minio
