@@ -1,4 +1,4 @@
-import { createLocalizedData } from '@/utils/localizedData';
+import { createLocalizedData } from '../../utils/localizedData';
 import { CASE_MENGNIU, CASE_MENGNIU_EN } from './items/mengniu';
 import { CASE_HAIER, CASE_HAIER_EN } from './items/haier';
 import { CASE_SUNING, CASE_SUNING_EN } from './items/suning';

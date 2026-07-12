@@ -1,4 +1,4 @@
-import { createLocalizedData } from '@/utils/localizedData';
+import { createLocalizedData } from '../../utils/localizedData';
 import { BLOG_AI_RECRUITING_2026, BLOG_AI_RECRUITING_2026_EN } from './posts/ai-recruiting-2026';
 import { BLOG_OKR_IMPLEMENTATION, BLOG_OKR_IMPLEMENTATION_EN } from './posts/okr-implementation';
 import { BLOG_HR_DATA_SECURITY, BLOG_HR_DATA_SECURITY_EN } from './posts/hr-data-security';

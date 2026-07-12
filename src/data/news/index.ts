@@ -1,4 +1,4 @@
-import { createLocalizedData } from '@/utils/localizedData';
+import { createLocalizedData } from '../../utils/localizedData';
 import { NEWS_SERIES_C_FUNDING, NEWS_SERIES_C_FUNDING_EN } from './articles/series-c-funding';
 import { NEWS_AI_FAMILY_3_LAUNCH, NEWS_AI_FAMILY_3_LAUNCH_EN } from './articles/ai-family-3-launch';
 import { NEWS_HR_DIGITIZATION_TREND_2026, NEWS_HR_DIGITIZATION_TREND_2026_EN } from './articles/hr-digitization-trend-2026';

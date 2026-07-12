@@ -70,7 +70,7 @@ apiClient.interceptors.response.use(
 // Request interceptor: attach session id header for anonymous tracking
 apiClient.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const sessionId = sessionStorage.getItem(STORAGE_KEYS.SESSION) || localStorage.getItem(STORAGE_KEYS.SESSION);
+    const sessionId = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID) || localStorage.getItem(STORAGE_KEYS.SESSION_ID);
     if (sessionId) {
       config.headers['X-Session-Id'] = sessionId;
     }

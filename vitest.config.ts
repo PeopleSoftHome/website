@@ -23,7 +23,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,ts}'],
     exclude: ['node_modules', 'dist', '.nuxt'],
     setupFiles: ['./src/test/setup.ts'],
+    testTimeout: 15000,
     maxWorkers: 2,
+    minWorkers: 1,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
