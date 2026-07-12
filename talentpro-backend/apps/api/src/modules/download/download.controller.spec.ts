@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DownloadController } from './download.controller';
 import { DownloadService } from './download.service';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 
 describe('DownloadController', () => {
   let controller: DownloadController;

@@ -10,7 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { DevLoginDto } from './dto/dev-login.dto';
-import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
+import { RecaptchaGuard } from '@shared/guards';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { Public } from '@shared/decorators/public.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';

@@ -2,12 +2,12 @@ import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards } from '@n
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Cacheable } from '@shared/decorators/cache.decorator';
 import { SystemService } from './system.service';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { Public } from '@shared/decorators/public.decorator';
 
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 import { UpsertSettingDto } from './dto/upsert-setting.dto';
 import { CreateAuditLogDto } from './dto/create-audit-log.dto';
 import { UpsertEmailTemplateDto } from './dto/upsert-email-template.dto';

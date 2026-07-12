@@ -5,7 +5,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { NotificationService } from './notification.service';
 import { NotificationSseService } from './notification-sse.service';
 import { NotificationController } from './notification.controller';
-import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
+import { SseAuthGuard } from '@shared/guards';
 
 @Module({
   imports: [

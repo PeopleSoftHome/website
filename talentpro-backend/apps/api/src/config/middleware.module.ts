@@ -1,5 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { RequestIdMiddleware } from './request-id.middleware';
+import { RequestIdMiddleware } from '@shared/middleware';
 
 @Module({})
 export class MiddlewareModule implements NestModule {

@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import type { Request, Response, NextFunction } from 'express';
 import * as Sentry from '@sentry/nestjs';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { HttpExceptionFilter } from '@shared/filters';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 
 async function bootstrap() {

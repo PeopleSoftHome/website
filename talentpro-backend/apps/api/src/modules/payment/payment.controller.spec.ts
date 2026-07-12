@@ -4,7 +4,7 @@ import { PaymentService } from './payment.service';
 import { AlipayService } from './alipay.service';
 import { CreateOrderDto, CreateStripeCheckoutDto } from './dto/create-order.dto';
 import { CheckoutCartDto } from './dto/checkout-cart.dto';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { InvoiceDto } from './dto/invoice.dto';
 import { AlipayPrepareDto } from './dto/alipay-prepare.dto';

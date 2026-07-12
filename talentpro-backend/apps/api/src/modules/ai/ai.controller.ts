@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { RecaptchaGuard } from '@/common/guards/recaptcha.guard';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RecaptchaGuard } from '@shared/guards';
+import { RolesGuard } from '@shared/guards';
 import { Observable } from 'rxjs';
 import { randomUUID } from 'crypto';
 import { AiService } from './ai.service';

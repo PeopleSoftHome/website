@@ -5,7 +5,7 @@ import { MarketplaceService } from './marketplace.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/create-vendor.dto';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/create-category.dto';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 
 describe('MarketplaceController', () => {
   let controller: MarketplaceController;

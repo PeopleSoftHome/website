@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { PaginationDto } from './pagination.dto';
+import { PaginationDto } from '@shared/dto';
 
 describe('PaginationDto', () => {
   it('should have default values', () => {

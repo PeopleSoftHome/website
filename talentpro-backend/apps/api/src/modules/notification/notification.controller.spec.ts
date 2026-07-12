@@ -3,8 +3,8 @@ import { of } from 'rxjs';
 import { NotificationController } from './notification.controller';
 import { NotificationService } from './notification.service';
 import { NotificationSseService } from './notification-sse.service';
-import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { SseAuthGuard } from '@shared/guards';
+import { PaginationDto } from '@shared/dto';
 
 describe('NotificationController', () => {
   let controller: NotificationController;

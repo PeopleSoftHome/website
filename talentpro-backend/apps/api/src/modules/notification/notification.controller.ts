@@ -13,11 +13,11 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { NotificationSseService } from './notification-sse.service';
-import { SseAuthGuard } from '@/common/guards/sse-auth.guard';
+import { SseAuthGuard } from '@shared/guards';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { Public } from '@shared/decorators/public.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 
 @ApiTags('通知中心')
 @Controller('notifications')

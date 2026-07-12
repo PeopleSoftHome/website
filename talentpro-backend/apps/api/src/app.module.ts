@@ -20,20 +20,20 @@ import { RedisModule } from '@shared/redis/redis.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { MeilisearchModule } from './modules/meilisearch/meilisearch.module';
 import { MetricsModule } from '@shared/metrics/metrics.module';
-import { MiddlewareModule } from './common/middleware/middleware.module';
+import { MiddlewareModule } from './config/middleware.module';
 import {
   FEATURE_MODULES,
   LISTENERS,
   PROCESSORS,
-} from './common/modules/module-registry';
+} from './config/module-registry';
 
 import { CacheInterceptor } from '@shared/interceptors/cache.interceptor';
-import { TimingInterceptor } from './common/interceptors/timing.interceptor';
+import { TimingInterceptor } from '@shared/interceptors';
 import { CacheControlInterceptor } from '@shared/interceptors/cache-control.interceptor';
-import { WorkspaceInterceptor } from './common/interceptors/workspace.interceptor';
+import { WorkspaceInterceptor } from '@shared/interceptors';
 import { AuditInterceptor } from '@shared/interceptors/audit.interceptor';
 import { MetricsInterceptor } from '@shared/interceptors/metrics.interceptor';
-import { SentryInterceptor } from './common/interceptors/sentry.interceptor';
+import { SentryInterceptor } from '@shared/interceptors';
 import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
 import { PermissionGuard } from '@shared/guards/permission.guard';
 import { IpFilterGuard } from '@shared/guards/ip-filter.guard';

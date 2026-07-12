@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma, SensitiveWordCategory } from '@prisma/client';
 import { PrismaService } from '@shared/prisma/prisma.service';
-import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
+import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@shared/utils';
 import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 
 @Injectable()

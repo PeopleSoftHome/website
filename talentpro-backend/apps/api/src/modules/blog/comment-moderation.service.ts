@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { CommentStatus } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@/common/utils/moderation.utils';
+import { checkSpamPatterns, checkSuspiciousLength, calculateRiskScore } from '@shared/utils';
 import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
 import { AiService } from '@/modules/ai/ai.service';
 

@@ -2,13 +2,13 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Us
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiConsumes } from '@nestjs/swagger';
 import { MediaService } from './media.service';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { Public } from '@shared/decorators/public.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { UserContext } from '@shared/types';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 

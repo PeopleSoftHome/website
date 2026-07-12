@@ -1,6 +1,6 @@
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { PermissionGuard } from './permission.guard';
+import { PermissionGuard } from '@shared/guards';
 
 describe('PermissionGuard', () => {
   let guard: PermissionGuard;

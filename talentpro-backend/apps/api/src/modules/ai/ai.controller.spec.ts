@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { AiGenerateType } from './dto/ai-generate.dto';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { of } from 'rxjs';
 
 describe('AiController', () => {

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { ForumService } from './forum.service';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { Public } from '@shared/decorators/public.decorator';

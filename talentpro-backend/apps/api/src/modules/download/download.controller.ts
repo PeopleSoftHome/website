@@ -2,9 +2,9 @@ import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { DownloadService } from './download.service';
 import { Public } from '@shared/decorators/public.decorator';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 import { CreateDownloadRecordDto } from './dto/create-download-record.dto';
 
 @ApiTags('资源下载')

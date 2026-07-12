@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { TrackPageViewDto } from './dto/track-page-view.dto';
 import { TrackEventDto } from './dto/track-event.dto';
 import { TrackEventsBatchDto } from './dto/track-events-batch.dto';

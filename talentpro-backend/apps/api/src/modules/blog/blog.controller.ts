@@ -2,7 +2,7 @@ import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } f
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { BlogService } from './blog.service';
 import { PostStatus } from '@prisma/client';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { Public } from '@shared/decorators/public.decorator';

@@ -2,7 +2,7 @@ import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ExportService } from './export.service';
-import { RolesGuard } from '@/common/guards/roles.guard';
+import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';

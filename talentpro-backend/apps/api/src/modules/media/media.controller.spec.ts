@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INTERCEPTORS_METADATA } from '@nestjs/common/constants';
 import { MediaController } from './media.controller';
 import { MediaService } from './media.service';
-import { PaginationDto } from '@/common/dto/pagination.dto';
+import { PaginationDto } from '@shared/dto';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 
