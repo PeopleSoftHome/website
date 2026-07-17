@@ -76,6 +76,7 @@ import SolutionPainCompare from '@/components/sections/SolutionDetail/SolutionPa
 import SolutionCaseDeep from '@/components/sections/SolutionDetail/SolutionCaseDeep.vue';
 import { getIndustryMap } from '@/data/industries/map';
 import { cmsApi } from '@/api/cms';
+import { useDetailPage } from '@/composables/useDetailPage';
 import s from './[slug].module.css';
 
 interface RoadmapItem {
@@ -157,29 +158,21 @@ const modalStore = useModalStore();
 
 const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 
-const { data: industry } = useAsyncData<IndustryDetail | null>(
-  () => `solution-${slugStr.value}-${locale.value}`,
-  async () => {
-    const key = slugStr.value || '';
-    const fallback = ((getIndustryMap(locale.value) as Record<string, unknown>)[key] as Partial<IndustryDetail> | undefined) || null;
-    try {
-      const cmsRes = await cmsApi.getIndustryBySlug(key);
-      const cms = (cmsRes?.data || cmsRes) as Partial<IndustryDetail> | undefined;
-      const merged = mergeIndustry(cms || null, fallback);
-      if (merged) return merged;
-    } catch (e) {
-      if (import.meta.env.DEV) {
-        const err = e as Error;
-        console.warn(`[SolutionDetail] CMS load failed for ${key}, using fallback`, err.message);
-      }
-    }
-    if (!fallback) {
-      throw createError({ statusCode: 404, statusMessage: 'Solution Not Found', fatal: true });
-    }
-    return fallback as IndustryDetail;
+const industryFallbackMap = computed(() => getIndustryMap(locale.value) as Record<string, IndustryDetail>);
+
+const { data: industry } = useDetailPage<IndustryDetail>({
+  keyFn: () => `solution-${slugStr.value}-${locale.value}`,
+  fetchFn: async (key) => {
+    const cmsRes = await cmsApi.getIndustryBySlug(key);
+    const cms = (cmsRes?.data || cmsRes) as Partial<IndustryDetail> | undefined;
+    const fallback = (industryFallbackMap.value[key] as Partial<IndustryDetail> | undefined) || null;
+    return mergeIndustry(cms || null, fallback);
   },
-  { default: () => null, watch: [slug, locale] }
-);
+  param: slugStr,
+  fallbackMap: industryFallbackMap,
+  notFoundMessage: 'Solution Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!industry.value) return {};

@@ -103,7 +103,8 @@ import { computed } from 'vue';
 import { useJsonLd } from '@/shared/utils/jsonld';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { careersApi } from '@/api/careers';
-import { getJobMap } from '@/data/jobs';
+import { getJobMap, type Job } from '@/data/jobs';
+import { useDetailPage } from '@/composables/useDetailPage';
 import s from './[id].module.css';
 
 definePageMeta({ title: 'careers.detail', description: 'careers.subtitle' });
@@ -133,33 +134,18 @@ useHead(() => {
   };
 });
 
-const { data: job, pending: loading, error: fetchError } = useAsyncData(
-  () => `career-${id.value}-${locale.value}`,
-  async () => {
-    const fallback = jobMap.value[id.value as string] || null;
-    try {
-      const res = await careersApi.getJob(id.value as string);
-      const data = res.data || null;
-      if (data) return data;
-    } catch (e) {
-      // API 不可用时降级到静态 fallback
-      if (import.meta.env.DEV) {
-        const err = e as Error;
-        console.warn(`[CareerDetail] CMS load failed for ${id.value}, using fallback`, err.message);
-      }
-    }
-    if (!fallback) {
-      throw createError({ statusCode: 404, statusMessage: 'Job Not Found', fatal: true });
-    }
-    return fallback;
-  },
-  { default: () => null, watch: [id, locale] }
-);
+const idStr = computed(() => Array.isArray(id.value) ? id.value[0] : id.value);
 
-const error = computed(() => {
-  if (!fetchError.value) return null;
-  const err = fetchError.value as any;
-  return err.response?.data?.message || err.message || t('common.loadError');
+const { data: job, isLoading: loading, error } = useDetailPage<Job>({
+  keyFn: () => `career-${idStr.value}-${locale.value}`,
+  fetchFn: async (value) => {
+    const res = await careersApi.getJob(value);
+    return res.data || null;
+  },
+  param: idStr,
+  fallbackMap: jobMap,
+  notFoundMessage: 'Job Not Found',
+  server: true,
 });
 
 const descriptionParagraphs = computed(() => {

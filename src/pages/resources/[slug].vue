@@ -138,6 +138,8 @@ import { computed, ref } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getResources, RESOURCE_TYPE_STYLES } from '@/data/resources';
+import type { Resource } from '@/data/resources/types';
+import { useDetailPage } from '@/composables/useDetailPage';
 import { useJsonLd } from '@/shared/utils/jsonld';
 import { useScrollProgress } from '@/composables/useScrollProgress';
 import { useSpyScroll } from '@/composables/useSpyScroll';
@@ -159,17 +161,18 @@ const feedbackMsg = ref('');
 const form = ref({ name: '', email: '', company: '' });
 const formError = ref('');
 
-const { data: resource } = useAsyncData(
-  () => `resource-${slug.value}`,
-  async () => {
-    const data = resources.value.find((r) => r.slug === slug.value) || null;
-    if (!data) {
-      throw createError({ statusCode: 404, statusMessage: 'Resource Not Found', fatal: true });
-    }
-    return data;
-  },
-  { default: () => null, watch: [slug, locale] }
-);
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
+const resourceFallbackMap = computed(() => Object.fromEntries(resources.value.map((r) => [r.slug, r])));
+
+// 资源详情无后端接口，纯静态数据；key 带 locale 以保证切换语言时重新解析 fallback
+const { data: resource } = useDetailPage<Resource>({
+  keyFn: () => `resource-${slugStr.value}-${locale.value}`,
+  fetchFn: async () => null,
+  param: slugStr,
+  fallbackMap: resourceFallbackMap,
+  notFoundMessage: 'Resource Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!resource.value) return {};

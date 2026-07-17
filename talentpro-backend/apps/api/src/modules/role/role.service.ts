@@ -1,56 +1,50 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { RoleRepository } from './role.repository';
+
+const ROLE_INCLUDE = { permissions: true };
 
 @Injectable()
 export class RoleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private repo: RoleRepository) {}
 
   async findAll() {
-    return this.prisma.role.findMany({
-      include: { permissions: true },
-    });
+    return this.repo.findAllWithPermissions();
   }
 
   async findOne(id: string) {
-    const role = await this.prisma.role.findUnique({
-      where: { id },
-      include: { permissions: true },
-    });
-    if (!role) throw new NotFoundException('Role not found');
-    return role;
+    return this.repo.findOne(id, ROLE_INCLUDE);
   }
 
   async create(data: { name: string; description?: string; permissionIds?: string[] }) {
-    return this.prisma.role.create({
-      data: {
+    return this.repo.create(
+      {
         name: data.name,
         description: data.description,
         permissions: data.permissionIds?.length
           ? { connect: data.permissionIds.map((id) => ({ id })) }
           : undefined,
       },
-      include: { permissions: true },
-    });
+      ROLE_INCLUDE,
+    );
   }
 
   async update(id: string, data: { name?: string; description?: string; permissionIds?: string[] }) {
     await this.findOne(id);
-    return this.prisma.role.update({
-      where: { id },
-      data: {
+    return this.repo.update(
+      id,
+      {
         name: data.name,
         description: data.description,
         permissions: data.permissionIds
           ? { set: data.permissionIds.map((id) => ({ id })) }
           : undefined,
       },
-      include: { permissions: true },
-    });
+      ROLE_INCLUDE,
+    );
   }
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.role.delete({ where: { id } });
-    return { message: 'Deleted successfully' };
+    return this.repo.delete(id);
   }
 }

@@ -73,6 +73,7 @@ import StatCounter from '@/components/ui/StatCounter/StatCounter.vue';
 import CaseTimeline from '@/components/sections/CaseDetail/CaseTimeline.vue';
 import { caseApi } from '@/api/case';
 import { getCases } from '@/data/cases';
+import { useDetailPage } from '@/composables/useDetailPage';
 import { getProductMap } from '@/data/products';
 import { coverStyle } from '@/utils/coverStyle';
 import s from './[slug].module.css';
@@ -115,36 +116,30 @@ interface CaseItem {
   [key: string]: unknown;
 }
 
-const { data: caseStudy, pending: loading, error: fetchError } = useAsyncData(
-  () => `case-${locale.value}-${slug.value}`,
-  async () => {
-    let data: CaseItem | null = null;
-    try {
-      const res = await caseApi.getCase(slug.value as string);
-      data = (res.data || null) as CaseItem | null;
-    } catch {
-      // API 失败时使用静态 fallback
-    }
-    const staticCase = (caseList.value as CaseItem[]).find((c) => c.slug === slug.value) || null;
-    if (!data && !staticCase) {
-      throw createError({ statusCode: 404, statusMessage: 'Case Study Not Found', fatal: true });
-    }
-    if (data && staticCase) {
-      return {
-        ...staticCase,
-        ...data,
-        metrics: data.metrics?.length ? data.metrics : staticCase.metrics,
-        timeline: staticCase.timeline,
-        products: staticCase.products,
-        relatedCases: staticCase.relatedCases,
-        teamSize: staticCase.teamSize,
-        projectDuration: staticCase.projectDuration,
-      };
-    }
-    return data || staticCase;
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
+const caseFallbackMap = computed(() => Object.fromEntries((caseList.value as CaseItem[]).map((c) => [c.slug, c])));
+
+const { data: caseStudy, isLoading: loading, error } = useDetailPage<CaseItem>({
+  keyFn: () => `case-${locale.value}-${slugStr.value}`,
+  fetchFn: async (value) => {
+    const res = await caseApi.getCase(value);
+    return (res.data || null) as CaseItem | null;
   },
-  { default: () => null, watch: [slug, locale] }
-);
+  param: slugStr,
+  fallbackMap: caseFallbackMap,
+  mergeFn: (apiData, fallback) => ({
+    ...fallback,
+    ...apiData,
+    metrics: apiData.metrics?.length ? apiData.metrics : fallback.metrics,
+    timeline: fallback.timeline,
+    products: fallback.products,
+    relatedCases: fallback.relatedCases,
+    teamSize: fallback.teamSize,
+    projectDuration: fallback.projectDuration,
+  }),
+  notFoundMessage: 'Case Study Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!caseStudy.value) return {};
@@ -166,12 +161,6 @@ useHead(() => {
     ],
     link: [{ rel: 'canonical', href: url }],
   };
-});
-
-const error = computed(() => {
-  if (!fetchError.value) return null;
-  const err = fetchError.value as any;
-  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 const relatedCases = computed<CaseItem[]>(() => {

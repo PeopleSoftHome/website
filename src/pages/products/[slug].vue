@@ -101,8 +101,9 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import SectionHeader from '@/components/ui/SectionHeader/SectionHeader.vue';
 import ProductFeatureCards from '@/components/sections/ProductDetail/ProductFeatureCards.vue';
 import ProductScenarioTabs from '@/components/sections/ProductDetail/ProductScenarioTabs.vue';
-import { getProductMap } from '@/data/products/map';
+import { getProductMap } from '@/data/products';
 import { cmsApi } from '@/api/cms';
+import { useDetailPage } from '@/composables/useDetailPage';
 import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
@@ -142,28 +143,28 @@ const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.
 
 const productMap = computed(() => getProductMap(locale.value));
 
-const { data: product } = useAsyncData(
-  () => `product-${slugStr.value}-${locale.value}`,
-  async () => {
-    const key = slugStr.value || '';
-    const fallback = (productMap.value as Record<string, any>)[key] || null;
-    try {
-      const cms = await cmsApi.getProductBySlug(key);
-      const merged = mergeProduct(cms, fallback);
-      if (merged) return merged;
-    } catch (e) {
-      if (import.meta.env.DEV) {
-        console.warn(`[ProductDetail] CMS load failed for ${key}, using fallback`, (e as Error).message);
-      }
-    }
-    if (!fallback) {
-      throw createError({ statusCode: 404, statusMessage: 'Product Not Found', fatal: true });
-    }
-    const { icon: _fallbackIcon, ...serializableFallback } = fallback;
-    return serializableFallback;
-  },
-  { default: () => null, watch: [slugStr, locale] }
-);
+// 注意：fallback.icon 是 Vue 组件函数，无法被 SSR payload 序列化，
+// 因此 fallbackMap 中剔除 icon（与旧逻辑返回值一致），icon 由 productIcon computed 提供。
+const productFallbackMap = computed(() => Object.fromEntries(
+  Object.entries(productMap.value as Record<string, any>).map(([key, val]) => {
+    const { icon: _icon, ...serializable } = val as Record<string, any>;
+    return [key, serializable];
+  })
+));
+
+const { data: product } = useDetailPage<any>({
+  keyFn: () => `product-${slugStr.value}-${locale.value}`,
+  // 旧逻辑将 cmsApi 的原始响应直接传给 mergeProduct；此处用包装对象返回，
+  // 避免 useDetailPage 内部的 res.data 自动解包改变 mergeProduct 的输入。
+  fetchFn: async (key) => ({
+    merged: mergeProduct(await cmsApi.getProductBySlug(key), (productMap.value as Record<string, any>)[key] || null),
+  }),
+  transform: (wrapped) => (wrapped as { merged: any }).merged,
+  param: slugStr,
+  fallbackMap: productFallbackMap,
+  notFoundMessage: 'Product Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!product.value) return {};

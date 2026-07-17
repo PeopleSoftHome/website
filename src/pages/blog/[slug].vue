@@ -54,7 +54,8 @@ import { blogApi } from '@/api/blog';
 import { renderMarkdown } from '@/utils/markdown';
 import { formatDate } from '@/shared/utils/date';
 import { useJsonLd } from '@/shared/utils/jsonld';
-import { getBlogPostMap } from '@/data/blog';
+import { getBlogPostMap, type BlogPost } from '@/data/blog';
+import { useDetailPage } from '@/composables/useDetailPage';
 import s from './[slug].module.css';
 
 definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
@@ -62,26 +63,17 @@ definePageMeta({ title: 'blog.detail', description: 'blog.subtitle' });
 const { t, locale } = useI18n();
 const route = useRoute();
 const slug = computed(() => route.params.slug);
+const slugStr = computed(() => Array.isArray(slug.value) ? slug.value[0] : slug.value);
 const blogPostMap = computed(() => getBlogPostMap(locale.value));
 
-const { data: post, pending: loading, error: fetchError, refresh: fetchPost } = useAsyncData(
-  () => `blog-${locale.value}-${slug.value}`,
-  async () => {
-    try {
-      const res = await blogApi.getPost(slug.value);
-      const data = res.data || res || null;
-      if (data) return data;
-    } catch (_e) {
-      // API 不可用时降级到静态 fallback
-    }
-    const fallback = blogPostMap.value[slug.value as string] || null;
-    if (!fallback) {
-      throw createError({ statusCode: 404, statusMessage: 'Blog Post Not Found', fatal: true });
-    }
-    return fallback;
-  },
-  { default: () => null, watch: [slug, locale] }
-);
+const { data: post, isLoading: loading, error, refresh: fetchPost } = useDetailPage<BlogPost>({
+  keyFn: () => `blog-${locale.value}-${slugStr.value}`,
+  fetchFn: (value) => blogApi.getPost(value),
+  param: slugStr,
+  fallbackMap: blogPostMap,
+  notFoundMessage: 'Blog Post Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!post.value) return {};
@@ -95,12 +87,6 @@ useHead(() => {
       { property: 'og:type', content: 'article' },
     ],
   };
-});
-
-const error = computed(() => {
-  if (!fetchError.value) return null;
-  const err = fetchError.value as any;
-  return err.response?.data?.message || err.message || t('common.loadError');
 });
 
 useJsonLd(computed(() => {

@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
+import { incrementViewCount } from '@shared/helpers/view-count.helper';
 import { BlogCategoryRepository } from './blog-category.repository';
 import { BlogTagRepository } from './blog-tag.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';
@@ -66,7 +67,7 @@ export class BlogPostService {
       },
     });
     if (!post) throw new NotFoundException('Post not found');
-    await this.prisma.blogPost.update({ where: { id: post.id }, data: { viewCount: { increment: 1 } } });
+    await incrementViewCount(this.prisma.blogPost, post.id);
     const comments = await this.prisma.comment.findMany({
       where: { entityType: 'BlogPost', entityId: post.id, status: 'APPROVED', parentId: null },
       include: { author: { select: { id: true, name: true, avatar: true } }, replies: { include: { author: { select: { id: true, name: true, avatar: true } } } } },

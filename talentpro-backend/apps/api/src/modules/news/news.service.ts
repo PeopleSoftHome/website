@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@shared/prisma/prisma.service';
+import { incrementViewCount } from '@shared/helpers/view-count.helper';
 import { NewsRepository } from './news.repository';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class NewsService {
       where: { slug, status: PostStatus.PUBLISHED },
     });
     if (!data) throw new NotFoundException('News not found');
-    await this.prisma.news.update({ where: { id: data.id }, data: { viewCount: { increment: 1 } } });
+    await incrementViewCount(this.prisma.news, data.id);
     return data;
   }
 

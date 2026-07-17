@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PrismaService } from '@shared/prisma/prisma.service';
+import { incrementViewCount } from '@shared/helpers/view-count.helper';
 import { ForumCategoryRepository } from './forum-category.repository';
 import { ForumTopicRepository } from './forum-topic.repository';
 import { SearchIndexEvent } from '@/events/search-index.event';
@@ -68,7 +69,7 @@ export class ForumTopicService {
       },
     });
     if (!topic) throw new NotFoundException('Topic not found');
-    await this.prisma.forumTopic.update({ where: { id }, data: { viewCount: { increment: 1 } } });
+    await incrementViewCount(this.prisma.forumTopic, id);
     return topic;
   }
 

@@ -98,6 +98,7 @@ import { computed, ref } from 'vue';
 import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { newsApi } from '@/api/news';
 import { getNewsArticles } from '@/data/news';
+import { useDetailPage } from '@/composables/useDetailPage';
 import { useJsonLd } from '@/shared/utils/jsonld';
 import s from './[slug].module.css';
 
@@ -132,26 +133,17 @@ interface NewsItem {
 const newsFallback = computed(() => getNewsArticles(locale.value));
 const newsFallbackMap = computed(() => Object.fromEntries(newsFallback.value.map((n) => [n.slug, n])));
 
-const { data: item, pending: loading, error: fetchError } = useAsyncData(
-  () => `news-${locale.value}-${slug.value}`,
-  async () => {
-    let data: NewsItem | null = null;
-    try {
-      const res = await newsApi.getNewsItem(slug.value || '');
-      data = (res.data as NewsItem) || null;
-    } catch {
-      // API 失败时使用静态 fallback
-    }
-    const fallback = (newsFallbackMap.value[slug.value || ''] as NewsItem) || null;
-    if (!data && !fallback) {
-      throw createError({ statusCode: 404, statusMessage: 'News Not Found', fatal: true });
-    }
-    return data || fallback;
+const { data: item, isLoading: loading, error } = useDetailPage<NewsItem>({
+  keyFn: () => `news-${locale.value}-${slug.value}`,
+  fetchFn: async (value) => {
+    const res = await newsApi.getNewsItem(value);
+    return (res.data as NewsItem) || null;
   },
-  { default: () => null, watch: [slug, locale] }
-);
-
-const error = computed(() => fetchError.value || null);
+  param: slug,
+  fallbackMap: newsFallbackMap,
+  notFoundMessage: 'News Not Found',
+  server: true,
+});
 
 useHead(() => {
   if (!item.value) return {};

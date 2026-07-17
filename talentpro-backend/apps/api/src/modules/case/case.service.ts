@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, PostStatus } from '@prisma/client';
 import { PrismaService } from '@shared/prisma/prisma.service';
+import { incrementViewCount } from '@shared/helpers/view-count.helper';
 import { CaseStudyRepository } from './case-study.repository';
 
 @Injectable()
@@ -29,7 +30,7 @@ export class CaseService {
       include: { metrics: true },
     });
     if (!data) throw new NotFoundException('Case not found');
-    await this.prisma.caseStudy.update({ where: { id: data.id }, data: { viewCount: { increment: 1 } } });
+    await incrementViewCount(this.prisma.caseStudy, data.id);
     return data;
   }
 

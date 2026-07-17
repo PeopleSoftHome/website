@@ -1,12 +1,6 @@
-export const escapeHtml = (text: string): string => {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-};
+import { escapeHtml } from '@/utils/markdown';
+
+export { escapeHtml };
 
 export const formatMessage = (text: string): string => {
   if (!text) return '';

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { RoleService } from './role.service';
+import { RoleRepository } from './role.repository';
 import { PrismaService } from '@shared/prisma/prisma.service';
 
 describe('RoleService', () => {
@@ -18,6 +19,7 @@ describe('RoleService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RoleService,
+        RoleRepository,
         {
           provide: PrismaService,
           useValue: {
