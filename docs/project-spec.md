@@ -300,7 +300,7 @@ SOM（可获得市场）：具备 AI 能力差异化的一体化 HR SaaS，目�
 |---------|------|------|
 | 原始 Demo HTML | `TalentPro_demo_v1_2_0.html` | 早期功能基线、视觉参考、交互逻辑（已归档） |
 | 当前代码库 | `src/` / `talentpro-backend/` / `talentpro-admin/` | 真实实现参考与架构约束 |
-| 架构诊断报告 | `architecture-diagnosis-report-v4.3.0.md` | 风险登记册与改进建议依据 |
+| 架构诊断报告 | `docs/archive/audits/architecture-diagnosis-report-v4.3.0.md` | 风险登记册与改进建议依据（已归档） |
 | 项目模板 | `产品规划和项目管理说明书_v1_1.md` | 企业级文档规范模板 |
 
 ### 7.2 成熟产品对标

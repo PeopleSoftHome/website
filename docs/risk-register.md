@@ -2,7 +2,7 @@
 
 > **版本**：v4.3.0 | **负责角色**：项目经理 Agent | **状态**：✅ 已同步最新实现
 > **最后更新**：2026-07-05
-> **输入依据**：`architecture-diagnosis-report-v4.3.0.md` §10 核心问题清单与 §11 改进建议、`CHANGELOG.md` v4.3.0、实际代码库
+> **输入依据**：`docs/archive/audits/architecture-diagnosis-report-v4.3.0.md` §10 核心问题清单与 §11 改进建议、`CHANGELOG.md` v4.3.0、实际代码库
 
 ---
 
@@ -41,7 +41,7 @@
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
-| 2026-07-05 | v4.3.0 | 基于 `architecture-diagnosis-report-v4.3.0.md` 全面重建；删除 React/v1.2.0 历史条目；新增 P0/P1/P2 真实风险 14 条 |
+| 2026-07-05 | v4.3.0 | 基于 `docs/archive/audits/architecture-diagnosis-report-v4.3.0.md` 全面重建；删除 React/v1.2.0 历史条目；新增 P0/P1/P2 真实风险 14 条 |
 | 2026-03-15 | v0.1.0 | 初始版本，记录 Vue 迁移前 React 重构风险（已归档） |
 
 ---

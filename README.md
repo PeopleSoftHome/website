@@ -1,7 +1,7 @@
 # TalentPro HR Portal
 
 > 面向中大型企业的一体化 HR SaaS 平台官方营销门户 + 管理后台 + NestJS 后端
-> **当前版本**：v4.3.0
+> **当前版本**：v4.3.3
 > **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + Vite 7.3.5 + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + PostgreSQL + Redis
 
 ---
@@ -9,15 +9,16 @@
 ## 项目结构
 
 ```
-talentpro-v2/
-├── nuxt.config.ts                  # Nuxt 3 主配置（模块、SSR、Nitro、i18n、PWA）
-├── package.json                    # Nuxt 3.4.6 + Vue 3.5 + Vite 7.3.5
+np-website/
+├── nuxt.config.ts                  # Nuxt 4 主配置（模块、SSR、Nitro、i18n、PWA）
+├── package.json                    # Nuxt 4.4.8 + Vue 3.5 + Vite 7.3.5
 ├── src/                            # 前端营销门户（Nuxt 自动挂载）
 │   ├── app.vue                     # 根组件：Provider + NuxtLayout + NuxtPage
 │   ├── api/                        # 后端 API 封装（Axios + 统一响应拦截器）
 │   ├── components/                 # 组件（layout / sections / ui）
-│   ├── composables/                # 组合式函数（22 个，自动全局导入）
-│   ├── data/                       # 静态业务数据（营销门户纯 JS 常量）
+│   ├── composables/                # 组合式函数（自动全局导入）
+│   ├── data/                       # 静态业务数据（CMS 失败时的 fallback 常量）
+│   ├── shared/                     # 前后端共享层（api / cms / composables / utils）
 │   ├── i18n/                       # 多语言（zh / en / zh-TW，~772 keys）
 │   ├── layouts/                    # Nuxt 布局
 │   ├── middleware/                 # Nuxt 全局路由中间件（认证守卫 + Meta 同步）
@@ -43,10 +44,11 @@ talentpro-v2/
 
 ## 快速开始
 
+> 完整部署指南（环境配置、权限、常见问题）见 `docs/getting-started.md`。
+
 ### 前端营销门户
 
 ```bash
-cd talentpro-v2
 npm install
 npm run dev      # → http://localhost:8080（SPA 开发模式）
 npm run build    # → .output/public/（SSG 静态生成）
@@ -101,4 +103,4 @@ docker-compose -f docker-compose.dev.yml up -d
 
 ---
 
-*TalentPro HR Portal · Nuxt 4.4.8 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.3.0*
+*TalentPro HR Portal · Nuxt 4.4.8 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.3.3*

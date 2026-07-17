@@ -1,6 +1,6 @@
 # TalentPro 文档中心
 
-> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md v4.3.0` 为权威规范源。
+> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md`（当前 v4.3.3）为权威规范源。
 
 ## 目录结构
 
@@ -20,6 +20,9 @@ docs/
 ├── reusable-assets.md           # 前后端可复用资产清单（活跃）
 ├── section-registry-sync.md     # Section Registry 同步指南（活跃）
 ├── i18n-guide.md                # 国际化贡献指南（活跃）
+├── security.md                  # 安全白皮书（活跃）
+├── redis-meilisearch-ha.md      # Redis / Meilisearch 高可用运维指南（活跃）
+├── redis-bullmq-failover-drill.md # Redis-BullMQ 故障切换演练手册（活跃）
 └── archive/                     # 历史归档（只读参考）
     ├── migrations/              # 技术迁移计划与状态
     ├── evaluations/             # 技术选型评估报告
@@ -42,6 +45,9 @@ docs/
 | `reusable-assets.md` | 前后端可复用模块清单 | 提取/迁移 shared 层时 |
 | `section-registry-sync.md` | Admin 与 Portal Section 同步规则 | 新增 Section 时 |
 | `i18n-guide.md` | 新增 key、三语言对齐、Admin locale | 新增用户可见文本时 |
+| `security.md` | 安全模型、认证、加密、CSP | 安全策略变更时 |
+| `redis-meilisearch-ha.md` | Redis Sentinel / Meilisearch 高可用运维 | 基础设施变更时 |
+| `redis-bullmq-failover-drill.md` | 故障切换演练步骤与验收 | 演练或队列配置变更时 |
 
 ## 归档文档
 

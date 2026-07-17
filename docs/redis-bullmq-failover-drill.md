@@ -1,6 +1,6 @@
 # Redis Sentinel + BullMQ 故障切换演练
 
-> 来源：`architecture-diagnosis-report-v4.3.0.md` R-02 / R-08 风险闭环  
+> 来源：`docs/archive/audits/architecture-diagnosis-report-v4.3.0.md` R-02 / R-08 风险闭环  
 > 目标：验证 `talentpro-backend` 的 BullMQ Worker 在 Redis 主节点故障、Sentinel 完成 failover 后，能够自动重连新主节点并继续消费任务。
 
 ---
