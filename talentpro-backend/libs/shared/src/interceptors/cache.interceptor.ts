@@ -15,6 +15,13 @@ import { REDIS_CLIENT } from '../redis/redis.module';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor<unknown, unknown> {
+  /**
+   * Single-flight 防缓存击穿：同一 key 未命中时，并发请求共享首个回源 Promise，
+   * 避免热点 key 失效瞬间全部回源 DB。进程内有效；多实例场景的击穿概率已被
+   * 实例数摊薄，跨实例锁（Redis SET NX）如需要请另行评估。
+   */
+  private inFlight = new Map<string, Promise<unknown>>();
+
   constructor(
     private reflector: Reflector,
     @Inject(REDIS_CLIENT) private redis: Redis,
@@ -74,10 +81,31 @@ export class CacheInterceptor implements NestInterceptor<unknown, unknown> {
       return of(JSON.parse(cached));
     }
 
-    return next.handle().pipe(
-      tap(async (response) => {
-        await this.redis.setex(fullKey, cacheTtl, JSON.stringify(response));
-      }),
-    );
+    // 未命中：single-flight —— 已有同 key 回源进行时，等待其结果而非重复回源
+    const pending = this.inFlight.get(fullKey);
+    if (pending) {
+      const value = await pending;
+      return of(value);
+    }
+
+    const promise = new Promise<unknown>((resolve, reject) => {
+      next.handle().subscribe({
+        next: (response) => {
+          this.redis
+            .setex(fullKey, cacheTtl, JSON.stringify(response))
+            .catch(() => undefined)
+            .finally(() => resolve(response));
+        },
+        error: (err: unknown) => reject(err as Error),
+      });
+    });
+    this.inFlight.set(fullKey, promise);
+
+    try {
+      const value = await promise;
+      return of(value);
+    } finally {
+      this.inFlight.delete(fullKey);
+    }
   }
 }

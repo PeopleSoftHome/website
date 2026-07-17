@@ -2,6 +2,19 @@
   "pageTitle": "TalentPro — Next-Gen Integrated Talent Management Platform",
   "pageDesc": "TalentPro provides integrated HR SaaS, talent assessment, and AI Agent solutions for mid-to-large enterprises.",
   "skipLink": "Skip to main content",
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Scales with your organization. Every plan includes free data migration and dedicated customer success.",
+    "perPerson": "/user/mo",
+    "custom": "Contact Us",
+    "includedTitle": "Included in every plan",
+    "included": ["Unlimited user accounts", "Encryption & compliance", "7×12 customer support", "Free product upgrades"],
+    "tiers": [
+      { "name": "Starter", "price": "¥9", "desc": "For small teams going digital", "cta": "Book a Demo", "badge": "", "features": ["Recruitment management", "HR & organization", "Mobile workplace", "Basic reports"] },
+      { "name": "Professional", "price": "¥19", "desc": "All-in-one HR for growing companies", "cta": "Book a Demo", "badge": "Most Popular", "features": ["Everything in Starter", "Performance + Payroll", "AI Recruiter", "Open API", "Advanced analytics"] },
+      { "name": "Enterprise", "price": "", "desc": "Group control & deep customization", "cta": "Contact Sales", "badge": "", "features": ["Everything in Professional", "Full AI Agent family", "Multi-entity & multi-region", "Dedicated implementation team", "Private deployment option"] }
+    ]
+  },
   "nav": {
     "aiFamily": "AI Family",
     "products": "Products",
@@ -888,6 +901,7 @@
     "handoffBtn": "Transfer to Agent",
     "handoffMsg": "Agent queue: estimated wait ~3 min",
     "handoffCall": "Call Now",
+    "handoffContact": "Leave a Message",
     "sendAria": "Send",
     "welcome1": "Hello! I'm the TalentPro AI Assistant \nWelcome to our all-in-one HR SaaS solution.",
     "welcome2": "What would you like to know about?",

@@ -60,7 +60,7 @@ describe('AiController', () => {
         sessionId: 's1',
       });
 
-      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'prev' }]);
+      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'prev' }], 'zh');
       expect(aiService.loadChatSession).not.toHaveBeenCalled();
       expect(aiService.appendChatMessage).toHaveBeenCalledWith('s1', 'user', 'hi');
       expect(aiService.appendChatMessage).toHaveBeenCalledWith('s1', 'assistant', 'reply');
@@ -74,7 +74,7 @@ describe('AiController', () => {
       const result = await controller.chat({ message: 'hi' });
 
       expect(aiService.loadChatSession).toHaveBeenCalled();
-      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'old' }]);
+      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'old' }], 'zh');
       expect(result.sessionId).toBeDefined();
       expect(result.content).toBe('reply');
     });
@@ -85,7 +85,7 @@ describe('AiController', () => {
       await controller.chat({ message: 'hi', history: [{ role: 'user', content: 'new' }] });
 
       expect(aiService.loadChatSession).not.toHaveBeenCalled();
-      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'new' }]);
+      expect(aiService.chat).toHaveBeenCalledWith('hi', [{ role: 'user', content: 'new' }], 'zh');
     });
   });
 

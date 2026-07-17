@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.3.5 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.3.6 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -339,6 +339,13 @@ npm run build
 - **CI deploy**：镜像 push 与 OSS 部署由 `vars.DOCKER_REGISTRY` / `vars.OSS_BUCKET` / `vars.OSS_ADMIN_BUCKET` 开关控制，配置即启用，勿硬编码 registry/bucket。
 - **压测**：`npm run test:load`（`scripts/load-test.cjs`，零依赖）；方法与基线表见 `docs/load-testing.md`。
 
+### v4.3.6 P1 闭环
+
+- **缓存 single-flight**：`CacheInterceptor` 进程内防击穿（in-flight Promise 共享）；改动缓存行为必须回归 `cache.interceptor.spec.ts`。
+- **搜索跳转**：`useSearch.selectItem` 按 `section` 分流——`/` 开头走 `router.push`，否则锚点滚动；新增搜索结果类型时保持该约定。
+- **ChatBot actions**：`POST /ai/chat` 响应含 `actions`（`open_demo`/`open_contact`/`link`，规则意图识别、三语 label）；前端按 type 执行，新增动作类型需同步 `ChatBot.vue handleAction`。
+- **定价页**：`/pricing`（i18n `pricing.*` ×3）；导航 fallback 在 `src/data/navigation/header.ts`（ZH/EN 两份，CMS 导航优先）。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.3.5*
+*TalentPro HR Portal · AGENTS.md v4.3.6*

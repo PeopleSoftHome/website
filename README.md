@@ -1,7 +1,7 @@
 # TalentPro HR Portal
 
 > 面向中大型企业的一体化 HR SaaS 平台官方营销门户 + 管理后台 + NestJS 后端
-> **当前版本**：v4.3.5
+> **当前版本**：v4.3.6
 > **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + Vite 7.3.5 + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + PostgreSQL + Redis
 
 ---
@@ -103,4 +103,4 @@ docker-compose -f docker-compose.dev.yml up -d
 
 ---
 
-*TalentPro HR Portal · Nuxt 4.4.8 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.3.5*
+*TalentPro HR Portal · Nuxt 4.4.8 + Vue 3.5 + NestJS 11 + Prisma 6 · v4.3.6*

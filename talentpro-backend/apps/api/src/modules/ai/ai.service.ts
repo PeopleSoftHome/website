@@ -1,13 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { Observable, Subject } from 'rxjs';
-import { ChatMessage, StreamEvent, LlmProvider } from './ai.types';
+import { ChatMessage, StreamEvent, LlmProvider, ChatAction } from './ai.types';
 import { AiRagService } from './ai-rag.service';
 import { AiPromptService } from './ai-prompt.service';
 import { LlmProviderFactory } from './ai-provider.factory';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { MediaService } from '@/modules/media/media.service';
 import { AiGenerateImageDto } from './dto/ai-generate-image.dto';
+
+const ACTION_PATTERNS = {
+  demo: /演示|预约|demo|trial|试用|体验/,
+  contact: /人工|客服|联系|留言|contact|human|agent/,
+  careers: /招聘|岗位|职位|求职|career|job/,
+  pricing: /价格|定价|收费|多少钱|报价|pricing|price|cost/,
+} as const;
+
+const ACTION_LABELS: Record<string, { demo: string; contact: string; careers: string; pricing: string }> = {
+  zh: { demo: '预约演示', contact: '联系顾问', careers: '查看在招岗位', pricing: '查看定价' },
+  en: { demo: 'Book a Demo', contact: 'Contact Us', careers: 'View Open Roles', pricing: 'View Pricing' },
+  'zh-TW': { demo: '預約演示', contact: '聯繫顧問', careers: '查看在招崗位', pricing: '查看定價' },
+};
 
 /**
  * AiService — Facade
@@ -32,16 +45,35 @@ export class AiService {
   async chat(message: string, history: ChatMessage[] = [], locale = 'zh') {
     const contexts = await this.ragService.retrieveContext(message);
     const systemPrompt = await this.promptService.buildSystemPrompt(contexts, locale);
+    const actions = this.detectActions(message, locale);
 
     if (this.llm.isConfigured()) {
-      return this.llm.chat([
+      const result = await this.llm.chat([
         { role: 'system', content: systemPrompt },
         ...history,
         { role: 'user', content: message },
       ]);
+      return { ...result, actions };
     }
 
-    return this.fallbackResponse(message, contexts);
+    return { ...this.fallbackResponse(message, contexts), actions };
+  }
+
+  /**
+   * 意图识别 → 对话内业务动作。规则驱动、确定性、不依赖 LLM，
+   * 对 LLM 回复与本地 fallback 回复同样生效。
+   */
+  private detectActions(message: string, locale: string): ChatAction[] {
+    const lower = message.toLowerCase();
+    const L = ACTION_LABELS[locale] || ACTION_LABELS.zh;
+    const actions: ChatAction[] = [];
+
+    if (ACTION_PATTERNS.demo.test(lower)) actions.push({ type: 'open_demo', label: L.demo });
+    if (ACTION_PATTERNS.contact.test(lower)) actions.push({ type: 'open_contact', label: L.contact });
+    if (ACTION_PATTERNS.careers.test(lower)) actions.push({ type: 'link', label: L.careers, url: '/careers' });
+    if (ACTION_PATTERNS.pricing.test(lower)) actions.push({ type: 'link', label: L.pricing, url: '/pricing' });
+
+    return actions;
   }
 
   async moderateContent(content: string) {

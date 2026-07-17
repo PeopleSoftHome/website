@@ -14,11 +14,18 @@ const LOCAL_ACTIONS = {
 
 const STORAGE_KEY = STORAGE_KEYS.CHAT_SESSION_ID;
 
+interface ChatAction {
+  type: 'open_demo' | 'open_contact' | 'link';
+  label: string;
+  url?: string;
+}
+
 interface ChatMessage {
   id: number;
   from: 'user' | 'bot';
   text: string;
   quickReplies?: string[];
+  actions?: ChatAction[];
   time?: string;
 }
 
@@ -127,12 +134,13 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
     return null;
   };
 
-  const pushBotMessage = (text: string, quickReplies: string[] = []) => {
+  const pushBotMessage = (text: string, quickReplies: string[] = [], actions: ChatAction[] = []) => {
     messages.value.push({
       id: Date.now(),
       from: 'bot',
       text,
       quickReplies,
+      actions,
       time: nowTime(locale.value),
     });
   };
@@ -200,9 +208,10 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
           history: buildHistory(),
           recaptchaToken,
           sessionId: sessionId.value,
+          locale: locale.value,
         },
         { signal: abortController.value.signal },
-      )).data as { content?: string; sessionId?: string };
+      )).data as { content?: string; sessionId?: string; actions?: ChatAction[] };
 
       const replyText = result?.content || '';
       if (result?.sessionId && result.sessionId !== sessionId.value) {
@@ -212,7 +221,7 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
       abortController.value = null;
 
       if (replyText) {
-        pushBotMessage(replyText, []);
+        pushBotMessage(replyText, [], result.actions || []);
       } else {
         const matched = matchRule(trimmed);
         pushBotMessage(matched.reply || botConfig.value.fallbackCopy || t('chatBot.fallback1'), matched.quickReplies || []);

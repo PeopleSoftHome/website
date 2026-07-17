@@ -147,9 +147,19 @@ export function useSearch(onClose?: (() => void) | undefined) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  /* ── 选中结果 ── */
+  /* ── 选中结果：API 结果（URL）路由跳转，本地索引结果（锚点 id）滚动 ── */
+  const router = useRouter();
   const selectItem = (item: SearchItem) => {
-    goToSection(item.section);
+    if (item.section && item.section.startsWith('/')) {
+      if (router) {
+        router.push(item.section);
+      } else if (typeof window !== 'undefined') {
+        // 无路由上下文（如测试/独立挂载）时降级为整页跳转
+        window.location.assign(item.section);
+      }
+    } else {
+      goToSection(item.section);
+    }
     onClose?.();
     query.value = '';
     debouncedQuery.value = '';

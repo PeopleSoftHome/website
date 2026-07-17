@@ -29,6 +29,9 @@
             <div v-if="msg.from === 'bot' && msg.quickReplies?.length" :class="s.quickReplies">
               <button v-for="q in msg.quickReplies" :key="q" :class="s.quickReply" @click="handleQuickReply(q)">{{ q }}</button>
             </div>
+            <div v-if="msg.from === 'bot' && msg.actions?.length" :class="s.actions">
+              <button v-for="a in msg.actions" :key="a.type + (a.url || '')" :class="s.actionBtn" @click="handleAction(a)">{{ a.label }}</button>
+            </div>
           </div>
         </div>
 
@@ -40,7 +43,8 @@
         <div v-if="isHandoff" :class="s.handoffBar">
           <span><Icon name="user" :size="16" /></span>
           <span>{{ t('chatBot.handoffMsg') }}</span>
-          <a href="tel:4008888888" :class="s.handoffCall">{{ t('chatBot.handoffCall') }}</a>
+          <a :href="`tel:${handoffPhone}`" :class="s.handoffCall">{{ t('chatBot.handoffCall') }}</a>
+          <button :class="s.handoffContact" @click="emit('openContact')">{{ t('chatBot.handoffContact') }}</button>
         </div>
 
         <div ref="bottomRef" />
@@ -61,14 +65,35 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import { useFocusTrap } from '@/shared/composables/useFocusTrap';
+import { useSiteConfig } from '@/shared/composables/useSiteConfig';
 import { useChatBot } from '@/composables/useChatBot';
 import Icon from '../Icon/Icon.vue';
 import s from './ChatBot.module.css';
 
 const props = defineProps({ isOpen: { type: Boolean, default: false } });
-const emit = defineEmits(['close', 'openDemo']);
+const emit = defineEmits(['close', 'openDemo', 'openContact']);
 
 const { t, locale } = useI18n();
+const router = useRouter();
+const { sitePhone } = useSiteConfig();
+const handoffPhone = computed(() => sitePhone.value || '4008888888');
+
+interface ChatAction {
+  type: 'open_demo' | 'open_contact' | 'link';
+  label: string;
+  url?: string;
+}
+
+const handleAction = (action: ChatAction) => {
+  if (action.type === 'open_demo') {
+    emit('openDemo');
+  } else if (action.type === 'open_contact') {
+    emit('openContact');
+  } else if (action.type === 'link' && action.url) {
+    router.push(action.url);
+    emit('close');
+  }
+};
 
 const windowRef = ref<HTMLElement | null>(null);
 const bottomRef = ref<HTMLElement | null>(null);

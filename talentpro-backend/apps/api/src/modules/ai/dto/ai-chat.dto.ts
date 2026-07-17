@@ -12,4 +12,8 @@ export class AiChatDto {
   @IsOptional()
   @IsString()
   sessionId?: string;
+
+  @IsOptional()
+  @IsString()
+  locale?: string;
 }

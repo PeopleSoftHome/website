@@ -216,12 +216,12 @@
 2. ~~统一 throttler 默认值不一致；确认生产 Swagger 暴露面~~ ✅ 默认值已对齐；Swagger 生产本就不挂载（已核实）
 3. ~~API 压测基线~~ ✅ `scripts/load-test.cjs`（零依赖）+ `docs/load-testing.md` 已交付；本机无 Docker 未执行实测，首次运行后填写基线表
 
-### P1（下一迭代，2-4 周）
+### P1（下一迭代，2-4 周）— ✅ v4.3.6 已全部闭环
 
-4. 缓存击穿防护：`@Cacheable` 增加 single-flight（Redis SET NX 锁或 in-flight Promise 复用）（H-1）
-5. 前端搜索切换到 Meilisearch 后端检索，废弃本地静态索引（U-1）
-6. ChatBot function calling：对话内完成预约演示/岗位查询（§7.2-3）；转人工出口（U-3）
-7. 定价页与 packaging（P1-3）
+4. ~~缓存击穿防护~~ ✅ `CacheInterceptor` 进程内 single-flight（H-1；跨实例 Redis 锁如需另立 P2）
+5. ~~前端搜索切换到 Meilisearch~~ ✅ 核实：useSearch 本就是 API 优先 + 本地 fallback；真实缺陷是 API 结果不可跳转，已修复（U-1 闭环）
+6. ~~ChatBot 业务动作 + 转人工出口~~ ✅ 服务端意图识别 `actions`（demo/contact/careers/pricing）+ handoffBar 接 CMS 电话 + 在线留言入口（U-3 闭环）
+7. ~~定价页~~ ✅ `/pricing` 三档方案 ×3 语言已上线（P1-3 闭环）
 
 ### P2（季度级）
 

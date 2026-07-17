@@ -29,7 +29,7 @@ export class AiController {
   async chat(@Body() dto: AiChatDto) {
     const sessionId = dto.sessionId || randomUUID();
     const history = dto.history?.length ? dto.history : await this.aiService.loadChatSession(sessionId);
-    const result = await this.aiService.chat(dto.message, history);
+    const result = await this.aiService.chat(dto.message, history, dto.locale || 'zh');
     await this.aiService.appendChatMessage(sessionId, 'user', dto.message);
     await this.aiService.appendChatMessage(sessionId, 'assistant', result.content);
     return { ...result, sessionId };

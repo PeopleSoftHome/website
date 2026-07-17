@@ -17,6 +17,7 @@
     :is-open="chatOpen"
     @close="chatOpen = false"
     @open-demo="modalStore.openModal(); chatOpen = false"
+    @open-contact="contactOpen = true; chatOpen = false"
   />
   <CookieBanner
     :show-banner="showBanner"

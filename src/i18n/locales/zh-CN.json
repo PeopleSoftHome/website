@@ -2,6 +2,19 @@
   "pageTitle": "TalentPro — 新一代一体化人才管理平台",
   "pageDesc": "TalentPro 为中大型企业提供一体化 HR SaaS、测评与人才管理、全场景 AI Agent 解决方案",
   "skipLink": "跳转到主内容",
+  "pricing": {
+    "title": "简单透明的定价",
+    "subtitle": "随企业规模灵活扩展，所有方案均含免费数据迁移与专属客户成功服务",
+    "perPerson": "/人/月",
+    "custom": "按需报价",
+    "includedTitle": "所有方案均包含",
+    "included": ["不限人数的账号体系", "数据加密与等保合规", "7×12 小时客服支持", "免费产品迭代升级"],
+    "tiers": [
+      { "name": "基础版", "price": "¥9", "desc": "中小团队数字化起步", "cta": "预约演示", "badge": "", "features": ["招聘管理系统", "组织人事系统", "移动办公", "基础报表"] },
+      { "name": "专业版", "price": "¥19", "desc": "成长型企业一体化 HR", "cta": "预约演示", "badge": "最受欢迎", "features": ["基础版全部功能", "绩效管理 + 薪酬核算", "AI 招聘助手", "开放平台 API", "高级分析报表"] },
+      { "name": "旗舰版", "price": "", "desc": "集团化管控与深度定制", "cta": "联系销售", "badge": "", "features": ["专业版全部功能", "全场景 AI Agent 家族", "多法人/多地域管控", "专属实施团队", "私有化部署选项"] }
+    ]
+  },
   "nav": {
     "aiFamily": "AI Family",
     "products": "产品",
@@ -888,6 +901,7 @@
     "handoffBtn": "转人工客服",
     "handoffMsg": "人工客服排队中，预计等待 3 分钟",
     "handoffCall": "立即电话联系",
+    "handoffContact": "在线留言",
     "sendAria": "发送",
     "welcome1": "您好！我是 TalentPro 智能助手**小才** \n欢迎咨询一体化 HR SaaS 解决方案。",
     "welcome2": "请问您对哪方面感兴趣？",

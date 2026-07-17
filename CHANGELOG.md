@@ -1,5 +1,24 @@
 # Changelog
 
+## [v4.3.6] - 2026-07-18 (P1 闭环：防击穿 + 搜索跳转 + ChatBot 业务动作 + 定价页)
+
+### ⚡ 性能
+
+- **缓存击穿防护**：`CacheInterceptor` 增加进程内 single-flight——同一 key 未命中时并发请求共享首个回源 Promise，热点 key 失效不再集体回源 DB；Redis 写失败降级为不影响响应。新增 `cache.interceptor.spec.ts` 7 个用例
+
+### ✨ 功能
+
+- **搜索结果可跳转**：修复 API 搜索结果（Meilisearch 返回 URL）选中后无反应的问题——`selectItem` 按类型分流：URL 走路由跳转，锚点 id 滚动定位；无路由上下文时降级整页跳转
+- **ChatBot 业务动作（服务端意图识别）**：`POST /ai/chat` 响应新增 `actions` 数组（规则驱动，对 LLM 与 fallback 通道同样生效）——演示意图→`open_demo`、人工/联系→`open_contact`、岗位→`/careers`、价格→`/pricing`；文案随 locale 三语切换；前端渲染为主按钮，点击直接打开对应弹窗/页面
+- **ChatBot 转人工出口**：handoffBar 电话号改用 CMS `sitePhone`（原硬编码 4008888888），新增「在线留言」按钮打开 ContactModal
+- **定价页 `/pricing`**：三档方案（基础版 ¥9 / 专业版 ¥19 / 旗舰版按需报价），专业版高亮，全部 CTA 收口预约演示；三语言 i18n；加入顶部导航 fallback（ZH/EN）
+
+### ✅ 验证结果
+
+- 前端 Vitest：`174 tests` 全部通过（新增 useSearch 跳转 2 例）；ESLint 0 error；SSG 构建成功，`/pricing` ×3 语言预渲染验证
+- 后端 Jest：`ai` 模块 154、缓存拦截器 7 例新增；全量套件通过
+- E2E：chromium 定向回归（home/secondary-pages/search/a11y）通过
+
 ## [v4.3.5] - 2026-07-17 (P0 闭环：支付验签修复 + 部署启用 + 压测基线)
 
 ### 🐛 修复

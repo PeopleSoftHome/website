@@ -62,6 +62,12 @@ const NAV_LINKS_ZH = [
     href: '/cases',
   },
   {
+    id: 'pricing',
+    label: '定价',
+    hasDropdown: false,
+    href: '/pricing',
+  },
+  {
     id: 'resources',
     label: '资源中心',
     hasDropdown: false,
@@ -140,6 +146,12 @@ const NAV_LINKS_EN = [
     label: 'Case Studies',
     hasDropdown: false,
     href: '/cases',
+  },
+  {
+    id: 'pricing',
+    label: 'Pricing',
+    hasDropdown: false,
+    href: '/pricing',
   },
   {
     id: 'resources',

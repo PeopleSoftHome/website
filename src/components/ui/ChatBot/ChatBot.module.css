@@ -309,6 +309,43 @@
 }
 .handoffCall:hover { text-decoration: underline; }
 
+/* ── 对话内业务动作按钮（服务端意图识别）── */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.actionBtn {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.actionBtn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.handoffContact {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
 /* ── 输入区 ── */
 .inputArea {
   display: flex;

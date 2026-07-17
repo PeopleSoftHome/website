@@ -110,7 +110,41 @@ describe('AiService', () => {
         { role: 'user', content: 'prev' },
         { role: 'user', content: 'hi' },
       ]);
-      expect(result).toEqual({ content: 'LLM reply' });
+      expect(result).toEqual({ content: 'LLM reply', actions: [] });
+    });
+
+    it('应识别演示意图并附带 open_demo 动作（LLM 通道）', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+
+      const result = await service.chat('我想预约产品演示', [], 'zh');
+      expect(result.actions).toEqual([{ type: 'open_demo', label: '预约演示' }]);
+    });
+
+    it('应识别多种意图并组合动作（fallback 通道）', async () => {
+      (ragService.retrieveContext as jest.Mock).mockResolvedValue([]);
+      const result = await service.chat('产品价格多少？可以联系人工客服吗', []);
+      const types = result.actions.map((a) => a.type);
+      expect(types).toContain('open_contact');
+      expect(types).toContain('link');
+      const pricing = result.actions.find((a) => a.url === '/pricing');
+      expect(pricing).toBeDefined();
+    });
+
+    it('动作文案随 locale 切换', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+
+      const result = await service.chat('I want to book a demo', [], 'en');
+      expect(result.actions).toEqual([{ type: 'open_demo', label: 'Book a Demo' }]);
+    });
+
+    it('无意图时 actions 为空数组', async () => {
+      llmMock = createConfiguredLlm();
+      (providerFactory.getActiveProvider as jest.Mock).mockReturnValue(llmMock);
+
+      const result = await service.chat('hello world', [], 'en');
+      expect(result.actions).toEqual([]);
     });
 
     it('should fall back when LLM is not configured', async () => {
