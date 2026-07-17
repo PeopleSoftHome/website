@@ -4,7 +4,7 @@
  * 集中声明所有 Feature 模块、Listener 和 Processor。
  * 新增模块只需在此文件添加一行 import + 推入数组，无需修改 AppModule。
  *
- * 未来可升级为目录扫描 auto-discovery（见 module-loader.ts）。
+ * 未来可升级为目录扫描 auto-discovery。
  */
 
 // ─── Feature Modules ───

@@ -28,3 +28,6 @@ coverage/
 
 # Prisma
 prisma/migrations/*/migration_lock.toml
+
+# Runtime uploads (local dev artifacts)
+uploads/

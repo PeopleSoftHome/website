@@ -1,7 +1,7 @@
 # libs/shared — 后端可复用能力层
 
 本库存放 NestJS 后端中可跨项目复用的基础设施代码，与 TalentPro 业务域解耦。
-业务代码统一从 `@shared/*` 导入；旧路径（`@/common/...`）保留兼容性 re-export，但新代码应避免使用。
+业务代码统一从 `@shared/*` 导入；旧路径（`@/common/...`）的兼容性 re-export 已于 v4.3.3 清理移除。
 
 ## 子目录
 
