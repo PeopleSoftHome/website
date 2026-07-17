@@ -1,6 +1,8 @@
 /**
- * 字体子集化脚本
- * 提取项目中所有用到的字符，裁剪 Noto Sans SC woff2 字体文件
+ * 字体子集化脚本（手动工具，非构建流程的一部分）
+ * 提取项目中所有用到的字符，裁剪 Noto Sans SC woff2 字体文件。
+ * 产物已入库于 public/fonts/；仅在字体或文案字符集发生重大变化时手动运行：
+ *   node scripts/subset-font.mjs
  */
 
 import fs from 'fs';

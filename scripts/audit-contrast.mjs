@@ -1,3 +1,11 @@
+/**
+ * 颜色对比度可访问性审计（手动工具，非 CI）
+ *
+ * 前置条件：
+ *   1. npm run build
+ *   2. node scripts/e2e-server.cjs .output/public 9876（另开终端保持运行）
+ * 用法：npm run audit:contrast
+ */
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 

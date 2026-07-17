@@ -38,6 +38,10 @@ jobs:
       - name: Validate design token sync
         run: node scripts/validate-tokens-sync.js
 
+      # 三项目版本号与 CHANGELOG 对齐校验
+      - name: Validate version sync
+        run: npm run validate:versions
+
       - run: npx vitest run --coverage
       - name: Install Playwright
         run: npx playwright install --with-deps
@@ -173,6 +177,7 @@ jobs:
         run: |
           echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-admin/public/version.json
 
+      - run: cd talentpro-admin && npm run test
       - run: cd talentpro-admin && npm run build
       - name: Upload admin build artifact
         uses: actions/upload-artifact@v4

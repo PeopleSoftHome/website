@@ -1,3 +1,9 @@
+/**
+ * PWA 图标生成器（一次性/手动工具，非构建流程的一部分）
+ *
+ * 产物 public/icon-192x192.png 与 public/icon-512x512.png 已入库。
+ * 仅在需要更换品牌图标时手动运行：node scripts/generate-icons.js
+ */
 import sharp from 'sharp';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
