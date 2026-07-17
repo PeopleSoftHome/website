@@ -63,7 +63,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import AiAssistButton from '@/components/ai/AiAssistButton.vue';
 import AiAssistDialog from '@/components/ai/AiAssistDialog.vue';
 

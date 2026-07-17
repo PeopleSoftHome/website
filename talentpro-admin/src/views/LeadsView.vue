@@ -121,13 +121,13 @@
 </template>
 
 <script setup>
-import { formatDate } from '@/utils/formatDate.js';
+import { formatDate } from '@/utils/formatDate';
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import client from '@/api/client.js';
-import { useList } from '@/composables/useList.js';
-import { downloadFile } from '@/utils/downloadFile.js';
+import client from '@/api/client';
+import { useList } from '@/composables/useList';
+import { downloadFile } from '@/utils/downloadFile';
 
 const { t } = useI18n();
 

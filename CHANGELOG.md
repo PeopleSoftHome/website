@@ -1,5 +1,33 @@
 # Changelog
 
+## [v4.4.0] - 2026-07-18 (P2 闭环：语义 RAG + 实验平台 + Admin TS + 基础设施 HA)
+
+### 🧠 智能化
+
+- **语义 RAG（pgvector + OpenAI Embeddings）**：新增 `AiEmbeddingService`——`AI_EMBEDDING_ENABLED=true` + `OPENAI_API_KEY` 时启用，`retrieveContext` 语义结果优先、Meilisearch 关键词补充并按标题去重，任一路失败静默降级；`AiEmbedding` 模型 + migration（`CREATE EXTENSION vector` + HNSW 余弦索引）；`npm run ai:embed` 全量重建已发布内容索引（product/industry/blog_post/case_study/news）
+
+### 📊 实验平台闭环
+
+- **分流指派**：`GET /experiments/:key/assign?sessionId=`（md5 确定性分桶，同会话恒定同组，trafficSplit 为 B 组占比；首次指派幂等记录 impression）
+- **前端 SDK**：`useExperiment(key)` composable（variant/config/trackConversion），已接入 `CtaBannerSection`（key: `cta-banner-copy`，变体 `config.ctaText` 覆盖主按钮文案，点击计为转化）
+
+### 🔧 工程化
+
+- **Admin 核心层 TS 迁移（11 文件）**：`api/client`、`api/ai`、`stores/auth`、`router`、`composables/useCrud|useList`、`directives/permission`、`utils/formatDate|downloadFile`、`config/menu.config|permission.config` 全部迁移为严格 TS（含泛型与 RouteMeta 增强声明），45 处跨文件引用同步收敛；views 层 JS 按既定渐进策略保留
+- **useChatBot 拆层**：意图识别抽为纯函数模块 `chatIntents.ts`（detectLocalAction/matchIntent/快捷回复判断，8 个单测），useChatBot 257→240 行
+- **多租户决策**：`docs/adr/ADR-001-multi-tenancy.md`——保持预留不激活，含激活条件与技术路径备忘（优先 RLS）
+- **PG/MinIO HA 资产**：`docker/docker-compose.postgres-ha.yml`（主+热备流复制）、`docker/docker-compose.minio-ha.yml`（EC:2 纠删码 + bucket 版本控制）、`docs/postgres-minio-ha.md`（切换手册、Patroni 演进、验收清单）
+
+### ✅ 验证结果
+
+- 后端 Jest：`ai` 模块 163（+9 embedding）、`experiment` 20（+4 assign）、缓存拦截器 7；全量套件通过；tsc 0 error
+- 前端 Vitest：新增 useExperiment 4 例 + chatIntents 8 例；ESLint 0 error
+- Admin：Vite 构建通过、77 tests 全绿、ESLint 0 error
+
+### 📌 延期项（明确记录）
+
+NavBar/ModalStep1/marketplace CSS 三个超规文件拆分延期至下一轮（需模板手术 + 视觉回归验证预算），方案见 `docs/project-evaluation-v4.3.4.md` §8 P2-10。
+
 ## [v4.3.6] - 2026-07-18 (P1 闭环：防击穿 + 搜索跳转 + ChatBot 业务动作 + 定价页)
 
 ### ⚡ 性能

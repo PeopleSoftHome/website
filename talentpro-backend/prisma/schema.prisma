@@ -776,6 +776,24 @@ model ExperimentEvent {
   @@map("experiment_events")
 }
 
+// ==================== AI 语义检索（pgvector） ====================
+
+model AiEmbedding {
+  id        String                    @id @default(uuid())
+  refType   String // blog_post | product | industry | case_study | news
+  refId     String
+  slug      String?
+  title     String
+  content   String                    @db.Text
+  embedding Unsupported("vector(1536)")
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+
+  @@unique([refType, refId])
+  @@index([refType])
+  @@map("ai_embeddings")
+}
+
 // ==================== System ====================
 
 model Setting {

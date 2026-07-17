@@ -109,10 +109,10 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth.js';
+import { useAuthStore } from '@/stores/auth';
 import { Fold, ArrowDown, Management } from '@element-plus/icons-vue';
 import NotificationBell from '@/components/ui/NotificationBell.vue';
-import { menuConfig, hasMenuPermission } from '@/config/menu.config.js';
+import { menuConfig, hasMenuPermission } from '@/config/menu.config';
 
 const route = useRoute();
 const router = useRouter();

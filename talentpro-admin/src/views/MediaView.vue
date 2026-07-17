@@ -87,7 +87,7 @@ import { Upload } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/ui/CmsTable.vue';
 import Picture from '@/components/ui/Picture.vue';
-import client from '@/api/client.js';
+import client from '@/api/client';
 
 const { t } = useI18n();
 

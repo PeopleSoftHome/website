@@ -6,15 +6,33 @@
  * - Sidebar 菜单（desktop + mobile）
  * - Breadcrumb 面包屑
  *
- * 新增页面只需在此文件添加一条配置，无需改 LayoutView.vue 或 router/index.js
+ * 新增页面只需在此文件添加一条配置，无需改 LayoutView.vue 或 router/index.ts
  *
  * v3.1.0: label 改为 i18n key，实际显示文本由 locale 文件提供
- * v4.3.2: 接入 permission.config.js 权限矩阵，自动为菜单项附加 permissions
+ * v4.3.2: 接入 permission.config.ts 权限矩阵，自动为菜单项附加 permissions
  */
 
-import { getRoutePermissions } from './permission.config.js';
+import type { RouteRecordRaw } from 'vue-router';
+import { getRoutePermissions } from './permission.config';
 
-export const menuConfig = [
+export interface MenuItem {
+  path?: string;
+  label: string;
+  icon: string;
+  roles: string[];
+  children?: MenuItem[];
+  permissions?: string[];
+  permissionMode?: 'all' | 'any';
+}
+
+export interface FlatMenuItem extends MenuItem {
+  isGroup?: boolean;
+  isChild?: boolean;
+  isItem?: boolean;
+  parentLabel?: string;
+}
+
+export const menuConfig: MenuItem[] = [
   {
     path: '/dashboard',
     label: 'menu.dashboard',
@@ -137,9 +155,9 @@ export const menuConfig = [
 /**
  * 为 menuConfig 自动附加权限矩阵配置
  */
-function enrichPermissions(items) {
+function enrichPermissions(items: MenuItem[]): void {
   for (const item of items) {
-    const cfg = getRoutePermissions(item.path);
+    const cfg = item.path ? getRoutePermissions(item.path) : undefined;
     if (cfg) {
       item.permissions = cfg.permissions;
       item.permissionMode = cfg.mode;
@@ -152,7 +170,7 @@ enrichPermissions(menuConfig);
 /**
  * 路由组件映射（非菜单项也需要在此注册，如 /login）
  */
-const routeComponentMap = {
+const routeComponentMap: Record<string, () => Promise<unknown>> = {
   '/login': () => import('@/views/LoginView.vue'),
   '/dashboard': () => import('@/views/DashboardView.vue'),
   '/leads': () => import('@/views/LeadsView.vue'),
@@ -192,24 +210,30 @@ const routeComponentMap = {
   '/ai-assistant': () => import('@/views/AiAssistantView.vue'),
 };
 
+interface RouteMetaLite {
+  roles?: string[];
+  permissions?: string[];
+  permissionMode?: 'all' | 'any';
+}
+
 /**
  * 根据 menuConfig 生成 Vue Router routes
  */
-export function buildRoutes() {
-  const children = [];
+export function buildRoutes(): RouteRecordRaw[] {
+  const children: RouteRecordRaw[] = [];
 
-  function walk(items) {
+  function walk(items: MenuItem[]): void {
     for (const item of items) {
       if (item.path && routeComponentMap[item.path]) {
-        const route = {
+        const meta: RouteMetaLite = {};
+        if (item.roles) meta.roles = item.roles;
+        if (item.permissions) meta.permissions = item.permissions;
+        if (item.permissionMode) meta.permissionMode = item.permissionMode;
+        children.push({
           path: item.path.replace(/^\//, ''),
           component: routeComponentMap[item.path],
-        };
-        route.meta = {};
-        if (item.roles) route.meta.roles = item.roles;
-        if (item.permissions) route.meta.permissions = item.permissions;
-        if (item.permissionMode) route.meta.permissionMode = item.permissionMode;
-        children.push(route);
+          meta,
+        });
       }
       if (item.children) walk(item.children);
     }
@@ -230,13 +254,16 @@ export function buildRoutes() {
   ];
 }
 
+interface MenuAuthLike {
+  hasPermission: (perm: string) => boolean;
+  hasAnyPermission: (perms: string | string[]) => boolean;
+  hasAllPermissions: (perms: string | string[]) => boolean;
+}
+
 /**
  * 检查当前用户是否有权限显示该菜单项
- * @param {Object} item - 菜单项
- * @param {string} userRole - 用户角色
- * @param {Object} auth - auth store（含 hasPermission / hasAnyPermission / hasAllPermissions）
  */
-export function hasMenuPermission(item, userRole, auth) {
+export function hasMenuPermission(item: MenuItem, userRole: string, auth?: MenuAuthLike): boolean {
   if (item.roles && !item.roles.includes(userRole)) return false;
   if (item.permissions && auth) {
     const mode = item.permissionMode || 'all';
@@ -252,8 +279,8 @@ export function hasMenuPermission(item, userRole, auth) {
 /**
  * 扁平化菜单（用于渲染 el-menu）
  */
-export function flattenMenu(items) {
-  const result = [];
+export function flattenMenu(items: MenuItem[]): FlatMenuItem[] {
+  const result: FlatMenuItem[] = [];
   for (const item of items) {
     if (item.children) {
       result.push({ ...item, isGroup: true });

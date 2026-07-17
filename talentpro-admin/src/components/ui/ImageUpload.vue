@@ -71,8 +71,8 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { UploadFilled, Delete, View, MagicStick } from '@element-plus/icons-vue';
-import { useAuthStore } from '@/stores/auth.js';
-import { aiApi } from '@/api/ai.js';
+import { useAuthStore } from '@/stores/auth';
+import { aiApi } from '@/api/ai';
 
 const { t } = useI18n();
 

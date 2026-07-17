@@ -91,7 +91,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import { REGISTERED_SECTIONS, getSectionConfigSchema } from '@/data/sectionRegistry.js';
 import SectionConfigForm from '@/components/page-config/SectionConfigForm.vue';
 import PageConfigSectionList from '@/components/page-config/PageConfigSectionList.vue';

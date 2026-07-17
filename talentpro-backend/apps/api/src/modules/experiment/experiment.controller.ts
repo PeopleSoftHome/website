@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { ExperimentService } from './experiment.service';
 import { Public } from '@shared/decorators/public.decorator';
 import { RolesGuard } from '@shared/guards';
@@ -26,6 +27,15 @@ export class ExperimentController {
   @ApiOperation({ summary: '运行中实验' })
   findRunning() {
     return this.experimentService.findRunning();
+  }
+
+  @Get(':key/assign')
+  @Public()
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
+  @ApiOperation({ summary: '实验分流指派（确定性分桶 + 幂等曝光）' })
+  @ApiQuery({ name: 'sessionId', required: true })
+  assign(@Param('key') key: string, @Query('sessionId') sessionId: string) {
+    return this.experimentService.assign(key, sessionId);
   }
 
   @Get(':key')

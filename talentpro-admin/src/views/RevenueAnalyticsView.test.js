@@ -5,7 +5,7 @@ import ElementPlus from 'element-plus';
 import { createI18n } from 'vue-i18n';
 import zhCN from '@/i18n/locales/zh-CN.json';
 import RevenueAnalyticsView from './RevenueAnalyticsView.vue';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import VChart from 'vue-echarts';
 
 const i18n = createI18n({
@@ -15,7 +15,7 @@ const i18n = createI18n({
   messages: { zh: zhCN },
 });
 
-vi.mock('@/api/client.js', () => ({
+vi.mock('@/api/client', () => ({
   default: {
     get: vi.fn(),
     post: vi.fn(),

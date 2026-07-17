@@ -1,6 +1,6 @@
 {
   "name": "talentpro-backend",
-  "version": "4.3.6",
+  "version": "4.4.0",
   "description": "TalentPro HR Portal — Enterprise Backend API",
   "author": "TalentPro Team",
   "private": true,
@@ -26,7 +26,8 @@
     "db:studio": "prisma studio",
     "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
     "docker:down": "docker-compose -f docker/docker-compose.yml down",
-    "test:load": "node scripts/load-test.cjs"
+    "test:load": "node scripts/load-test.cjs",
+    "ai:embed": "ts-node scripts/embed-content.ts"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.0",

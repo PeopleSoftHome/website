@@ -1,9 +1,7 @@
 /**
  * 触发浏览器下载 Blob 文件
- * @param {Blob} blob - 文件 Blob
- * @param {string} filename - 下载文件名
  */
-export function downloadFile(blob, filename) {
+export function downloadFile(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

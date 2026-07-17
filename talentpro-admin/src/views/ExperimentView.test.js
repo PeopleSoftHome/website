@@ -2,12 +2,12 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import ElementPlus from 'element-plus';
-import { useAuthStore } from '@/stores/auth.js';
+import { useAuthStore } from '@/stores/auth';
 import { createI18n } from 'vue-i18n';
 import zhCN from '@/i18n/locales/zh-CN.json';
 import ExperimentView from './ExperimentView.vue';
-import client from '@/api/client.js';
-import { permissionDirective } from '@/directives/permission.js';
+import client from '@/api/client';
+import { permissionDirective } from '@/directives/permission';
 
 const i18n = createI18n({
   legacy: false,
@@ -16,7 +16,7 @@ const i18n = createI18n({
   messages: { zh: zhCN },
 });
 
-vi.mock('@/api/client.js', () => ({
+vi.mock('@/api/client', () => ({
   default: {
     get: vi.fn(),
     post: vi.fn(),

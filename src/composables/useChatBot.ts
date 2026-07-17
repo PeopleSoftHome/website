@@ -3,14 +3,10 @@ import { apiClient } from '@/shared/api/client';
 import { usePublicConfig } from '@/composables/usePublicConfig';
 import { FAQ_RULES_META, FALLBACK_REPLY_KEYS } from '@/components/ui/ChatBot/chatData';
 import { formatMessage, nowTime } from '@/components/ui/ChatBot/chatUtils';
+import { detectLocalAction, matchIntent as matchIntentRule, isDemoQuickReply, isHumanQuickReply, type ChatIntent } from '@/components/ui/ChatBot/chatIntents';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { ENDPOINTS } from '@/constants/endpoints';
 import { getOrCreateSessionId } from '@/composables/useSessionId';
-
-const LOCAL_ACTIONS = {
-  demo: ['演示', '预约', 'demo', 'book', 'trial', '试用', '体验'],
-  human: ['人工', '客服', 'agent', 'human', 'service', '真人', '转人工'],
-};
 
 const STORAGE_KEY = STORAGE_KEYS.CHAT_SESSION_ID;
 
@@ -27,12 +23,6 @@ interface ChatMessage {
   quickReplies?: string[];
   actions?: ChatAction[];
   time?: string;
-}
-
-interface ChatIntent {
-  keywords: string[];
-  reply?: string;
-  quickReplies?: string[];
 }
 
 interface ChatBotConfig {
@@ -104,15 +94,7 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
     timers.value = [];
   };
 
-  const matchIntent = (text: string) => {
-    const lower = text.toLowerCase();
-    for (const intent of botConfig.value.intents) {
-      if (Array.isArray(intent.keywords) && intent.keywords.some(k => lower.includes(k.toLowerCase()))) {
-        return intent;
-      }
-    }
-    return null;
-  };
+  const matchIntent = (text: string) => matchIntentRule(text, botConfig.value.intents);
 
   const matchRule = (text: string) => {
     const lower = text.toLowerCase();
@@ -125,13 +107,6 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
       reply: fallbackReplies.value[Math.floor(Math.random() * fallbackReplies.value.length)] || '',
       quickReplies: [] as string[],
     };
-  };
-
-  const detectLocalAction = (text: string) => {
-    const lower = text.toLowerCase();
-    if (LOCAL_ACTIONS.demo.some(k => lower.includes(k))) return 'demo';
-    if (LOCAL_ACTIONS.human.some(k => lower.includes(k))) return 'human';
-    return null;
   };
 
   const pushBotMessage = (text: string, quickReplies: string[] = [], actions: ChatAction[] = []) => {
@@ -236,13 +211,12 @@ export function useChatBot({ emit, locale }: UseChatBotOptions) {
   };
 
   const handleQuickReply = (text: string) => {
-    const lower = text.toLowerCase();
-    if (lower.includes('演示') || lower.includes('demo') || lower.includes('预约') || lower.includes('book')) {
+    if (isDemoQuickReply(text)) {
       emit('openDemo');
       sendMessage(text);
       return;
     }
-    if (lower.includes('人工') || lower.includes('agent') || lower.includes('human') || lower.includes('客服') || lower.includes('service')) {
+    if (isHumanQuickReply(text)) {
       sendMessage(t('chatBot.handoffBtn'));
       return;
     }

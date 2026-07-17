@@ -113,10 +113,10 @@
 </template>
 
 <script setup>
-import { formatDate } from '@/utils/formatDate.js';
+import { formatDate } from '@/utils/formatDate';
 import { ref, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 const { t } = useI18n();

@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.3.6 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.4.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -346,6 +346,14 @@ npm run build
 - **ChatBot actions**：`POST /ai/chat` 响应含 `actions`（`open_demo`/`open_contact`/`link`，规则意图识别、三语 label）；前端按 type 执行，新增动作类型需同步 `ChatBot.vue handleAction`。
 - **定价页**：`/pricing`（i18n `pricing.*` ×3）；导航 fallback 在 `src/data/navigation/header.ts`（ZH/EN 两份，CMS 导航优先）。
 
+### v4.4.0 P2 闭环
+
+- **语义 RAG**：`AiEmbeddingService`（env `AI_EMBEDDING_ENABLED` + `OPENAI_API_KEY` 门控）；`AiEmbedding` 表用 raw SQL + `::vector` cast；`npm run ai:embed` 重建索引；语义结果优先、关键词补充、按标题去重。
+- **实验平台**：`GET /experiments/:key/assign` 确定性分桶（md5(`key:sessionId`)），impression 幂等；前端 `useExperiment(key)`，参考 `CtaBannerSection` 接法（config 覆盖文案 + 点击 `trackConversion`）。
+- **Admin TS**：核心层（api/stores/router/composables/directives/utils/config）已是严格 TS；views 仍为 JS（渐进策略），新增核心代码必须 TS。
+- **多租户**：保持预留（`docs/adr/ADR-001-multi-tenancy.md`），禁止扩展 `workspaceStorage` 能力面。
+- **HA 资产**：PG 流复制与 MinIO 纠删码 compose 在 `docker/`，运维手册 `docs/postgres-minio-ha.md`。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.3.6*
+*TalentPro HR Portal · AGENTS.md v4.4.0*

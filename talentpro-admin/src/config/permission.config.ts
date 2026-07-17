@@ -12,7 +12,14 @@
  * - manage 包含该资源全部操作（仅特殊资源使用）
  */
 
-export const RESOURCE_PERMISSIONS = {
+export type PermissionMode = 'all' | 'any';
+
+export interface RoutePermission {
+  permissions: string[];
+  mode: PermissionMode;
+}
+
+export const RESOURCE_PERMISSIONS: Record<string, string[]> = {
   dashboard: ['dashboard:read'],
   leads: ['lead:read', 'lead:update'],
   users: ['user:read', 'user:create', 'user:update', 'user:delete'],
@@ -55,7 +62,7 @@ export const RESOURCE_PERMISSIONS = {
  * 路由 -> 权限配置
  * permissionMode: 'all' 表示需同时拥有；'any' 表示满足其一即可。
  */
-export const ROUTE_PERMISSIONS = {
+export const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   '/dashboard': { permissions: RESOURCE_PERMISSIONS.dashboard, mode: 'all' },
   '/leads': { permissions: RESOURCE_PERMISSIONS.leads, mode: 'all' },
   '/users': { permissions: RESOURCE_PERMISSIONS.users, mode: 'all' },
@@ -96,21 +103,21 @@ export const ROUTE_PERMISSIONS = {
 
 /**
  * 根据路由路径获取权限配置
- * @param {string} path - 路由路径（如 /users）
- * @returns {{ permissions: string[], mode: string } | null}
  */
-export function getRoutePermissions(path) {
+export function getRoutePermissions(path: string): RoutePermission | null {
   return ROUTE_PERMISSIONS[path] || null;
+}
+
+interface AuthLike {
+  hasAnyPermission: (perms: string | string[]) => boolean;
+  hasAllPermissions: (perms: string | string[]) => boolean;
 }
 
 /**
  * 检查单个菜单项是否匹配权限矩阵；若无配置则放行。
- * @param {Object} item - menuConfig 中的菜单项
- * @param {Object} auth - auth store 实例
- * @returns {boolean}
  */
-export function checkRoutePermission(item, auth) {
-  const cfg = getRoutePermissions(item.path);
+export function checkRoutePermission(item: { path?: string }, auth: AuthLike): boolean {
+  const cfg = item.path ? getRoutePermissions(item.path) : null;
   if (!cfg) return true;
   const { permissions, mode } = cfg;
   if (mode === 'any') return auth.hasAnyPermission(permissions);

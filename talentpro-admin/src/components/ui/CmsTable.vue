@@ -148,11 +148,11 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import ImageUpload from './ImageUpload.vue';
 import AiAssistButton from '../ai/AiAssistButton.vue';
 import AiAssistDialog from '../ai/AiAssistDialog.vue';
-import { useCrud } from '@/composables/useCrud.js';
+import { useCrud } from '@/composables/useCrud';
 
 const { t } = useI18n();
 

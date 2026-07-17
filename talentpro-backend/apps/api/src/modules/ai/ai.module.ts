@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { AiRagService } from './ai-rag.service';
+import { AiEmbeddingService } from './ai-embedding.service';
 import { AiPromptService } from './ai-prompt.service';
 import { AiOpenAiService } from './ai-openai.service';
 import { AiAzureOpenAiService } from './ai-azure-openai.service';
@@ -14,6 +15,7 @@ import { MediaModule } from '../media/media.module';
   providers: [
     AiService,
     AiRagService,
+    AiEmbeddingService,
     AiPromptService,
     AiOpenAiService,
     AiAzureOpenAiService,

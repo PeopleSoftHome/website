@@ -90,7 +90,7 @@ import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import CmsTable from '@/components/ui/CmsTable.vue';
-import client from '@/api/client.js';
+import client from '@/api/client';
 
 const { t } = useI18n();
 

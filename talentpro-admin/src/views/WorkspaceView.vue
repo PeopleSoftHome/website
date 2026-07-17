@@ -69,7 +69,7 @@
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import client from '@/api/client.js';
+import client from '@/api/client';
 
 const { t } = useI18n();
 

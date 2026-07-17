@@ -34,7 +34,7 @@ import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
-import { useAuthStore } from '@/stores/auth.js';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const { t } = useI18n();

@@ -55,8 +55,8 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Bell } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
-import client from '@/api/client.js';
-import { useAuthStore } from '@/stores/auth.js';
+import client from '@/api/client';
+import { useAuthStore } from '@/stores/auth';
 
 const { t } = useI18n();
 

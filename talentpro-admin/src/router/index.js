@@ -4,8 +4,8 @@
  * 位于: router/index.js
  */
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '@/stores/auth.js';
-import { buildRoutes } from '@/config/menu.config.js';
+import { useAuthStore } from '@/stores/auth';
+import { buildRoutes } from '@/config/menu.config';
 
 const router = createRouter({
   history: createWebHistory(),

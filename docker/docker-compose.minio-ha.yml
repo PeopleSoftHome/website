@@ -1,0 +1,50 @@
+# MinIO 纠删码（单机 4 盘演示拓扑）
+# 用法：docker-compose -f docker/docker-compose.minio-ha.yml up -d
+# 生产 4 节点分布式拓扑见 docs/postgres-minio-ha.md §3
+#
+# 说明：单机 4 卷即可开启纠删码（EC:2），用于验证应用的分布式读写行为；
+# 真正的节点级容错需至少 4 台主机（每节点 1 盘起步）。
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: talentpro-minio-ha
+    command: server /data{1...4} --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin_dev}
+      MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}
+    volumes:
+      - minio-data1:/data1
+      - minio-data2:/data2
+      - minio-data3:/data3
+      - minio-data4:/data4
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 一次性任务：创建应用 bucket 并开启版本控制（防误删/可回滚）
+  minio-init:
+    image: minio/mc:latest
+    container_name: talentpro-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minioadmin_dev}
+        mc mb --ignore-existing local/talentpro-media
+        mc version enable local/talentpro-media
+        echo "bucket talentpro-media ready (versioning on)"
+
+volumes:
+  minio-data1:
+  minio-data2:
+  minio-data3:
+  minio-data4:

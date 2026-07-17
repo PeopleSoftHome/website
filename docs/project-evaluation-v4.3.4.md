@@ -223,13 +223,13 @@
 6. ~~ChatBot 业务动作 + 转人工出口~~ ✅ 服务端意图识别 `actions`（demo/contact/careers/pricing）+ handoffBar 接 CMS 电话 + 在线留言入口（U-3 闭环）
 7. ~~定价页~~ ✅ `/pricing` 三档方案 ×3 语言已上线（P1-3 闭环）
 
-### P2（季度级）
+### P2（季度级）— ✅ v4.4.0 已闭环 4.5/5 项
 
-8. 语义 RAG：embedding + Meilisearch vector / pgvector（§7.2-1）
-9. 实验平台闭环：前端分流 SDK + 转化归因（P1-2、§7.2-2）
-10. Admin TS 迁移收尾 + 超规文件拆分（NavBar/ModalStep1/useChatBot/marketplace CSS）
-11. 多租户决策：明确"预留即可"还是启动查询层改造（§2.2、§5.3-③）
-12. PostgreSQL/MinIO HA 拓扑入仓库资产（H-5）
+8. ~~语义 RAG~~ ✅ pgvector + OpenAI Embeddings（`AiEmbeddingService`，env 开关 + 降级，`npm run ai:embed` 建索引，HNSW 余弦索引）
+9. ~~实验平台闭环~~ ✅ 后端确定性分桶 assign + 幂等曝光；前端 `useExperiment` SDK；CtaBanner 首个真实实验接入
+10. **部分完成**：Admin 核心层 11 文件 TS 迁移（api/stores/router/composables/directives/utils/config）✅；useChatBot 意图层拆分 ✅；**延期**：NavBar/ModalStep1/marketplace CSS 拆分——需模板手术与视觉回归验证，建议单独一轮配合截图对比工具执行
+11. ~~多租户决策~~ ✅ ADR-001：保持预留，激活条件与 RLS 优先的技术路径已备忘
+12. ~~PG/MinIO HA~~ ✅ 流复制 compose + MinIO 纠删码 compose + 运维手册（手动切换；自动故障转移建议评估 Patroni）
 
 ---
 

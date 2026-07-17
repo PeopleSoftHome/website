@@ -1,0 +1,60 @@
+# PostgreSQL 16 流复制 HA（主 + 热备）
+# 用法：docker-compose -f docker/docker-compose.postgres-ha.yml up -d
+# 拓扑与运维手册见 docs/postgres-minio-ha.md
+#
+# 定位：单可用区内的读扩展 + 手动故障切换基础；自动故障转移请评估 Patroni（见文档 §4）
+
+services:
+  pg-primary:
+    image: postgres:16-alpine
+    container_name: talentpro-pg-primary
+    environment:
+      POSTGRES_USER: talentpro
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talentpro_dev}
+      POSTGRES_DB: talentpro
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: >
+      postgres
+      -c wal_level=replica
+      -c max_wal_senders=4
+      -c max_replication_slots=4
+      -c hot_standby=on
+      -c wal_keep_size=256MB
+    volumes:
+      - pg-primary-data:/var/lib/postgresql/data
+      - ./postgres/primary-init.sh:/docker-entrypoint-initdb.d/00-replication.sh:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talentpro"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg-replica:
+    image: postgres:16-alpine
+    container_name: talentpro-pg-replica
+    depends_on:
+      pg-primary:
+        condition: service_healthy
+    environment:
+      PGUSER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-talentpro_dev}
+      REPLICATOR_PASSWORD: ${REPLICATOR_PASSWORD:-replicator_dev}
+      PRIMARY_HOST: pg-primary
+      PGDATA: /var/lib/postgresql/data/pgdata
+    entrypoint: ["/bin/sh", "/entrypoint-replica.sh"]
+    volumes:
+      - pg-replica-data:/var/lib/postgresql/data
+      - ./postgres/replica-entrypoint.sh:/entrypoint-replica.sh:ro
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg-primary-data:
+  pg-replica-data:

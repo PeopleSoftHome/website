@@ -37,7 +37,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { formatDate } from '@/utils/formatDate.js';
+import { formatDate } from '@/utils/formatDate';
 
 const { t } = useI18n();
 

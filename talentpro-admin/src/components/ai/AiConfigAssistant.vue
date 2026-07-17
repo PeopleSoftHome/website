@@ -82,7 +82,7 @@ import { ref, computed, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import { Cpu, Loading } from '@element-plus/icons-vue';
-import { aiApi } from '@/api/ai.js';
+import { aiApi } from '@/api/ai';
 
 const { t } = useI18n();
 

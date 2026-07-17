@@ -91,7 +91,7 @@
 </template>
 
 <script setup>
-import { formatDate } from '@/utils/formatDate.js';
+import { formatDate } from '@/utils/formatDate';
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -101,10 +101,10 @@ onMounted(() => {
   fetchCategories();
 });
 import { ElMessage, ElMessageBox } from 'element-plus';
-import client from '@/api/client.js';
+import client from '@/api/client';
 import RichEditor from '@/components/ui/RichEditor.vue';
 import ImageUpload from '@/components/ui/ImageUpload.vue';
-import { useList } from '@/composables/useList.js';
+import { useList } from '@/composables/useList';
 import AiAssistButton from '@/components/ai/AiAssistButton.vue';
 import AiAssistDialog from '@/components/ai/AiAssistDialog.vue';
 

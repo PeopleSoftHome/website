@@ -4,7 +4,7 @@ import ElementPlus from 'element-plus';
 import { createI18n } from 'vue-i18n';
 import zhCN from '@/i18n/locales/zh-CN.json';
 import AiConfigAssistant from './AiConfigAssistant.vue';
-import * as aiModule from '@/api/ai.js';
+import * as aiModule from '@/api/ai';
 
 const i18n = createI18n({
   legacy: false,
@@ -13,7 +13,7 @@ const i18n = createI18n({
   messages: { zh: zhCN },
 });
 
-vi.mock('@/api/ai.js', () => ({
+vi.mock('@/api/ai', () => ({
   aiApi: {
     adminChat: vi.fn(),
   },
