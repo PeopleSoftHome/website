@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { PaymentStatus, PaymentProvider, SubscriptionStatus, Prisma } from '@prisma/client';
 import { getSkip, buildPaginatedResponse } from '@shared/helpers/pagination.helper';
+import { getRevenueByDay, getRevenueTopApps } from '@shared/helpers/revenue-stats.helper';
 import Stripe from 'stripe';
 import type { Stripe as StripeTypes } from 'stripe/cjs/stripe.core.js';
 
@@ -297,44 +298,11 @@ export class PaymentService {
     since.setDate(since.getDate() - days);
     since.setHours(0, 0, 0, 0);
 
-    const stats = await this.getOrderStats();
-
-    const completedOrders = await this.prisma.order.findMany({
-      where: {
-        status: PaymentStatus.COMPLETED,
-        paidAt: { gte: since },
-      },
-      include: { subscription: { include: { app: true } } },
-      orderBy: { paidAt: 'asc' },
-    });
-
-    const byDayMap = new Map<string, { revenue: number; orders: number }>();
-    const appMap = new Map<string, { name: string; revenue: number; orders: number }>();
-
-    for (const order of completedOrders) {
-      const date = order.paidAt!.toISOString().split('T')[0];
-      const day = byDayMap.get(date) || { revenue: 0, orders: 0 };
-      day.revenue += order.total;
-      day.orders += 1;
-      byDayMap.set(date, day);
-
-      const app = order.subscription?.app;
-      if (app) {
-        const appStat = appMap.get(app.id) || { name: app.name, revenue: 0, orders: 0 };
-        appStat.revenue += order.total;
-        appStat.orders += 1;
-        appMap.set(app.id, appStat);
-      }
-    }
-
-    const byDay = Array.from(byDayMap.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([date, value]) => ({ date, ...value }));
-
-    const topApps = Array.from(appMap.entries())
-      .sort((a, b) => b[1].revenue - a[1].revenue)
-      .slice(0, 10)
-      .map(([appId, value]) => ({ appId, ...value }));
+    const [stats, byDay, topApps] = await Promise.all([
+      this.getOrderStats(),
+      getRevenueByDay(this.prisma, since),
+      getRevenueTopApps(this.prisma, since),
+    ]);
 
     return {
       ...stats,

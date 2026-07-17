@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, PaymentStatus } from '@prisma/client';
 import { PrismaService } from '@shared/prisma/prisma.service';
+import { getRevenueTopApps } from '@shared/helpers/revenue-stats.helper';
 
 @Injectable()
 export class AnalyticsService {
@@ -206,25 +207,7 @@ export class AnalyticsService {
           orders: r._count.id,
         })),
       ),
-      this.prisma.order.findMany({
-        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: since } },
-        include: { subscription: { include: { app: true } } },
-        orderBy: { paidAt: 'asc' },
-      }).then((orders) => {
-        const appMap = new Map<string, { name: string; revenue: number; orders: number }>();
-        for (const order of orders) {
-          const app = order.subscription?.app;
-          if (!app) continue;
-          const stat = appMap.get(app.id) || { name: app.name, revenue: 0, orders: 0 };
-          stat.revenue += order.total;
-          stat.orders += 1;
-          appMap.set(app.id, stat);
-        }
-        return Array.from(appMap.entries())
-          .sort((a, b) => b[1].revenue - a[1].revenue)
-          .slice(0, 10)
-          .map(([appId, value]) => ({ appId, ...value }));
-      }),
+      getRevenueTopApps(this.prisma, since),
     ]);
 
     const totalRevenue = byProvider.reduce((sum, row) => sum + (row._sum.total || 0), 0);

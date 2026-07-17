@@ -284,22 +284,28 @@ describe('PaymentService', () => {
 
     it('getRevenueAnalytics should include byDay and topApps', async () => {
       jest.spyOn(prisma.order, 'count').mockResolvedValue(0);
-      jest.spyOn(prisma.order, 'groupBy').mockResolvedValue([] as never);
       const now = new Date();
       const dateStr = now.toISOString().split('T')[0];
-      jest.spyOn(prisma.order, 'findMany').mockResolvedValue([
-        {
-          id: 'o1',
-          total: 299,
-          paidAt: now,
-          subscription: { app: { id: 'a1', name: 'Test App' } },
-        },
-      ] as unknown as Order[]);
+      jest.spyOn(prisma.order, 'groupBy')
+        // getOrderStats: byProvider
+        .mockResolvedValueOnce([] as never)
+        // getRevenueByDay: groupBy paidAt
+        .mockResolvedValueOnce([
+          { paidAt: now, _sum: { total: 299 }, _count: { id: 1 } },
+        ] as never)
+        // getRevenueTopApps: groupBy subscriptionId
+        .mockResolvedValueOnce([
+          { subscriptionId: 'sub-1', _sum: { total: 299 }, _count: { id: 1 } },
+        ] as never);
+      jest.spyOn(prisma.subscription, 'findMany').mockResolvedValue([
+        { id: 'sub-1', app: { id: 'a1', name: 'Test App' } },
+      ] as unknown as import('@prisma/client').Subscription[]);
 
       const result = await service.getRevenueAnalytics(30);
 
       expect(result.byDay).toEqual([{ date: dateStr, revenue: 299, orders: 1 }]);
       expect(result.topApps).toEqual([{ appId: 'a1', name: 'Test App', revenue: 299, orders: 1 }]);
+      expect(prisma.order.findMany).not.toHaveBeenCalled();
     });
   });
 

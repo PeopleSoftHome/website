@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { getSkip } from '@shared/helpers/pagination.helper';
 import { CmsContentRepository } from './cms-content.repository';
 
 interface NavItem {
@@ -107,19 +108,17 @@ export class CmsPageService {
         create: { key: data.key, label: data.label, location: data.location || 'header' },
       });
       await tx.navItem.deleteMany({ where: { navigationId: nav.id } });
-      for (const item of data.items) {
-        await tx.navItem.create({
-          data: {
-            navigationId: nav.id,
-            label: item.label,
-            href: item.href,
-            icon: item.icon,
-            description: item.description,
-            sortOrder: item.sortOrder || 0,
-            isExternal: item.isExternal || false,
-          },
-        });
-      }
+      await tx.navItem.createMany({
+        data: data.items.map((item) => ({
+          navigationId: nav.id,
+          label: item.label,
+          href: item.href,
+          icon: item.icon,
+          description: item.description,
+          sortOrder: item.sortOrder || 0,
+          isExternal: item.isExternal || false,
+        })),
+      });
       return tx.navigation.findUnique({
         where: { key: data.key },
         include: {
@@ -156,7 +155,7 @@ export class CmsPageService {
   async findAllTranslations(page: number | undefined, pageSize: number | undefined, locale?: string, context?: string) {
     const p = page || 1;
     const ps = pageSize || 20;
-    const skip = (p - 1) * ps;
+    const skip = getSkip(p, ps);
     const where: Prisma.TranslationWhereInput = {};
     if (locale) where.locale = locale;
     if (context) where.context = context;

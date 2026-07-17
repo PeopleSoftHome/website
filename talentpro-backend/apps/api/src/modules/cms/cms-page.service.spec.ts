@@ -44,7 +44,7 @@ describe('CmsPageService', () => {
             },
             navItem: {
               deleteMany: jest.fn(),
-              create: jest.fn(),
+              createMany: jest.fn(),
             },
             translation: {
               findMany: jest.fn(),
@@ -268,7 +268,7 @@ describe('CmsPageService', () => {
         },
         navItem: {
           deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
-          create: jest.fn().mockResolvedValue({}),
+          createMany: jest.fn().mockResolvedValue({ count: 2 }),
         },
       };
       (prisma.$transaction as jest.Mock).mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => callback(tx));
@@ -290,28 +290,28 @@ describe('CmsPageService', () => {
         create: { key: 'main', label: 'Main', location: 'header' },
       });
       expect(tx.navItem.deleteMany).toHaveBeenCalledWith({ where: { navigationId: 'n1' } });
-      expect(tx.navItem.create).toHaveBeenCalledTimes(2);
-      expect(tx.navItem.create).toHaveBeenNthCalledWith(1, {
-        data: {
-          navigationId: 'n1',
-          label: 'Home',
-          href: '/',
-          icon: undefined,
-          description: undefined,
-          sortOrder: 1,
-          isExternal: true,
-        },
-      });
-      expect(tx.navItem.create).toHaveBeenNthCalledWith(2, {
-        data: {
-          navigationId: 'n1',
-          label: 'About',
-          href: '/about',
-          icon: undefined,
-          description: undefined,
-          sortOrder: 0,
-          isExternal: false,
-        },
+      expect(tx.navItem.createMany).toHaveBeenCalledTimes(1);
+      expect(tx.navItem.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            navigationId: 'n1',
+            label: 'Home',
+            href: '/',
+            icon: undefined,
+            description: undefined,
+            sortOrder: 1,
+            isExternal: true,
+          },
+          {
+            navigationId: 'n1',
+            label: 'About',
+            href: '/about',
+            icon: undefined,
+            description: undefined,
+            sortOrder: 0,
+            isExternal: false,
+          },
+        ],
       });
       expect(result).toEqual(returnedNav);
     });
@@ -325,7 +325,7 @@ describe('CmsPageService', () => {
         },
         navItem: {
           deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
-          create: jest.fn().mockResolvedValue({}),
+          createMany: jest.fn().mockResolvedValue({ count: 0 }),
         },
       };
       (prisma.$transaction as jest.Mock).mockImplementation(async (callback: (tx: unknown) => Promise<unknown>) => callback(tx));

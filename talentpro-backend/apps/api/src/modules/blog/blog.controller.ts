@@ -6,6 +6,7 @@ import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { Public } from '@shared/decorators/public.decorator';
+import { Cacheable, CacheEvict } from '@shared/decorators/cache.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { UserContext } from '@shared/types';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
@@ -26,6 +27,7 @@ export class BlogController {
   // Categories
   @Get('categories')
   @Public()
+  @Cacheable({ key: 'blog:categories', ttl: 300 })
   @ApiOperation({ summary: '文章分类列表' })
   findAllCategories() {
     return this.blogService.findAllCategories();
@@ -35,6 +37,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_category:create')
+  @CacheEvict({ keys: ['blog:categories'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建分类' })
   createCategory(@Body() dto: CreateBlogCategoryDto) {
@@ -45,6 +48,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_category:update')
+  @CacheEvict({ keys: ['blog:categories'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新分类' })
   updateCategory(@Param('id') id: string, @Body() dto: UpdateBlogCategoryDto) {
@@ -55,6 +59,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_category:delete')
+  @CacheEvict({ keys: ['blog:categories'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除分类' })
   deleteCategory(@Param('id') id: string) {
@@ -64,6 +69,7 @@ export class BlogController {
   // Posts
   @Get('posts')
   @Public()
+  @Cacheable({ key: 'blog:posts', ttl: 300 })
   @ApiOperation({ summary: '文章列表' })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
@@ -82,6 +88,7 @@ export class BlogController {
 
   @Get('posts/:slug')
   @Public()
+  @Cacheable({ key: 'blog:post', ttl: 300 })
   @ApiOperation({ summary: '文章详情' })
   findPostBySlug(@Param('slug') slug: string) {
     return this.blogService.findPostBySlug(slug);
@@ -91,6 +98,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:create')
+  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
   createPost(
@@ -104,6 +112,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:update')
+  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新文章' })
   updatePost(
@@ -118,6 +127,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:delete')
+  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除文章' })
   deletePost(@Param('id') id: string, @CurrentUser() user: UserContext) {
@@ -127,6 +137,7 @@ export class BlogController {
   // Tags
   @Get('tags')
   @Public()
+  @Cacheable({ key: 'blog:tags', ttl: 300 })
   @ApiOperation({ summary: '标签列表' })
   findAllTags() {
     return this.blogService.findAllTags();
@@ -136,6 +147,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_tag:create')
+  @CacheEvict({ keys: ['blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建标签' })
   createTag(@Body() dto: CreateBlogTagDto) {
@@ -146,6 +158,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_tag:delete')
+  @CacheEvict({ keys: ['blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除标签' })
   deleteTag(@Param('id') id: string) {
@@ -155,6 +168,7 @@ export class BlogController {
   // Comments
   @Get('comments')
   @Public()
+  @Cacheable({ key: 'blog:comments', ttl: 300 })
   @ApiOperation({ summary: '评论列表' })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'pageSize', required: false })
@@ -172,6 +186,7 @@ export class BlogController {
   @Post('comments')
   @ApiBearerAuth()
   @Permission('comment:create')
+  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
   @ApiOperation({ summary: '发表评论' })
   createComment(
     @CurrentUser('id') authorId: string,
@@ -184,6 +199,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:update')
+  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '审核评论' })
   moderateComment(@Param('id') id: string, @Body() dto: ModerateCommentDto) {
@@ -194,6 +210,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:update')
+  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '批量审核评论' })
   batchModerateComments(@Body() dto: BatchModerateCommentsDto) {
@@ -218,6 +235,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:delete')
+  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除评论' })
   deleteComment(@Param('id') id: string) {
