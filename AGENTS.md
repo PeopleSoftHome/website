@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.3.3 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.3.4 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -329,9 +329,9 @@ npm run build
 - **useDetailPage**：详情页数据加载统一抽象，已接入 news/blog/cases/products/solutions/careers/resources 7 个 `[slug]` 页；`fallbackMap` 支持 Ref/getter。marketplace 详情页为并行双请求 + 非 fatal 404，刻意不用。
 - **后端 helpers**：`incrementViewCount(model, id)`（view-count.helper）；`getRevenueByDay/getRevenueTopApps`（revenue-stats.helper，groupBy 聚合，payment 与 analytics 共用）。
 - **RoleService**：走 `BaseCrudRepository`（`role.repository.ts`），新增 model 的 CRUD 一律沿用该模式。
-- **热点缓存**：blog/forum 公开 GET 已加 `@Cacheable(ttl 300s)` + 写操作 `@CacheEvict`；注意缓存命中窗口内详情页 viewCount 不逐次自增（已知取舍）。
+- **热点缓存**：blog/forum 公开列表 GET 已加 `@Cacheable(ttl 300s)` + 写操作 `@CacheEvict`；详情接口（`posts/:slug`、`topics/:id`）**不加缓存**（v4.3.4 起），保证 viewCount 逐请求精确自增。
 - **工程化**：Token 校验唯一脚本 `scripts/validate-tokens-sync.js`（husky + CI 共用）；CI 强制 `validate:versions` 与 Admin 测试；发件人配置唯一 key 为 `SMTP_FROM`。
 
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.3.3*
+*TalentPro HR Portal · AGENTS.md v4.3.4*

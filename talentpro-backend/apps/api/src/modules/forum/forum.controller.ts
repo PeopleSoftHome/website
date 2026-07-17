@@ -85,7 +85,6 @@ export class ForumController {
 
   @Get('topics/:id')
   @Public()
-  @Cacheable({ key: 'forum:topic', ttl: 300 })
   @ApiOperation({ summary: '话题详情' })
   findTopicById(@Param('id') id: string, @CurrentUser() user?: UserContext) {
     return this.forumService.findTopicById(id, user?.workspaceId);
@@ -94,7 +93,7 @@ export class ForumController {
   @Post('topics')
   @ApiBearerAuth()
   @Permission('forum_topic:create')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic', 'forum:categories'] })
+  @CacheEvict({ keys: ['forum:topics', 'forum:categories'] })
   @ApiOperation({ summary: '发布话题' })
   createTopic(
     @CurrentUser() user: UserContext,
@@ -107,7 +106,7 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_topic:update')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic', 'forum:categories'] })
+  @CacheEvict({ keys: ['forum:topics', 'forum:categories'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新话题' })
   updateTopic(
@@ -122,7 +121,7 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_topic:delete')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic', 'forum:categories'] })
+  @CacheEvict({ keys: ['forum:topics', 'forum:categories'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除话题' })
   deleteTopic(@Param('id') id: string, @CurrentUser() user: UserContext) {
@@ -133,7 +132,7 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_topic:update')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic'] })
+  @CacheEvict({ keys: ['forum:topics'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '置顶/取消置顶' })
   togglePin(@Param('id') id: string, @Body() dto: TogglePinDto) {
@@ -144,7 +143,7 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_topic:update')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic'] })
+  @CacheEvict({ keys: ['forum:topics'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '锁定/解锁话题' })
   toggleLock(@Param('id') id: string, @Body() dto: ToggleLockDto) {
@@ -155,7 +154,7 @@ export class ForumController {
   @Post('posts')
   @ApiBearerAuth()
   @Permission('forum_post:create')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic'] })
+  @CacheEvict({ keys: ['forum:topics'] })
   @ApiOperation({ summary: '回复话题' })
   createPost(
     @CurrentUser() user: UserContext,
@@ -168,7 +167,6 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_post:update')
-  @CacheEvict({ keys: ['forum:topic'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新回复' })
   updatePost(
@@ -183,7 +181,7 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_post:delete')
-  @CacheEvict({ keys: ['forum:topics', 'forum:topic'] })
+  @CacheEvict({ keys: ['forum:topics'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除回复' })
   deletePost(@Param('id') id: string, @CurrentUser() user: UserContext) {
@@ -194,7 +192,6 @@ export class ForumController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('forum_post:update')
-  @CacheEvict({ keys: ['forum:topic'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '标记为解决方案' })
   markAsSolution(@Param('id') id: string) {

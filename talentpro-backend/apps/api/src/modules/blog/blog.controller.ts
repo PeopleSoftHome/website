@@ -88,7 +88,6 @@ export class BlogController {
 
   @Get('posts/:slug')
   @Public()
-  @Cacheable({ key: 'blog:post', ttl: 300 })
   @ApiOperation({ summary: '文章详情' })
   findPostBySlug(@Param('slug') slug: string) {
     return this.blogService.findPostBySlug(slug);
@@ -98,7 +97,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:create')
-  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
+  @CacheEvict({ keys: ['blog:posts', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '创建文章' })
   createPost(
@@ -112,7 +111,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:update')
-  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
+  @CacheEvict({ keys: ['blog:posts', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '更新文章' })
   updatePost(
@@ -127,7 +126,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('blog_post:delete')
-  @CacheEvict({ keys: ['blog:posts', 'blog:post', 'blog:categories', 'blog:tags'] })
+  @CacheEvict({ keys: ['blog:posts', 'blog:categories', 'blog:tags'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除文章' })
   deletePost(@Param('id') id: string, @CurrentUser() user: UserContext) {
@@ -186,7 +185,7 @@ export class BlogController {
   @Post('comments')
   @ApiBearerAuth()
   @Permission('comment:create')
-  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
+  @CacheEvict({ keys: ['blog:comments'] })
   @ApiOperation({ summary: '发表评论' })
   createComment(
     @CurrentUser('id') authorId: string,
@@ -199,7 +198,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:update')
-  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
+  @CacheEvict({ keys: ['blog:comments'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '审核评论' })
   moderateComment(@Param('id') id: string, @Body() dto: ModerateCommentDto) {
@@ -210,7 +209,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:update')
-  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
+  @CacheEvict({ keys: ['blog:comments'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '批量审核评论' })
   batchModerateComments(@Body() dto: BatchModerateCommentsDto) {
@@ -235,7 +234,7 @@ export class BlogController {
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('comment:delete')
-  @CacheEvict({ keys: ['blog:comments', 'blog:post'] })
+  @CacheEvict({ keys: ['blog:comments'] })
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除评论' })
   deleteComment(@Param('id') id: string) {

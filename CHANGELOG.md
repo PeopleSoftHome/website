@@ -1,5 +1,19 @@
 # Changelog
 
+## [v4.3.4] - 2026-07-17 (遗留修复：对比度 + 浏览量精确计数)
+
+### 🐛 修复
+
+- **可访问性**: 修复首页 axe `color-contrast` 既有违规——WhyUs 区块 MetricCard 描述文字由 `--text-on-dark-tertiary`（alpha 0.4，对比度 3.76）改用 `--text-on-dark-secondary`（alpha 0.6，对比度约 6:1），符合 WCAG 2 AA；token 阶梯与 Footer 边框用法不受影响
+- **浏览量精确计数**: 移除 blog `posts/:slug` 与 forum `topics/:id` 两个详情接口的响应缓存（列表/分类/标签/评论缓存保留），viewCount 恢复逐请求自增；同步清理失效的 `CacheEvict` key
+- **E2E 稳定性**: 本地 Playwright `retries` 0→1（CI 已为 2），消除高负载下跨浏览器时序抖动的误报；经复跑确认此前 9 个 firefox/webkit/mobile 失败均为时序抖动而非功能缺陷
+
+### ✅ 验证结果
+
+- 后端 Jest（blog/forum 相关）：`9 suites, 144 tests` 全部通过
+- 前端 Nuxt 构建：成功，预渲染路由数不变
+- Playwright 全量：280 通过 / 5 flaky 重试后通过 / 0 失败（axe 全浏览器 60/60）
+
 ## [v4.3.3] - 2026-07-17 (项目整理：复用沉淀 + 目录清理 + 性能优化)
 
 ### 🧹 目录与死代码清理
