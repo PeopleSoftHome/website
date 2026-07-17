@@ -1,5 +1,33 @@
 # Changelog
 
+## [v4.3.5] - 2026-07-17 (P0 闭环：支付验签修复 + 部署启用 + 压测基线)
+
+### 🐛 修复
+
+- **Stripe Webhook 验签 bug（真实线上隐患）**：`main.ts` 创建 Nest 应用时未开 `rawBody`，导致 `@RawBody()` 恒为 `undefined`、`stripe.webhooks.constructEvent` 必抛错、所有 Stripe 回调静默失败（`received:false`）。已开 `rawBody: true` 并注释说明
+- **限流默认值不一致**：Joi 声明 `THROTTLE_LIMIT=500` / `THROTTLE_STRICT_LIMIT=100`，`forRootAsync` 工厂 fallback 却是 100/50；已对齐为 500/100（保持既有生效行为不变）
+
+### 🚀 部署与运维
+
+- **CI deploy 启用**：镜像 push 与 OSS 部署由注释占位改为活跃步骤，按仓库变量自动启用——配置 `vars.DOCKER_REGISTRY`（+ secrets `DOCKER_USERNAME/DOCKER_PASSWORD`）即推送镜像；配置 `vars.OSS_BUCKET` / `vars.OSS_ADMIN_BUCKET`（+ OSS secrets）即部署静态站；未配置时自动跳过，不影响现有 CI
+- **压测基线**：新增零依赖脚本 `talentpro-backend/scripts/load-test.cjs`（`npm run test:load`，覆盖 blog/forum/marketplace 7 个热点 GET，输出 RPS/p50/p95/p99/错误率，错误率 >1% 退出码 1）+ `docs/load-testing.md`（环境准备、限流关系、基线记录表、调优指引）
+
+### 🔍 安全核实
+
+- **Swagger 生产暴露**：核实 `main.ts:92` 生产环境（`APP_ENV=production`）不挂载 Swagger，无暴露面，评估项 S-5 闭环
+- **支付宝验签**：代码审计通过——RSA2、签名串按键名排序、排除 sign/sign_type/空值；`ALIPAY_MOCK` 与沙箱网关配置齐备，具备联调条件
+
+### 📋 支付上线前联调清单（运营动作，需生产/沙箱密钥）
+
+1. Stripe：配置 `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` → `stripe listen --forward-to localhost:4000/api/v1/payments/stripe/webhook` → 完成一笔 test checkout → 断言订单 PENDING→COMPLETED 且订阅 ACTIVE
+2. 支付宝：`ALIPAY_SANDBOX=true` + 沙箱密钥 → 沙箱 APP 支付 → 验签通过 → 订单状态机同上
+3. 回归 mock 通道：`ALIPAY_MOCK=true` 下 `verifyMockPayment` 全流程
+
+### ✅ 验证结果
+
+- 后端 nest build 通过；payment 模块 `57 tests` 全部通过
+- CI YAML 语法校验通过；load-test 脚本无后端时优雅退出（exit 2）
+
 ## [v4.3.4] - 2026-07-17 (遗留修复：对比度 + 浏览量精确计数)
 
 ### 🐛 修复

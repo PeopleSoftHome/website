@@ -1,6 +1,6 @@
 # TalentPro 文档中心
 
-> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md`（当前 v4.3.4）为权威规范源。
+> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md`（当前 v4.3.5）为权威规范源。
 
 ## 目录结构
 
@@ -23,6 +23,8 @@ docs/
 ├── security.md                  # 安全白皮书（活跃）
 ├── redis-meilisearch-ha.md      # Redis / Meilisearch 高可用运维指南（活跃）
 ├── redis-bullmq-failover-drill.md # Redis-BullMQ 故障切换演练手册（活跃）
+├── project-evaluation-v4.3.4.md   # 全面架构与产品评估报告 v4.3.4（活跃）
+├── load-testing.md               # API 负载测试与容量基线（活跃）
 └── archive/                     # 历史归档（只读参考）
     ├── migrations/              # 技术迁移计划与状态
     ├── evaluations/             # 技术选型评估报告
@@ -48,6 +50,8 @@ docs/
 | `security.md` | 安全模型、认证、加密、CSP | 安全策略变更时 |
 | `redis-meilisearch-ha.md` | Redis Sentinel / Meilisearch 高可用运维 | 基础设施变更时 |
 | `redis-bullmq-failover-drill.md` | 故障切换演练步骤与验收 | 演练或队列配置变更时 |
+| `project-evaluation-v4.3.4.md` | 七维度架构与产品评估、P0-P2 路线图 | 每轮大版本评估后更新/归档 |
+| `load-testing.md` | API 负载测试方法、限流关系、容量基线表 | 性能变更后更新基线 |
 
 ## 归档文档
 

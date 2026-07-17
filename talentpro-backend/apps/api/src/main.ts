@@ -14,6 +14,8 @@ import { TransformInterceptor } from '@shared/interceptors/transform.interceptor
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
+    // Stripe Webhook 验签需要原始请求体（@RawBody），不开则 payload 为 undefined、验签永远失败
+    rawBody: true,
   });
   app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);

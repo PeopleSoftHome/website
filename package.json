@@ -1,7 +1,7 @@
 {
   "name": "talentpro-portal",
   "private": true,
-  "version": "4.3.4",
+  "version": "4.3.5",
   "type": "module",
   "lint-staged": {
     "src/**/*.{js,ts,vue}": [

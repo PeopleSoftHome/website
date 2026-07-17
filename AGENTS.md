@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.3.4 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.3.5 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -332,6 +332,13 @@ npm run build
 - **热点缓存**：blog/forum 公开列表 GET 已加 `@Cacheable(ttl 300s)` + 写操作 `@CacheEvict`；详情接口（`posts/:slug`、`topics/:id`）**不加缓存**（v4.3.4 起），保证 viewCount 逐请求精确自增。
 - **工程化**：Token 校验唯一脚本 `scripts/validate-tokens-sync.js`（husky + CI 共用）；CI 强制 `validate:versions` 与 Admin 测试；发件人配置唯一 key 为 `SMTP_FROM`。
 
+### v4.3.5 P0 闭环
+
+- **Stripe Webhook**：`main.ts` 必须 `rawBody: true`（`@RawBody()` 依赖），改动前验签必失败——支付相关改动后需回归 webhook 测试。
+- **限流默认值**：Joi 与 `forRootAsync` 工厂 fallback 必须保持一致（当前 500/100/10000/60/10000）。
+- **CI deploy**：镜像 push 与 OSS 部署由 `vars.DOCKER_REGISTRY` / `vars.OSS_BUCKET` / `vars.OSS_ADMIN_BUCKET` 开关控制，配置即启用，勿硬编码 registry/bucket。
+- **压测**：`npm run test:load`（`scripts/load-test.cjs`，零依赖）；方法与基线表见 `docs/load-testing.md`。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.3.4*
+*TalentPro HR Portal · AGENTS.md v4.3.5*

@@ -133,12 +133,12 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
           {
             name: 'default',
             ttl: config.get<number>('THROTTLE_TTL', 60000),
-            limit: config.get<number>('THROTTLE_LIMIT', 100),
+            limit: config.get<number>('THROTTLE_LIMIT', 500),
           },
           {
             name: 'strict',
             ttl: config.get<number>('THROTTLE_STRICT_TTL', 60000),
-            limit: config.get<number>('THROTTLE_STRICT_LIMIT', 50),
+            limit: config.get<number>('THROTTLE_STRICT_LIMIT', 100),
           },
           {
             name: 'auth',

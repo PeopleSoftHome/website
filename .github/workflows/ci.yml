@@ -205,43 +205,50 @@ jobs:
           name: admin-dist
           path: talentpro-admin/dist/
 
-      # 构建并推送前端 Docker 镜像
+      # 构建前端/后端 Docker 镜像（始终执行，验证 Dockerfile 可用）
       - name: Build frontend Docker image
         run: |
           docker build -t talentpro-web:${{ github.sha }} -f docker/Dockerfile.frontend .
           docker tag talentpro-web:${{ github.sha }} talentpro-web:latest
 
-      # 构建并推送后端 Docker 镜像（需要配置 Docker Registry 认证 Secrets）
       - name: Build backend Docker image
         run: |
           cd talentpro-backend
           docker build -t talentpro-api:${{ github.sha }} -f docker/Dockerfile .
           docker tag talentpro-api:${{ github.sha }} talentpro-api:latest
-      # - name: Push Docker images
-      #   run: |
-      #     echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin <registry>
-      #     docker push <registry>/talentpro-web:${{ github.sha }}
-      #     docker push <registry>/talentpro-web:latest
-      #     docker push <registry>/talentpro-api:${{ github.sha }}
-      #     docker push <registry>/talentpro-api:latest
 
-      # 前端静态资源部署（需要配置目标环境：OSS / S3 / Vercel / Netlify 等）
-      # - name: Deploy frontend to OSS
-      #   run: |
-      #     npm install -g @alicloud/ossutil
-      #     ossutil cp -rf .output/public/ oss://talentpro-static/
-      #   env:
-      #     OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
-      #     OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+      # 推送镜像：配置仓库变量 vars.DOCKER_REGISTRY（如 registry.example.com）与
+      # secrets.DOCKER_USERNAME / DOCKER_PASSWORD 后自动启用
+      - name: Push Docker images
+        if: vars.DOCKER_REGISTRY != ''
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin "${{ vars.DOCKER_REGISTRY }}"
+          for img in talentpro-web talentpro-api; do
+            docker tag ${img}:${{ github.sha }} ${{ vars.DOCKER_REGISTRY }}/${img}:${{ github.sha }}
+            docker tag ${img}:${{ github.sha }} ${{ vars.DOCKER_REGISTRY }}/${img}:latest
+            docker push ${{ vars.DOCKER_REGISTRY }}/${img}:${{ github.sha }}
+            docker push ${{ vars.DOCKER_REGISTRY }}/${img}:latest
+          done
 
-      # Admin 后台部署（需要配置目标环境）
-      # - name: Deploy admin to OSS
-      #   run: |
-      #     npm install -g @alicloud/ossutil
-      #     ossutil cp -rf talentpro-admin/dist/ oss://talentpro-admin-static/
-      #   env:
-      #     OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
-      #     OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+      # 前端静态资源部署：配置 vars.OSS_BUCKET 与对应 secrets 后自动启用
+      - name: Deploy frontend to OSS
+        if: vars.OSS_BUCKET != ''
+        run: |
+          npm install -g @alicloud/ossutil
+          ossutil cp -rf .output/public/ oss://${{ vars.OSS_BUCKET }}/
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+
+      # Admin 后台部署：配置 vars.OSS_ADMIN_BUCKET 与对应 secrets 后自动启用
+      - name: Deploy admin to OSS
+        if: vars.OSS_ADMIN_BUCKET != ''
+        run: |
+          npm install -g @alicloud/ossutil
+          ossutil cp -rf talentpro-admin/dist/ oss://${{ vars.OSS_ADMIN_BUCKET }}/
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
 
       # 标记部署版本（可扩展为 GitHub Release 或发送部署通知）
       - name: Create deployment tag
