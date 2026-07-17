@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.3.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.3.3 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -318,6 +318,20 @@ npm run build
 - **门户 Hero 配置化**：`HeroSection.vue` 读取 CMS `Section.config`，未配置时回退 i18n。
 - **部署注意**：新增权限 `ai:generate-image`、`ai:chat` 在 `seed.ts` 中写入。已有数据库需重新执行 seed 或手动将这两条权限赋予 ADMIN / SUPER_ADMIN 角色。
 
+### v4.3.2 共享层迁移
+
+- **前端 `src/shared/`**：API client、CMS composables、主题/搜索/导航/焦点 trap/滚动锁、JSON-LD/日期工具迁入；`src/composables`、`src/utils`、`src/api` 下的同名旧文件是 **Nuxt 自动导入的桥（re-export shim），禁止删除**（`imports.dirs` 不含 `shared/`）。
+- **后端 `libs/shared/`**：decorators/guards/helpers/interceptors/prisma/repositories/redis/metrics/types 迁入，业务统一 `@shared/*` 导入；旧路径 `@/common/*` re-export 已于 v4.3.3 移除。
+- **Admin 工程化**：组件按 `ui/ai/page-config/order-manager` 分目录；`permission.config.js` 权限矩阵接入菜单/路由。
+
+### v4.3.3 项目整理（复用沉淀 + 性能优化）
+
+- **useDetailPage**：详情页数据加载统一抽象，已接入 news/blog/cases/products/solutions/careers/resources 7 个 `[slug]` 页；`fallbackMap` 支持 Ref/getter。marketplace 详情页为并行双请求 + 非 fatal 404，刻意不用。
+- **后端 helpers**：`incrementViewCount(model, id)`（view-count.helper）；`getRevenueByDay/getRevenueTopApps`（revenue-stats.helper，groupBy 聚合，payment 与 analytics 共用）。
+- **RoleService**：走 `BaseCrudRepository`（`role.repository.ts`），新增 model 的 CRUD 一律沿用该模式。
+- **热点缓存**：blog/forum 公开 GET 已加 `@Cacheable(ttl 300s)` + 写操作 `@CacheEvict`；注意缓存命中窗口内详情页 viewCount 不逐次自增（已知取舍）。
+- **工程化**：Token 校验唯一脚本 `scripts/validate-tokens-sync.js`（husky + CI 共用）；CI 强制 `validate:versions` 与 Admin 测试；发件人配置唯一 key 为 `SMTP_FROM`。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.3.0*
+*TalentPro HR Portal · AGENTS.md v4.3.3*

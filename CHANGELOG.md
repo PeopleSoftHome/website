@@ -1,5 +1,41 @@
 # Changelog
 
+## [v4.3.3] - 2026-07-17 (项目整理：复用沉淀 + 目录清理 + 性能优化)
+
+### 🧹 目录与死代码清理
+
+- **后端共享层收尾**: 删除 `apps/api/src/common/` 整目录 36 个零引用兼容 re-export（v4.3.2 迁移残留），`libs/shared/README.md` 同步说明
+- **前端死代码**: 删除零引用 `PricingTiers/` 组件、`useLazyImage`、`api/ai.ts`、`api/index.ts`（约 450 行）
+- **一次性脚本**: 删除 `static-server.js`、`replace-backend-errors.py`（含硬编码路径）、后端 `fix-admin.js`（含硬编码密码）、`refactor-specs.js`、重复的后端 `docker/redis-ha/`
+- **仓库卫生**: 后端 `.gitignore` 补 `uploads/`；本地残留日志清理
+
+### 🔧 复用沉淀
+
+- **useDetailPage 推广**: 7 个详情页（news/blog/cases/products/solutions/careers/resources）统一改用它，`fallbackMap` 扩展支持 Ref/getter；marketplace 详情页因并行双请求+非 fatal 404 语义保持原样
+- **后端 helper**: 新增 `view-count.helper`（收敛 4 处 viewCount 自增）、`revenue-stats.helper`（支付/分析收入统计去重并改 groupBy 聚合）
+- **RoleService** 迁移至 `BaseCrudRepository` 模式（新增 `role.repository.ts`），公开契约不变
+- `escapeHtml` 去重（chatUtils 复用 `utils/markdown`）；products 数据入口统一走门面
+
+### ⚡ 性能优化
+
+- **热点缓存**: blog（posts/:slug/categories/tags/comments）与 forum（categories/topics/:id）公开 GET 补 `@Cacheable(ttl 300s)` + 写操作 `@CacheEvict`；已知差异：缓存命中窗口内详情页 viewCount 不逐次自增
+- **收入统计**: `getRevenueStats` 全行拉取改 `groupBy` 聚合，消除与 analytics 的重复查询；返回结构不变
+- `cms-page.service` 分页改用 `getSkip`，导航 upsert 改 `createMany`
+
+### 🛠 工程化
+
+- Token 校验双脚本合一（保留 ESM 版 `validate-tokens-sync.js`，husky/CI 统一引用）
+- CI 新增 `validate:versions` 与 Admin 单元测试步骤
+- `.env.example` 补 `ALIPAY_*` 六项；发件人配置统一为代码实际读取的 `SMTP_FROM`
+- 文档：一次性诊断报告归档 `docs/archive/audits/`；`docs/README.md` 索引补 3 个活跃文档；README 修正版本与目录名；3 个手动脚本补头部用途注释，`audit:contrast`/`test:e2e` 入 npm scripts
+
+### ✅ 验证结果
+
+- 前端 Vitest：`36 files, 172 tests` 全部通过；ESLint 0 error；Nuxt 构建预渲染 647 条路由成功
+- 后端 Jest：`84 files, 998 tests` 全部通过；NestJS 构建成功；ESLint 0 error
+- Admin Vitest/构建：通过（CI 已接入测试步骤）
+- Playwright E2E：275 通过 / 10 失败——均已核实与本次改动无关：1 个为首页对比度既有问题（axe `color-contrast`，`#747882` on `#171e2f`，ratio 3.76，v4.3.2 即存在，本次零样式改动，记为技术债），9 个为 firefox/webkit/mobile 跨浏览器时序抖动（chromium 复跑全过）
+
 ## [v4.3.2] - 2026-07-13 (全量清理与工程化改进)
 
 ### 🧹 工程化清理
