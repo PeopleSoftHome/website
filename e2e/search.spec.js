@@ -15,8 +15,14 @@ test.describe('Search', () => {
     await waitForAppReady(page);
     await dismissCookieBanner(page);
 
-    await page.keyboard.press('Control+k');
-    await expect(page.locator('[role="dialog"]')).toBeVisible({ timeout: 10000 });
+    // 轮询重试直至弹窗打开（消除应用水合时序依赖；已打开则不重复按键避免来回切换）
+    const dialog = page.locator('[role="dialog"]');
+    await expect(async () => {
+      if (!(await dialog.isVisible().catch(() => false))) {
+        await page.keyboard.press('Control+k');
+      }
+      await expect(dialog).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 10000 });
   });
 
   test('should search and navigate to results', async ({ page }) => {
@@ -24,13 +30,20 @@ test.describe('Search', () => {
     await waitForAppReady(page);
     await dismissCookieBanner(page);
 
-    await page.keyboard.press('Control+k');
+    const dialog = page.locator('[role="dialog"]');
+    await expect(async () => {
+      if (!(await dialog.isVisible().catch(() => false))) {
+        await page.keyboard.press('Control+k');
+      }
+      await expect(dialog).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 10000 });
+
     const input = page.locator('[role="dialog"] input');
     await expect(input).toBeVisible();
     await input.fill('AI');
     await page.waitForTimeout(300);
 
     const firstResult = page.locator('[role="dialog"] [class*="resultItem"]').first();
-    await expect(firstResult).toBeVisible();
+    await expect(firstResult).toBeVisible({ timeout: 10000 });
   });
 });

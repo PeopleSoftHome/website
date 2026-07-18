@@ -15,15 +15,17 @@ test.describe('Demo Modal', () => {
     await waitForAppReady(page);
     await dismissCookieBanner(page);
 
-    // 点击预约演示按钮 (evaluate click to bypass viewport issues)
-    await page.evaluate(() => {
-      const btn = Array.from(document.querySelectorAll('button')).find(b => /Book a Demo|预约演示/.test(b.textContent));
-      if (btn) btn.click();
-    });
-
-    // 验证弹窗打开
+    // 轮询点击直至弹窗打开（消除水合时序依赖）
     const dialog = page.locator('[role="dialog"]').first();
-    await expect(dialog).toBeVisible({ timeout: 10000 });
+    await expect(async () => {
+      if (!(await dialog.isVisible().catch(() => false))) {
+        await page.evaluate(() => {
+          const btn = Array.from(document.querySelectorAll('button')).find(b => /Book a Demo|预约演示/.test(b.textContent));
+          if (btn) btn.click();
+        });
+      }
+      await expect(dialog).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 10000 });
 
     // 填写表单
     const nameInput = dialog.locator('input[name="name"]').first();
@@ -42,13 +44,17 @@ test.describe('Demo Modal', () => {
     await waitForAppReady(page);
     await dismissCookieBanner(page);
 
-    await page.evaluate(() => {
-      const btn = Array.from(document.querySelectorAll('button')).find(b => /Book a Demo|预约演示/.test(b.textContent));
-      if (btn) btn.click();
-    });
-
+    // 轮询点击直至弹窗打开（消除水合时序依赖）
     const dialog = page.locator('[role="dialog"]').first();
-    await expect(dialog).toBeVisible({ timeout: 10000 });
+    await expect(async () => {
+      if (!(await dialog.isVisible().catch(() => false))) {
+        await page.evaluate(() => {
+          const btn = Array.from(document.querySelectorAll('button')).find(b => /Book a Demo|预约演示/.test(b.textContent));
+          if (btn) btn.click();
+        });
+      }
+      await expect(dialog).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 10000 });
 
     // Step 1: 填写基本信息
     await dialog.locator('input[name="name"]').first().fill('Test');

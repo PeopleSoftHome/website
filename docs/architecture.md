@@ -887,22 +887,24 @@ talentpro-backend/apps/api/src/modules/
 | Guard | 职责 | 顺序 |
 |-------|------|------|
 | JwtAuthGuard | 解析 JWT，注入 req.user | 1 |
-| ThrottlerGuard | 按端点限流（默认 500/min，auth 10/min，search 30/min） | 2 |
+| ThrottlerGuard | 按端点限流（默认 500/min，search 60/min，登录/留资等敏感端点单独收紧） | 2 |
 | PermissionGuard | 校验 `@Permissions()` 声明 | 3 |
 | IpFilterGuard | 校验 IP 黑白名单 | 4 |
 
-### 11.5 多租户（Workspace）
+### 11.5 多租户（Workspace，预留）
 
-- **WorkspaceInterceptor**：从 `req.user.workspaceId` 提取租户 ID，注入 AsyncLocalStorage
-- **Prisma 扩展**：`softDeleteExtension` → `encryptionExtension` → `workspaceExtension`
-- **数据隔离**：所有查询自动附加 `workspaceId` 过滤条件
+> 决策见 `docs/adr/ADR-001-multi-tenancy.md`：**保持预留，不启用查询层租户过滤**。
+
+- **WorkspaceInterceptor**：从 `req.user.workspaceId` 提取租户 ID，注入 AsyncLocalStorage（`workspace.storage.ts`）
+- **Prisma 扩展**：`softDeleteExtension` → `encryptionExtension`（无 workspaceExtension）
+- **数据隔离**：当前**不强制**租户过滤；`workspaceId` 仅在部分写路径传递，属结构预留。激活路径（RLS 优先）见 ADR-001
 
 ### 11.6 缓存体系
 
 - **Redis 客户端**：ioredis，通过 `REDIS_CLIENT` Token 注入
 - **@Cacheable 装饰器**：`@Cacheable({ key, ttl })` 标记需要缓存的 GET 端点
-- **CacheInterceptor**：全局拦截，自动读取/写入 Redis，支持 `CACHE_EVICT` 清除
-- **CacheInterceptor 已全局注册**，CMS 公开 GET 接口自动受益
+- **CacheInterceptor**：全局拦截，自动读取/写入 Redis；v4.3.6 起进程内 single-flight 防击穿；支持 `@CacheEvict` 清除
+- **覆盖范围**：cms/marketplace/system/blog/forum 公开 GET（详情接口除外，见 v4.3.4 viewCount 取舍）
 
 ### 11.7 队列（BullMQ）
 

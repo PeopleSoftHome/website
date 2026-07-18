@@ -1,6 +1,6 @@
 {
   "name": "talentpro-admin",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.0",
@@ -25,6 +26,7 @@
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
+    "@typescript-eslint/parser": "^8.64.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/test-utils": "^2.4.11",
     "eslint": "^9.20.0",

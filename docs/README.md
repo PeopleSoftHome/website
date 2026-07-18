@@ -1,6 +1,6 @@
 # TalentPro 文档中心
 
-> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md`（当前 v4.4.1）为权威规范源。
+> 本文档说明 `docs/` 目录的组织方式与用途。所有活跃文档以 `AGENTS.md`（当前 v4.4.2）为权威规范源。
 
 ## 目录结构
 
@@ -26,6 +26,7 @@ docs/
 ├── project-evaluation-v4.3.4.md   # 全面架构与产品评估报告 v4.3.4（活跃）
 ├── load-testing.md               # API 负载测试与容量基线（活跃）
 ├── postgres-minio-ha.md          # PostgreSQL / MinIO 高可用运维手册（活跃）
+├── go-live-checklist.md          # 生产激活清单（活跃）
 ├── adr/                          # 架构决策记录（ADR-001 多租户策略）
 └── archive/                     # 历史归档（只读参考）
     ├── migrations/              # 技术迁移计划与状态
@@ -55,6 +56,7 @@ docs/
 | `project-evaluation-v4.3.4.md` | 七维度架构与产品评估、P0-P2 路线图 | 每轮大版本评估后更新/归档 |
 | `load-testing.md` | API 负载测试方法、限流关系、容量基线表 | 性能变更后更新基线 |
 | `postgres-minio-ha.md` | PG 流复制 / MinIO 纠删码的部署与切换 | 数据库/存储拓扑变更时 |
+| `go-live-checklist.md` | 支付/部署/压测/语义 RAG 等生产激活步骤 | 上线前逐项执行 |
 | `adr/` | 架构决策记录（多租户等） | 重大技术决策时新增 |
 
 ## 归档文档

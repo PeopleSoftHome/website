@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { formatDate } from '@/utils/formatDate';
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';

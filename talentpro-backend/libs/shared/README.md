@@ -8,7 +8,7 @@
 | 目录 | 说明 | 代表模块 |
 |------|------|----------|
 | `repositories/` | Base CRUD Repository | `base-crud.repository.ts` |
-| `prisma/` | Prisma 扩展（软删除、PII 加密、多租户） | `prisma.service.ts`、`prisma.module.ts`、`soft-delete.extension.ts`、`field-encryption.extension.ts`、`workspace.storage.ts` |
+| `prisma/` | Prisma 扩展（软删除、PII 加密、多租户预留） | `prisma.service.ts`、`prisma.module.ts`、`soft-delete.extension.ts`、`field-encryption.extension.ts`、`workspace.storage.ts` |
 | `helpers/` | 分页、响应包装等通用工具 | `pagination.helper.ts` |
 | `guards/` | 认证/权限/IP 过滤/角色 Guard | `jwt-auth.guard.ts`、`permission.guard.ts`、`ip-filter.guard.ts`、`roles.guard.ts` |
 | `decorators/` | 缓存、权限、公共路由、当前用户装饰器 | `cache.decorator.ts`、`permission.decorator.ts`、`public.decorator.ts`、`roles.decorator.ts`、`current-user.decorator.ts` |

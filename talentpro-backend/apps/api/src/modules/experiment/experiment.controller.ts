@@ -32,10 +32,15 @@ export class ExperimentController {
   @Get(':key/assign')
   @Public()
   @Throttle({ default: { limit: 60, ttl: 60000 } })
-  @ApiOperation({ summary: '实验分流指派（确定性分桶 + 幂等曝光）' })
+  @ApiOperation({ summary: '实验分流指派（确定性分桶 + 幂等曝光，支持分群信号）' })
   @ApiQuery({ name: 'sessionId', required: true })
-  assign(@Param('key') key: string, @Query('sessionId') sessionId: string) {
-    return this.experimentService.assign(key, sessionId);
+  @ApiQuery({ name: 'segment', required: false, description: '访客分群，如 new:mobile:zh' })
+  assign(
+    @Param('key') key: string,
+    @Query('sessionId') sessionId: string,
+    @Query('segment') segment?: string,
+  ) {
+    return this.experimentService.assign(key, sessionId, segment);
   }
 
   @Get(':key')

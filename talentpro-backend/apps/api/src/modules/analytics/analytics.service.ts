@@ -183,6 +183,57 @@ export class AnalyticsService {
     });
   }
 
+  async getWebVitalsSummary(days = 7) {
+    const since = new Date(Date.now() - days * 86400000);
+    const events = await this.prisma.eventTrack.findMany({
+      where: { event: { startsWith: 'web_vital_' }, createdAt: { gte: since } },
+      select: { event: true, properties: true },
+    });
+
+    interface Bucket {
+      values: number[];
+      ratings: Record<string, number>;
+      pages: Record<string, number[]>;
+    }
+    const buckets = new Map<string, Bucket>();
+
+    for (const e of events) {
+      const name = e.event.replace('web_vital_', '');
+      const props = e.properties as { value?: number; rating?: string; pathname?: string };
+      if (!props || typeof props.value !== 'number') continue;
+      let b = buckets.get(name);
+      if (!b) {
+        b = { values: [], ratings: {}, pages: {} };
+        buckets.set(name, b);
+      }
+      b.values.push(props.value);
+      const rating = props.rating || 'unknown';
+      b.ratings[rating] = (b.ratings[rating] || 0) + 1;
+      const page = props.pathname || '/';
+      (b.pages[page] = b.pages[page] || []).push(props.value);
+    }
+
+    const pct = (arr: number[], p: number): number => {
+      if (arr.length === 0) return 0;
+      const s = [...arr].sort((a, b) => a - b);
+      return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)];
+    };
+
+    return [...buckets.entries()]
+      .map(([metric, b]) => ({
+        metric,
+        count: b.values.length,
+        p50: pct(b.values, 50),
+        p75: pct(b.values, 75),
+        ratings: b.ratings,
+        pages: Object.entries(b.pages)
+          .map(([pathname, values]) => ({ pathname, count: values.length, p75: pct(values, 75) }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10),
+      }))
+      .sort((a, b) => a.metric.localeCompare(b.metric));
+  }
+
   async getMarketplaceRevenue(days = 30) {
     const since = new Date();
     since.setDate(since.getDate() - days);

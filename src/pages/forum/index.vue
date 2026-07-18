@@ -88,6 +88,7 @@ import Skeleton from '@/components/ui/Skeleton/Skeleton.vue';
 import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { forumApi } from '@/api/forum';
 import { formatDate } from '@/shared/utils/date';
+import { usePagedList } from '@/shared/composables/usePagedList';
 import { getForumCategories, getForumTopics } from '@/data/forum';
 import s from './index.module.css';
 
@@ -96,34 +97,51 @@ const { t, locale } = useI18n();
 const FORUM_CATEGORIES = computed(() => getForumCategories(locale.value));
 const FORUM_TOPICS = computed(() => getForumTopics(locale.value));
 
-const page = ref(1);
 const pageSize = FORUM_PAGE_SIZE;
 const activeCategory = ref<string | number | null>(null);
 
-const { data: topicsRes, pending: loading, error: fetchError, refresh: fetchTopics } = useAsyncData(
-  'forum-topics',
-  () => forumApi.getTopics({
-    page: page.value,
-    pageSize,
-    categoryId: activeCategory.value || undefined,
-  }),
-  { default: () => ({ data: [], meta: { total: 0 } }) }
-);
+interface ForumTopicItem {
+  id: string | number;
+  title: string;
+  content?: string;
+  viewCount?: number;
+  replyCount?: number;
+  createdAt: string;
+  category?: { id: string | number; name: string };
+  author?: { name?: string; avatar?: string };
+  isPinned?: boolean;
+  isLocked?: boolean;
+  _count?: { posts?: number };
+}
 
-const fallbackTopics = computed(() => {
-  let list = FORUM_TOPICS.value;
+const fallbackTopics = computed<ForumTopicItem[]>(() => {
+  let list = FORUM_TOPICS.value as ForumTopicItem[];
   if (activeCategory.value) {
     list = list.filter((t) => t.category?.id === activeCategory.value);
   }
   return list;
 });
-const hasApiTopics = computed(() => Array.isArray(topicsRes.value?.data) && topicsRes.value.data.length > 0);
-const topics = computed(() => hasApiTopics.value ? topicsRes.value.data : fallbackTopics.value);
-const total = computed(() => hasApiTopics.value ? ((topicsRes.value as any)?.meta?.total || 0) : fallbackTopics.value.length);
+
+const {
+  items: topics, total, page,
+  isLoading: loading, error: fetchError,
+  refresh: fetchTopics, resetPage,
+} = usePagedList<ForumTopicItem>({
+  key: 'forum-topics',
+  fetchFn: ({ page: p, pageSize: ps }) => forumApi.getTopics({
+    page: p,
+    pageSize: ps,
+    categoryId: activeCategory.value || undefined,
+  }),
+  pageSize,
+  watchSources: [activeCategory],
+  fallbackData: fallbackTopics,
+});
+
 const error = computed(() => {
-  if (hasApiTopics.value || fallbackTopics.value.length > 0) return null;
+  if (topics.value.length > 0) return null;
   if (!fetchError.value) return null;
-  const err = fetchError.value as any;
+  const err = fetchError.value as { response?: { data?: { message?: string } }; message?: string };
   return err.response?.data?.message || err.message || t('common.loadError');
 });
 
@@ -137,7 +155,7 @@ const categories = computed(() => apiCategories.value.length > 0 ? apiCategories
 
 const setCategory = (id: string | number) => {
   activeCategory.value = activeCategory.value === id ? null : id;
-  page.value = 1;
+  resetPage();
   fetchTopics();
 };
 

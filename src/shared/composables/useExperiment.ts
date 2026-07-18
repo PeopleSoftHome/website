@@ -9,6 +9,7 @@ import { ref, computed, onMounted, type Ref } from 'vue';
 import { apiClient } from '@/shared/api/client';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { getOrCreateSessionId } from '@/composables/useSessionId';
+import { usePersonalization } from '@/shared/composables/usePersonalization';
 
 interface ExperimentAssignment {
   experimentId: string;
@@ -21,12 +22,13 @@ export function useExperiment(key: string) {
   const assignment: Ref<ExperimentAssignment | null> = ref(null);
   const variant = computed<'A' | 'B'>(() => assignment.value?.variant || 'A');
   const config = computed<Record<string, unknown>>(() => assignment.value?.config || {});
+  const { segment } = usePersonalization();
 
   onMounted(async () => {
     try {
       const sessionId = getOrCreateSessionId(STORAGE_KEYS.SESSION_ID, 'sessionStorage');
       const res = await apiClient.get(`/experiments/${key}/assign`, {
-        params: { sessionId },
+        params: { sessionId, segment: segment.value },
         silent: true,
       } as Record<string, unknown>);
       const data = ((res as { data?: unknown })?.data ?? res) as ExperimentAssignment | null;

@@ -68,6 +68,17 @@ export class AnalyticsController {
     return this.analyticsService.trackWebVital(dto);
   }
 
+  @Get('web-vitals/summary')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('analytics:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Web Vitals 聚合摘要（p50/p75/评级分布/页面 Top10）' })
+  @ApiQuery({ name: 'days', required: false })
+  getWebVitalsSummary(@Query('days') days?: string) {
+    return this.analyticsService.getWebVitalsSummary(days ? Number(days) || 7 : 7);
+  }
+
   @Post('activities')
   @ApiBearerAuth()
   @Permission('analytics:write')

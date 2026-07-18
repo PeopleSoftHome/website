@@ -93,14 +93,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (email: string, password: string) => {
     const res = await client.post('/auth/login', { email, password }, { _skipRefresh: true } as Record<string, unknown>);
-    const data = (res as { data?: { user: AdminUser } }).data || (res as { user: AdminUser });
+    const data = (res as { data?: { user: AdminUser } }).data || (res as unknown as { user: AdminUser });
     setUser(normalizeUser(data.user));
     return res;
   };
 
   const devLogin = async () => {
     const res = await client.post('/auth/dev-login', {}, { _skipRefresh: true } as Record<string, unknown>);
-    const data = (res as { data?: { user: AdminUser } }).data || (res as { user: AdminUser });
+    const data = (res as { data?: { user: AdminUser } }).data || (res as unknown as { user: AdminUser });
     setUser(normalizeUser(data.user));
     return res;
   };

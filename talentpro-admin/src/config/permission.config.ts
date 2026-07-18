@@ -94,6 +94,7 @@ export const ROUTE_PERMISSIONS: Record<string, RoutePermission> = {
   '/forums': { permissions: RESOURCE_PERMISSIONS.forums, mode: 'all' },
   '/comment-moderation': { permissions: RESOURCE_PERMISSIONS.commentModeration, mode: 'all' },
   '/analytics': { permissions: RESOURCE_PERMISSIONS.analytics, mode: 'all' },
+  '/web-vitals': { permissions: RESOURCE_PERMISSIONS.analytics, mode: 'all' },
   '/experiments': { permissions: RESOURCE_PERMISSIONS.experiments, mode: 'all' },
   '/download-records': { permissions: RESOURCE_PERMISSIONS.downloadRecords, mode: 'all' },
   '/sensitive-words': { permissions: RESOURCE_PERMISSIONS.sensitiveWords, mode: 'all' },

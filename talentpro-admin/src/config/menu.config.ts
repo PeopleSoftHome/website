@@ -150,6 +150,12 @@ export const menuConfig: MenuItem[] = [
     icon: 'DataAnalysis',
     roles: ['SUPER_ADMIN', 'ADMIN', 'USER'],
   },
+  {
+    path: '/web-vitals',
+    label: 'menu.webVitals',
+    icon: 'Odometer',
+    roles: ['SUPER_ADMIN', 'ADMIN'],
+  },
 ];
 
 /**
@@ -203,18 +209,13 @@ const routeComponentMap: Record<string, () => Promise<unknown>> = {
   '/forums': () => import('@/views/ForumManagerView.vue'),
   '/comment-moderation': () => import('@/views/CommentModerationView.vue'),
   '/analytics': () => import('@/views/AnalyticsView.vue'),
+  '/web-vitals': () => import('@/views/RumView.vue'),
   '/experiments': () => import('@/views/ExperimentView.vue'),
   '/download-records': () => import('@/views/DownloadRecordView.vue'),
   '/sensitive-words': () => import('@/views/SensitiveWordView.vue'),
   '/medias': () => import('@/views/MediaView.vue'),
   '/ai-assistant': () => import('@/views/AiAssistantView.vue'),
 };
-
-interface RouteMetaLite {
-  roles?: string[];
-  permissions?: string[];
-  permissionMode?: 'all' | 'any';
-}
 
 /**
  * 根据 menuConfig 生成 Vue Router routes
@@ -225,7 +226,7 @@ export function buildRoutes(): RouteRecordRaw[] {
   function walk(items: MenuItem[]): void {
     for (const item of items) {
       if (item.path && routeComponentMap[item.path]) {
-        const meta: RouteMetaLite = {};
+        const meta: Record<string, unknown> = {};
         if (item.roles) meta.roles = item.roles;
         if (item.permissions) meta.permissions = item.permissions;
         if (item.permissionMode) meta.permissionMode = item.permissionMode;

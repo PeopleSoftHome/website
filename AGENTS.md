@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.4.1 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.4.2 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -360,6 +360,15 @@ npm run build
 - **NavBar 子组件**：`NavSearchBar/NavLangSwitcher/NavUserMenu` 与主文件共享 `NavBar.module.css`（同文件 import 哈希一致）。
 - **SSE**：25s 命名事件 `heartbeat` 心跳；消费端只监听 `message`，新增事件类型须保持命名事件与 message 分离。
 
+### v4.4.2 技术债清零（D-3~D-8）
+
+- **页面 composable 必须显式 import**：Vitest 无 Nuxt 自动导入，页面中使用 `@/shared/composables/*` 一律显式 import（参照 blog/forum index）。
+- **服务端分页**：用 `usePagedList`（page + watchSources + fallback + meta.total）；loadMore 场景才用 `useListPage`。
+- **Admin typecheck 棘轮**：`npm run typecheck`，核心层（非 views）必须 0 error；改动某 view 顺带清零其错误。
+- **E2E 弹窗等待**：统一 `toPass` 轮询（已打开则不重复触发），禁止单纯加大 timeout。
+- **分群**：`usePersonalization()` segment 随实验 assign 入库；RUM 看板 `/web-vitals`（Admin）。
+- **Vite 同名双文件**：`.js` 优先于 `.ts` 解析——迁移 TS 后必须删除旧 `.js`。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.4.1*
+*TalentPro HR Portal · AGENTS.md v4.4.2*

@@ -230,5 +230,22 @@ describe('ExperimentService', () => {
       expect(result!.config).toEqual({ ctaText: '文案B' });
       expect(result!.experimentId).toBe('e1');
     });
+
+    it('segment 随首次曝光写入 properties，重复曝光不写入', async () => {
+      jest.spyOn(prisma.experiment, 'findUnique').mockResolvedValue(running as any);
+      const findFirst = jest.spyOn(prisma.experimentEvent, 'findFirst').mockResolvedValue(null);
+      const create = jest.spyOn(prisma.experimentEvent, 'create').mockResolvedValue({} as any);
+
+      await service.assign('cta-banner-copy', 's1', 'new:mobile:zh');
+      expect(create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ properties: { segment: 'new:mobile:zh' } }),
+      }));
+
+      // 已曝光后 segment 不再重复写入
+      findFirst.mockResolvedValue({ id: 'ev1' } as any);
+      create.mockClear();
+      await service.assign('cta-banner-copy', 's1', 'new:mobile:zh');
+      expect(create).not.toHaveBeenCalled();
+    });
   });
 });

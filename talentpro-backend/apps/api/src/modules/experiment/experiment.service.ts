@@ -58,7 +58,7 @@ export class ExperimentService {
    * 并按 trafficSplit（B 组占比）返回变体配置；首次指派记录一次 impression（幂等）。
    * 实验不存在或非 RUNNING 时返回 null，调用方按默认文案渲染。
    */
-  async assign(key: string, sessionId: string) {
+  async assign(key: string, sessionId: string, segment?: string) {
     const exp = await this.prisma.experiment.findUnique({ where: { key } });
     if (!exp || exp.status !== ExperimentStatus.RUNNING || !sessionId) return null;
 
@@ -71,7 +71,14 @@ export class ExperimentService {
       select: { id: true },
     });
     if (!existing) {
-      await this.recordEvent({ experimentId: exp.id, variant, eventType: 'impression', sessionId });
+      await this.recordEvent({
+        experimentId: exp.id,
+        variant,
+        eventType: 'impression',
+        sessionId,
+        // 分群信号（如 new:mobile:zh）随曝光入库，支撑后续分群分析
+        properties: segment ? { segment } : undefined,
+      });
     }
 
     return {

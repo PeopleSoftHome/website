@@ -291,12 +291,12 @@ TalentPro HR Portal v4.3.4 是一个**工程成熟度显著高于同类营销门
 |---|----|------|---------|
 | D-1 | CSS Module 仍超 200 行：NavBar 473 / ChatBot 451 / DemoModal 446 / HeroSection 387 | 4 文件，可复用 v4.4.1 类族拆分范式 | P4 |
 | D-2 | 组件仍超行数：AuthModal 213 / SearchModal 192 / HeroSection 156（Section 限 150）；useChatBot 240（Hook 限 100，可部分援引"状态机"例外）；IconSprite 533（明示例外） | 5 文件 | P4 |
-| D-3 | Admin views 38 个仍为 JS（核心层已 TS） | 迭代级 | P4 |
-| D-4 | E2E 跨浏览器抖动以 retries 治理（mask 而非根治）；CI 单 worker 无影响 | 低 | P4 |
-| D-5 | 个性化/RUM 数据闭环（实验平台已具备归因管道，缺分群与自动变体） | 产品级 | P4 |
-| D-6 | Swagger/支付/压测/语义 RAG 的**生产激活清单**散落在 CHANGELOG 与各文档，建议汇总为 `docs/go-live-checklist.md` | 文档级 | P4 |
-| D-7 | `useListPage` 与服务端分页语义不兼容（blog/forum 仍手写分页），抽象存在但未推广 | 低 | 观察 |
-| D-8 | workspace 多租户预留（ADR-001 已决策保持） | — | 已决策 |
+| ~~D-3~~ | ~~Admin views 38 个仍为 JS~~ ✅ **v4.4.2 已清零**：全部 `lang="ts"`，核心层 vue-tsc 0 error，`npm run typecheck` 棘轮 + 355 条 views 存量按"改谁清谁"规则收敛 | 已闭环 | — |
+| ~~D-4~~ | ~~E2E retries 治理~~ ✅ **v4.4.2 根治**：`toPass` 轮询替代固定等待，水合时序依赖消除 | 已闭环 | — |
+| ~~D-5~~ | ~~个性化/RUM 闭环~~ ✅ **v4.4.2 已闭环**：`usePersonalization` 分群（新访/设备/语言）随 assign 入 impression.properties；`/analytics/web-vitals/summary` + Admin `/web-vitals` 看板 | 已闭环 | — |
+| ~~D-6~~ | ~~激活清单散落~~ ✅ `docs/go-live-checklist.md` | 已闭环 | — |
+| ~~D-7~~ | ~~useListPage 未推广~~ ✅ **v4.4.2**：新增 `usePagedList`（服务端分页语义），blog/forum 已迁移；useListPage 保留服务 loadMore 场景 | 已闭环 | — |
+| D-8 | workspace 多租户预留（ADR-001 已决策保持；v4.4.2 起 architecture.md/libs README 口径一致） | — | 已决策 |
 
 ### 10.5 审计结论
 

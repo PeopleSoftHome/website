@@ -1,5 +1,26 @@
 # Changelog
 
+## [v4.4.2] - 2026-07-18 (技术债清零：D-3~D-8)
+
+### 🔧 工程化
+
+- **D-3 Admin views TS 迁移**：38 个视图全部 `lang="ts"`；核心层 vue-tsc 0 error（修复 menu.config/auth 3 处）；清除遗漏的 `router/index.js` 重复文件（Vite `.js` 优先解析会遮蔽 `.ts`）；新增 `npm run typecheck` 收敛棘轮，基线与清零规则记入 `docs/admin-components.md`
+- **D-4 E2E 抖动根治**：弹窗类测试改用 `toPass` 轮询（已打开则不重复触发，避免来回切换），消除应用水合时序依赖，不再依赖 retries 掩盖
+- **D-7 usePagedList**：新增服务端分页抽象（page 状态 + watchSources + fallback + meta.total），blog/forum 列表页迁移（各减约 20 行重复），4 个单测；页面测试基建要求显式 import（已补）
+- **D-6 上线清单**：`docs/go-live-checklist.md` 汇总支付/部署/压测/语义 RAG/HA 全部环境激活步骤
+- **D-8 多租户口径**：`libs/shared/README.md` 与 `docs/architecture.md` §11.5 修正为"预留"（§11.5 原文"所有查询自动附加 workspaceId 过滤"与实际不符，已勘误；§11.4 限流数字同步更新）
+
+### ✨ 功能（D-5 个性化/RUM 闭环）
+
+- **访客分群**：`usePersonalization()` 产出 segment（新访/回访 × 设备 × 语言），随 `useExperiment` assign 上报；后端 assign 接受 segment 并写入 impression `properties.segment`（幂等逻辑不变）
+- **RUM 看板**：`GET /analytics/web-vitals/summary`（按指标 p50/p75 + 评级分布 + 页面 Top10，ADMIN）；Admin 新增 `/web-vitals` 页（7d/30d 切换、阈值着色的指标卡 + LCP 页面表），菜单/路由/权限/i18n ×3 全接入
+
+### ✅ 验证结果
+
+- 后端 Jest：analytics/experiment 37 全过（新增 3 例）；nest build 通过
+- 前端 Vitest：`39 files, 190 tests` 全绿；ESLint 0 error；SSG 构建 653 路由成功、0 TS 错误
+- Admin：38 视图 TS 化后构建通过、77 tests 全绿、核心层 typecheck 0 error
+
 ## [v4.4.1] - 2026-07-18 (P3 闭环：超规文件拆分 + 安全加固 + E2E 治理)
 
 ### 🔧 拆分（AGENTS.md 行数规范收敛）

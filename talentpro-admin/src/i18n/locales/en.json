@@ -38,7 +38,8 @@
     "sensitiveWords": "Sensitive Words",
     "medias": "Media Library",
     "aiAssistant": "AI Assistant",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "webVitals": "Web Vitals"
   },
   "layout": {
     "admin": "Admin",

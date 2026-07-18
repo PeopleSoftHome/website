@@ -23,6 +23,7 @@ describe('AnalyticsService', () => {
               create: jest.fn(),
               count: jest.fn(),
               groupBy: jest.fn(),
+              findMany: jest.fn(),
             },
             userActivity: {
               create: jest.fn(),
@@ -101,6 +102,41 @@ describe('AnalyticsService', () => {
 
       expect(result.steps).toHaveLength(4);
       expect(result.steps[0].name).toBe('页面访问');
+    });
+  });
+
+  describe('getWebVitalsSummary', () => {
+    it('按指标聚合 p50/p75、评级分布与页面 Top10', async () => {
+      const mk = (name: string, value: number, rating: string, pathname = '/') => ({
+        event: `web_vital_${name}`,
+        properties: { value, rating, pathname },
+      });
+      jest.spyOn(prisma.eventTrack, 'findMany').mockResolvedValue([
+        mk('LCP', 1000, 'good', '/'),
+        mk('LCP', 3000, 'needs-improvement', '/pricing'),
+        mk('LCP', 2000, 'good', '/pricing'),
+        mk('CLS', 0.05, 'good', '/'),
+      ] as any);
+
+      const result = await service.getWebVitalsSummary(7);
+
+      const lcp = result.find((r) => r.metric === 'LCP');
+      expect(lcp).toBeDefined();
+      expect(lcp!.count).toBe(3);
+      expect(lcp!.p50).toBe(2000);
+      expect(lcp!.p75).toBe(3000);
+      expect(lcp!.ratings).toEqual({ good: 2, 'needs-improvement': 1 });
+      // 页面按样本数排序，/pricing 2 条在前
+      expect(lcp!.pages[0].pathname).toBe('/pricing');
+      expect(lcp!.pages[0].count).toBe(2);
+
+      const cls = result.find((r) => r.metric === 'CLS');
+      expect(cls!.count).toBe(1);
+    });
+
+    it('无事件时返回空数组', async () => {
+      jest.spyOn(prisma.eventTrack, 'findMany').mockResolvedValue([]);
+      expect(await service.getWebVitalsSummary(7)).toEqual([]);
     });
   });
 });

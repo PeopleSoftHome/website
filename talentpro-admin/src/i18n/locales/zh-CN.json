@@ -38,7 +38,8 @@
     "sensitiveWords": "敏感词",
     "medias": "媒体库",
     "aiAssistant": "AI 内容助手",
-    "analytics": "数据分析"
+    "analytics": "数据分析",
+    "webVitals": "性能监控"
   },
   "layout": {
     "admin": "管理员",

@@ -38,7 +38,8 @@
     "sensitiveWords": "敏感詞",
     "medias": "媒體庫",
     "aiAssistant": "AI 內容助手",
-    "analytics": "數據分析"
+    "analytics": "數據分析",
+    "webVitals": "性能監控"
   },
   "layout": {
     "admin": "管理員",

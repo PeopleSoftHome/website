@@ -157,3 +157,12 @@ Admin 路由、侧边栏、面包屑的单一数据源。
 2. 替换 `client.js` 为项目的 API 客户端。
 3. 替换 Element Plus 为项目 UI 库，或保留 Element Plus 依赖。
 4. 同步 `menu.config.js` 的 roles/permissions 体系。
+
+---
+
+## TypeScript 迁移基线（v4.4.2）
+
+- **已完成**：核心层全部严格 TS（api/stores/router/composables/directives/utils/config）；38 个 views 已加 `lang="ts"`，`vue-tsc` 非视图文件 0 error。
+- **收敛棘轮**：`npm run typecheck`（admin 目录）——基线 **355 errors，全部在 views/**（strict 隐式 any 为主）。
+- **规则**：改动某个 view 时必须顺带清零该文件的 typecheck 错误，禁止新增；核心层（非 views）必须保持 0 error，CI 可视情况接入。
+- Top 待清零：PageConfigView 49 / AiAssistantView 32 / SubscriptionManagerView 25 / LeadsView 24 / AppManagerView 20。

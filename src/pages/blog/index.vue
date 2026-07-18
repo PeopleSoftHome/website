@@ -78,40 +78,52 @@ import Pagination from '@/components/ui/Pagination/Pagination.vue';
 import { blogApi } from '@/api/blog';
 import { formatDate } from '@/shared/utils/date';
 import { useJsonLd } from '@/shared/utils/jsonld';
+import { usePagedList } from '@/shared/composables/usePagedList';
 import s from './index.module.css';
 import { BLOG_PAGE_SIZE } from '@/constants/pagination';
 import { getBlogPosts, getBlogCategories } from '@/data/blog';
 
 const { t, locale } = useI18n();
 
-const page = ref(1);
-const activeCategory = ref<string | null>(null);
 const pageSize = BLOG_PAGE_SIZE;
+const activeCategory = ref<string | null>(null);
 
 const blogPosts = computed(() => getBlogPosts(locale.value));
 const blogCategories = computed(() => getBlogCategories(locale.value));
 
-const { data: postsRes, pending: loading, error, refresh: fetchPosts } = useAsyncData(
-  () => `blog-posts-${locale.value}`,
-  () => blogApi.getPosts({
-    page: page.value,
-    pageSize,
-    category: activeCategory.value || undefined,
-    status: 'PUBLISHED',
-  }),
-  { default: () => ({ data: [], meta: { total: 0 } }), watch: [page, activeCategory, locale] }
-);
+interface BlogPostItem {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  coverImage?: string;
+  createdAt: string;
+  category?: { name: string; slug?: string; id?: string };
+  tags?: { id: string; name: string }[];
+}
 
-const fallbackPosts = computed(() => {
-  let list = blogPosts.value;
+const fallbackPosts = computed<BlogPostItem[]>(() => {
+  let list = blogPosts.value as BlogPostItem[];
   if (activeCategory.value) {
     list = list.filter((p) => p.category?.slug === activeCategory.value || p.category?.id === activeCategory.value);
   }
   return list;
 });
-const hasApiPosts = computed(() => Array.isArray(postsRes.value?.data) && postsRes.value.data.length > 0);
-const posts = computed(() => hasApiPosts.value ? postsRes.value.data : fallbackPosts.value);
-const total = computed(() => hasApiPosts.value ? ((postsRes.value as any)?.meta?.total || 0) : fallbackPosts.value.length);
+
+const { items: posts, total, page, isLoading: loading, error, refresh: fetchPosts, resetPage } =
+  usePagedList<BlogPostItem>({
+    key: () => `blog-posts-${locale.value}`,
+    fetchFn: ({ page: p, pageSize: ps }) => blogApi.getPosts({
+      page: p,
+      pageSize: ps,
+      category: activeCategory.value || undefined,
+      status: 'PUBLISHED',
+    }),
+    pageSize,
+    watchSources: [activeCategory, locale],
+    fallbackData: fallbackPosts,
+  });
 
 const { data: catRes } = useAsyncData(
   () => `blog-categories-${locale.value}`,
@@ -123,7 +135,7 @@ const categories = computed(() => apiCategories.value.length > 0 ? apiCategories
 
 const setCategory = (slug: string) => {
   activeCategory.value = activeCategory.value === slug ? null : slug;
-  page.value = 1;
+  resetPage();
   fetchPosts();
 };
 
@@ -131,7 +143,7 @@ const goToPost = (slug: string) => {
   navigateTo(`/blog/${slug}`);
 };
 
-const truncate = (text: string, len: number): string => {
+const truncate = (text: string | undefined, len: number): string => {
   if (!text) return '';
   return text.length > len ? text.slice(0, len) + '...' : text;
 };
