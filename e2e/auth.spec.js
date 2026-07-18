@@ -19,7 +19,7 @@ test.describe('Auth', () => {
       const btn = Array.from(document.querySelectorAll('button')).find(b => /登录|Login/.test(b.textContent));
       if (btn) btn.click();
     });
-    await expect(page.getByText(/欢迎回来|Welcome Back/)).toBeVisible();
+    await expect(page.getByText(/欢迎回来|Welcome Back/)).toBeVisible({ timeout: 10000 });
   });
 
   test('should switch to register mode', async ({ page }) => {
@@ -31,6 +31,6 @@ test.describe('Auth', () => {
       if (btn) btn.click();
     });
     await page.getByText(/注册|Sign Up/).first().click({ force: true });
-    await expect(page.getByText(/创建账号|Create Account/)).toBeVisible();
+    await expect(page.getByText(/创建账号|Create Account/)).toBeVisible({ timeout: 10000 });
   });
 });

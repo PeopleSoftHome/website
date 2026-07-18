@@ -91,7 +91,20 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { getMarketplaceApps, getMarketplaceCategories } from '@/data/marketplace';
 import { marketplaceApi, transformMarketplaceApp, transformMarketplaceCategory, type MarketplaceApp, type MarketplaceCategory } from '@/api/marketplace';
 import { useJsonLd } from '@/shared/utils/jsonld';
-import s from './index.module.css';
+import sBase from './index.module.css';
+import sFeatured from './index.featured.module.css';
+import sCards from './index.cards.module.css';
+import sCta from './index.cta.module.css';
+
+// 类族按文件拆分（互不相交）。用 Proxy 回退链合并（不用展开运算符——
+// vitest 将 CSS Module mock 为不可枚举的 Proxy，展开会丢失全部类名）
+const s = new Proxy({}, {
+  get: (_, key: string) =>
+    (sBase as Record<string, string>)[key] ??
+    (sFeatured as Record<string, string>)[key] ??
+    (sCards as Record<string, string>)[key] ??
+    (sCta as Record<string, string>)[key],
+}) as typeof sBase;
 
 const { t, locale } = useI18n();
 const modalStore = useModalStore();

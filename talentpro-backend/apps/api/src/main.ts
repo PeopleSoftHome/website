@@ -38,6 +38,7 @@ async function bootstrap() {
 
   // Helmet 安全响应头（显式 CSP，生产环境收紧 script-src）
   const isProduction = configService.get<string>('app.env') === 'production';
+  logger.log(`[Security] CSP mode: ${isProduction ? 'production (strict script-src)' : 'development (allows unsafe-inline/unsafe-eval)'}`);
   app.use(
     helmet({
       contentSecurityPolicy: {

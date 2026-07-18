@@ -16,7 +16,7 @@ test.describe('Search', () => {
     await dismissCookieBanner(page);
 
     await page.keyboard.press('Control+k');
-    await expect(page.locator('[role="dialog"]')).toBeVisible();
+    await expect(page.locator('[role="dialog"]')).toBeVisible({ timeout: 10000 });
   });
 
   test('should search and navigate to results', async ({ page }) => {

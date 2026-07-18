@@ -117,7 +117,20 @@ import { getMarketplaceApps, getMarketplaceAppMap, getMarketplaceCategories } fr
 import { marketplaceApi, paymentApi, cartApi, transformMarketplaceApp, type MarketplaceApp } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
 import { useJsonLd } from '@/shared/utils/jsonld';
-import s from './[slug].module.css';
+import sBase from './[slug].module.css';
+import sFeatures from './[slug].features.module.css';
+import sPricing from './[slug].pricing.module.css';
+import sRelated from './[slug].related.module.css';
+
+// 类族按文件拆分（互不相交）。用 Proxy 回退链合并（不用展开运算符——
+// vitest 将 CSS Module mock 为不可枚举的 Proxy，展开会丢失全部类名）
+const s = new Proxy({}, {
+  get: (_, key: string) =>
+    (sBase as Record<string, string>)[key] ??
+    (sFeatures as Record<string, string>)[key] ??
+    (sPricing as Record<string, string>)[key] ??
+    (sRelated as Record<string, string>)[key],
+}) as typeof sBase;
 
 definePageMeta({ title: 'marketplace.detail', description: 'marketplace.subtitle' });
 

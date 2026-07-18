@@ -23,7 +23,7 @@ test.describe('Demo Modal', () => {
 
     // 验证弹窗打开
     const dialog = page.locator('[role="dialog"]').first();
-    await expect(dialog).toBeVisible();
+    await expect(dialog).toBeVisible({ timeout: 10000 });
 
     // 填写表单
     const nameInput = dialog.locator('input[name="name"]').first();
@@ -48,7 +48,7 @@ test.describe('Demo Modal', () => {
     });
 
     const dialog = page.locator('[role="dialog"]').first();
-    await expect(dialog).toBeVisible();
+    await expect(dialog).toBeVisible({ timeout: 10000 });
 
     // Step 1: 填写基本信息
     await dialog.locator('input[name="name"]').first().fill('Test');

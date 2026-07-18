@@ -82,7 +82,18 @@ import Breadcrumb from '@/components/ui/Breadcrumb/Breadcrumb.vue';
 import { cartApi, paymentApi } from '@/api/marketplace';
 import { showToast } from '@/utils/toast';
 import { useAuthStore } from '@/stores/auth.pinia';
-import s from './cart.module.css';
+import sBase from './cart.module.css';
+import sItems from './cart.items.module.css';
+import sSummary from './cart.summary.module.css';
+
+// 类族按文件拆分（互不相交）。用 Proxy 回退链合并（不用展开运算符——
+// vitest 将 CSS Module mock 为不可枚举的 Proxy，展开会丢失全部类名）
+const s = new Proxy({}, {
+  get: (_, key: string) =>
+    (sBase as Record<string, string>)[key] ??
+    (sItems as Record<string, string>)[key] ??
+    (sSummary as Record<string, string>)[key],
+}) as typeof sBase;
 
 definePageMeta({ title: 'marketplace.cartTitle', description: 'marketplace.subtitle' });
 

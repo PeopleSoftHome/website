@@ -41,8 +41,20 @@ export class NotificationSseService implements OnModuleInit, OnModuleDestroy {
   addStream(userId: string): Observable<MessageEvent> {
     const subject = new Subject<MessageEvent>();
     this.userStreams.set(userId, subject);
+
+    // 心跳（H-4）：25s 一次命名事件 'heartbeat'，防止代理/LB 静默断连。
+    // 前端只监听 'message' 事件，命名事件天然被忽略，不会渲染为通知。
+    const heartbeat = setInterval(() => {
+      try {
+        subject.next({ type: 'heartbeat', data: { ts: Date.now() } } as MessageEvent);
+      } catch {
+        // stream 已关闭，finalize 会清理定时器
+      }
+    }, 25000);
+
     return subject.pipe(
       finalize(() => {
+        clearInterval(heartbeat);
         this.userStreams.delete(userId);
       }),
     );

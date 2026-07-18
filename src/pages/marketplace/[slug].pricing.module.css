@@ -1,0 +1,176 @@
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.pricingCard {
+  padding: 28px;
+  border-radius: 14px;
+  background: var(--page-bg);
+  border: 1px solid var(--gray-100);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricingCardHighlight {
+  border-color: var(--primary);
+  box-shadow: 0 8px 32px var(--indigo-500-alpha-12);
+}
+
+.pricingName {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.pricingPrice {
+  margin-bottom: 10px;
+}
+
+.priceFree {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.priceCurrency {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gray-900);
+  vertical-align: top;
+}
+
+.priceValue {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.priceUnit {
+  font-size: 14px;
+  color: var(--gray-400);
+}
+
+.pricingDesc {
+  font-size: 13px;
+  color: var(--gray-400);
+  margin-bottom: 20px;
+}
+
+.pricingFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pricingFeature {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.pricingBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--primary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-top: auto;
+}
+
+.pricingBtn:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.pricingBtnPrimary {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.pricingBtnPrimary:hover {
+  background: var(--primary-dark);
+}
+
+.pricingBtnSecondary {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gray-600);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--gray-200);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  margin-top: 8px;
+}
+
+.pricingBtnSecondary:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.compatibilityList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.compatibilityTag {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .pricingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pricingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .priceValue {
+    font-size: 28px;
+  }
+}
+
+/* Dark mode */
+[data-theme='dark'] .priceValue,
+[data-theme='dark'] .priceCurrency {
+  color: var(--gray-50);
+}
+
+[data-theme='dark'] .pricingFeature,
+[data-theme='dark'] .pricingDesc {
+  color: var(--gray-400);
+}
+
+[data-theme='dark'] .pricingCard {
+  background: var(--gray-800);
+  border-color: var(--gray-700);
+}
+
+[data-theme='dark'] .pricingCardHighlight {
+  border-color: var(--primary);
+}
+
+[data-theme='dark'] .compatibilityTag {
+  background: var(--gray-700);
+  color: var(--gray-300);
+}

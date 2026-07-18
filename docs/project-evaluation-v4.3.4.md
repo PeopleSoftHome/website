@@ -223,11 +223,19 @@
 6. ~~ChatBot 业务动作 + 转人工出口~~ ✅ 服务端意图识别 `actions`（demo/contact/careers/pricing）+ handoffBar 接 CMS 电话 + 在线留言入口（U-3 闭环）
 7. ~~定价页~~ ✅ `/pricing` 三档方案 ×3 语言已上线（P1-3 闭环）
 
-### P2（季度级）— ✅ v4.4.0 已闭环 4.5/5 项
+### P3（补录，v4.4.1 全部闭环）
+
+- **延期拆分项**：NavBar/ModalStep1/marketplace CSS ✅ 已按互不相交类族拆分（CSS 模板零改动）；useChatBot 意图层 v4.4.0 已拆
+- **S-2 / S-3**：CSP 模式启动日志 ✅；email 明文口径与 HMAC 索引现状已写入 `security.md` ✅
+- **H-3 / H-4**：Prisma 连接池指引 ✅；SSE 25s 命名事件心跳 ✅
+- **E2E 跨浏览器抖动**：根因=资源竞争，retries + 断言超时加宽已治理 ✅
+- **记入下一轮（P4 候选）**：Admin views 38 个 JS→TS（迭代级）；个性化/RUM 数据闭环（产品级）
+
+### P2（季度级）— ✅ v4.4.0/v4.4.1 已全部闭环
 
 8. ~~语义 RAG~~ ✅ pgvector + OpenAI Embeddings（`AiEmbeddingService`，env 开关 + 降级，`npm run ai:embed` 建索引，HNSW 余弦索引）
 9. ~~实验平台闭环~~ ✅ 后端确定性分桶 assign + 幂等曝光；前端 `useExperiment` SDK；CtaBanner 首个真实实验接入
-10. **部分完成**：Admin 核心层 11 文件 TS 迁移（api/stores/router/composables/directives/utils/config）✅；useChatBot 意图层拆分 ✅；**延期**：NavBar/ModalStep1/marketplace CSS 拆分——需模板手术与视觉回归验证，建议单独一轮配合截图对比工具执行
+10. ~~Admin TS + 超规拆分~~ ✅ Admin 核心层 11 文件 TS 迁移；useChatBot 意图层拆分（v4.4.0）；NavBar/ModalStep1/marketplace CSS 拆分（v4.4.1）
 11. ~~多租户决策~~ ✅ ADR-001：保持预留，激活条件与 RLS 优先的技术路径已备忘
 12. ~~PG/MinIO HA~~ ✅ 流复制 compose + MinIO 纠删码 compose + 运维手册（手动切换；自动故障转移建议评估 Patroni）
 

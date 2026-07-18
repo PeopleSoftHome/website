@@ -36,51 +36,8 @@
         <div :class="s.right">
           <span :class="s.phone">{{ sitePhone || t('nav.phone') }}</span>
 
-          <!-- 搜索栏（内联展开） -->
-          <div :class="[s.searchWrap, searchOpen ? s.searchExpanded : '', scrolled ? s.searchScrolled : '']">
-            <button
-              :class="s.searchIconBtn"
-              @click="searchOpen ? closeSearchBar() : openSearchBar()"
-              :aria-label="t('search.label')"
-            >
-              <Icon name="search" :size="16" />
-            </button>
-            <input
-              ref="searchInputRef"
-              :class="s.searchInput"
-              type="text"
-              v-model="searchQuery"
-              @keydown="handleSearchKey"
-              :placeholder="t('search.placeholder')"
-              autocomplete="off"
-            />
-            <button :class="s.searchClose" @click="closeSearchBar" :aria-label="t('nav.searchClose')">
-              <Icon name="close" :size="14" />
-            </button>
-          </div>
-
-          <!-- 语言切换器 -->
-          <div :class="s.langWrap">
-            <button
-              :class="s.langBtn"
-              @click="langMenuOpen = !langMenuOpen"
-              :aria-label="t('nav.langLabel')"
-              :aria-expanded="langMenuOpen"
-            >
-              <Icon name="globe" :size="14" /> {{ localeLabel(locale) ?? t('nav.langLabel') }} <Icon name="chevron-down" :size="12" />
-            </button>
-            <div v-if="langMenuOpen" :class="s.langMenu" role="menu">
-              <button
-                v-for="loc in localeOptions"
-                :key="loc.key"
-                role="menuitem"
-                :class="[s.langOption, locale === loc.key ? s.langActive : '']"
-                @click="pickLang(loc.key)"
-              >
-                {{ loc.label }}
-              </button>
-            </div>
-          </div>
+          <NavSearchBar :scrolled="scrolled" />
+          <NavLangSwitcher />
 
           <!-- 购物车 -->
           <CartButton />
@@ -94,29 +51,7 @@
             <Icon :name="isDark ? 'sun' : 'moon'" :size="16" />
           </button>
 
-          <template v-if="auth.isLoggedIn">
-            <NotificationBell />
-            <div :class="s.userWrap">
-              <button :class="s.userBtn" @click="userMenuOpen = !userMenuOpen">
-                <span :class="s.userAvatar">{{ userInitial }}</span>
-                <span :class="s.userName">{{ user?.name || user?.email }}</span>
-                <Icon name="chevron-down" :size="12" />
-              </button>
-              <div v-if="userMenuOpen" :class="s.userMenu" role="menu">
-                <button role="menuitem" :class="s.userMenuItem" @click="goProfile">
-                  <Icon name="user" :size="14" /> {{ t('nav.profile') }}
-                </button>
-                <button role="menuitem" :class="s.userMenuItem" @click="handleLogout">
-                  <Icon name="logout" :size="14" /> {{ t('nav.logout') }}
-                </button>
-              </div>
-            </div>
-          </template>
-          <template v-else>
-            <Button variant="ghost" size="sm" :class-name="scrolled ? s.loginScrolled : ''" @click="openAuth">
-              {{ t('nav.login') }}
-            </Button>
-          </template>
+          <NavUserMenu :scrolled="scrolled" />
           <Button variant="primary" size="sm" @click="modalStore.openModal()">
             {{ t('nav.demo') }}
           </Button>
@@ -139,8 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent, onUnmounted } from 'vue';
-const NotificationBell = defineAsyncComponent(() => import('@/components/ui/NotificationBell/NotificationBell.vue'));
+import { ref, computed } from 'vue';
 
 interface NavDropdownItem {
   icon: string;
@@ -158,26 +92,16 @@ interface NavLinkItem {
   banner?: { thumb: string; title: string; desc: string; href: string };
 }
 
-interface UserInfo {
-  name?: string;
-  email?: string;
-}
-
 import { useNavScroll } from '@/composables/useNavScroll';
 import { useNavigation } from '@/shared/composables/useNavigation';
 import { useSiteConfig } from '@/shared/composables/useSiteConfig';
 import { useThemeStore } from '@/stores/theme.pinia';
-import { useSearchStore } from '@/stores/search.pinia';
 import { useModalStore } from '@/stores/modal.pinia';
-import { useAuthStore } from '@/stores/auth.pinia';
-const localeOptions = computed(() => [
-  { key: 'zh', label: t('nav.lang.zh') },
-  { key: 'en', label: t('nav.lang.en') },
-  { key: 'zh-TW', label: t('nav.lang.zhTw') },
-]);
-const localeLabel = (code: string) => localeOptions.value.find((l: { key: string; label: string }) => l.key === code)?.label;
 import Icon from '../../ui/Icon/Icon.vue';
 import NavDropdown from './NavDropdown.vue';
+import NavSearchBar from './NavSearchBar.vue';
+import NavLangSwitcher from './NavLangSwitcher.vue';
+import NavUserMenu from './NavUserMenu.vue';
 import MobileMenu from './MobileMenu.vue';
 import Button from '../../ui/Button/Button.vue';
 import s from './NavBar.module.css';
@@ -186,56 +110,15 @@ const { scrolled } = useNavScroll();
 const { navLinks } = useNavigation() as unknown as { navLinks: NavLinkItem[] };
 const { sitePhone } = useSiteConfig();
 
-const { t, locale, setLocale } = useI18n();
+const { t } = useI18n();
 const themeStore  = useThemeStore();
-const searchStore = useSearchStore();
 const modalStore  = useModalStore();
-const auth        = useAuthStore();
 const authOpen    = useState('authOpen', () => false);
 
 const mobileOpen = ref(false);
-const langMenuOpen = ref(false);
-const userMenuOpen = ref(false);
-const searchOpen = ref(false);
-const searchQuery = ref('');
-const searchInputRef = ref<HTMLInputElement | null>(null);
-const router = useRouter();
 
 const openMobile = () => { mobileOpen.value = true; };
 const closeMobile = () => { mobileOpen.value = false; };
-const pickLang = (l: string) => { setLocale(l as 'zh' | 'en' | 'zh-TW'); langMenuOpen.value = false; };
-const openAuth = () => { authOpen.value = true; };
-const goProfile = () => { userMenuOpen.value = false; router.push('/profile'); };
-const handleLogout = () => { auth.logout(); userMenuOpen.value = false; };
-
-let searchFocusTimer: ReturnType<typeof setTimeout> | null = null;
-
-const openSearchBar = () => {
-  searchOpen.value = true;
-  searchFocusTimer = setTimeout(() => searchInputRef.value?.focus(), 50);
-};
-
-const closeSearchBar = () => {
-  searchOpen.value = false;
-  searchQuery.value = '';
-};
-
-const handleSearchKey = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && searchQuery.value.trim()) {
-    searchStore.openSearch();
-    closeSearchBar();
-  }
-  if (e.key === 'Escape') closeSearchBar();
-};
 
 const isDark = computed(() => themeStore.isDark);
-const user = computed(() => auth.user as UserInfo | null | undefined);
-const userInitial = computed(() => {
-  const name = user.value?.name || user.value?.email || '';
-  return name.charAt(0).toUpperCase();
-});
-
-onUnmounted(() => {
-  if (searchFocusTimer) clearTimeout(searchFocusTimer);
-});
 </script>

@@ -1,5 +1,33 @@
 # Changelog
 
+## [v4.4.1] - 2026-07-18 (P3 闭环：超规文件拆分 + 安全加固 + E2E 治理)
+
+### 🔧 拆分（AGENTS.md 行数规范收敛）
+
+- **NavBar** 241→131 行：右侧操作区拆为 `NavSearchBar` / `NavLangSwitcher` / `NavUserMenu` 三个 ≤80 行子组件（共享同一 CSS Module，行为不变）
+- **ModalStep1** 262→175 行：内联 Field 提取为 `ModalField.vue`，手机号正则/格式化/自动填入提取为 `usePhoneField.ts`
+- **marketplace CSS**：`[slug]` 515→4 文件（main/features/pricing/related）、`index` 483→4 文件（main/featured/cards/cta）、`cart` 353→3 文件（main/items/summary），按互不相交类族拆分并在组件内合并回单一 `s` 对象，模板零改动；媒体查询与暗色规则按类族随迁
+- **useChatBot** 意图识别已于 v4.4.0 拆为 `chatIntents.ts`（补记）
+
+### 🐛 修复
+
+- **marketplace 列表结果条样式失效**：模板引用的 `s.resultText` 与 CSS 定义的 `.resultBar` 类名不匹配（历史遗留，样式从未生效），已统一为 `.resultText`
+
+### 🛡 安全与加固
+
+- 启动日志输出 CSP 模式（S-2：生产 strict / 开发宽松一目了然，防 `APP_ENV` 误配静默降级）
+- `docs/security.md` §3.2 口径对齐：email 明文查询为明确取舍，`PII_HMAC_KEY` HMAC 索引已落地（S-3 闭环）
+- Prisma 连接池配置指引入 `.env.example`（`connection_limit`/`pool_timeout`，H-3 闭环）
+- SSE 增加 25s 心跳（命名事件 `heartbeat`，前端 'message' 监听天然忽略，防代理静默断连，H-4 闭环）
+
+### 🧪 E2E 治理
+
+- 跨浏览器时序抖动根因定位为本机 2 workers × 5 projects 资源竞争（非选择器问题）：本地 retries 0→1（v4.3.4）+ 弹窗可见性断言超时 5s→10s（search/auth/form）
+
+### ✅ 验证结果
+
+- 后端 build + 全量 Jest 通过；前端 Vitest/ESLint/SSG 构建通过；E2E 定向回归通过
+
 ## [v4.4.0] - 2026-07-18 (P2 闭环：语义 RAG + 实验平台 + Admin TS + 基础设施 HA)
 
 ### 🧠 智能化

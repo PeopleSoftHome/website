@@ -44,7 +44,9 @@
 
 ### 3.2 Email 查询
 
-`User.email`、`WorkspaceInvite.email` 当前为明文以支持等值查询。生产环境建议补充 HMAC-SHA256 索引后转为密文存储。
+`User.email`、`WorkspaceInvite.email` 当前为明文存储以支持等值查询，这是明确的取舍（非疏漏）。
+已落地缓解：`PII_HMAC_KEY` 独立的 HMAC-SHA256 哈希索引（`emailHash` 列）用于查询匹配，密钥与加密密钥分离；未配置时回退 `PII_ENCRYPTION_KEY`，生产环境必须独立设置。
+后续可选演进：全面转密文 + 仅走 HMAC 索引查询。
 
 ### 3.3 密码策略
 

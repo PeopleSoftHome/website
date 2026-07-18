@@ -14,7 +14,7 @@
     </button>
 
     <div :class="s.formRow">
-      <Field :label="t('modal.labelName')" required :error="errors.name">
+      <ModalField :label="t('modal.labelName')" required :error="errors.name">
         <input
           ref="nameRef"
           :class="[s.input, errors.name ? s.inputError : '']"
@@ -23,8 +23,8 @@
           @focus="scrollToTop"
           autocomplete="name"
         />
-      </Field>
-      <Field :label="t('modal.labelCompany')" required :error="errors.company">
+      </ModalField>
+      <ModalField :label="t('modal.labelCompany')" required :error="errors.company">
         <input
           :class="[s.input, errors.company ? s.inputError : '']"
           name="company" :placeholder="t('modal.phCompany')"
@@ -32,10 +32,10 @@
           @focus="scrollToTop"
           autocomplete="organization"
         />
-      </Field>
+      </ModalField>
     </div>
 
-    <Field :label="t('modal.labelPhone')" required :error="errors.phone">
+    <ModalField :label="t('modal.labelPhone')" required :error="errors.phone">
       <input
         :class="[s.input, errors.phone ? s.inputError : '']"
         name="phone" :placeholder="t('modal.phPhone')" type="tel" maxlength="13"
@@ -44,9 +44,9 @@
         @focus="scrollToTop"
         autocomplete="tel"
       />
-    </Field>
+    </ModalField>
 
-    <Field :label="t('modal.labelCode')" required :error="errors.code">
+    <ModalField :label="t('modal.labelCode')" required :error="errors.code">
       <div :class="s.verifyRow">
         <input
           :class="[s.input, errors.code ? s.inputError : '']"
@@ -58,7 +58,7 @@
           {{ countdown > 0 ? t('modal.resend', { n: countdown }) : t('modal.sendCode') }}
         </button>
       </div>
-    </Field>
+    </ModalField>
 
     <!-- 服务条款复选框 -->
     <div :class="s.tosRow">
@@ -82,13 +82,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onUnmounted, h, watch, computed, onMounted } from 'vue';
-import type { SetupContext } from 'vue';
+import { ref, reactive, onUnmounted, watch, computed } from 'vue';
 import { useModalStore } from '@/stores/modal.pinia';
 import { STORAGE_KEYS } from '@/constants/storage';
+import ModalField from './ModalField.vue';
+import { PHONE_REG, formatPhone, usePhoneAutofill } from './usePhoneField';
 import s from './DemoModal.module.css';
-
-const PHONE_REG = /^1[3-9]\d{9}$/;
 
 const { t } = useI18n();
 const modalStore = useModalStore();
@@ -124,18 +123,12 @@ watch(fields, (val) => {
   modalStore.formData.code = val.code;
 }, { deep: true });
 
-/* ── 手机号格式化：13800000000 → 138 0000 0000 ── */
-const formattedPhone = computed(() => {
-  const raw = fields.phone.replace(/\D/g, '');
-  if (raw.length <= 3) return raw;
-  if (raw.length <= 7) return `${raw.slice(0, 3)} ${raw.slice(3)}`;
-  return `${raw.slice(0, 3)} ${raw.slice(3, 7)} ${raw.slice(7, 11)}`;
-});
+/* ── 手机号格式化与输入 ── */
+const formattedPhone = computed(() => formatPhone(fields.phone));
 
 const handlePhoneInput = (e: Event) => {
   const target = e.target as HTMLInputElement;
-  const raw = target.value.replace(/\D/g, '').slice(0, 11);
-  fields.phone = raw;
+  fields.phone = target.value.replace(/\D/g, '').slice(0, 11);
   clearError('phone');
 };
 
@@ -149,52 +142,10 @@ const scrollToTop = () => {
 };
 
 /* ── 微信/浏览器手机号自动填入 ── */
-const canAutoFill = ref(false);
-onMounted(() => {
-  canAutoFill.value = 'contacts' in navigator || 'credentials' in navigator;
+const { canAutoFill, autoFillPhone } = usePhoneAutofill({
+  setPhone: (v) => { fields.phone = v; },
+  onFilled: () => clearError('phone'),
 });
-
-interface ContactInfo {
-  tel?: string[];
-}
-
-declare global {
-  interface Navigator {
-    contacts?: {
-      select: (props: string[], options: { multiple: boolean }) => Promise<ContactInfo[]>;
-    };
-  }
-  interface Window {
-    ContactsManager?: unknown;
-  }
-}
-
-const autoFillPhone = async () => {
-  if (typeof window === 'undefined') return;
-  try {
-    if (navigator.contacts && 'ContactsManager' in window) {
-      const props = ['tel'];
-      const contacts = await navigator.contacts.select(props, { multiple: false });
-      const firstContact = contacts[0];
-      if (firstContact?.tel && firstContact.tel.length > 0) {
-        const raw = (firstContact.tel[0] || '').replace(/\D/g, '');
-        if (PHONE_REG.test(raw)) {
-          fields.phone = raw;
-          clearError('phone');
-          return;
-        }
-      }
-    }
-  } catch {
-    // 静默失败
-  }
-  // Fallback：尝试读取已保存的表单数据
-  const savedPhone = sessionStorage.getItem(STORAGE_KEYS.DEMO_LAST_PHONE);
-  if (savedPhone && PHONE_REG.test(savedPhone)) {
-    fields.phone = savedPhone;
-    clearError('phone');
-  }
-};
 
 onUnmounted(() => {
   if (timer) { clearInterval(timer); timer = null; }
@@ -236,27 +187,5 @@ const handleNext = () => {
     sessionStorage.setItem(STORAGE_KEYS.DEMO_LAST_PHONE, fields.phone);
   }
   emit('next');
-};
-
-/* ═══════ Field 子组件 ═══════ */
-interface FieldProps {
-  label: string;
-  required?: boolean;
-  error?: string;
-}
-
-const Field = {
-  props: ['label', 'required', 'error'],
-  setup(props: FieldProps, { slots }: SetupContext) {
-    const { t: _t } = useI18n();
-    return () => h('div', { class: s.formGroup }, [
-      h('label', { class: s.label }, [
-        props.label,
-        props.required && h('span', { class: s.required }, _t('modal.required')),
-      ]),
-      slots.default?.(),
-      props.error && h('span', { class: s.errorMsg }, props.error),
-    ]);
-  },
 };
 </script>

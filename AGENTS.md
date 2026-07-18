@@ -1,6 +1,6 @@
 # AGENTS.md — TalentPro HR Portal
 
-> 面向 AI 编程助手。**当前版本**：v4.4.0 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
+> 面向 AI 编程助手。**当前版本**：v4.4.1 | **技术栈**：Nuxt 4.4.8 + Nitro 2.13.4 + Vue 3.5 + TypeScript + CSS Modules + Pinia + @nuxtjs/i18n + NestJS 11 + Prisma 6 + Redis
 
 ---
 
@@ -354,6 +354,12 @@ npm run build
 - **多租户**：保持预留（`docs/adr/ADR-001-multi-tenancy.md`），禁止扩展 `workspaceStorage` 能力面。
 - **HA 资产**：PG 流复制与 MinIO 纠删码 compose 在 `docker/`，运维手册 `docs/postgres-minio-ha.md`。
 
+### v4.4.1 P3 闭环
+
+- **CSS Module 拆分范式**：超 200 行时按**互不相交类族**拆为多文件（含各自 media/dark 规则），组件内用 **Proxy 回退链**合并（`new Proxy({}, { get: (_, k) => sBase[k] ?? sX[k] })`）——禁止按 @media 块横切（断开响应式覆盖）；禁止展开运算符合并（vitest 将 CSS Module mock 为不可枚举 Proxy，展开丢类名）。参照 `src/pages/marketplace/`。
+- **NavBar 子组件**：`NavSearchBar/NavLangSwitcher/NavUserMenu` 与主文件共享 `NavBar.module.css`（同文件 import 哈希一致）。
+- **SSE**：25s 命名事件 `heartbeat` 心跳；消费端只监听 `message`，新增事件类型须保持命名事件与 message 分离。
+
 ---
 
-*TalentPro HR Portal · AGENTS.md v4.4.0*
+*TalentPro HR Portal · AGENTS.md v4.4.1*
