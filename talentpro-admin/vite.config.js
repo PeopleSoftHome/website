@@ -17,7 +17,9 @@ export default defineConfig({
     // 已通过 manualChunks 拆分 vendor，提高告警阈值避免误报。
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      // 过滤第三方 @vueuse/core 的 annotation 警告（非项目代码）
+      // 过滤第三方 @vueuse/core 的 annotation 警告。
+      // 注意：本项目未直接依赖 @vueuse/core，该警告来自 element-plus 等 transitive dependency；
+      // 若未来引入 @vueuse/core，应移除此过滤并修复根因。
       onLog(level, log, handler) {
         if (log.code === 'INVALID_ANNOTATION' && log.message?.includes('@vueuse/core')) return;
         handler(level, log);

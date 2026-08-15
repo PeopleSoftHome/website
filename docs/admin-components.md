@@ -1,13 +1,13 @@
 # Admin 可复用组件 API
 
-> **版本**：v4.3.0  
+> **版本**：v4.4.2  
 > 说明：本文档汇总 `talentpro-admin/src/components/` 中适合跨项目复用的核心组件，含 props、事件、插槽与使用示例。
 
 ---
 
 ## CmsTable
 
-路径：`talentpro-admin/src/components/CmsTable.vue`
+路径：`talentpro-admin/src/components/ui/CmsTable.vue`
 
 声明式 CMS CRUD 表格，集成分页、创建/编辑弹窗、批量删除、AI 辅助。
 
@@ -63,7 +63,7 @@
 
 ## SectionConfigForm
 
-路径：`talentpro-admin/src/components/SectionConfigForm.vue`
+路径：`talentpro-admin/src/components/page-config/SectionConfigForm.vue`
 
 根据 `configSchema` 自动渲染表单：input、textarea、switch、image-upload。
 
@@ -84,7 +84,7 @@
 
 ## ImageUpload
 
-路径：`talentpro-admin/src/components/ImageUpload.vue`
+路径：`talentpro-admin/src/components/ui/ImageUpload.vue`
 
 图片上传组件，支持本地上传与 DALL·E AI 生成。
 
@@ -107,8 +107,8 @@
 
 路径：
 
-- `talentpro-admin/src/components/AiAssistButton.vue`
-- `talentpro-admin/src/components/AiAssistDialog.vue`
+- `talentpro-admin/src/components/ai/AiAssistButton.vue`
+- `talentpro-admin/src/components/ai/AiAssistDialog.vue`
 
 为表单字段提供 AI 草稿生成（标题、摘要、正文、SEO、翻译、审核）。
 
@@ -122,9 +122,9 @@
 
 ---
 
-## menu.config.js
+## menu.config.ts
 
-路径：`talentpro-admin/src/config/menu.config.js`
+路径：`talentpro-admin/src/config/menu.config.ts`
 
 Admin 路由、侧边栏、面包屑的单一数据源。
 
@@ -153,10 +153,10 @@ Admin 路由、侧边栏、面包屑的单一数据源。
 
 ## 迁移到其它项目
 
-1. 复制 `talentpro-admin/src/components/CmsTable.vue` 及其依赖（`useCrud.js`、`ImageUpload.vue`、`AiAssistButton.vue`）。
-2. 替换 `client.js` 为项目的 API 客户端。
+1. 复制 `talentpro-admin/src/components/ui/CmsTable.vue` 及其依赖（`useCrud.ts`、`ImageUpload.vue`、`AiAssistButton.vue`）。
+2. 替换 `client.ts` 为项目的 API 客户端。
 3. 替换 Element Plus 为项目 UI 库，或保留 Element Plus 依赖。
-4. 同步 `menu.config.js` 的 roles/permissions 体系。
+4. 同步 `menu.config.ts` 与 `permission.config.ts` 的 roles/permissions 体系。
 
 ---
 
