@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AiEmbeddingService } from './ai-embedding.service';
 
 describe('AiEmbeddingService', () => {

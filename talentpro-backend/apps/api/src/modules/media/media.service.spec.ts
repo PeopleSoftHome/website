@@ -259,7 +259,6 @@ describe('MediaService', () => {
       jest.spyOn(prisma.media, 'count').mockResolvedValue(10);
       jest.spyOn(prisma.media, 'groupBy').mockResolvedValue([
         { mimeType: 'image/jpeg', _count: { mimeType: 5 }, _sum: { size: 5000 } },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ] as unknown as any[]);
 
       const result = await service.getStats();

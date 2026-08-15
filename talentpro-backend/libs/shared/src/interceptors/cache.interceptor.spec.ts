@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CacheInterceptor } from './cache.interceptor';
 import { CACHE_KEY, CACHE_TTL, CACHE_EVICT } from '../decorators/cache.decorator';
 import { of, throwError, firstValueFrom } from 'rxjs';

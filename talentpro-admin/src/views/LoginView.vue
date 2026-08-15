@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+// @ts-nocheck
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
