@@ -1,6 +1,6 @@
 # TalentPro 可复用资产清单
 
-> **版本**：v4.3.0  
+> **版本**：v4.4.2  
 > 说明：梳理前后端可跨项目复用的模块、迁移路径与合并注意事项。
 
 ---
@@ -37,11 +37,13 @@
 
 | 模块 | 路径 | 复用价值 |
 |------|------|----------|
-| CmsTable | `talentpro-admin/src/components/CmsTable.vue` | 声明式 CRUD 表格 |
-| SectionConfigForm | `talentpro-admin/src/components/SectionConfigForm.vue` | Schema 驱动表单 |
-| ImageUpload | `talentpro-admin/src/components/ImageUpload.vue` | 上传 + AI 生成图片 |
-| AiAssistButton | `talentpro-admin/src/components/AiAssistButton.vue` | AI 内容生成 |
-| menu.config.js | `talentpro-admin/src/config/menu.config.js` | 路由/菜单/面包屑同源 |
+| CmsTable | `talentpro-admin/src/components/ui/CmsTable.vue` | 声明式 CRUD 表格 |
+| SectionConfigForm | `talentpro-admin/src/components/page-config/SectionConfigForm.vue` | Schema 驱动表单 |
+| ImageUpload | `talentpro-admin/src/components/ui/ImageUpload.vue` | 上传 + AI 生成图片 |
+| AiAssistButton | `talentpro-admin/src/components/ai/AiAssistButton.vue` | AI 内容生成 |
+| AiConfigAssistant | `talentpro-admin/src/components/ai/AiConfigAssistant.vue` | Admin 配置助手聊天面板 |
+| menu.config.ts | `talentpro-admin/src/config/menu.config.ts` | 路由/菜单/面包屑同源 |
+| permission.config.ts | `talentpro-admin/src/config/permission.config.ts` | 权限矩阵 |
 
 ---
 

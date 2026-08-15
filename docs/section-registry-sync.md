@@ -1,6 +1,6 @@
 # Section Registry 同步指南
 
-> **版本**：v4.3.0  
+> **版本**：v4.4.2  
 > 说明：Admin 配置首页 Section 时，需要同时维护 Admin 与 Portal 两侧的 Section 注册表。本文档说明同步规则。
 
 ---

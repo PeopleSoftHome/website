@@ -100,6 +100,9 @@ docker-compose -f docker-compose.dev.yml up -d
 | 测试计划 | `docs/test-plan.md` | 测试策略与用例框架 |
 | 变更记录 | `CHANGELOG.md` | 所有版本变更历史 |
 | AI 助手指南 | `AGENTS.md` | 编码规范与项目约定 |
+| 项目整理计划 | `docs/project-cleanup-plan-v4.4.2.md` | 本次整理范围、阶段与验收 |
+| 项目整理报告 | `docs/project-cleanup-report-v4.4.2.md` | 整理结果、性能对比与测试摘要 |
+| 历史评估（归档） | `docs/archive/audits/project-evaluation-v4.3.4.md` | v4.3.4 全面架构评估 |
 
 ---
 
