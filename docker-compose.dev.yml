@@ -5,7 +5,7 @@ version: '3.8'
 #   docker-compose -f docker-compose.dev.yml up -d
 #   前端：npm run dev（连接 http://localhost:4000）
 #   后端 Swagger：http://localhost:4000/api/docs
-#   Minio 控制台：http://localhost:9001
+#   Minio 控制台：http://localhost:9003
 #
 # 说明：
 # - 首次启动会自动执行 prisma migrate deploy + db:seed + seed-rich-data
@@ -14,7 +14,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: talentpro-postgres-dev
     restart: unless-stopped
     environment:
@@ -22,7 +22,7 @@ services:
       POSTGRES_PASSWORD: talentpro_dev
       POSTGRES_DB: talentpro
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - talentpro_postgres_dev:/var/lib/postgresql/data
     healthcheck:
@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes --save 60 1000
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - talentpro_redis_dev:/data
     healthcheck:
@@ -70,8 +70,8 @@ services:
       MINIO_ROOT_USER: talentpro
       MINIO_ROOT_PASSWORD: talentpro_minio_dev
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "9002:9000"
+      - "9003:9001"
     volumes:
       - talentpro_minio_dev:/data
     command: server /data --console-address ":9001"
@@ -83,7 +83,7 @@ services:
 
   # 数据初始化服务：先跑 migration，再跑 seed，完成后退出
   seed:
-    image: node:22-alpine
+    image: node:22
     container_name: talentpro-seed-dev
     working_dir: /app
     volumes:
@@ -118,7 +118,7 @@ services:
              echo '✅ Seed completed'"
 
   api:
-    image: node:22-alpine
+    image: node:22
     container_name: talentpro-api-dev
     restart: unless-stopped
     working_dir: /app
