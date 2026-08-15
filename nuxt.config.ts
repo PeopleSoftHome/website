@@ -255,8 +255,10 @@ export default defineNuxtConfig({
         output: {
           manualChunks: {
             'vendor-vue': ['vue', 'vue-router', 'pinia'],
-            'vendor-utils': ['axios', '@sentry/vue', 'dompurify', 'marked'],
+            'vendor-utils': ['axios', '@sentry/vue'],
             'vendor-i18n': ['vue-i18n'],
+            // Markdown 渲染库（MarkdownEditor / ChatBot 使用）延迟加载，避免拖慢首屏
+            'vendor-markdown': ['marked', 'dompurify'],
           },
         },
       },
