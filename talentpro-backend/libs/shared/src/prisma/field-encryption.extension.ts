@@ -180,7 +180,7 @@ export function fieldEncryptionExtension(secret: string) {
           if (Array.isArray(results)) return results.map((r) => decryptResult(model, r));
           return results;
         },
-      },
+      } as any,
     },
-  });
+  } as any);
 }
