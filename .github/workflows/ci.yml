@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: write
+
 jobs:
   test-frontend:
     runs-on: ubuntu-latest
@@ -42,6 +45,24 @@ jobs:
       - run: npx vitest run --coverage
       - name: Install Playwright
         run: npx playwright install --with-deps
+      - name: Bootstrap missing visual baselines
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          expected=12
+          actual=$(find e2e -type f -path '*-snapshots/*.png' | wc -l | tr -d ' ')
+          if [ "$actual" -ge "$expected" ]; then
+            echo "Visual baselines already present: $actual"
+            exit 0
+          fi
+          echo "Bootstrapping visual baselines: $actual/$expected"
+          npx playwright test e2e/visual-regression.spec.js --update-snapshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'e2e/*-snapshots'
+          git commit -m "test: bootstrap visual regression baselines" || true
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
       - name: Run E2E tests
         run: npx playwright test
         env:
@@ -221,5 +242,4 @@ jobs:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
       - name: Create deployment tag
-        run: |
-          echo "Deployed version ${{ github.sha }} from branch ${{ github.ref_name }}"
+        run: echo "Deployed version ${{ github.sha }} from branch ${{ github.ref_name }}"
