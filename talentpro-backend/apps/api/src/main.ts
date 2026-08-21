@@ -10,11 +10,11 @@ import * as Sentry from '@sentry/nestjs';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from '@shared/filters';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
+import { csrfMiddleware } from '@shared/security/csrf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug'],
-    // Stripe Webhook 验签需要原始请求体（@RawBody），不开则 payload 为 undefined、验签永远失败
     rawBody: true,
   });
   app.useLogger(app.get(Logger));
@@ -33,10 +33,10 @@ async function bootstrap() {
   const port = configService.get<number>('app.port', 4000);
   const frontendUrl = configService.get<string>('app.frontendUrl', 'http://localhost:3000');
 
-  // Cookie parser（支持 signed cookies）
   app.use(cookieParser(configService.get<string>('JWT_SECRET')));
+  // P0: cookie JWT writes must carry a matching double-submit CSRF token.
+  app.use(csrfMiddleware);
 
-  // Helmet 安全响应头（显式 CSP，生产环境收紧 script-src）
   const isProduction = configService.get<string>('app.env') === 'production';
   logger.log(`[Security] CSP mode: ${isProduction ? 'production (strict script-src)' : 'development (allows unsafe-inline/unsafe-eval)'}`);
   app.use(
@@ -60,7 +60,6 @@ async function bootstrap() {
     }),
   );
 
-  // CORS — 开发模式下允许多个 localhost 端口
   const corsOrigins = configService.get<string>('app.corsOrigins', frontendUrl);
   const origins = corsOrigins.split(',').map((o) => o.trim()).filter(Boolean);
   logger.log(`[CORS] Allowed origins: ${origins.join(', ')}`);
@@ -70,13 +69,11 @@ async function bootstrap() {
     exposedHeaders: ['X-Request-Id'],
   });
 
-  // CORP — 允许跨域资源嵌入（开发模式）
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     next();
   });
 
-  // Global pipes & filters
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -88,10 +85,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
-  // API prefix
   app.setGlobalPrefix('api/v1');
 
-  // Swagger（生产环境关闭）
   if (configService.get<string>('app.env') !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('TalentPro API')
