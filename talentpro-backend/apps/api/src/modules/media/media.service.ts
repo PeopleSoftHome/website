@@ -3,6 +3,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 import { Prisma, Media } from '@prisma/client';
 import { MediaRepository } from './media.repository';
 import { StorageService } from './storage.service';
+import { SignedUrlService } from './signed-url.service';
 
 @Injectable()
 export class MediaService {
@@ -10,6 +11,7 @@ export class MediaService {
     private prisma: PrismaService,
     private repo: MediaRepository,
     private storage: StorageService,
+    private signedUrls: SignedUrlService,
   ) {}
 
   async findAll(page = 1, pageSize = 20, mimeType?: string) {
@@ -22,6 +24,17 @@ export class MediaService {
     const media = await this.repo.findOne(id);
     await this.checkWorkspaceAccess(media, workspaceId);
     return media;
+  }
+
+  async createSignedUrl(id: string, workspaceId?: string, ttlSeconds?: number) {
+    const media = await this.repo.findOne(id);
+    await this.checkWorkspaceAccess(media, workspaceId);
+    const signed = this.signedUrls.sign(media.filename, ttlSeconds);
+    return {
+      mediaId: media.id,
+      expiresAt: signed.expiresAt,
+      url: `/api/v1/medias/file/${encodeURIComponent(media.filename)}?exp=${signed.expiresAt}&sig=${signed.signature}`,
+    };
   }
 
   async upload(file: Express.Multer.File, userId: string) {
