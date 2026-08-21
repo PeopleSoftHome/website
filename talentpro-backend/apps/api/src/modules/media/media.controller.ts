@@ -1,7 +1,12 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UseInterceptors, UploadedFile, Res, StreamableFile, HttpException, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiConsumes } from '@nestjs/swagger';
+import type { Response } from 'express';
+import { extname } from 'path';
+import { createReadStream } from 'fs';
 import { MediaService } from './media.service';
+import { StorageService } from './storage.service';
+import { SignedUrlService } from './signed-url.service';
 import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
@@ -14,7 +19,11 @@ import { UpdateMediaDto } from './dto/update-media.dto';
 @ApiTags('媒体库')
 @Controller('medias')
 export class MediaController {
-  constructor(private mediaService: MediaService) {}
+  constructor(
+    private mediaService: MediaService,
+    private storage: StorageService,
+    private signedUrls: SignedUrlService,
+  ) {}
 
   @Get()
   @UseGuards(RolesGuard)
@@ -33,6 +42,36 @@ export class MediaController {
   @ApiOperation({ summary: '媒体统计' })
   getStats() {
     return this.mediaService.getStats();
+  }
+
+  @Get('file/:filename')
+  @ApiOperation({ summary: '短时签名私有对象下载' })
+  async serveSignedFile(
+    @Param('filename') filename: string,
+    @Query('exp') exp: string,
+    @Query('sig') sig: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const expiresAt = Number(exp);
+    this.signedUrls.assert(filename, expiresAt, sig);
+    if (!/^[A-Za-z0-9._-]+$/.test(filename)) {
+      throw new HttpException('Invalid storage object key', HttpStatus.BAD_REQUEST);
+    }
+
+    let stat;
+    try {
+      stat = await this.storage.stat(filename);
+    } catch {
+      throw new HttpException('Media file not found', HttpStatus.NOT_FOUND);
+    }
+
+    const contentType = this.contentType(filename);
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Length', String(stat.size));
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Disposition', `inline; filename="${filename.replace(/"/g, '')}"`);
+
+    return new StreamableFile(createReadStream(this.storage.resolveLocalPath(filename)));
   }
 
   @Get(':id/signed-url')
@@ -96,5 +135,19 @@ export class MediaController {
   @ApiOperation({ summary: '删除媒体' })
   delete(@Param('id') id: string, @CurrentUser() user: UserContext) {
     return this.mediaService.delete(id, user.workspaceId);
+  }
+
+  private contentType(filename: string) {
+    const ext = extname(filename).toLowerCase();
+    const types: Record<string, string> = {
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+      '.gif': 'image/gif',
+      '.webp': 'image/webp',
+      '.mp4': 'video/mp4',
+      '.pdf': 'application/pdf',
+    };
+    return types[ext] || 'application/octet-stream';
   }
 }
