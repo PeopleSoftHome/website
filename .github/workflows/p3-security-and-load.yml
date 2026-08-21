@@ -1,0 +1,55 @@
+name: P3 Security and Load
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql:
+    name: CodeQL SAST
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-sbom
+          path: sbom.cdx.json
+          retention-days: 14
+
+  load-smoke:
+    name: Load smoke contract
+    if: ${{ vars.LOAD_TEST_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: grafana/setup-k6-action@v1
+      - uses: actions/checkout@v4
+      - name: Run k6 smoke test
+        env:
+          BASE_URL: ${{ vars.LOAD_TEST_URL }}
+        run: k6 run load-tests/smoke.js
