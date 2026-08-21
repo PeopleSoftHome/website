@@ -42,7 +42,7 @@
           type="email-template"
           :title="form.subject"
           :content="form.body || form.html"
-          @result="(p) => { aiPayload.value = p; aiVisible.value = true; }"
+          @result="(p) => { aiPayload = p; aiVisible = true; }"
         />
         <el-button @click="dialogVisible = false">{{ t('emailTemplates.cancel') }}</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">{{ t('emailTemplates.save') }}</el-button>

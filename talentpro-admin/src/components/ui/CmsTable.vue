@@ -145,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import client from '@/api/client';
@@ -294,7 +294,8 @@ const formatJson = (val) => {
   }
 };
 
-// 解构暴露给模板，保持原模板变量名完全兼容
+// 必须用 toRefs 解构：crud 是 reactive 对象，直接解构会拿到一次性快照，
+// 导致表格数据/加载态永远不更新；toRefs 保持模板的响应式绑定且变量名完全兼容
 const {
   items,
   total,
@@ -310,7 +311,7 @@ const {
   handleDelete,
   setParams,
   params,
-} = crud;
+} = toRefs(crud);
 
 defineExpose({ setParams, params, fetch: crud.fetch, refresh: crud.refresh });
 </script>

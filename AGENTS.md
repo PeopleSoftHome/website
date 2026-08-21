@@ -230,6 +230,7 @@ npm run build
 3. 严禁硬编码 `#fff`/`#000`，使用语义化 CSS 变量。
 4. 新增用户可见文本必须同步 `zh-CN.json` / `en.json` / `zh-TW.json`。
 5. 新增弹窗前核对 z-index 表。
+6. Admin：`useList` 返回普通对象包裹的 ref，模板用 `list.items` 访问时必须 `reactive(useList(...))` 包装（参照 `useCrud` 返回约定）；从 `useCrud` 的 reactive 返回值解构必须经 `toRefs`，直接解构会拿到一次性快照（el-table 收到 RefImpl 会抛 `rows is not iterable`，继而引发 `parentNode` 渲染崩溃）。
 
 ---
 

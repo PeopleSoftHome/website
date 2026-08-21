@@ -132,9 +132,10 @@ import { downloadFile } from '@/utils/downloadFile';
 
 const { t } = useI18n();
 
-const list = useList({
+// useList 返回普通对象包裹的 ref，需用 reactive 包装后模板才能正确解包（同 useCrud 的返回约定）
+const list = reactive(useList({
   fetchFn: (p) => client.get(`/demo-bookings?page=${p.page}&pageSize=${p.pageSize}`),
-});
+}));
 
 const drawerVisible = ref(false);
 const detailLoading = ref(false);

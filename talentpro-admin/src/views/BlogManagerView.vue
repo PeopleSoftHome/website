@@ -73,7 +73,7 @@
           type="blog"
           :title="form.title"
           :content="form.content || form.excerpt"
-          @result="(p) => { aiPayload.value = p; aiVisible.value = true; }"
+          @result="(p) => { aiPayload = p; aiVisible = true; }"
         />
         <el-button @click="dialogVisible = false">{{ t('blogs.cancel') }}</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">{{ t('blogs.save') }}</el-button>
@@ -93,7 +93,7 @@
 <script setup lang="ts">
 // @ts-nocheck
 import { formatDate } from '@/utils/formatDate';
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -112,9 +112,10 @@ import AiAssistDialog from '@/components/ai/AiAssistDialog.vue';
 const aiVisible = ref(false);
 const aiPayload = ref({ type: 'blog', title: '', content: '' });
 
-const list = useList({
+// useList 返回普通对象包裹的 ref，需用 reactive 包装后模板才能正确解包（同 useCrud 的返回约定）
+const list = reactive(useList({
   fetchFn: (p) => client.get(`/blogs/posts?page=${p.page}&pageSize=${p.pageSize}`),
-});
+}));
 
 const categories = ref([]);
 const dialogVisible = ref(false);
