@@ -14,7 +14,7 @@ Based on the 2026-08-21 architecture/product/UI/security assessment, P1 covers:
 ## Acceptance contracts
 
 ### Visual Regression
-Baseline routes: `/`, `/en`, `/zh-TW`; viewports: desktop 1440x900 and mobile 390x844; themes: light/dark.
+Baseline routes: `/`, `/en`, `/zh-TW`; viewports: desktop 1440x900 and mobile 390x844; themes: light/dark. Baseline PNGs are release artifacts and must be reviewed and committed; CI never creates or pushes them.
 
 ### Performance Budget
 - LCP < 2.5s
@@ -33,19 +33,19 @@ Baseline routes: `/`, `/en`, `/zh-TW`; viewports: desktop 1440x900 and mobile 39
 - RPO <= 15 min
 - RTO <= 30 min
 
-These are targets, not a claim that production currently meets them.
+These are targets, not production evidence until measured against the live environment.
 
 ### AI Gateway
-All AI entry points should converge on quota -> queue -> model gateway -> provider routing, keeping model latency isolated from normal API workers.
+All AI entry points converge on quota -> queue -> model gateway -> provider routing. Production provider misconfiguration fails closed instead of silently falling back.
 
-### AI Eval
-Every model/provider change should be evaluated for quality, cost, latency, and safety before production promotion.
+### AI Evaluation
+Every model/provider change is evaluated for quality, safety, latency and cost. Current CI is a deterministic live-provider gate; broader semantic and adversarial evaluation remains a planned hardening layer.
 
 ### Event Contract
 Cross-domain events use versioned event names and stable envelopes. Producers must not directly depend on consumers' persistence models.
 
 ### Signed URL Storage
-Business files remain private in object storage. Applications return time-limited signed download URLs instead of public object paths.
+Business files remain private. Production requires S3/OSS-compatible object storage and time-limited signed download URLs.
 
 ### Production HA
-Stateless API instances, shared Redis state, durable job queues, health/readiness endpoints, and documented backup/restore objectives are required before production scale claims.
+Stateless API instances, shared Redis state, durable queues, health/readiness endpoints, backup/restore and failover drills are required before production scale claims. CI includes a deterministic local PostgreSQL restore + Redis failover drill; production RPO/RTO still requires environment evidence before release.
