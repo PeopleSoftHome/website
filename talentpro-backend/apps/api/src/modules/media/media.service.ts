@@ -4,6 +4,7 @@ import { Prisma, Media } from '@prisma/client';
 import { MediaRepository } from './media.repository';
 import { StorageService } from './storage.service';
 import { SignedUrlService } from './signed-url.service';
+import { assertMediaSignature } from './file-signature';
 
 @Injectable()
 export class MediaService {
@@ -38,6 +39,7 @@ export class MediaService {
   }
 
   async upload(file: Express.Multer.File, userId: string) {
+    assertMediaSignature(file.buffer, file.mimetype);
     const result = await this.storage.upload(file);
     const media = await this.repo.create({
       filename: result.filename,
@@ -77,6 +79,7 @@ export class MediaService {
     alt?: string;
     createdBy: string;
   }) {
+    assertMediaSignature(data.buffer, data.mimeType);
     const originalName = data.originalName || data.filename || `ai-generated-${Date.now()}.png`;
     const file: Express.Multer.File = {
       buffer: data.buffer,
