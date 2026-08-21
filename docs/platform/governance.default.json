@@ -1,0 +1,14 @@
+{
+  "id": "enterprise-default",
+  "version": "1.0.0",
+  "name": "Enterprise Default Governance",
+  "enabled": true,
+  "maxRisk": "medium",
+  "allowedTools": ["analyze_workforce", "search_product", "get_case", "find_policy"],
+  "blockedDataClasses": ["raw_credentials", "payment_card_data", "private_keys"],
+  "requireHumanApprovalFor": ["high-risk-tool", "external-side-effect", "bulk-write"],
+  "maxStepsPerRun": 20,
+  "maxCostUsd": 2,
+  "retentionDays": 30,
+  "auditRequired": true
+}
