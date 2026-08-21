@@ -23,15 +23,8 @@ export class MediaController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '媒体文件列表' })
   @ApiQuery({ name: 'mimeType', required: false, description: 'image/video/document' })
-  findAll(
-    @Query() pagination: PaginationDto,
-    @Query('mimeType') mimeType?: string,
-  ) {
-    return this.mediaService.findAll(
-      pagination.page,
-      pagination.pageSize,
-      mimeType,
-    );
+  findAll(@Query() pagination: PaginationDto, @Query('mimeType') mimeType?: string) {
+    return this.mediaService.findAll(pagination.page, pagination.pageSize, mimeType);
   }
 
   @Get('stats')
@@ -43,9 +36,17 @@ export class MediaController {
     return this.mediaService.getStats();
   }
 
+  @Get(':id/signed-url')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '获取短时签名媒体 URL' })
+  signedUrl(@Param('id') id: string, @CurrentUser() user: UserContext, @Query('ttl') ttl?: string) {
+    const ttlSeconds = ttl ? Number(ttl) : undefined;
+    return this.mediaService.createSignedUrl(id, user.workspaceId, ttlSeconds);
+  }
+
   @Get(':id')
   @Public()
-  @ApiOperation({ summary: '媒体详情' })
+  @ApiOperation({ summary: '媒体详情（兼容接口，业务文件应优先使用 signed-url）' })
   findOne(@Param('id') id: string, @CurrentUser() user?: UserContext) {
     return this.mediaService.findOne(id, user?.workspaceId);
   }
@@ -64,10 +65,7 @@ export class MediaController {
       cb(allowed ? null : new Error('不支持的文件类型'), allowed);
     },
   }))
-  upload(
-    @CurrentUser('id') userId: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  upload(@CurrentUser('id') userId: string, @UploadedFile() file: Express.Multer.File) {
     return this.mediaService.upload(file, userId);
   }
 
@@ -77,10 +75,7 @@ export class MediaController {
   @ApiBearerAuth()
   @Permission('media:create')
   @ApiOperation({ summary: '创建媒体记录（上传后调用）' })
-  create(
-    @CurrentUser('id') userId: string,
-    @Body() dto: CreateMediaDto,
-  ) {
+  create(@CurrentUser('id') userId: string, @Body() dto: CreateMediaDto) {
     return this.mediaService.create({ ...dto, createdBy: userId });
   }
 
