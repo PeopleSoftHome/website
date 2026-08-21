@@ -26,8 +26,11 @@ const DEFAULT_POLICY: GovernancePolicy = {
 export class ToolRegistryService {
   private readonly tools = new Map<string, ToolDefinition>();
   private readonly handlers = new Map<string, ToolHandler>();
+  private readonly policyReady: Promise<void>;
 
-  constructor(private readonly config: ConfigService, private readonly redis: Redis | Cluster, private readonly prisma: PrismaService) { void this.ensurePolicy(); }
+  constructor(private readonly config: ConfigService, private readonly redis: Redis | Cluster, private readonly prisma: PrismaService) {
+    this.policyReady = this.ensurePolicy();
+  }
 
   register(definition: ToolDefinition, handler: ToolHandler) {
     if (definition.id.includes('/')) throw new Error('Tool id must not contain /');
@@ -124,6 +127,7 @@ export class ToolRegistryService {
   }
 
   private async loadPolicy(): Promise<GovernancePolicy> {
+    await this.policyReady;
     const raw = await this.redis.get(GOVERNANCE_KEY);
     if (!raw) throw new Error('AI governance policy is unavailable');
     try { return JSON.parse(raw) as GovernancePolicy; } catch { throw new Error('AI governance policy is invalid'); }
