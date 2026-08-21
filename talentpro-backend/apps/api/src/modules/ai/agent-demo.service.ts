@@ -7,6 +7,8 @@ import type { Cluster } from 'ioredis';
 import { randomUUID } from 'crypto';
 import { REDIS_CLIENT } from '@shared/redis/redis.module';
 import { AiGatewayService } from './ai-gateway.service';
+import { ToolRegistryService } from './platform/tool-registry.service';
+import type { ToolInvocationRequest } from './platform/tool-registry.types';
 
 export const DEMO_AGENT_CONTEXT = {
   userId: 'public-demo-user',
@@ -20,45 +22,13 @@ export const DEMO_AGENT_CONTEXT = {
   },
 } as const;
 
-type DemoPrompt = {
-  id: string;
-  question: string;
-  metrics: string[];
-  finding: string;
-  decision: string;
-  action: string;
-};
-
-interface AgentActionJob {
-  actionKey: string;
-  action: Record<string, unknown>;
-}
+type DemoPrompt = { id: string; question: string; metrics: string[]; finding: string; decision: string; action: string };
+interface AgentActionJob { actionKey: string; action: Record<string, unknown> }
 
 const PROMPTS: DemoPrompt[] = [
-  {
-    id: 'hiring-efficiency',
-    question: 'Why did hiring efficiency drop this quarter?',
-    metrics: ['12,481 workforce signals', 'conversion by funnel stage', 'offer acceptance rate'],
-    finding: '3 conversion bottlenecks in high-friction funnel stages',
-    decision: 'Rebalance recruiter capacity',
-    action: 'Shift 18 recruiter hours to the highest-friction funnel stages',
-  },
-  {
-    id: 'attrition-risk',
-    question: 'Which teams are most at risk of regrettable attrition?',
-    metrics: ['7,208 engagement signals', 'manager pulse', 'team-level risk trend'],
-    finding: '2 teams with rising attrition risk',
-    decision: 'Launch manager interventions',
-    action: 'Create targeted manager check-ins for the two highest-risk teams',
-  },
-  {
-    id: 'workforce-cost',
-    question: 'Where can we reduce workforce cost without slowing growth?',
-    metrics: ['31 cost and capacity metrics', 'workflow volume', 'approval cycle time'],
-    finding: '4 low-leverage activities',
-    decision: 'Automate repeatable workflows',
-    action: 'Automate four repeatable approvals and recover 126 hours / month',
-  },
+  { id: 'hiring-efficiency', question: 'Why did hiring efficiency drop this quarter?', metrics: ['12,481 workforce signals', 'conversion by funnel stage', 'offer acceptance rate'], finding: '3 conversion bottlenecks in high-friction funnel stages', decision: 'Rebalance recruiter capacity', action: 'Shift 18 recruiter hours to the highest-friction funnel stages' },
+  { id: 'attrition-risk', question: 'Which teams are most at risk of regrettable attrition?', metrics: ['7,208 engagement signals', 'manager pulse', 'team-level risk trend'], finding: '2 teams with rising attrition risk', decision: 'Launch manager interventions', action: 'Create targeted manager check-ins for the two highest-risk teams' },
+  { id: 'workforce-cost', question: 'Where can we reduce workforce cost without slowing growth?', metrics: ['31 cost and capacity metrics', 'workflow volume', 'approval cycle time'], finding: '4 low-leverage activities', decision: 'Automate repeatable workflows', action: 'Automate four repeatable approvals and recover 126 hours / month' },
 ];
 
 @Injectable()
@@ -66,117 +36,63 @@ export class AgentDemoService {
   constructor(
     private readonly gateway: AiGatewayService,
     private readonly config: ConfigService,
+    private readonly tools: ToolRegistryService,
     @Inject(REDIS_CLIENT) private readonly redis: Redis | Cluster,
     @InjectQueue('agent-actions') private readonly actionQueue: Queue<AgentActionJob>,
-  ) {}
+  ) {
+    this.tools.register({
+      id: 'analyze_workforce_demo', version: '1.0.0', name: 'Analyze workforce demo', description: 'Analyze workspace-scoped aggregated workforce metrics for the product demo.',
+      inputSchema: { type: 'object', required: ['promptId'] }, outputSchema: { type: 'object' },
+      permissions: [{ permission: 'ai:demo:analyze', roles: ['DEMO_USER'] }], dataScope: { workspaceScoped: true, resourceTypes: ['aggregated_workforce_metrics'] }, risk: 'low', auditRequired: true, sideEffects: false,
+    }, async (input: unknown) => {
+      const promptId = typeof input === 'object' && input !== null && 'promptId' in input ? String((input as { promptId: unknown }).promptId) : PROMPTS[0].id;
+      const prompt = PROMPTS.find((item) => item.id === promptId) || PROMPTS[0];
+      return { metrics: prompt.metrics, finding: prompt.finding, decision: prompt.decision, workspaceId: DEMO_AGENT_CONTEXT.workspaceId };
+    });
 
-  async run(input: { promptId?: string; apply?: boolean; locale?: string }) {
+    this.tools.register({
+      id: 'apply_workforce_action_demo', version: '1.0.0', name: 'Apply workforce demo action', description: 'Queue a synthetic demo workflow action after explicit human approval.',
+      inputSchema: { type: 'object', required: ['promptId', 'requestId'] }, outputSchema: { type: 'object' },
+      permissions: [{ permission: 'ai:demo:action', roles: ['DEMO_USER'] }], dataScope: { workspaceScoped: true, resourceTypes: ['aggregated_workforce_metrics'] }, risk: 'low', auditRequired: true, sideEffects: true,
+    }, async (input: unknown, request: ToolInvocationRequest) => {
+      const payload = input as { promptId: string; requestId: string };
+      const prompt = PROMPTS.find((item) => item.id === payload.promptId) || PROMPTS[0];
+      return this.queueAction(prompt, payload.requestId);
+    });
+  }
+
+  async run(input: { promptId?: string; apply?: boolean; locale?: string; approvalToken?: string }) {
     const prompt = PROMPTS.find((item) => item.id === input.promptId) || PROMPTS[0];
     const requestId = randomUUID();
     const providerConfigured = this.isProviderConfigured();
-    const isProduction = this.config.get('APP_ENV', 'development') === 'production';
-    const requireProvider = isProduction || this.config.get('AGENT_DEMO_REQUIRE_PROVIDER', 'false') === 'true';
+    const production = this.config.get('APP_ENV', 'development') === 'production';
+    if ((production || this.config.get('AGENT_DEMO_REQUIRE_PROVIDER', 'false') === 'true') && !providerConfigured) throw new ServiceUnavailableException('Agent demo requires a configured LLM provider');
 
-    if (requireProvider && !providerConfigured) {
-      throw new ServiceUnavailableException('Agent demo requires a configured LLM provider');
+    const context = { userId: DEMO_AGENT_CONTEXT.userId, workspaceId: DEMO_AGENT_CONTEXT.workspaceId, roles: [...DEMO_AGENT_CONTEXT.roles], permissions: [...DEMO_AGENT_CONTEXT.permissions], requestId, dataClasses: [...DEMO_AGENT_CONTEXT.dataScope.dataClasses], steps: input.apply ? 2 : 1, estimatedCostUsd: 0, approvalToken: input.approvalToken };
+    const analysisInvocation = await this.tools.invoke({ toolId: 'analyze_workforce_demo', version: '1.0.0', input: { promptId: prompt.id }, context });
+    const toolResult = analysisInvocation.result as { metrics: string[]; finding: string; decision: string };
+
+    const response = await this.gateway.chat({ subject: `agent-demo:${DEMO_AGENT_CONTEXT.workspaceId}`, locale: input.locale || 'en', message: prompt.question, history: [{ role: 'system', content: [
+      'You are the TalentPro workforce agent demo.', `User=${DEMO_AGENT_CONTEXT.userId}`, `Workspace=${DEMO_AGENT_CONTEXT.workspaceId}`, `Role=${DEMO_AGENT_CONTEXT.roles.join(',')}`, `Permissions=${DEMO_AGENT_CONTEXT.permissions.join(',')}`, `DataScope=${DEMO_AGENT_CONTEXT.dataScope.dataClasses.join(',')}`, `ToolResult=${JSON.stringify(toolResult)}`, 'Do not invent data outside this scope.',
+    ].join('\n') }] });
+
+    let action: unknown = null;
+    if (input.apply) {
+      action = await this.tools.invoke({ toolId: 'apply_workforce_action_demo', version: '1.0.0', input: { promptId: prompt.id, requestId }, context });
     }
 
-    const toolResult = this.executeAnalyzeTool(prompt, requestId);
-    const response = await this.gateway.chat({
-      subject: `agent-demo:${DEMO_AGENT_CONTEXT.workspaceId}`,
-      locale: input.locale || 'en',
-      message: prompt.question,
-      history: [
-        {
-          role: 'system',
-          content: [
-            'You are the TalentPro workforce agent demo.',
-            'The request is authorized under the following scope:',
-            `User=${DEMO_AGENT_CONTEXT.userId}`,
-            `Workspace=${DEMO_AGENT_CONTEXT.workspaceId}`,
-            `Role=${DEMO_AGENT_CONTEXT.roles.join(',')}`,
-            `Permissions=${DEMO_AGENT_CONTEXT.permissions.join(',')}`,
-            `DataScope=${DEMO_AGENT_CONTEXT.dataScope.dataClasses.join(',')}`,
-            `Tool=analyze_workforce_demo`,
-            `ToolResult=${JSON.stringify(toolResult)}`,
-            'Do not invent data outside this scope.',
-          ].join('\n'),
-        },
-      ],
-    });
-
-    const action = input.apply ? await this.applyAction(prompt, requestId) : null;
-
-    return {
-      requestId,
-      providerConfigured,
-      context: DEMO_AGENT_CONTEXT,
-      tool: {
-        id: 'analyze_workforce_demo',
-        version: '1.0.0',
-        risk: 'low',
-        dataScope: DEMO_AGENT_CONTEXT.dataScope,
-        result: toolResult,
-      },
-      analysis: {
-        question: prompt.question,
-        response: response.content,
-        finding: prompt.finding,
-        decision: prompt.decision,
-        action: prompt.action,
-      },
-      action,
-    };
+    return { requestId, providerConfigured, context: DEMO_AGENT_CONTEXT, tool: { id: 'analyze_workforce_demo', version: '1.0.0', risk: 'low', dataScope: DEMO_AGENT_CONTEXT.dataScope, result: toolResult }, analysis: { question: prompt.question, response: response.content, finding: prompt.finding, decision: prompt.decision, action: prompt.action }, action };
   }
 
-  private executeAnalyzeTool(prompt: DemoPrompt, requestId: string) {
-    return {
-      requestId,
-      workspaceId: DEMO_AGENT_CONTEXT.workspaceId,
-      metrics: prompt.metrics,
-      finding: prompt.finding,
-      decision: prompt.decision,
-    };
-  }
-
-  private async applyAction(prompt: DemoPrompt, requestId: string) {
-    const approval = this.config.get('AGENT_DEMO_ACTION_APPROVAL', 'public-demo-approved');
-    const action = {
-      id: randomUUID(),
-      requestId,
-      toolId: 'apply_workforce_action_demo',
-      workspaceId: DEMO_AGENT_CONTEXT.workspaceId,
-      permission: 'ai:demo:action',
-      approval,
-      action: prompt.action,
-      createdAt: new Date().toISOString(),
-      status: 'queued',
-    };
+  private async queueAction(prompt: DemoPrompt, requestId: string) {
+    const action = { id: randomUUID(), requestId, toolId: 'apply_workforce_action_demo', workspaceId: DEMO_AGENT_CONTEXT.workspaceId, permission: 'ai:demo:action', approval: 'human-approved', action: prompt.action, createdAt: new Date().toISOString(), status: 'queued' };
     const actionKey = `ai:demo:action:${action.id}`;
-
     await this.redis.set(actionKey, JSON.stringify(action), 'EX', 86_400);
     const job = await this.actionQueue.add('apply-workforce-action', { actionKey, action });
-
-    const started = Date.now();
-    while (Date.now() - started < 10_000) {
-      const raw = await this.redis.get(actionKey);
-      if (raw) {
-        const current = JSON.parse(raw) as typeof action & { executedAt?: string; execution?: unknown };
-        if (current.status === 'completed') {
-          return { ...current, jobId: job.id };
-        }
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    return { ...action, jobId: job.id, status: 'queued' };
+    return { ...action, jobId: job.id };
   }
 
   private isProviderConfigured() {
-    return Boolean(
-      this.config.get('OPENAI_API_KEY') ||
-      this.config.get('AZURE_OPENAI_API_KEY') ||
-      this.config.get('ANTHROPIC_API_KEY'),
-    );
+    return Boolean(this.config.get('OPENAI_API_KEY') || this.config.get('AZURE_OPENAI_API_KEY') || this.config.get('ANTHROPIC_API_KEY'));
   }
 }
