@@ -1,184 +1,100 @@
 /**
- * 顶部导航 fallback 数据
- * v4.2.0：支持按 locale 返回对应语言数据
+ * P0 Navigation v2 — small, product-first primary navigation.
+ * Secondary utilities (search, language, theme, account, commerce) should
+ * remain discoverable from the product shell / command palette rather than
+ * competing with the primary story above the fold.
  */
 
 const NAV_LINKS_ZH = [
   {
-    id: 'ai-family',
-    label: 'AI Family',
+    id: 'platform',
+    label: '平台',
     hasDropdown: true,
     items: [
-      { icon: 'bot', title: 'AI 招聘助手', desc: '让招聘更智能、更高效', href: '/products/ai-recruit' },
-      { icon: 'target', title: 'AI 面试官', desc: '不止评能力，更要测潜力', href: '/products/ai-interview' },
-      { icon: 'book', title: 'AI 学习助手', desc: '陪伴员工个性化成长', href: '/products/ai-course' },
-      { icon: 'award', title: 'AI 领导力教练', desc: '管理者专属成长伙伴', href: '/products/ai-coach' },
+      { icon: 'grid', title: 'TalentPro Platform', desc: '统一的人才、组织与工作空间', href: '/platform' },
+      { icon: 'users', title: 'Workspace', desc: '企业团队协作与人才运营', href: '/workspace' },
+      { icon: 'bar-chart', title: 'Analytics', desc: '从数据到决策的 HR Intelligence', href: '/analytics' },
     ],
-    banner: {
-      thumb: 'award',
-      title: '2026 AI+HR 最佳实践案例集',
-      desc: '蒙牛、京东方等先锋企业的 AI 落地经验',
-      href: '/cases',
-    },
-  },
-  {
-    id: 'products',
-    label: '产品',
-    hasDropdown: true,
-    items: [
-      { icon: 'users', title: '招聘管理系统', desc: '全流程数字化招聘', href: '/products/recruit' },
-      { icon: 'bar-chart', title: '绩效管理系统', desc: '目标对齐、绩效驱动', href: '/products/performance' },
-      { icon: 'building', title: '组织人事系统', desc: '集团化组织管控', href: '/products/org' },
-      { icon: 'dollar-sign', title: '薪酬管理系统', desc: '精准薪酬，自动核算', href: '/products/payroll' },
-    ],
-    banner: {
-      thumb: 'bar-chart',
-      title: '《2026 HR 数智化成熟度模型白皮书》',
-      desc: '权威调研，免费下载',
-      href: '/resources/hr-digitization-whitepaper',
-    },
   },
   {
     id: 'solutions',
     label: '解决方案',
     hasDropdown: true,
     items: [
-      { icon: 'factory', title: '制造业方案', desc: '精细化管理，加速转型', href: '/solutions/manufacturing' },
-      { icon: 'store', title: '零售连锁方案', desc: '精益门店运营，协同提效', href: '/solutions/retail' },
-      { icon: 'monitor', title: '互联网方案', desc: '智慧决策，极致体验', href: '/solutions/internet' },
-      { icon: 'landmark', title: '央国企方案', desc: '推进人才强企战略', href: '/solutions/government' },
+      { icon: 'factory', title: '制造业', desc: '复杂 workforce 的精细化运营', href: '/solutions/manufacturing' },
+      { icon: 'store', title: '零售连锁', desc: '多门店人才效率与协同', href: '/solutions/retail' },
+      { icon: 'monitor', title: '互联网与科技', desc: '快速增长团队的人才决策', href: '/solutions/internet' },
+      { icon: 'landmark', title: '央国企', desc: '人才强企与集团化治理', href: '/solutions/government' },
     ],
-    banner: {
-      thumb: 'factory',
-      title: '制造业 HR 数字化转型实战指南',
-      desc: '覆盖排班 / 考勤 / 蓝领招聘全场景',
-      href: '/resources/hr-digital-upgrade',
-    },
   },
   {
-    id: 'cases',
-    label: '客户案例',
-    hasDropdown: false,
-    href: '/cases',
-  },
-  {
-    id: 'pricing',
-    label: '定价',
-    hasDropdown: false,
-    href: '/pricing',
+    id: 'ai',
+    label: 'AI',
+    hasDropdown: true,
+    items: [
+      { icon: 'bot', title: 'AI Workforce Copilot', desc: '理解业务问题，定位瓶颈并给出行动', href: '/ai' },
+      { icon: 'target', title: 'AI 招聘', desc: '从候选人搜索到决策辅助', href: '/products/ai-recruit' },
+      { icon: 'award', title: 'AI 领导力', desc: '让管理者获得持续决策支持', href: '/products/ai-coach' },
+    ],
   },
   {
     id: 'resources',
-    label: '资源中心',
-    hasDropdown: false,
-    href: '/resources',
-  },
-  {
-    id: 'about',
-    label: '关于我们',
+    label: '资源',
     hasDropdown: true,
     items: [
-      { icon: 'building', title: '公司介绍', desc: '了解 TalentPro 的发展历程与愿景', href: '/about' },
-      { icon: 'newspaper', title: '新闻动态', desc: '最新产品发布与企业资讯', href: '/news' },
-      { icon: 'grid', title: '应用广场', desc: '探索丰富的 HR 生态应用', href: '/marketplace' },
-      { icon: 'book-open', title: '博客', desc: 'HR 数字化实践与行业洞察', href: '/blog' },
-      { icon: 'message-circle', title: '社区', desc: '用户交流与最佳实践分享', href: '/forum' },
-      { icon: 'users', title: '加入我们', desc: '与我们一起打造下一代 HR SaaS', href: '/careers' },
-      { icon: 'mail', title: '联系我们', desc: '获取产品咨询与专业支持', href: '/about/contact' },
+      { icon: 'book-open', title: '案例', desc: '看结果，不只看功能', href: '/cases' },
+      { icon: 'book', title: '洞察', desc: 'HR 数字化与 AI 趋势', href: '/resources' },
+      { icon: 'message-circle', title: '社区', desc: '实践交流与最佳实践', href: '/forum' },
     ],
   },
 ];
 
 const NAV_LINKS_EN = [
   {
-    id: 'ai-family',
-    label: 'AI Family',
+    id: 'platform',
+    label: 'Platform',
     hasDropdown: true,
     items: [
-      { icon: 'bot', title: 'AI Recruiter', desc: 'Smarter, faster hiring', href: '/products/ai-recruit' },
-      { icon: 'target', title: 'AI Interviewer', desc: 'Beyond skills — assess potential', href: '/products/ai-interview' },
-      { icon: 'book', title: 'AI Learning Coach', desc: 'Personalized employee growth', href: '/products/ai-course' },
-      { icon: 'award', title: 'AI Leadership Coach', desc: 'Personal coach for every manager', href: '/products/ai-coach' },
+      { icon: 'grid', title: 'TalentPro Platform', desc: 'One system for people, work and decisions', href: '/platform' },
+      { icon: 'users', title: 'Workspace', desc: 'Collaborate and operate talent at scale', href: '/workspace' },
+      { icon: 'bar-chart', title: 'Analytics', desc: 'Turn workforce data into decisions', href: '/analytics' },
     ],
-    banner: {
-      thumb: 'award',
-      title: '2026 AI+HR Best Practice Playbook',
-      desc: 'How Mengniu, BOE & more are winning with AI HR',
-      href: '/cases',
-    },
-  },
-  {
-    id: 'products',
-    label: 'Products',
-    hasDropdown: true,
-    items: [
-      { icon: 'users', title: 'Recruitment Management', desc: 'End-to-end digital recruiting', href: '/products/recruit' },
-      { icon: 'bar-chart', title: 'Performance Management', desc: 'Align goals, drive results', href: '/products/performance' },
-      { icon: 'building', title: 'HR & Organization', desc: 'Enterprise org management', href: '/products/org' },
-      { icon: 'dollar-sign', title: 'Payroll Management', desc: 'Precise payroll, automated', href: '/products/payroll' },
-    ],
-    banner: {
-      thumb: 'bar-chart',
-      title: '2026 HR Digitalization Maturity Report',
-      desc: 'Authoritative research, free download',
-      href: '/resources/hr-digitization-whitepaper',
-    },
   },
   {
     id: 'solutions',
     label: 'Solutions',
     hasDropdown: true,
     items: [
-      { icon: 'factory', title: 'Manufacturing', desc: 'Streamline complex operations', href: '/solutions/manufacturing' },
-      { icon: 'store', title: 'Retail & Chain', desc: 'Multi-store workforce efficiency', href: '/solutions/retail' },
-      { icon: 'monitor', title: 'Internet & Tech', desc: 'Agile HR for fast-growing teams', href: '/solutions/internet' },
-      { icon: 'landmark', title: 'State-owned Enterprise', desc: 'Talent-driven enterprise strategy', href: '/solutions/government' },
+      { icon: 'factory', title: 'Manufacturing', desc: 'Operate complex workforces with precision', href: '/solutions/manufacturing' },
+      { icon: 'store', title: 'Retail & Chain', desc: 'Improve multi-site workforce efficiency', href: '/solutions/retail' },
+      { icon: 'monitor', title: 'Internet & Tech', desc: 'Make better talent decisions at speed', href: '/solutions/internet' },
+      { icon: 'landmark', title: 'State-owned Enterprise', desc: 'Build talent-led enterprise strategy', href: '/solutions/government' },
     ],
-    banner: {
-      thumb: 'factory',
-      title: 'Manufacturing HR Digital Transformation Guide',
-      desc: 'Covering scheduling, attendance & blue-collar hiring',
-      href: '/resources/hr-digital-upgrade',
-    },
   },
   {
-    id: 'cases',
-    label: 'Case Studies',
-    hasDropdown: false,
-    href: '/cases',
-  },
-  {
-    id: 'pricing',
-    label: 'Pricing',
-    hasDropdown: false,
-    href: '/pricing',
+    id: 'ai',
+    label: 'AI',
+    hasDropdown: true,
+    items: [
+      { icon: 'bot', title: 'AI Workforce Copilot', desc: 'Understand problems, find bottlenecks, take action', href: '/ai' },
+      { icon: 'target', title: 'AI Recruiting', desc: 'From candidate discovery to decision support', href: '/products/ai-recruit' },
+      { icon: 'award', title: 'AI Leadership', desc: 'Continuous decision support for managers', href: '/products/ai-coach' },
+    ],
   },
   {
     id: 'resources',
     label: 'Resources',
-    hasDropdown: false,
-    href: '/resources',
-  },
-  {
-    id: 'about',
-    label: 'About Us',
     hasDropdown: true,
     items: [
-      { icon: 'building', title: 'About TalentPro', desc: 'Learn about our journey and vision', href: '/about' },
-      { icon: 'newspaper', title: 'News', desc: 'Latest product releases and company news', href: '/news' },
-      { icon: 'grid', title: 'Marketplace', desc: 'Explore rich HR ecosystem apps', href: '/marketplace' },
-      { icon: 'book-open', title: 'Blog', desc: 'HR digitalization practice and insights', href: '/blog' },
-      { icon: 'message-circle', title: 'Community', desc: 'User exchange and best practice sharing', href: '/forum' },
-      { icon: 'users', title: 'Careers', desc: 'Join us to build the next-gen HR SaaS', href: '/careers' },
-      { icon: 'mail', title: 'Contact Us', desc: 'Get product consulting and professional support', href: '/about/contact' },
+      { icon: 'book-open', title: 'Case Studies', desc: 'See outcomes, not just features', href: '/cases' },
+      { icon: 'book', title: 'Insights', desc: 'HR digitalization and AI trends', href: '/resources' },
+      { icon: 'message-circle', title: 'Community', desc: 'Practice and best-practice exchange', href: '/forum' },
     ],
   },
 ];
 
 export function getHeaderNav(locale?: string) {
-  if (locale === 'zh' || locale === 'zh-TW') return NAV_LINKS_ZH;
-  return NAV_LINKS_EN;
+  return locale === 'zh' || locale === 'zh-TW' ? NAV_LINKS_ZH : NAV_LINKS_EN;
 }
 
-/** 兼容旧直接引用：默认中文 */
 export const NAV_LINKS = NAV_LINKS_ZH;
