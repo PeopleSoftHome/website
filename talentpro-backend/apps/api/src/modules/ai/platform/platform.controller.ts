@@ -17,7 +17,7 @@ export class PlatformController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('ai:tools:read')
   @ApiOperation({ summary: 'List governed AI tools' })
-  listTools() {
+  async listTools() {
     return this.tools.list();
   }
 
@@ -25,7 +25,7 @@ export class PlatformController {
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('ai:tools:invoke')
   @ApiOperation({ summary: 'Invoke a governed AI tool' })
-  invokeTool(@Body() request: ToolInvocationRequest) {
+  async invokeTool(@Body() request: ToolInvocationRequest) {
     return this.tools.invoke(request);
   }
 }
