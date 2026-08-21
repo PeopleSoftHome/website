@@ -48,6 +48,14 @@ jobs:
           path: sbom.cdx.json
           retention-days: 14
 
+  dr-local:
+    name: Database restore + Redis failover drill
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run deterministic DR drill
+        run: bash scripts/dr-drill.sh
+
   load-local:
     name: Deterministic local load smoke
     runs-on: ubuntu-latest
