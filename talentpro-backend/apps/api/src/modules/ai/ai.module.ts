@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AiService } from './ai.service';
+import { AiGatewayService } from './ai-gateway.service';
 import { AiRagService } from './ai-rag.service';
 import { AiEmbeddingService } from './ai-embedding.service';
 import { AiPromptService } from './ai-prompt.service';
@@ -14,6 +15,7 @@ import { MediaModule } from '../media/media.module';
   imports: [MediaModule],
   providers: [
     AiService,
+    AiGatewayService,
     AiRagService,
     AiEmbeddingService,
     AiPromptService,
@@ -23,6 +25,6 @@ import { MediaModule } from '../media/media.module';
     LlmProviderFactory,
   ],
   controllers: [AiController],
-  exports: [AiService],
+  exports: [AiService, AiGatewayService],
 })
 export class AiModule {}
