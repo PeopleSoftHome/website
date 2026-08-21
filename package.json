@@ -4,12 +4,8 @@
   "version": "4.4.2",
   "type": "module",
   "lint-staged": {
-    "src/**/*.{js,ts,vue}": [
-      "eslint --fix"
-    ],
-    "e2e/**/*.js": [
-      "eslint --fix"
-    ]
+    "src/**/*.{js,ts,vue}": ["eslint --fix"],
+    "e2e/**/*.js": ["eslint --fix"]
   },
   "scripts": {
     "dev": "nuxt dev",
@@ -25,7 +21,9 @@
     "validate:versions": "node scripts/validate-version-sync.cjs",
     "verify:ssg-seo": "node scripts/verify-ssg-seo.cjs",
     "test:e2e": "playwright test",
+    "test:visual": "playwright test e2e/visual-regression.spec.js",
     "audit:contrast": "node scripts/audit-contrast.mjs",
+    "test:ai-eval": "node scripts/ai-eval.mjs",
     "build:all": "npm run build && cd talentpro-backend && npm run build && cd ../talentpro-admin && npm run build",
     "dev:all": "concurrently \"npm run dev\" \"cd talentpro-backend && npm run start:dev\" \"cd talentpro-admin && npm run dev\"",
     "prepare": "husky",
