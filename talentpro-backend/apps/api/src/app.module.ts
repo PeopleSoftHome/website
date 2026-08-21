@@ -6,11 +6,9 @@ import * as Joi from 'joi';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { BullModule } from '@nestjs/bullmq';
 import { LoggerModule } from 'nestjs-pino';
 import { randomUUID } from 'crypto';
-import { join } from 'path';
 import { IncomingMessage, IncomingHttpHeaders } from 'http';
 
 import appConfig from './config/app.config';
@@ -63,6 +61,8 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
         RECAPTCHA_SECRET_KEY: Joi.string().allow(''),
         OPENAI_API_KEY: Joi.string().allow(''),
         OPENAI_MODEL: Joi.string().allow(''),
+        AZURE_OPENAI_API_KEY: Joi.string().allow(''),
+        ANTHROPIC_API_KEY: Joi.string().allow(''),
         MEILISEARCH_HOST: Joi.string().uri().allow(''),
         MEILISEARCH_API_KEY: Joi.string().allow(''),
         SENTRY_DSN: Joi.string().uri().allow(''),
@@ -84,9 +84,12 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
         TRUSTED_PROXIES: Joi.string().allow(''),
         CACHE_KEY_PREFIX: Joi.string().allow(''),
         LOG_LEVEL: Joi.string().valid('fatal', 'error', 'warn', 'info', 'debug', 'trace').default('info'),
+        AI_GATEWAY_RPM: Joi.number().integer().min(1).default(30),
+        AI_GATEWAY_MAX_WAIT_MS: Joi.number().integer().min(1000).default(60000),
+        AI_GATEWAY_CONCURRENCY: Joi.number().integer().min(1).default(4),
       }),
       validationOptions: {
-        allowUnknown: true,
+        allowUnknown: false,
         abortEarly: false,
       },
     }),
@@ -117,14 +120,6 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
         },
       }),
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'uploads'),
-      serveRoot: '/uploads',
-      serveStaticOptions: {
-        index: false,
-        fallthrough: true,
-      },
-    }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -143,8 +138,6 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
           {
             name: 'auth',
             ttl: config.get<number>('THROTTLE_AUTH_TTL', 60000),
-            // auth 全局兜底放宽：Admin 页面导航会触发大量 GET 请求，不能全局 10 次/分
-            // 登录/注册等敏感接口仍通过 @Throttle({ auth: ... }) 单独收紧
             limit: config.get<number>('THROTTLE_AUTH_LIMIT', 10000),
           },
           {
@@ -155,7 +148,6 @@ import { IpFilterGuard } from '@shared/guards/ip-filter.guard';
           {
             name: 'lead',
             ttl: config.get<number>('THROTTLE_LEAD_TTL', 3600000),
-            // lead 全局兜底放宽：仅 /demo-bookings POST 需要严格限流，已单独配置 @Throttle
             limit: config.get<number>('THROTTLE_LEAD_LIMIT', 10000),
           },
         ],
