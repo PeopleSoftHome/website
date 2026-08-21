@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectQueue } from '@nestjs/bullmq';
 import type { Job, Queue } from 'bullmq';
 import type Redis from 'ioredis';
+import type { Cluster } from 'ioredis';
 import { AiService } from './ai.service';
 import type { ChatMessage } from './ai.types';
 import { REDIS_CLIENT } from '@shared/redis/redis.module';
@@ -22,7 +23,7 @@ export class AiGatewayService {
   constructor(
     private readonly config: ConfigService,
     @InjectQueue('ai-gateway') private readonly queue: Queue<AiGatewayChatJob>,
-    @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis | Cluster,
   ) {
     this.limitPerMinute = Number(this.config.get('AI_GATEWAY_RPM', 30));
     this.maxWaitMs = Number(this.config.get('AI_GATEWAY_MAX_WAIT_MS', 60_000));
