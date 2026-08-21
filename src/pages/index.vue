@@ -22,20 +22,29 @@ import { useJsonLd } from '@/shared/utils/jsonld';
 import SectionSkeleton from '@/components/ui/SectionSkeleton/SectionSkeleton.vue';
 import { resolveSectionComponent } from '@/composables/useCmsPageAsync';
 
-// Section 骨架屏默认高度映射
+// P0: homepage is a narrative, not a catalog. Keep the primary story to six scenes.
+const P0_HOME_SCENES = [
+  'hero',
+  'brands',
+  'stats',
+  'ai-family',
+  'testimonials',
+  'cta-banner',
+] as const;
+
 const SKELETON_HEIGHTS = {
   hero: 600,
-  brands: 260,
-  stats: 360,
-  products: 720,
+  brands: 220,
+  stats: 320,
+  products: 680,
   'ai-family': 680,
-  industries: 640,
+  industries: 620,
   testimonials: 520,
-  logos: 580,
-  'why-us': 760,
-  resources: 620,
-  'roi-calculator': 720,
-  'cta-banner': 440,
+  logos: 520,
+  'why-us': 720,
+  resources: 600,
+  'roi-calculator': 700,
+  'cta-banner': 400,
 };
 
 const sectionSkeletonHeight = (key: string) => {
@@ -43,15 +52,21 @@ const sectionSkeletonHeight = (key: string) => {
 };
 
 const { t } = useI18n();
-
 const { sections } = useCmsPageAsync('home');
 
-const sectionComponents = computed(() =>
-  (sections.value || []).map((s) => ({
-    ...s,
-    component: resolveSectionComponent(s.key),
-  })),
-);
+const sectionComponents = computed(() => {
+  const cmsSections = sections.value || [];
+  const selected = new Map(cmsSections.map((section) => [section.key, section]));
+
+  return P0_HOME_SCENES.map((key) => {
+    const section = selected.get(key);
+    if (!section) return null;
+    return {
+      ...section,
+      component: resolveSectionComponent(section.key),
+    };
+  }).filter(Boolean) as Array<{ key: string; component: unknown; config?: Record<string, unknown> }>;
+});
 
 useJsonLd({
   '@context': 'https://schema.org',

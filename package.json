@@ -4,12 +4,8 @@
   "version": "4.4.2",
   "type": "module",
   "lint-staged": {
-    "src/**/*.{js,ts,vue}": [
-      "eslint --fix"
-    ],
-    "e2e/**/*.js": [
-      "eslint --fix"
-    ]
+    "src/**/*.{js,ts,vue}": ["eslint --fix"],
+    "e2e/**/*.js": ["eslint --fix"]
   },
   "scripts": {
     "dev": "nuxt dev",
@@ -25,7 +21,9 @@
     "validate:versions": "node scripts/validate-version-sync.cjs",
     "verify:ssg-seo": "node scripts/verify-ssg-seo.cjs",
     "test:e2e": "playwright test",
+    "test:visual": "playwright test e2e/visual-regression.spec.js",
     "audit:contrast": "node scripts/audit-contrast.mjs",
+    "test:ai-eval": "node scripts/ai-eval.mjs",
     "build:all": "npm run build && cd talentpro-backend && npm run build && cd ../talentpro-admin && npm run build",
     "dev:all": "concurrently \"npm run dev\" \"cd talentpro-backend && npm run start:dev\" \"cd talentpro-admin && npm run dev\"",
     "prepare": "husky",
@@ -37,7 +35,7 @@
     "@sentry/vue": "^10.54.0",
     "@vite-pwa/nuxt": "^1.1.1",
     "axios": "^1.16.1",
-    "dompurify": "^3.4.11",
+    "dompurify": "^3.4.14",
     "marked": "^18.0.5",
     "vue": "^3.5.34",
     "vue-router": "^5.0.7",
@@ -54,15 +52,15 @@
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/coverage-v8": "^4.1.7",
     "@vue/test-utils": "^2.4.10",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.5",
     "cross-env": "^7.0.3",
     "eslint": "^9.20.0",
     "eslint-plugin-vue": "^9.32.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.5",
-    "nuxt": "^4.4.6",
-    "sharp": "^0.34.5",
+    "nuxt": "^4.5.2",
+    "sharp": "^0.35.3",
     "subset-font": "^2.5.0",
     "typescript": "^6.0.3",
     "unplugin-auto-import": "^21.0.0",
@@ -73,9 +71,13 @@
   "overrides": {
     "esbuild": "^0.28.1",
     "form-data": "^4.0.6",
-    "js-yaml": "^4.1.2",
+    "js-yaml": "^4.3.1",
     "launch-editor": "^2.14.1",
-    "tar": "^7.5.16"
+    "nanoid": "^6.0.1",
+    "postcss": "^8.5.26",
+    "tar": "^7.5.22",
+    "fast-uri": "^4.1.2",
+    "undici": "^7.29.0"
   },
   "engines": {
     "node": ">=18.0.0",

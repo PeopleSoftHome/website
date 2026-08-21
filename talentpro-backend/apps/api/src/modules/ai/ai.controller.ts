@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { RecaptchaGuard } from '@shared/guards';
-import { RolesGuard } from '@shared/guards';
+import { RecaptchaGuard, RolesGuard } from '@shared/guards';
 import { Observable } from 'rxjs';
 import { randomUUID } from 'crypto';
 import { AiService } from './ai.service';
+import { AiGatewayService } from './ai-gateway.service';
+import { AgentDemoService } from './agent-demo.service';
 import { Public } from '@shared/decorators/public.decorator';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { UserContext } from '@shared/types';
 import { AiChatDto } from './dto/ai-chat.dto';
 import { AiChatStreamDto } from './dto/ai-chat-stream.dto';
 import { AiGenerateDto } from './dto/ai-generate.dto';
@@ -19,7 +21,48 @@ import { AiAdminChatDto } from './dto/ai-admin-chat.dto';
 @ApiTags('AI 助手')
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly aiGateway: AiGatewayService,
+    private readonly agentDemo: AgentDemoService,
+  ) {}
+
+  @Post('agent/demo')
+  @Public()
+  @Throttle({ default: { limit: 12, ttl: 60000 } })
+  @ApiOperation({ summary: '真实 AI Agent 产品演示（Gateway → Tool → Workspace scope → Action）' })
+  async agentDemoRun(@Body() body: { promptId?: string; apply?: boolean; locale?: string }) {
+    return this.agentDemo.run(body || {});
+  }
+
+  @Post('agent/demo/approve')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('ai:demo:action')
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  @ApiOperation({ summary: '审批并执行 Agent Demo action' })
+  async approveAgentDemo(@Body() body: { approvalId: string }, @CurrentUser() user: UserContext) {
+    return this.agentDemo.approve(body.approvalId, user);
+  }
+
+  @Post('gateway/chat')
+  @Public()
+  @UseGuards(RecaptchaGuard)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  @ApiOperation({ summary: 'AI Gateway 对话（quota + distributed BullMQ + provider facade）' })
+  async gatewayChat(@Body() dto: AiChatDto, @Req() req: { ip?: string }) {
+    const subject = req.ip || 'anonymous';
+    return this.aiGateway.chat({ subject, message: dto.message, history: dto.history, locale: dto.locale });
+  }
+
+  @Get('gateway/status')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('ai:generate')
+  @ApiOperation({ summary: 'AI Gateway 队列与容量状态' })
+  gatewayStatus() { return this.aiGateway.getStatus(); }
 
   @Post('chat')
   @Public()
@@ -52,48 +95,23 @@ export class AiController {
   @Permission('ai:generate')
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @ApiOperation({ summary: 'AI 内容生成（博客/产品/SEO/翻译/审核）' })
-  async generate(@Body() dto: AiGenerateDto) {
-    return this.aiService.generateContent(dto);
-  }
+  async generate(@Body() dto: AiGenerateDto) { return this.aiService.generateContent(dto); }
 
   @Post('generate-image')
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('ai:generate-image')
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @Permission('ai:generate')
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: 'AI 图片生成' })
-  async generateImage(
-    @Body() dto: AiGenerateImageDto,
-    @CurrentUser('id') userId: string,
-  ) {
-    return this.aiService.generateImage({ ...dto, userId });
-  }
+  async generateImage(@Body() dto: AiGenerateImageDto) { return this.aiService.generateImage(dto); }
 
-  @Post('admin/chat')
+  @Post('admin-chat')
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
   @Permission('ai:chat')
   @Throttle({ default: { limit: 30, ttl: 60000 } })
-  @ApiOperation({ summary: 'Admin 配置助手对话' })
-  async adminChat(@Body() dto: AiAdminChatDto) {
-    const sessionId = randomUUID();
-    const result = await this.aiService.adminChat(
-      dto.message,
-      dto.history || [],
-      dto.context,
-    );
-    return { ...result, sessionId };
-  }
-
-  @Get('provider-status')
-  @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles('ADMIN', 'SUPER_ADMIN')
-  @Permission('ai:generate')
-  @ApiOperation({ summary: 'LLM Provider 可用性状态' })
-  getProviderStatus() {
-    return this.aiService.getProviderStatus();
-  }
+  @ApiOperation({ summary: 'Admin AI 对话' })
+  async adminChat(@Body() dto: AiAdminChatDto) { return this.aiService.adminChat(dto); }
 }

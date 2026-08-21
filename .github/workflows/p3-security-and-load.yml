@@ -1,0 +1,96 @@
+name: P3 Security and Load
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql:
+    name: CodeQL SAST + blocking gate
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+      - name: Block high/critical findings
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.head_ref || github.ref_name }}
+        run: node scripts/fail-on-codeql-high.mjs
+
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-sbom
+          path: sbom.cdx.json
+          retention-days: 14
+
+  dr-local:
+    name: Database restore + Redis failover drill
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run deterministic DR drill
+        run: bash scripts/dr-drill.sh
+
+  load-local:
+    name: Deterministic local load smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Start static server
+        run: |
+          node .output/server/index.mjs > /tmp/talentpro-server.log 2>&1 &
+          echo $! > /tmp/talentpro-server.pid
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:3000/ >/dev/null && exit 0
+            sleep 2
+          done
+          cat /tmp/talentpro-server.log
+          exit 1
+      - uses: grafana/setup-k6-action@v1
+      - name: Run deterministic k6 smoke test
+        env:
+          BASE_URL: http://127.0.0.1:3000
+        run: k6 run load-tests/smoke.js
+
+  load-production:
+    name: Production load smoke
+    if: ${{ github.event_name == 'workflow_dispatch' && vars.LOAD_TEST_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - name: Run k6 production smoke test
+        env:
+          BASE_URL: ${{ vars.LOAD_TEST_URL }}
+        run: k6 run load-tests/smoke.js

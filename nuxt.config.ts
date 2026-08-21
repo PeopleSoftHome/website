@@ -8,14 +8,7 @@ import { getIndustryMap } from './src/data/industries/map';
 import { getForumTopics } from './src/data/forum';
 import { getJobs } from './src/data/jobs';
 
-/**
- * 构建动态路由全量预渲染列表
- * 优先使用 src/data/ 静态 fallback 数据，不依赖后端 API
- * 兼容 i18n prefix_except_default 策略：zh 无前缀，en / zh-TW 有前缀
- */
 function buildPrerenderRoutes(): string[] {
-  // products/list.ts 顶层导入 Vue 组件，无法在 Node 构建期直接导入；
-  // slug 列表由 lightweight 产品数据推导，与 list.ts 保持一致
   const PRODUCT_SLUGS = [
     'recruit', 'performance', 'org', 'attendance', 'payroll', 'learning', 'talent', 'analytics',
     'ai-recruit', 'ai-interview', 'ai-coach', 'ai-course',
@@ -33,7 +26,6 @@ function buildPrerenderRoutes(): string[] {
 
   for (const { code, prefix } of locales) {
     const dataLocale = code === 'en' ? 'en' : 'zh';
-
     getBlogPosts(dataLocale).forEach((p) => routes.push(`${prefix}/blog/${p.slug}`));
     getCases(dataLocale).forEach((c) => routes.push(`${prefix}/cases/${c.slug}`));
     getNewsArticles(dataLocale).forEach((n) => routes.push(`${prefix}/news/${n.slug}`));
@@ -76,15 +68,8 @@ function buildCsp(): string {
 }
 
 export default defineNuxtConfig({
-  // ── 源码目录 ──
   srcDir: 'src',
-
-  // ── 渲染模式 ──
-  // 生产构建使用 static preset 生成真实 SSG；开发同样走 SSR 渲染，
-  // 保证 SSR 不兼容代码在开发阶段即可暴露。
   ssr: true,
-
-  // ── 运行时配置 ──
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1',
@@ -94,43 +79,28 @@ export default defineNuxtConfig({
       assetBaseUrl: process.env.NUXT_PUBLIC_ASSET_BASE_URL || '/',
     },
   },
-
-  // ── 模块 ──
   modules: ['@pinia/nuxt', '@nuxtjs/i18n', '@vite-pwa/nuxt', '@nuxt/image'],
-
-  // ── CSS ──
   css: [
     '~/styles/global.css',
+    '~/styles/design-tokens-v2.css',
     '~/styles/animations.css',
     '~/styles/reveal.css',
   ],
-
-  // ── 自动导入 ──
   imports: {
-    dirs: [
-      'composables',
-      'stores',
-      'utils',
-    ],
+    dirs: ['composables', 'stores', 'utils'],
   },
-
-  // ── 组件自动导入 ──
   components: [
     {
       path: '~/components',
       pathPrefix: false,
     },
   ],
-
-  // ── Nitro 预设 ──
   nitro: {
     preset: 'static',
     prerender: {
       routes: buildPrerenderRoutes(),
       crawlLinks: true,
     },
-    // 注：Nuxt 4 + static preset + Windows 下 compressPublicAssets 与资源复制存在竞态，
-    // 导致构建偶尔/必然 ENOENT。由 CDN/Nginx 统一压缩，关闭 Nitro 内置压缩。
     compressPublicAssets: false,
     routeRules: {
       '/_nuxt/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
@@ -140,8 +110,6 @@ export default defineNuxtConfig({
       '/manifest.webmanifest': { headers: { 'cache-control': 'public, max-age=0, must-revalidate' } },
     },
   },
-
-  // ── 图片优化 ──
   image: {
     quality: 80,
     format: ['webp', 'jpg', 'png'],
@@ -153,8 +121,6 @@ export default defineNuxtConfig({
       xl: 1280,
     },
   },
-
-  // ── i18n ──
   i18n: {
     restructureDir: '.',
     locales: [
@@ -175,9 +141,6 @@ export default defineNuxtConfig({
       strictMessage: false,
     },
   },
-
-  // ── PWA ──
-  // 开发模式禁用 Service Worker，避免 SW 安装/更新与缓存清理带来的额外开销。
   pwa: {
     disable: process.env.NODE_ENV !== 'production',
     registerType: 'autoUpdate',
@@ -197,13 +160,11 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      // 仅预缓存核心资源，避免全部 HTML 页面进入 precache 导致首次 SW 安装过大。
       globPatterns: ['offline.html', 'icon-*.png', '**/*.{js,css}'],
       navigateFallback: '/offline.html',
       navigateFallbackDenylist: [/^\/api\//, /^\/.well-known/],
       runtimeCaching: [
         {
-          // 本地字体运行时缓存
           urlPattern: /.*\/fonts\/.*\.(woff2?|ttf|otf)$/i,
           handler: 'CacheFirst',
           options: {
@@ -213,7 +174,6 @@ export default defineNuxtConfig({
           },
         },
         {
-          // 页面 HTML 运行时缓存，首次访问后支持离线
           urlPattern: ({ request }) => request.mode === 'navigate',
           handler: 'StaleWhileRevalidate',
           options: {
@@ -243,13 +203,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-
-  // ── Vite 配置迁移 ──
   vite: {
     build: {
       sourcemap: process.env.SOURCE_MAP === 'true',
-      // SSG 入口 chunk 包含全站路由预加载映射，405KB 属于 manifest 级别开销；
-      // 将告警阈值提高到 500KB，避免误报，同时通过 manualChunks 拆分第三方库。
       chunkSizeWarningLimit: 500,
       rollupOptions: {
         output: {
@@ -257,7 +213,6 @@ export default defineNuxtConfig({
             'vendor-vue': ['vue', 'vue-router', 'pinia'],
             'vendor-utils': ['axios', '@sentry/vue'],
             'vendor-i18n': ['vue-i18n'],
-            // Markdown 渲染库（MarkdownEditor / ChatBot 使用）延迟加载，避免拖慢首屏
             'vendor-markdown': ['marked', 'dompurify'],
           },
         },
@@ -275,20 +230,13 @@ export default defineNuxtConfig({
       ],
     },
   },
-
-  // ── 开发服务器 ──
   devServer: {
     port: 8080,
   },
-
-  // ── TypeScript ──
-  // 生产构建保留类型检查；开发模式关闭 typeCheck，避免 vue-tsc 拖慢 HMR 与启动。
   typescript: {
     strict: true,
     typeCheck: process.env.NODE_ENV === 'production',
   },
-
-  // ── 应用配置 ──
   app: {
     head: {
       htmlAttrs: {

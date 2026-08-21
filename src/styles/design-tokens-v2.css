@@ -1,0 +1,76 @@
+/*
+ * TalentPro Design Token v2
+ * Three layers: Primitive → Semantic → Component.
+ * Product components should consume only Semantic/Component tokens.
+ */
+
+:root {
+  /* ── Primitive layer ── */
+  --ds-primitive-brand-500: #1B5FEB;
+  --ds-primitive-brand-700: #1347C8;
+  --ds-primitive-violet-500: #7C3AED;
+  --ds-primitive-success-500: #059669;
+  --ds-primitive-neutral-0: #FFFFFF;
+  --ds-primitive-neutral-50: #F8FAFB;
+  --ds-primitive-neutral-100: #F0F4F8;
+  --ds-primitive-neutral-200: #E2E8F0;
+  --ds-primitive-neutral-600: #475569;
+  --ds-primitive-neutral-700: #334155;
+  --ds-primitive-neutral-900: #0F172A;
+  --ds-primitive-black-18: rgba(0, 0, 0, 0.18);
+  --ds-primitive-brand-08: rgba(27, 95, 235, 0.08);
+  --ds-primitive-brand-15: rgba(27, 95, 235, 0.15);
+  --ds-primitive-success-10: rgba(5, 150, 105, 0.10);
+
+  /* ── Semantic layer ── */
+  --ds-color-brand-primary: var(--ds-primitive-brand-500);
+  --ds-color-brand-strong: var(--ds-primitive-brand-700);
+  --ds-brand-soft: var(--ds-primitive-brand-08);
+  --ds-color-brand-soft-border: var(--ds-primitive-brand-15);
+  --ds-color-text-primary: var(--ds-primitive-neutral-900);
+  --ds-color-text-secondary: var(--ds-primitive-neutral-600);
+  --ds-color-text-muted: #64748B;
+  --ds-color-border-subtle: var(--ds-primitive-neutral-200);
+  --ds-color-state-success: var(--ds-primitive-success-500);
+  --ds-success-soft: var(--ds-primitive-success-10);
+  --ds-surface-primary: var(--ds-primitive-neutral-0);
+  --ds-surface-secondary: var(--ds-primitive-neutral-50);
+  --ds-surface-elevated: rgba(255, 255, 255, 0.90);
+  --ds-shadow-brand: rgba(27, 95, 235, 0.18);
+  --ds-radius-sm: 10px;
+  --ds-radius-md: 18px;
+  --ds-radius-lg: 28px;
+  --ds-motion-fast: 180ms;
+  --ds-motion-control: 240ms;
+  --ds-motion-narrative: 800ms;
+
+  /* ── Component layer ── */
+  --ds-component-button-primary-bg: var(--ds-color-brand-primary);
+  --ds-component-button-primary-hover: var(--ds-color-brand-strong);
+  --ds-component-card-radius: var(--ds-radius-md);
+  --ds-component-nav-height: 72px;
+  --ds-component-stage-radius: var(--ds-radius-lg);
+}
+
+[data-theme="dark"] {
+  --ds-color-brand-primary: #4B82F5;
+  --ds-color-brand-strong: #2D63E0;
+  --ds-brand-soft: rgba(75, 130, 245, 0.14);
+  --ds-color-brand-soft-border: rgba(75, 130, 245, 0.28);
+  --ds-color-text-primary: #F1F5F9;
+  --ds-color-text-secondary: #CBD5E1;
+  --ds-color-text-muted: #94A3B8;
+  --ds-color-border-subtle: #334155;
+  --ds-surface-primary: #0F172A;
+  --ds-surface-secondary: #1E293B;
+  --ds-surface-elevated: rgba(15, 23, 42, 0.92);
+  --ds-shadow-brand: rgba(75, 130, 245, 0.20);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-motion-fast: 0ms;
+    --ds-motion-control: 0ms;
+    --ds-motion-narrative: 0ms;
+  }
+}

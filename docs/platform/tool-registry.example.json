@@ -1,0 +1,31 @@
+{
+  "id": "analyze_workforce",
+  "version": "1.0.0",
+  "name": "Analyze Workforce",
+  "description": "Analyze workforce metrics for the current workspace.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "metric": { "type": "string", "enum": ["turnover", "headcount", "hiring"] },
+      "period": { "type": "string" }
+    },
+    "required": ["metric"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "summary": { "type": "string" },
+      "metrics": { "type": "array" }
+    }
+  },
+  "permissions": [
+    { "permission": "workspace:analytics:read", "roles": ["ADMIN", "MANAGER"] }
+  ],
+  "dataScope": {
+    "workspaceScoped": true,
+    "resourceTypes": ["workforce_metric"]
+  },
+  "risk": "medium",
+  "auditRequired": true,
+  "sideEffects": false
+}

@@ -11,6 +11,7 @@
   <DemoModal />
   <VideoModal />
   <SearchModal />
+  <CommandPalette />
   <ContactModal :is-open="contactOpen" @close="contactOpen = false" />
   <AuthModal :is-open="authOpen" @close="authOpen = false" />
   <ChatBot
@@ -55,6 +56,7 @@ import FloatingBar from '@/components/sections/FloatingBar/FloatingBar.vue';
 import DemoModal from '@/components/ui/DemoModal/DemoModal.vue';
 import VideoModal from '@/components/ui/VideoModal/VideoModal.vue';
 import CookieBanner from '@/components/ui/CookieBanner/CookieBanner.vue';
+import CommandPalette from '@/components/ui/CommandPalette/CommandPalette.vue';
 
 /* 按需异步加载的大体积弹窗/组件，降低主包体积 */
 const SearchModal = defineAsyncComponent(() => import('@/components/ui/SearchModal/SearchModal.vue'));

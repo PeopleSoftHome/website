@@ -6,8 +6,27 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
 jobs:
+  verify-lockfiles:
+    name: Verify dependency lockfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify root lockfile
+        run: npm install --package-lock-only --ignore-scripts && git diff --exit-code -- package-lock.json
+      - name: Verify admin lockfile
+        run: cd talentpro-admin && npm install --package-lock-only --ignore-scripts && git diff --exit-code -- package-lock.json
+      - name: Verify backend lockfile
+        run: cd talentpro-backend && npm install --package-lock-only --ignore-scripts && git diff --exit-code -- package-lock.json
+
   test-frontend:
+    needs: [verify-lockfiles]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,62 +35,63 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: npm ci
-
-      # 安全审计：检查依赖漏洞（moderate 及以上级别）
-      # 发现漏洞时不会中断构建，但会在日志中高亮显示
-      - name: Security audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-
-      # 代码规范检查
+      - name: Security audit — high/critical gate
+        run: npm audit --audit-level=high
+      - name: Security audit — moderate report
+        run: npm audit --audit-level=moderate --json > npm-audit.json || true
       - name: Lint
         run: npm run lint
-
-      # 注入构建版本信息（前端通过 public/ 自动复制到 dist）
       - name: Inject build version
-        run: |
-          echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > public/version.json
-
+        run: echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > public/version.json
       - run: npm run build
-
-      # Token 双源同步校验
       - name: Validate design token sync
         run: node scripts/validate-tokens-sync.js
-
-      # 三项目版本号与 CHANGELOG 对齐校验
       - name: Validate version sync
         run: npm run validate:versions
-
+      - name: Run live AI evaluation gate
+        env:
+          AI_EVAL_PROVIDER: ${{ secrets.AI_EVAL_PROVIDER }}
+          AI_EVAL_MODEL: ${{ secrets.AI_EVAL_MODEL }}
+          AI_EVAL_INPUT_USD_PER_1M: ${{ secrets.AI_EVAL_INPUT_USD_PER_1M }}
+          AI_EVAL_OUTPUT_USD_PER_1M: ${{ secrets.AI_EVAL_OUTPUT_USD_PER_1M }}
+          AI_EVAL_REQUIRE_COST: 'true'
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run test:ai-eval
       - run: npx vitest run --coverage
       - name: Install Playwright
         run: npx playwright install --with-deps
+      - name: Require checked-in visual baselines
+        shell: bash
+        run: |
+          expected=12
+          actual=$(find e2e -type f -path '*-snapshots/*.png' | wc -l | tr -d ' ')
+          test "$actual" -ge "$expected" || { echo "Missing visual baselines: found $actual, expected at least $expected. Run 'npm run test:visual -- --update-snapshots' locally and commit the snapshots."; exit 1; }
       - name: Run E2E tests
         run: npx playwright test
         env:
           CI: true
       - name: Upload frontend build artifact
-        uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: .output/public/
           retention-days: 30
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
           path: coverage/
           retention-days: 14
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
-
-      # Lighthouse 性能审计
       - name: Run Lighthouse CI
         run: |
           npm install -g @lhci/cli
@@ -79,14 +99,15 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
       - name: Upload Lighthouse report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
           path: .lighthouseci/
           retention-days: 7
 
   test-backend:
+    needs: [verify-lockfiles]
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -118,46 +139,39 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: cd talentpro-backend && npm ci
-
-      # 安全审计：检查后端依赖漏洞
-      - name: Security audit
-        run: cd talentpro-backend && npm audit --audit-level=moderate
-        continue-on-error: true
-
-      # 代码规范检查
+      - name: Security audit — high/critical gate
+        run: cd talentpro-backend && npm audit --audit-level=high
+      - name: Security audit — moderate report
+        run: cd talentpro-backend && npm audit --audit-level=moderate --json > npm-audit.json || true
       - name: Lint
         run: cd talentpro-backend && npm run lint
-
       - run: cd talentpro-backend && npx prisma generate
       - run: cd talentpro-backend && npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
       - run: cd talentpro-backend && npm run build
-
-      # 注入构建版本信息到后端产物
       - name: Inject build version
-        run: |
-          echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-backend/dist/version.json
-
+        run: echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-backend/dist/version.json
       - run: cd talentpro-backend && npm run test:cov
       - name: Check backend coverage threshold
-        run: |
-          cd talentpro-backend
-          npx jest --coverage --coverageThreshold='{"global":{"branches":50,"functions":60,"lines":60,"statements":60}}'
+        run: cd talentpro-backend && npx jest --coverage --coverageThreshold='{"global":{"branches":50,"functions":60,"lines":60,"statements":60}}'
       - run: cd talentpro-backend && npm run test:e2e
         env:
           DATABASE_URL: postgresql://talentpro:talentpro_dev@localhost:5432/talentpro?schema=public
           REDIS_URL: redis://localhost:6379
           JWT_SECRET: test-jwt-secret-ci
+          STORAGE_SIGNING_SECRET: test-storage-signing-secret-ci-32-chars-minimum
+          PII_ENCRYPTION_KEY: test-pii-encryption-key-ci-32-chars-minimum
       - name: Upload backend coverage
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
           path: talentpro-backend/coverage/
           retention-days: 14
 
   build-admin:
+    needs: [verify-lockfiles]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -166,28 +180,24 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: cd talentpro-admin && npm ci
-
-      # 安全审计：检查 admin 依赖漏洞
-      - name: Security audit
-        run: cd talentpro-admin && npm audit --audit-level=moderate
-        continue-on-error: true
-
-      # 注入构建版本信息（admin 通过 public/ 自动复制到 dist）
+      - name: Security audit — high/critical gate
+        run: cd talentpro-admin && npm audit --audit-level=high
+      - name: Security audit — moderate report
+        run: cd talentpro-admin && npm audit --audit-level=moderate --json > npm-audit.json || true
       - name: Inject build version
         run: |
+          mkdir -p talentpro-admin/public
           echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-admin/public/version.json
-
       - run: cd talentpro-admin && npm run test
       - run: cd talentpro-admin && npm run build
       - name: Upload admin build artifact
-        uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
         with:
           name: admin-dist
           path: talentpro-admin/dist/
           retention-days: 30
 
-  # CD 部署阶段（master 分支且测试通过后触发）
   deploy:
     runs-on: ubuntu-latest
     needs: [test-frontend, test-backend, build-admin]
@@ -204,21 +214,15 @@ jobs:
         with:
           name: admin-dist
           path: talentpro-admin/dist/
-
-      # 构建前端/后端 Docker 镜像（始终执行，验证 Dockerfile 可用）
       - name: Build frontend Docker image
         run: |
           docker build -t talentpro-web:${{ github.sha }} -f docker/Dockerfile.frontend .
           docker tag talentpro-web:${{ github.sha }} talentpro-web:latest
-
       - name: Build backend Docker image
         run: |
           cd talentpro-backend
           docker build -t talentpro-api:${{ github.sha }} -f docker/Dockerfile .
           docker tag talentpro-api:${{ github.sha }} talentpro-api:latest
-
-      # 推送镜像：配置仓库变量 vars.DOCKER_REGISTRY（如 registry.example.com）与
-      # secrets.DOCKER_USERNAME / DOCKER_PASSWORD 后自动启用
       - name: Push Docker images
         if: vars.DOCKER_REGISTRY != ''
         run: |
@@ -229,8 +233,6 @@ jobs:
             docker push ${{ vars.DOCKER_REGISTRY }}/${img}:${{ github.sha }}
             docker push ${{ vars.DOCKER_REGISTRY }}/${img}:latest
           done
-
-      # 前端静态资源部署：配置 vars.OSS_BUCKET 与对应 secrets 后自动启用
       - name: Deploy frontend to OSS
         if: vars.OSS_BUCKET != ''
         run: |
@@ -239,8 +241,6 @@ jobs:
         env:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-
-      # Admin 后台部署：配置 vars.OSS_ADMIN_BUCKET 与对应 secrets 后自动启用
       - name: Deploy admin to OSS
         if: vars.OSS_ADMIN_BUCKET != ''
         run: |
@@ -249,12 +249,5 @@ jobs:
         env:
           OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-
-      # 标记部署版本（可扩展为 GitHub Release 或发送部署通知）
       - name: Create deployment tag
-        run: |
-          echo "Deployed version ${{ github.sha }} from branch ${{ github.ref_name }}"
-          echo "Build artifacts:"
-          echo "  - frontend-dist/"
-          echo "  - admin-dist/"
-          echo "  - talentpro-api:${{ github.sha }}"
+        run: echo "Deployed version ${{ github.sha }} from branch ${{ github.ref_name }}"
