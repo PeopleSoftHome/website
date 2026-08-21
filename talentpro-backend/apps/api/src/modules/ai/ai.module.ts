@@ -14,10 +14,12 @@ import { AiAnthropicService } from './ai-anthropic.service';
 import { LlmProviderFactory } from './ai-provider.factory';
 import { AiController } from './ai.controller';
 import { MediaModule } from '../media/media.module';
+import { AiPlatformModule } from './platform/platform.module';
 
 @Module({
   imports: [
     MediaModule,
+    AiPlatformModule,
     BullModule.registerQueue(
       {
         name: 'ai-gateway',
