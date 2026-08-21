@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import type Redis from 'ioredis';
 import type { Cluster } from 'ioredis';
 import { REDIS_CLIENT } from '@shared/redis/redis.module';
+import { PrismaService } from '@shared/prisma/prisma.service';
 import { ToolDefinition, ToolInvocationRequest, TOOL_REGISTRY_VERSION, ToolRisk } from './tool-registry.types';
 import type { GovernanceDecision, GovernancePolicy } from './platform-governance.types';
 
@@ -15,18 +16,10 @@ const AUDIT_INDEX_KEY = 'ai:tool:audit:index';
 const AUDIT_KEY_PREFIX = 'ai:tool:audit:';
 
 const DEFAULT_POLICY: GovernancePolicy = {
-  id: 'enterprise-default',
-  version: '1.1.0',
-  name: 'Enterprise Default Governance',
-  enabled: true,
-  maxRisk: 'medium',
+  id: 'enterprise-default', version: '1.1.0', name: 'Enterprise Default Governance', enabled: true, maxRisk: 'medium',
   allowedTools: ['analyze_workforce', 'search_product', 'get_case', 'find_policy', 'analyze_workforce_demo', 'apply_workforce_action_demo'],
   blockedDataClasses: ['raw_credentials', 'payment_card_data', 'private_keys'],
-  requireHumanApprovalFor: ['high-risk-tool', 'external-side-effect', 'bulk-write'],
-  maxStepsPerRun: 20,
-  maxCostUsd: 2,
-  retentionDays: 30,
-  auditRequired: true,
+  requireHumanApprovalFor: ['high-risk-tool', 'external-side-effect', 'bulk-write'], maxStepsPerRun: 20, maxCostUsd: 2, retentionDays: 30, auditRequired: true,
 };
 
 @Injectable()
@@ -34,9 +27,7 @@ export class ToolRegistryService {
   private readonly tools = new Map<string, ToolDefinition>();
   private readonly handlers = new Map<string, ToolHandler>();
 
-  constructor(private readonly config: ConfigService, private readonly redis: Redis | Cluster) {
-    void this.ensurePolicy();
-  }
+  constructor(private readonly config: ConfigService, private readonly redis: Redis | Cluster, private readonly prisma: PrismaService) { void this.ensurePolicy(); }
 
   register(definition: ToolDefinition, handler: ToolHandler) {
     if (definition.id.includes('/')) throw new Error('Tool id must not contain /');
@@ -54,12 +45,7 @@ export class ToolRegistryService {
       const persisted = await this.redis.mget(...keys);
       for (const raw of persisted) {
         if (!raw) continue;
-        try {
-          const tool = JSON.parse(raw) as ToolDefinition;
-          merged.set(`${tool.id}@${tool.version}`, tool);
-        } catch {
-          // Ignore malformed persisted entries; registration on workers remains authoritative.
-        }
+        try { const tool = JSON.parse(raw) as ToolDefinition; merged.set(`${tool.id}@${tool.version}`, tool); } catch { /* ignore malformed persisted entry */ }
       }
     }
     return [...merged.values()];
@@ -81,7 +67,6 @@ export class ToolRegistryService {
     const key = `${definition.id}@${definition.version}`;
     const handler = this.handlers.get(key);
     if (!handler) throw new NotFoundException(`Handler for ${key} not found on this worker`);
-
     this.assertPermission(definition, request);
     this.assertWorkspaceScope(definition, request);
     const governance = await this.evaluateGovernance(definition, request);
@@ -103,10 +88,7 @@ export class ToolRegistryService {
 
   private assertPermission(definition: ToolDefinition, request: ToolInvocationRequest) {
     if (!definition.permissions.length) return;
-    const allowed = definition.permissions.some((rule) => {
-      const roleAllowed = !rule.roles?.length || rule.roles.some((role) => request.context.roles.includes(role));
-      return roleAllowed && request.context.permissions.includes(rule.permission);
-    });
+    const allowed = definition.permissions.some((rule) => (!rule.roles?.length || rule.roles.some((role) => request.context.roles.includes(role))) && request.context.permissions.includes(rule.permission));
     if (!allowed) throw new ForbiddenException('Tool permission denied');
   }
 
@@ -133,17 +115,12 @@ export class ToolRegistryService {
   }
 
   private async ensurePolicy() {
+    const raw = await this.redis.get(GOVERNANCE_KEY);
+    if (!raw) { await this.redis.set(GOVERNANCE_KEY, JSON.stringify(DEFAULT_POLICY)); return; }
     try {
-      const raw = await this.redis.get(GOVERNANCE_KEY);
-      if (!raw) {
-        await this.redis.set(GOVERNANCE_KEY, JSON.stringify(DEFAULT_POLICY));
-        return;
-      }
       const current = JSON.parse(raw) as GovernancePolicy;
       if (current.version !== DEFAULT_POLICY.version) await this.redis.set(GOVERNANCE_KEY, JSON.stringify(DEFAULT_POLICY));
-    } catch {
-      // Runtime invocation will surface Redis errors in production rather than silently bypassing governance.
-    }
+    } catch { await this.redis.set(GOVERNANCE_KEY, JSON.stringify(DEFAULT_POLICY)); }
   }
 
   private async loadPolicy(): Promise<GovernancePolicy> {
@@ -155,8 +132,10 @@ export class ToolRegistryService {
   private async audit(payload: { executionId: string | null; request: ToolInvocationRequest; definition: ToolDefinition; governance: GovernanceDecision; status: string }) {
     if (!this.config.get<boolean>('AI_GOVERNANCE_AUDIT', true)) return;
     const id = randomUUID();
-    const retentionSeconds = Math.max(86_400, Number(payload.definition.auditRequired ? DEFAULT_POLICY.retentionDays : 7) * 86_400);
+    const retentionDays = Math.max(30, DEFAULT_POLICY.retentionDays);
     const record = { id, at: new Date().toISOString(), executionId: payload.executionId, status: payload.status, userId: payload.request.context.userId, workspaceId: payload.request.context.workspaceId || null, requestId: payload.request.context.requestId, toolId: payload.definition.id, version: payload.definition.version, governance: payload.governance };
+    await this.prisma.auditLog.create({ data: { action: `ai.tool.${payload.status}`, resource: 'ai.tool', resourceId: payload.definition.id, newValue: record } });
+    const retentionSeconds = retentionDays * 86_400;
     await this.redis.set(`${AUDIT_KEY_PREFIX}${id}`, JSON.stringify(record), 'EX', retentionSeconds);
     await this.redis.zadd(AUDIT_INDEX_KEY, Date.now(), id);
     await this.redis.zremrangebyscore(AUDIT_INDEX_KEY, 0, Date.now() - retentionSeconds * 1000);
