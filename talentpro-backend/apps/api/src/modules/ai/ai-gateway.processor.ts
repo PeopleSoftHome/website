@@ -3,7 +3,7 @@ import type { Job } from 'bullmq';
 import { AiService } from './ai.service';
 import type { AiGatewayChatJob } from './ai-gateway.service';
 
-@Processor('ai-gateway')
+@Processor('ai-gateway', { concurrency: Number(process.env.AI_GATEWAY_CONCURRENCY || 4) })
 export class AiGatewayProcessor extends WorkerHost {
   constructor(private readonly ai: AiService) {
     super();
