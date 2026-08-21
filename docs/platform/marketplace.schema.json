@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://talentpro.cn/schemas/agent-marketplace.schema.json",
+  "title": "TalentPro Agent Marketplace Package",
+  "type": "object",
+  "required": ["id", "version", "name", "publisher", "manifest", "governance"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$" },
+    "version": { "type": "string" },
+    "name": { "type": "string", "minLength": 1 },
+    "publisher": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": { "id": { "type": "string" }, "name": { "type": "string" } }
+    },
+    "manifest": { "$ref": "https://talentpro.cn/schemas/plugin-manifest.schema.json" },
+    "governance": {
+      "type": "object",
+      "required": ["risk", "permissions"],
+      "properties": {
+        "risk": { "enum": ["low", "medium", "high"] },
+        "permissions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
