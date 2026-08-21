@@ -1,10 +1,5 @@
 /**
  * 模块注册中心
- *
- * 集中声明所有 Feature 模块、Listener 和 Processor。
- * 新增模块只需在此文件添加一行 import + 推入数组，无需修改 AppModule。
- *
- * 未来可升级为目录扫描 auto-discovery。
  */
 
 // ─── Feature Modules ───
@@ -22,6 +17,7 @@ import { SystemModule } from '@/modules/system/system.module';
 import { NotificationModule } from '@/modules/notification/notification.module';
 import { MailModule } from '@/modules/mail/mail.module';
 import { AiModule } from '@/modules/ai/ai.module';
+import { AiPlatformModule } from '@/modules/ai/platform/platform.module';
 import { WorkspaceModule } from '@/modules/workspace/workspace.module';
 import { ExportModule } from '@/modules/export/export.module';
 import { ExperimentModule } from '@/modules/experiment/experiment.module';
@@ -50,6 +46,7 @@ export const FEATURE_MODULES = [
   NotificationModule,
   MailModule,
   AiModule,
+  AiPlatformModule,
   WorkspaceModule,
   ExportModule,
   ExperimentModule,
