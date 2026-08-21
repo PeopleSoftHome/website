@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://talentpro.cn/schemas/plugin-manifest.schema.json",
+  "title": "TalentPro Plugin Manifest",
+  "type": "object",
+  "required": ["id", "version", "name", "publisher", "apiVersion", "permissions", "security"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$" },
+    "version": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "publisher": { "type": "object", "required": ["id", "name"] },
+    "apiVersion": { "const": "v1" },
+    "tools": { "type": "array", "items": { "type": "string" } },
+    "agents": { "type": "array", "items": { "type": "string" } },
+    "permissions": { "type": "array", "items": { "type": "object", "required": ["permission", "rationale"] } },
+    "events": { "type": "array", "items": { "type": "string" } },
+    "security": {
+      "type": "object",
+      "required": ["signed", "sandbox"],
+      "properties": {
+        "signed": { "type": "boolean" },
+        "checksum": { "type": "string" },
+        "sandbox": { "const": "isolated" }
+      }
+    }
+  }
+}
