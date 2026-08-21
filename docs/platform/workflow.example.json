@@ -1,0 +1,22 @@
+{
+  "id": "workforce-bottleneck-to-action",
+  "version": "1.0.0",
+  "name": "Workforce Bottleneck to Action",
+  "description": "Analyze a workforce metric and prepare a governed action plan.",
+  "nodes": [
+    { "id": "input", "type": "input", "name": "question", "schema": { "type": "string" } },
+    { "id": "analysis", "type": "tool", "toolId": "analyze_workforce", "input": { "question": "{{input.question}}" } },
+    { "id": "plan", "type": "agent", "agentId": "hr-operator", "input": { "analysis": "{{analysis}}" } },
+    { "id": "approval", "type": "condition", "expression": "plan.risk >= 0.7" },
+    { "id": "output", "type": "output", "name": "action_plan" }
+  ],
+  "edges": [
+    { "from": "input", "to": "analysis" },
+    { "from": "analysis", "to": "plan" },
+    { "from": "plan", "to": "approval" },
+    { "from": "approval", "to": "output", "when": "false" }
+  ],
+  "timeoutMs": 30000,
+  "maxSteps": 8,
+  "governancePolicyId": "enterprise-default"
+}
