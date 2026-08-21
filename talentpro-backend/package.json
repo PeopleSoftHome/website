@@ -31,8 +31,6 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
-    "@aws-sdk/client-s3": "^3.888.0",
-    "@aws-sdk/s3-request-presigner": "^3.888.0",
     "@nestjs/bullmq": "^11.0.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.0",
@@ -113,42 +111,12 @@
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {"^.+\\.(t|j)s$": "ts-jest"},
-    "collectCoverageFrom": [
-      "apps/api/src/**/*.ts",
-      "!apps/api/src/**/*.module.ts",
-      "!apps/api/src/**/dto/**/*.ts",
-      "!apps/api/src/**/*.decorator.ts",
-      "!apps/api/src/**/*.guard.ts",
-      "!apps/api/src/**/*.filter.ts",
-      "!apps/api/src/**/*.interceptor.ts",
-      "!apps/api/src/**/*.middleware.ts",
-      "!apps/api/src/**/*.spec.ts",
-      "!apps/api/src/**/*.e2e-spec.ts",
-      "!apps/api/src/**/test/**",
-      "!apps/api/src/main.ts",
-      "!apps/api/src/app.module.ts",
-      "!apps/api/src/processors/**/*.ts",
-      "!apps/api/src/types/**/*.ts",
-      "!apps/api/src/config/**/*.ts",
-      "!apps/api/src/listeners/**/*.ts",
-      "!apps/api/src/common/metrics/**/*.ts",
-      "!apps/api/src/common/modules/**/*.ts",
-      "!apps/api/src/common/prisma/field-encryption.extension.ts",
-      "!apps/api/src/common/prisma/prisma.service.ts",
-      "!apps/api/src/common/prisma/soft-delete.extension.ts"
-    ],
+    "collectCoverageFrom": ["apps/api/src/**/*.ts"],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": ["<rootDir>/apps/", "<rootDir>/libs/"],
-    "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/apps/api/src/$1",
-      "^@shared/(.*)$": "<rootDir>/libs/shared/src/$1"
-    }
+    "moduleNameMapper": {"^@/(.*)$": "<rootDir>/apps/api/src/$1", "^@shared/(.*)$": "<rootDir>/libs/shared/src/$1"}
   },
-  "overrides": {
-    "exceljs": {"uuid": "^11.1.1"},
-    "js-yaml": "^4.1.2",
-    "multer": "^2.2.0"
-  },
+  "overrides": {"exceljs": {"uuid": "^11.1.1"}, "js-yaml": "^4.1.2", "multer": "^2.2.0"},
   "engines": {"node": ">=18.0.0", "npm": ">=9.0.0"}
 }
