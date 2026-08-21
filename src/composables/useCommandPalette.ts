@@ -18,6 +18,7 @@ const BASE_COMMANDS: CommandItem[] = [
   { id: 'products', label: 'Products', description: 'Explore TalentPro products', href: '/products' },
   { id: 'solutions', label: 'Solutions', description: 'Explore industry solutions', href: '/solutions' },
   { id: 'cases', label: 'Case studies', description: 'See customer results', href: '/cases' },
+  { id: 'pricing', label: 'Pricing', description: 'View plans and pricing', href: '/pricing' },
   { id: 'resources', label: 'Resources', description: 'Guides, reports and insights', href: '/resources' },
   { id: 'ai-family', label: 'AI Family', description: 'Explore AI products', href: '/ai-family' },
   { id: 'search', label: 'Search', description: 'Search the site', shortcut: '/' },
