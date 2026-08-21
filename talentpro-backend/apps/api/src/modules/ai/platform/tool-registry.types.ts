@@ -33,6 +33,10 @@ export interface ToolInvocationContext {
   roles: string[];
   permissions: string[];
   requestId: string;
+  dataClasses?: string[];
+  steps?: number;
+  estimatedCostUsd?: number;
+  approvalToken?: string;
 }
 
 export interface ToolInvocationRequest {
