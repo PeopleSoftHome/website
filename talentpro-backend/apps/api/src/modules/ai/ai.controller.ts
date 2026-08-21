@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { randomUUID } from 'crypto';
 import { AiService } from './ai.service';
 import { AiGatewayService } from './ai-gateway.service';
+import { AgentDemoService } from './agent-demo.service';
 import { Public } from '@shared/decorators/public.decorator';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
@@ -23,13 +24,22 @@ export class AiController {
   constructor(
     private readonly aiService: AiService,
     private readonly aiGateway: AiGatewayService,
+    private readonly agentDemo: AgentDemoService,
   ) {}
+
+  @Post('agent/demo')
+  @Public()
+  @Throttle({ default: { limit: 12, ttl: 60000 } })
+  @ApiOperation({ summary: '真实 AI Agent 产品演示（Gateway → Tool → Workspace scope → Action）' })
+  async agentDemoRun(@Body() body: { promptId?: string; apply?: boolean; locale?: string }) {
+    return this.agentDemo.run(body || {});
+  }
 
   @Post('gateway/chat')
   @Public()
   @UseGuards(RecaptchaGuard)
   @Throttle({ default: { limit: 20, ttl: 60000 } })
-  @ApiOperation({ summary: 'AI Gateway 对话（quota + bounded queue + provider facade）' })
+  @ApiOperation({ summary: 'AI Gateway 对话（quota + distributed BullMQ + provider facade）' })
   async gatewayChat(@Body() dto: AiChatDto, @Req() req: { ip?: string }) {
     const subject = req.ip || 'anonymous';
     return this.aiGateway.chat({
