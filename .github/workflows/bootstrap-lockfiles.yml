@@ -3,18 +3,20 @@ name: One-time lockfile bootstrap
 on:
   pull_request:
     branches: [master]
+  push:
+    branches: [codex/remediate-p0-p3-20260822]
 
 permissions:
   contents: write
 
 jobs:
   bootstrap:
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -30,4 +32,4 @@ jobs:
           git add package-lock.json talentpro-admin/package-lock.json talentpro-backend/package-lock.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "chore: regenerate dependency lockfiles"
-          git push origin "HEAD:${GITHUB_HEAD_REF}"
+          git push origin "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
