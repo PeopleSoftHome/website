@@ -3,7 +3,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery, ApiConsumes } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { extname } from 'path';
-import { createReadStream } from 'fs';
 import { MediaService } from './media.service';
 import { StorageService } from './storage.service';
 import { SignedUrlService } from './signed-url.service';
@@ -65,13 +64,12 @@ export class MediaController {
       throw new HttpException('Media file not found', HttpStatus.NOT_FOUND);
     }
 
-    const contentType = this.contentType(filename);
-    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Type', this.contentType(filename));
     res.setHeader('Content-Length', String(stat.size));
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('Content-Disposition', `inline; filename="${filename.replace(/"/g, '')}"`);
 
-    return new StreamableFile(createReadStream(this.storage.resolveLocalPath(filename)));
+    return new StreamableFile(this.storage.createReadStream(filename));
   }
 
   @Get(':id/signed-url')
