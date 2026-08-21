@@ -13,12 +13,16 @@ export class SignedUrlService {
   private readonly defaultTtlSeconds: number;
 
   constructor(private readonly config: ConfigService) {
-    this.secret = this.config.get<string>('STORAGE_SIGNING_SECRET', this.config.get<string>('JWT_SECRET', 'dev-storage-secret'));
-    this.defaultTtlSeconds = Number(this.config.get('SIGNED_URL_TTL_SECONDS', 300));
+    const secret = this.config.get<string>('STORAGE_SIGNING_SECRET');
+    if (!secret || secret.length < 32) {
+      throw new Error('STORAGE_SIGNING_SECRET must be configured and at least 32 characters long');
+    }
+    this.secret = secret;
+    this.defaultTtlSeconds = Math.min(Number(this.config.get('SIGNED_URL_TTL_SECONDS', 300)), 900);
   }
 
   sign(path: string, ttlSeconds = this.defaultTtlSeconds): SignedUrlPayload & { signature: string } {
-    const expiresAt = Math.floor(Date.now() / 1000) + Math.max(1, ttlSeconds);
+    const expiresAt = Math.floor(Date.now() / 1000) + Math.min(Math.max(1, ttlSeconds), 900);
     return { path, expiresAt, signature: this.signature(path, expiresAt) };
   }
 
