@@ -1,5 +1,7 @@
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectQueue } from '@nestjs/bullmq';
+import type { Queue } from 'bullmq';
 import type Redis from 'ioredis';
 import type { Cluster } from 'ioredis';
 import { randomUUID } from 'crypto';
@@ -26,6 +28,11 @@ type DemoPrompt = {
   decision: string;
   action: string;
 };
+
+interface AgentActionJob {
+  actionKey: string;
+  action: Record<string, unknown>;
+}
 
 const PROMPTS: DemoPrompt[] = [
   {
@@ -60,14 +67,17 @@ export class AgentDemoService {
     private readonly gateway: AiGatewayService,
     private readonly config: ConfigService,
     @Inject(REDIS_CLIENT) private readonly redis: Redis | Cluster,
+    @InjectQueue('agent-actions') private readonly actionQueue: Queue<AgentActionJob>,
   ) {}
 
   async run(input: { promptId?: string; apply?: boolean; locale?: string }) {
     const prompt = PROMPTS.find((item) => item.id === input.promptId) || PROMPTS[0];
     const requestId = randomUUID();
     const providerConfigured = this.isProviderConfigured();
+    const isProduction = this.config.get('APP_ENV', 'development') === 'production';
+    const requireProvider = isProduction || this.config.get('AGENT_DEMO_REQUIRE_PROVIDER', 'false') === 'true';
 
-    if (this.config.get('AGENT_DEMO_REQUIRE_PROVIDER', 'false') === 'true' && !providerConfigured) {
+    if (requireProvider && !providerConfigured) {
       throw new ServiceUnavailableException('Agent demo requires a configured LLM provider');
     }
 
@@ -142,15 +152,24 @@ export class AgentDemoService {
       createdAt: new Date().toISOString(),
       status: 'queued',
     };
+    const actionKey = `ai:demo:action:${action.id}`;
 
-    await this.redis.set(
-      `ai:demo:action:${action.id}`,
-      JSON.stringify(action),
-      'EX',
-      86_400,
-    );
+    await this.redis.set(actionKey, JSON.stringify(action), 'EX', 86_400);
+    const job = await this.actionQueue.add('apply-workforce-action', { actionKey, action });
 
-    return action;
+    const started = Date.now();
+    while (Date.now() - started < 10_000) {
+      const raw = await this.redis.get(actionKey);
+      if (raw) {
+        const current = JSON.parse(raw) as typeof action & { executedAt?: string; execution?: unknown };
+        if (current.status === 'completed') {
+          return { ...current, jobId: job.id };
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    return { ...action, jobId: job.id, status: 'queued' };
   }
 
   private isProviderConfigured() {
