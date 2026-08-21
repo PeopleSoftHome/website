@@ -32,6 +32,8 @@ async function bootstrap() {
 
   const port = configService.get<number>('app.port', 4000);
   const frontendUrl = configService.get<string>('app.frontendUrl', 'http://localhost:3000');
+  const corsOrigins = configService.get<string>('app.corsOrigins', frontendUrl);
+  process.env.CORS_ORIGINS = corsOrigins;
 
   app.use(cookieParser(configService.get<string>('JWT_SECRET')));
   // P0: cookie JWT writes must carry a matching double-submit CSRF token.
@@ -60,7 +62,6 @@ async function bootstrap() {
     }),
   );
 
-  const corsOrigins = configService.get<string>('app.corsOrigins', frontendUrl);
   const origins = corsOrigins.split(',').map((o) => o.trim()).filter(Boolean);
   logger.log(`[CORS] Allowed origins: ${origins.join(', ')}`);
   app.enableCors({
