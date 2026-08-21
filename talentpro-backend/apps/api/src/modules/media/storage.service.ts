@@ -25,7 +25,7 @@ export class StorageService {
 
   constructor(private configService: ConfigService) {
     this.storageType = this.configService.get<string>('STORAGE_TYPE', 'local');
-    this.uploadDir = this.configService.get<string>('UPLOAD_DIR', path.join(process.cwd(), 'uploads'));
+    this.uploadDir = path.resolve(this.configService.get<string>('UPLOAD_DIR', path.join(process.cwd(), 'uploads')));
 
     if (this.storageType === 'local') {
       if (!fs.existsSync(this.uploadDir)) {
@@ -52,13 +52,12 @@ export class StorageService {
     filename: string,
     originalName: string,
   ): Promise<UploadResult> {
-    const filePath = path.join(this.uploadDir, filename);
+    const filePath = this.resolveLocalPath(filename);
     await fs.promises.writeFile(filePath, file.buffer);
 
     const mimeType = file.mimetype;
     const size = file.size;
     const internalUrl = `storage://${filename}`;
-
     let width: number | undefined;
     let height: number | undefined;
 
@@ -69,38 +68,51 @@ export class StorageService {
         height = metadata.height;
 
         const thumbFilename = `thumb-${filename}`;
-        const thumbPath = path.join(this.uploadDir, thumbFilename);
+        const thumbPath = this.resolveLocalPath(thumbFilename);
         await sharp(filePath)
           .resize(300, 300, { fit: 'inside', withoutEnlargement: true })
           .toFile(thumbPath);
 
         const webpFilename = `${path.parse(filename).name}.webp`;
-        const webpPath = path.join(this.uploadDir, webpFilename);
+        const webpPath = this.resolveLocalPath(webpFilename);
         await sharp(filePath).webp({ quality: 85 }).toFile(webpPath);
       } catch (err) {
         this.logger.warn(`图片处理失败: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
-    return {
-      filename,
-      originalName,
-      url: internalUrl,
-      mimeType,
-      size,
-      width,
-      height,
-    };
+    return { filename, originalName, url: internalUrl, mimeType, size, width, height };
+  }
+
+  resolveLocalPath(filename: string): string {
+    if (path.basename(filename) !== filename || filename.includes('\\') || filename.includes('/')) {
+      throw new Error('Invalid storage object key');
+    }
+    const resolved = path.resolve(this.uploadDir, filename);
+    if (!resolved.startsWith(`${this.uploadDir}${path.sep}`)) {
+      throw new Error('Invalid storage object key');
+    }
+    return resolved;
+  }
+
+  createReadStream(filename: string): fs.ReadStream {
+    if (this.storageType !== 'local') {
+      throw new Error('Local stream is unavailable for the configured storage backend');
+    }
+    return fs.createReadStream(this.resolveLocalPath(filename));
+  }
+
+  async stat(filename: string) {
+    return fs.promises.stat(this.resolveLocalPath(filename));
   }
 
   async delete(filename: string): Promise<void> {
     if (this.storageType !== 'local') return;
 
-    const filePath = path.join(this.uploadDir, filename);
-    const thumbPath = path.join(this.uploadDir, `thumb-${filename}`);
-    const webpPath = path.join(this.uploadDir, `${path.parse(filename).name}.webp`);
-
     try {
+      const filePath = this.resolveLocalPath(filename);
+      const thumbPath = this.resolveLocalPath(`thumb-${filename}`);
+      const webpPath = this.resolveLocalPath(`${path.parse(filename).name}.webp`);
       if (fs.existsSync(filePath)) await fs.promises.unlink(filePath);
       if (fs.existsSync(thumbPath)) await fs.promises.unlink(thumbPath);
       if (fs.existsSync(webpPath)) await fs.promises.unlink(webpPath);
