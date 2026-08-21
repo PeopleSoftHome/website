@@ -185,7 +185,9 @@ jobs:
       - name: Security audit — moderate report
         run: cd talentpro-admin && npm audit --audit-level=moderate --json > npm-audit.json || true
       - name: Inject build version
-        run: echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-admin/public/version.json
+        run: |
+          mkdir -p talentpro-admin/public
+          echo "{\"version\":\"${{ github.sha }}\",\"branch\":\"${{ github.ref_name }}\",\"buildTime\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > talentpro-admin/public/version.json
       - run: cd talentpro-admin && npm run test
       - run: cd talentpro-admin && npm run build
       - name: Upload admin build artifact
