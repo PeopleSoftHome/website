@@ -7,10 +7,33 @@ on:
     branches: [master]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
+  regenerate-lockfiles-once:
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - run: npm --prefix talentpro-admin install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - run: npm --prefix talentpro-backend install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json talentpro-admin/package-lock.json talentpro-backend/package-lock.json
+          if git diff --cached --quiet; then echo "Lockfiles already synchronized"; exit 0; fi
+          git commit -m "chore: regenerate dependency lockfiles"
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
+
   verify-lockfiles:
+    needs: [regenerate-lockfiles-once]
+    if: ${{ always() && needs.regenerate-lockfiles-once.result == 'success' }}
     name: Verify dependency lockfiles
     runs-on: ubuntu-latest
     steps:
