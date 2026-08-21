@@ -5,7 +5,6 @@ import { MediaService } from './media.service';
 import { RolesGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
-import { Public } from '@shared/decorators/public.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { UserContext } from '@shared/types';
 import { PaginationDto } from '@shared/dto';
@@ -45,10 +44,10 @@ export class MediaController {
   }
 
   @Get(':id')
-  @Public()
-  @ApiOperation({ summary: '媒体详情（兼容接口，业务文件应优先使用 signed-url）' })
-  findOne(@Param('id') id: string, @CurrentUser() user?: UserContext) {
-    return this.mediaService.findOne(id, user?.workspaceId);
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '媒体详情（私有对象元数据）' })
+  findOne(@Param('id') id: string, @CurrentUser() user: UserContext) {
+    return this.mediaService.findOne(id, user.workspaceId);
   }
 
   @Post('upload')
