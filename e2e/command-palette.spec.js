@@ -7,7 +7,7 @@ test.describe('P3 command palette', () => {
     await page.keyboard.press('Control+KeyK');
     await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeVisible();
 
-    await page.getByRole('textbox', { name: 'Search commands' }).fill('pricing');
+    await page.getByRole('searchbox', { name: 'Search commands' }).fill('pricing');
     await expect(page.getByText('Pricing', { exact: true })).toBeVisible();
   });
 
