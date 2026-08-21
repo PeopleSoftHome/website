@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { RecaptchaGuard } from '@shared/guards';
@@ -6,6 +6,7 @@ import { RolesGuard } from '@shared/guards';
 import { Observable } from 'rxjs';
 import { randomUUID } from 'crypto';
 import { AiService } from './ai.service';
+import { AiGatewayService } from './ai-gateway.service';
 import { Public } from '@shared/decorators/public.decorator';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Permission } from '@shared/decorators/permission.decorator';
@@ -19,7 +20,35 @@ import { AiAdminChatDto } from './dto/ai-admin-chat.dto';
 @ApiTags('AI 助手')
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly aiGateway: AiGatewayService,
+  ) {}
+
+  @Post('gateway/chat')
+  @Public()
+  @UseGuards(RecaptchaGuard)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  @ApiOperation({ summary: 'AI Gateway 对话（quota + bounded queue + provider facade）' })
+  async gatewayChat(@Body() dto: AiChatDto, @Req() req: { ip?: string }) {
+    const subject = req.ip || 'anonymous';
+    return this.aiGateway.chat({
+      subject,
+      message: dto.message,
+      history: dto.history,
+      locale: dto.locale,
+    });
+  }
+
+  @Get('gateway/status')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Permission('ai:generate')
+  @ApiOperation({ summary: 'AI Gateway 队列与容量状态' })
+  gatewayStatus() {
+    return this.aiGateway.getStatus();
+  }
 
   @Post('chat')
   @Public()
