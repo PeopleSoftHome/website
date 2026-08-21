@@ -38,6 +38,8 @@ jobs:
         run: node scripts/validate-tokens-sync.js
       - name: Validate version sync
         run: npm run validate:versions
+      - name: Run AI evaluation suite
+        run: npm run test:ai-eval
       - run: npx vitest run --coverage
       - name: Install Playwright
         run: npx playwright install --with-deps
